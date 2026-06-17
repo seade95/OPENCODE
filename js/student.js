@@ -13,7 +13,7 @@ function renderStudentPortal() {
   el = document.getElementById('stuCurrentTerm'); if (el) el.textContent = data.currentTerm || 'No active term';
 
   // Results
-  var results = data.results.filter(function(r) { return r.studentId === s.id; });
+  var results = (data.results || []).filter(function(r) { return r.studentId === s.id; });
   var rt = document.getElementById('stuResultsTable');
   var re = document.getElementById('stuResultsEmpty');
   if (results.length && rt && re) {
@@ -22,7 +22,7 @@ function renderStudentPortal() {
   } else { if (rt) rt.innerHTML = ''; if (re) re.style.display = 'block'; }
 
   // CAT
-  var cat = data.cat.filter(function(c) { return c.studentId === s.id; });
+  var cat = (data.cat || []).filter(function(c) { return c.studentId === s.id; });
   var ct = document.getElementById('stuCatTable');
   var ce = document.getElementById('stuCatEmpty');
   if (cat.length && ct && ce) {
@@ -31,7 +31,7 @@ function renderStudentPortal() {
   } else { if (ct) ct.innerHTML = ''; if (ce) ce.style.display = 'block'; }
 
   // Fees
-  var fees = data.fees.filter(function(f) { return f.studentId === s.id; });
+  var fees = (data.fees || []).filter(function(f) { return f.studentId === s.id; });
   var ft = document.getElementById('stuFeesTable');
   var fe = document.getElementById('stuFeesEmpty');
   if (fees.length && ft && fe) {
@@ -44,7 +44,7 @@ function renderStudentPortal() {
   } else { if (ft) ft.innerHTML = ''; if (fe) fe.style.display = 'block'; }
 
   // Activities
-  var acts = data.activities.filter(function(a) { return a.participants.indexOf(s.id) >= 0; });
+  var acts = (data.activities || []).filter(function(a) { return (a.participants || []).indexOf(s.id) >= 0; });
   var ag = document.getElementById('stuActivitiesGrid');
   var ae = document.getElementById('stuActivitiesEmpty');
   if (acts.length && ag && ae) {
@@ -64,7 +64,7 @@ function renderStudentPortal() {
   if (typeof renderStudentGPA === 'function') renderStudentGPA();
   if (typeof renderStudentReportCard === 'function') renderStudentReportCard();
 
-  var att = data.attendance.filter(function(a) { return a.studentId === s.id; }).sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+  var att = (data.attendance || []).filter(function(a) { return a.studentId === s.id; }).sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
   var at = document.getElementById('stuAttendanceTable');
   var ate = document.getElementById('stuAttendanceEmpty');
   if (att.length && at && ate) {
@@ -113,7 +113,7 @@ function checkFeeLock() {
   var cfg = data.feeConfig || {};
   var graceDays = cfg.partPaymentGraceDays || 7;
 
-  var lockable = data.fees.filter(function(f) {
+  var lockable = (data.fees || []).filter(function(f) {
     if (f.studentId !== s.id || f.status === 'paid' || f.amount <= 0) return false;
     // Partial payers get a grace period: portal stays open for graceDays after last payment
     if (f.status === 'partial' && f.lastPaymentDate) {
@@ -198,7 +198,7 @@ function closeFeeLock() {
       if (tabName === 'gallery' && typeof renderGalleryView === 'function') renderGalleryView('stuGalleryView');
       if (tabName === 'calendar' && typeof renderAcademicCalendarView === 'function') renderAcademicCalendarView('stuCalendarView');
       if (tabName === 'hostel' && typeof renderStudentHostel === 'function') renderStudentHostel();
-      if (tabName === 'simulation' && typeof renderSimCenter === 'function') { cleanupSim(); renderSimCenter(); }
+      if (tabName === 'simulation' && typeof renderSimCenter === 'function') { if (typeof cleanupSim === 'function') cleanupSim(); renderSimCenter(); }
       if (tabName === 'activitygames' && typeof renderStudentActivityGames === 'function') renderStudentActivityGames();
       if (tabName === 'alumni' && typeof renderStudentAlumni === 'function') renderStudentAlumni();
       if (tabName === 'health' && typeof renderStudentHealthView === 'function') renderStudentHealthView();
