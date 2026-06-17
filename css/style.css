@@ -699,10 +699,33 @@ tr:hover td { background: #f7fafc; }
   color: var(--text-light);
 }
 
-/* Responsive – comprehensive */
+/* ===================================================================== */
+/* RESPONSIVE — Mobile-First Across All Components                       */
+/* ===================================================================== */
+
+/* ---- 1200px (Large tablets / small desktops) ---- */
+@media (max-width: 1200px) {
+  .admin-sidebar { width: 200px; }
+  .hero-content { gap: 40px; }
+  .admin-panel h2 { font-size: 22px; }
+}
+
+/* ---- 1100px ---- */
 @media (max-width: 1100px) {
   .features-grid { grid-template-columns: repeat(2, 1fr); }
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ---- 1024px (Tablets landscape) ---- */
+@media (max-width: 1024px) {
+  .portal-card { padding: 28px 24px; }
+  .admin-sidebar-item { padding: 10px 16px; font-size: 13px; }
+  .health-grid { grid-template-columns: repeat(2, 1fr); }
+  .admin-content { padding: 24px; }
+  .student-layout { padding: 24px; }
+}
+
+/* ---- 968px (Small tablets) ---- */
 @media (max-width: 968px) {
   .hero-text h1 { font-size: 40px; }
   .hero-content { flex-direction: column; text-align: center; }
@@ -713,23 +736,39 @@ tr:hover td { background: #f7fafc; }
   .admin-sidebar { width: 56px; }
   .admin-sidebar-item span { display: none; }
   .admin-sidebar-item { justify-content: center; padding: 14px 8px; font-size: 16px; }
+  .admin-sidebar-item i { margin: 0; }
+  .sidebar-divider { display: none; }
+  .admin-sidebar > div[style*="padding:8px 16px"] { display: none; }
   .student-profile-card { flex-direction: column; text-align: center; }
   .student-tabs { justify-content: center; }
   #stuAssignmentsGrid { grid-template-columns: 1fr 1fr !important; }
+  .conf-card { flex-direction: column; align-items: stretch; }
+  .conf-card .conf-actions { justify-content: flex-end; }
+  .transport-card { padding: 14px; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-main { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ---- 768px (Tablets portrait / large phones) ---- */
 @media (max-width: 768px) {
   .hero-text h1 { font-size: 34px; }
   .features-grid { grid-template-columns: 1fr; }
   .portal-card { padding: 32px 24px; }
   .portal-card h3 { font-size: 22px; }
+  
+  /* Admin layout */
   .admin-layout { flex-direction: column; }
   .admin-sidebar {
     width: 100%;
     display: flex;
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 8px 12px;
     gap: 4px;
+    -webkit-overflow-scrolling: touch;
   }
+  .admin-sidebar::-webkit-scrollbar { height: 3px; }
+  .admin-sidebar::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
   .admin-sidebar-item {
     flex-shrink: 0;
     padding: 10px 14px;
@@ -740,85 +779,464 @@ tr:hover td { background: #f7fafc; }
   }
   .admin-sidebar-item span { display: inline; }
   .admin-sidebar-item.active { border-left-color: transparent; border-bottom-color: var(--accent); }
+  .admin-sidebar-item i { width: auto; }
   .admin-content { padding: 20px; }
+  .admin-panel h2 { font-size: 20px; }
+  
+  /* Student layout */
   .student-layout { padding: 20px; }
-  .student-tabs { gap: 6px; }
-  .student-tab { font-size: 13px; padding: 8px 14px; }
+  .student-tabs {
+    gap: 6px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    justify-content: flex-start;
+  }
+  .student-tab { font-size: 13px; padding: 8px 14px; flex-shrink: 0; }
   #stuAssignmentsGrid { grid-template-columns: 1fr !important; }
+  .student-profile-card { padding: 24px; }
+  
+  /* Cards & headers */
   .card-header { flex-direction: column; align-items: stretch; }
   .card-header .btn { align-self: flex-start; }
+  .card { padding: 16px; }
+  .card-header h3 { font-size: 16px; }
+  
+  /* Search */
   .search-bar { flex-direction: column; }
   .search-bar input { min-width: auto; }
+  
+  /* Tables */
+  .table-responsive { -webkit-overflow-scrolling: touch; }
   thead { font-size: 13px; }
   th, td { padding: 10px 12px; }
+  
+  /* Portal header */
   .portal-header { padding: 12px 20px; flex-wrap: wrap; gap: 8px; }
-  .portal-header-right { flex-wrap: wrap; }
+  .portal-header-right { flex-wrap: wrap; gap: 8px; }
+  .portal-header-right span { font-size: 12px; }
+  .portal-header-left { gap: 10px; }
+  
+  /* Timetable */
   .timetable-row { grid-template-columns: 70px repeat(5, 1fr) !important; }
   .timetable-header { padding: 8px 4px; font-size: 11px; }
   .timetable-cell { padding: 6px 4px; min-height: 44px; font-size: 11px; }
   .timetable-cell .subject { font-size: 11px; }
   .timetable-cell .teacher-name { font-size: 10px; }
-  .card { padding: 16px; }
-  .admin-content { padding: 16px; }
-  .student-layout { padding: 16px; }
+  
+  /* Health records */
+  .health-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .health-card { padding: 12px; }
+  
+  /* Transport */
+  .transport-card { padding: 14px; }
+  .transport-stop { font-size: 12px; }
+  
+  /* Conferences */
+  .conf-card { padding: 12px; }
+  .conf-card .conf-info h4 { font-size: 13px; }
+  
+  /* Library */
+  .library-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  
+  /* Gradebook */
+  .gradebook-toolbar { flex-direction: column; gap: 8px; }
+  
+  /* Fee config */
+  .feeConfigContainer .form-grid { grid-template-columns: 1fr; }
+  
+  /* Behavior, Lesson notes etc */
+  .beh-filters { flex-direction: column; gap: 8px; }
+  .ln-filters { flex-direction: column; gap: 8px; }
+  
+  /* Staff HR */
+  .hr-toolbar { flex-direction: column; gap: 8px; }
+  
+  /* Embedded admin */
+  .embedded-admin { flex-direction: column; }
+  .embedded-admin-sidebar { width: 100%; display: flex; overflow-x: auto; }
+  
+  /* Calendar week */
+  .cal-week-view .cal-week-header div { font-size: 11px; padding: 6px; }
+  .cal-week-period > div { font-size: 10px; }
+  
+  /* General adjustments */
+  .stats-grid { gap: 12px; }
+  .notif-bell { margin: 0 4px; }
+  .sub-banner { padding: 8px 16px; font-size: 12px; }
+  #stuCurrentTerm, #tchTermBadgeText { font-size: 11px; }
 }
+
+/* ---- 600px (Phones) ---- */
 @media (max-width: 600px) {
-  .navbar { padding: 12px 20px; }
-  .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--primary-dark); padding: 16px; z-index: 100; }
+  .navbar { padding: 12px 16px; }
+  .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--primary-dark); padding: 16px; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
   .nav-links.open { display: flex; }
   .nav-toggle { display: block; }
+  .nav-logo { font-size: 18px; }
+  .nav-logo img { height: 30px; }
+  .nav-links a { padding: 12px 16px; font-size: 15px; width: 100%; }
+  
+  /* Hero */
   .hero-text h1 { font-size: 26px; }
   .hero-text p { font-size: 15px; }
   .hero { padding: 100px 16px 60px; }
+  .hero-badge { font-size: 11px; padding: 4px 12px; }
+  .hero-stats { flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .hero-stat { font-size: 13px; }
+  
+  /* Stats */
   .stats-section { padding: 0 16px; margin-top: -40px; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .stat-card { padding: 20px 16px; }
   .stat-card h3 { font-size: 28px; }
+  
+  /* Features */
   .features-section { padding: 40px 16px; }
   .features-grid { gap: 16px; }
   .feature-card { padding: 24px 20px; }
   .section-header h2 { font-size: 28px; }
+  
+  /* Portal selection */
   .portal-section { padding: 40px 16px 80px; }
+  .portal-card { padding: 24px 16px; }
+  .portal-card .icon { font-size: 48px; }
+  
+  /* Admin */
   .admin-content { padding: 16px; }
+  .admin-panel h2 { font-size: 18px; }
+  .admin-panel .subtitle { font-size: 13px; }
+  .admin-sidebar-item { padding: 8px 12px; font-size: 12px; }
+  
+  /* Forms */
   .form-grid { grid-template-columns: 1fr; }
+  .form-group input, .form-group select, .form-group textarea { padding: 12px 14px; font-size: 16px; /* better touch targets */ }
+  
+  /* Buttons */
+  .btn { padding: 12px 20px; font-size: 14px; justify-content: center; }
+  .btn-sm { padding: 10px 14px; font-size: 13px; }
+  
+  /* Portal header */
   .portal-header { padding: 10px 12px; }
   .portal-header-left h2 { font-size: 16px; }
   .portal-header-left img { height: 28px !important; }
+  .portal-back-btn { padding: 6px 12px; font-size: 12px; }
+  .portal-header-right span { font-size: 11px; }
+  
+  /* Hero card stack hidden */
   .hero-card-stack { display: none; }
-  .btn { padding: 10px 20px; font-size: 14px; }
-  .modal { padding: 24px 20px; }
-  .admin-sidebar-item { padding: 8px 12px; font-size: 12px; }
+  
+  /* Modal */
+  .modal { padding: 24px 16px; max-width: 100%; width: 96%; max-height: 90vh; border-radius: 12px; }
+  .modal h3 { font-size: 17px; }
+  .modal-actions { flex-direction: column; gap: 8px; }
+  .modal-actions .btn { width: 100%; }
+  
+  /* Student */
   .student-profile-card { padding: 20px; }
   .student-avatar { width: 56px; height: 56px; font-size: 24px; }
-  footer { padding: 24px 16px; font-size: 12px; }
-  .stats-grid[style] { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-  .timetable-row { grid-template-columns: 50px repeat(5, 1fr) !important; }
-  .timetable-header { padding: 6px 2px; font-size: 10px; }
-  .timetable-cell { padding: 4px 2px; min-height: 36px; font-size: 10px; }
-  .timetable-cell .subject { font-size: 10px; }
-  .timetable-cell .teacher-name { font-size: 9px; }
-  .timetable-cell .tt-delete-btn { padding: 1px 4px !important; font-size: 8px !important; }
-  .cal-day { min-height: 60px; font-size: 11px; }
-  .cal-day-header { padding: 4px; font-size: 10px; }
-  .cal-event-chip { font-size: 8px; }
-  .cal-nav-title { font-size: 14px; }
-  .cal-week-period > div { min-height: 28px; font-size: 9px; }
-  .cal-week-view .cal-week-header div { font-size: 10px; padding: 4px; }
-  .feeConfigContainer .form-grid { grid-template-columns: 1fr; }
-  .card { padding: 12px; }
-  .admin-content { padding: 12px; }
+  .student-info h2 { font-size: 18px; }
+  .student-tabs { gap: 4px; padding-bottom: 4px; }
+  .student-tab { font-size: 12px; padding: 8px 10px; }
+  .student-tab i { font-size: 12px; }
   .student-layout { padding: 12px; }
+  
+  /* Cards */
+  .card { padding: 12px; }
+  .card-header h3 { font-size: 15px; }
+  
+  /* Tables */
+  .table-responsive { margin: 0 -4px; }
+  th, td { padding: 8px 10px; font-size: 12px; }
+  thead { font-size: 11px; }
+  
+  /* Footer */
+  footer { padding: 24px 16px; font-size: 12px; }
+  
+  /* Stats grid (admin dashboard) */
+  .stats-grid[style] { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  
+  /* Timetable */
+  .timetable-row { grid-template-columns: 40px repeat(5, 1fr) !important; }
+  .timetable-header { padding: 6px 2px; font-size: 9px; }
+  .timetable-cell { padding: 4px 2px; min-height: 36px; font-size: 9px; }
+  .timetable-cell .subject { font-size: 9px; }
+  .timetable-cell .teacher-name { font-size: 8px; }
+  .timetable-cell .tt-delete-btn { padding: 1px 4px !important; font-size: 8px !important; }
+  
+  /* Calendar */
+  .cal-day { min-height: 50px; font-size: 10px; }
+  .cal-day-header { padding: 3px; font-size: 9px; }
+  .cal-event-chip { font-size: 7px; padding: 1px 2px; }
+  .cal-nav-title { font-size: 14px; }
+  .cal-nav { gap: 4px; }
+  .cal-nav-btns button { padding: 4px 8px; font-size: 11px; }
+  .cal-week-period > div { min-height: 24px; font-size: 8px; }
+  .cal-week-view .cal-week-header div { font-size: 9px; padding: 3px; }
+  .cal-filter-btn { font-size: 10px; padding: 3px 8px; }
+  .cal-legend { gap: 6px; }
+  .cal-legend-item { font-size: 10px; }
+  .cal-grid { border-radius: 6px; }
+  .cal-day-num { font-size: 11px; }
+  
+  /* Health records */
+  .health-grid { grid-template-columns: 1fr; gap: 8px; }
+  .health-card { padding: 10px; }
+  .health-card h4 { font-size: 12px; }
+  .health-card .value { font-size: 13px; }
+  .health-allergy, .health-condition { font-size: 10px; }
+  
+  /* Transport */
+  .transport-card { padding: 12px; }
+  .transport-card h4 { font-size: 13px; }
+  .transport-card .sub { font-size: 11px; }
+  .transport-stop { font-size: 11px; padding: 3px 0; }
+  .transport-stop .stop-idx { width: 20px; height: 20px; font-size: 9px; }
+  .transport-student-tag { font-size: 10px; }
+  
+  /* Conferences */
+  .conf-card { padding: 10px; }
+  .conf-card .conf-info h4 { font-size: 12px; }
+  .conf-card .conf-info p { font-size: 11px; }
+  .conf-slot { padding: 6px 10px; font-size: 12px; }
+  
+  /* Library */
+  .library-grid { grid-template-columns: 1fr; gap: 10px; }
+  .lib-card { padding: 12px; }
+  .book-title { font-size: 13px; }
+  
+  /* Hostel */
+  .room-grid { grid-template-columns: 1fr; }
+  
+  /* Gradebook */
+  .gradebook-table th, .gradebook-table td { font-size: 11px; padding: 6px 8px; }
+  
+  /* Messages */
+  .msg-list { max-height: 250px; }
+  .msg-item { padding: 10px; }
+  .msg-item .msg-subject { font-size: 13px; }
+  
+  /* Gallery */
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  
+  /* ID Cards */
+  .id-card-preview { max-width: 100%; }
+  
+  /* Exam Sim */
+  .sim-question { padding: 16px; }
+  .sim-question h4 { font-size: 14px; }
+  .sim-option { padding: 10px; font-size: 13px; }
+  
+  /* Exam Modules */
+  .em-card { padding: 14px; }
+  
+  /* AI Tools */
+  .ai-tool-card { padding: 14px; }
+  
+  /* E-School */
+  .vc-card { padding: 14px; }
+  
+  /* Alumni */
+  .alumni-grid { grid-template-columns: 1fr; }
+  
+  /* Transcript */
+  .transcript-preview { padding: 16px; font-size: 12px; }
+  
+  /* Report Cards */
+  .rc-preview { padding: 16px; }
+  
+  /* Subscription */
+  .plan-card { padding: 16px; }
+  
+  /* Notifications */
+  .notif-dropdown { right: -40px; width: 280px; }
+  .notif-bell { margin: 0 2px; }
+  
+  /* Fee config */
+  .feeConfigContainer .form-grid { grid-template-columns: 1fr; }
+  .feeConfigContainer .stats-grid { grid-template-columns: 1fr; }
+  
+  /* System tools */
+  .sys-tool-card { padding: 14px; }
+
+  /* Landing Page Enhanced sections */
+  .slide { min-height: 60vh; padding: 60px 20px; }
+  .slide-title { font-size: 26px; }
+  .slide-subtitle { font-size: 14px; }
+  .slider-arrow { width: 36px; height: 36px; font-size: 14px; }
+  .slider-dots { gap: 6px; }
+  .slider-dot { width: 8px; height: 8px; }
+  .services-grid, .features-enhanced-grid, .courses-grid, .events-grid, .testimonials-grid, .news-grid { grid-template-columns: 1fr; }
+  .footer-main { grid-template-columns: 1fr; gap: 24px; }
+  .section-area { padding: 40px 16px; }
+  .section-area h2 { font-size: 24px; }
+  .search-section { padding: 40px 16px; }
+  .search-stats { flex-wrap: wrap; gap: 12px; }
+  .search-stats span { font-size: 12px; }
+  .event-card { flex-direction: column; }
+  .footer-top-bar { flex-direction: column; gap: 12px; text-align: center; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  .slider-arrow.prev { left: 8px; }
+  .slider-arrow.next { right: 8px; }
+  
+  /* Embedded admin */
+  .embedded-admin-sidebar { width: 100%; display: flex; overflow-x: auto; }
+  .ev-admin-sidebar-item { white-space: nowrap; padding: 10px 14px; font-size: 12px; }
+  .embedded-admin-content { padding: 16px; }
+  .embedded-admin-content h2 { font-size: 18px; }
+  .embedded-admin-content .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  
+  /* EduVerse */
+  .ev-layout { flex-direction: column; }
+  .ev-sidebar { width: 100%; display: flex; overflow-x: auto; }
+  .ev-sidebar-item { white-space: nowrap; }
+  .ev-content { padding: 16px; }
+  .ev-topbar { flex-wrap: wrap; gap: 8px; }
+  .ev-school-nav { overflow-x: auto; flex-wrap: nowrap; }
+  .ev-school-tab { white-space: nowrap; font-size: 12px; padding: 6px 12px; }
+  .ev-post-card { padding: 12px; }
+  
+  /* School Profile */
+  .sp-item { padding: 14px; }
 }
-@media (max-width: 400px) {
+
+/* ---- 480px (Small phones) ---- */
+@media (max-width: 480px) {
+  .hero-text h1 { font-size: 24px; }
+  .hero-text p { font-size: 14px; }
+  .hero { padding: 80px 12px 50px; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .stat-card { padding: 16px 12px; }
+  .stats-section { margin-top: -30px; }
+  .stat-card { padding: 14px 10px; }
   .stat-card h3 { font-size: 22px; }
-  .stat-card .icon { font-size: 24px; }
-  .hero-text h1 { font-size: 22px; }
+  .stat-card .icon { font-size: 22px; }
+  .stat-card p { font-size: 11px; }
+  .section-header h2 { font-size: 22px; }
+  .section-header p { font-size: 13px; }
+  
+  .admin-content { padding: 12px; }
+  .admin-panel h2 { font-size: 16px; }
+  .admin-panel .subtitle { font-size: 12px; }
+  .admin-sidebar { padding: 6px 8px; gap: 2px; }
+  .admin-sidebar-item { padding: 8px 10px; font-size: 11px; }
+  
+  .card { padding: 10px; border-radius: 10px; }
+  .card-header h3 { font-size: 14px; }
+  
+  .student-layout { padding: 10px; }
+  .student-tab { font-size: 11px; padding: 6px 8px; }
+  .student-tab i { font-size: 10px; margin-right: 2px; }
+  .student-profile-card { padding: 16px; gap: 12px; }
+  .student-avatar { width: 44px; height: 44px; font-size: 18px; }
+  .student-info h2 { font-size: 16px; }
+  
+  .portal-header { padding: 8px 10px; }
+  .portal-header-left h2 { font-size: 14px; }
+  .portal-header-left img { height: 24px !important; }
+  .portal-back-btn { padding: 4px 8px; font-size: 11px; }
+  .portal-header-left { gap: 6px; }
+  
+  .modal { padding: 20px 12px; border-radius: 8px; }
+  .modal h3 { font-size: 15px; }
+  
+  th, td { padding: 6px 6px; font-size: 11px; }
+  
+  .cal-day { min-height: 40px; font-size: 9px; }
+  .cal-day-header { font-size: 8px; padding: 2px; }
+  .cal-event-chip { font-size: 6px; }
+  .cal-day-num { font-size: 9px; }
+  
+  .health-grid { gap: 6px; }
+  .health-card { padding: 8px; }
+  
+  .transport-card { padding: 10px; }
+  .transport-stop { font-size: 10px; }
+  .transport-stop .stop-idx { width: 16px; height: 16px; font-size: 8px; }
+  
+  .admin-sidebar > div[style*="padding:8px 16px"] { display: none; }
+  .sidebar-divider { display: none; }
+  
+  .sub-banner { padding: 6px 12px; font-size: 11px; }
+  .notif-dropdown { right: -60px; width: 240px; }
+  
+  .library-grid { gap: 8px; }
+  .lib-card { padding: 10px; }
+  .book-title { font-size: 12px; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  
+  .embedded-admin-content .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ev-school-tab { font-size: 11px; padding: 4px 10px; }
+}
+
+/* ---- 400px (Very small phones) ---- */
+@media (max-width: 400px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stat-card { padding: 12px 8px; }
+  .stat-card h3 { font-size: 18px; }
+  .stat-card .icon { font-size: 20px; }
+  .stat-card p { font-size: 10px; }
+  .hero-text h1 { font-size: 20px; }
+  .hero-text p { font-size: 13px; }
   .hero-actions { flex-direction: column; align-items: center; }
   .hero-actions .btn { width: 100%; justify-content: center; }
-  .portal-card { padding: 24px 16px; }
-  .portal-card .icon { font-size: 40px; }
+  .portal-card { padding: 20px 12px; }
+  .portal-card .icon { font-size: 36px; }
+  .portal-card h3 { font-size: 18px; }
+  .nav-logo { font-size: 16px; }
+  .nav-logo img { height: 24px; }
+  .navbar { padding: 10px 12px; }
+  
+  .admin-content { padding: 8px; }
+  .admin-sidebar-item { padding: 6px 8px; font-size: 10px; }
+  
+  .card { padding: 8px; border-radius: 8px; }
+  
+  .student-tab { font-size: 10px; padding: 5px 6px; }
+  .student-tab span { display: none; }
+  .student-tab i { margin: 0; }
+  
+  th, td { padding: 4px 4px; font-size: 10px; }
+  
+  .cal-day { min-height: 32px; }
+  .cal-day-header { font-size: 7px; }
+  .cal-nav-title { font-size: 12px; }
+  .cal-nav-btns button { padding: 3px 6px; font-size: 10px; }
+  
+  .portal-header-left h2 { font-size: 13px; }
+  .portal-header-left i { font-size: 18px; }
+  
+  .modal { padding: 16px 10px; }
+  .modal h3 { font-size: 14px; }
+  .modal-actions .btn { font-size: 13px; padding: 10px; }
+  
+  .btn { font-size: 13px; padding: 10px 16px; }
+  .btn-sm { font-size: 11px; padding: 8px 12px; }
+  
+  footer { padding: 16px 12px; font-size: 11px; }
+  .sub-banner { font-size: 10px; padding: 4px 8px; }
+  
+  .library-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+  
+  .slide { min-height: 50vh; padding: 40px 16px; }
+  .slide-title { font-size: 20px; }
+  .slide-subtitle { font-size: 12px; }
+  .section-area { padding: 32px 12px; }
+  .section-area h2 { font-size: 20px; }
+  
+  .embedded-admin-content .stats-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- Landscape phone height fixes ---- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: auto; padding: 80px 40px 40px; }
+  .hero-content { gap: 20px; }
+  .hero-text h1 { font-size: 22px; }
+  .slide { min-height: 100vh; padding: 60px 20px; }
+  .modal { max-height: 85vh; }
+  .admin-sidebar { padding: 4px 8px; }
+  .admin-sidebar-item { padding: 6px 10px; font-size: 11px; }
 }
 
 /* === LANDING PAGE ENHANCED SECTIONS === */
