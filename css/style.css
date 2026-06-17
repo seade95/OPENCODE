@@ -240,6 +240,10 @@ body {
   from { opacity:0; transform:translateY(20px); }
   to { opacity:1; transform:translateY(0); }
 }
+@keyframes fadeIn {
+  from { opacity:0; }
+  to { opacity:1; }
+}
 
 /* Stats Section */
 .stats-section {
@@ -749,6 +753,14 @@ tr:hover td { background: #f7fafc; }
   th, td { padding: 10px 12px; }
   .portal-header { padding: 12px 20px; flex-wrap: wrap; gap: 8px; }
   .portal-header-right { flex-wrap: wrap; }
+  .timetable-row { grid-template-columns: 70px repeat(5, 1fr) !important; }
+  .timetable-header { padding: 8px 4px; font-size: 11px; }
+  .timetable-cell { padding: 6px 4px; min-height: 44px; font-size: 11px; }
+  .timetable-cell .subject { font-size: 11px; }
+  .timetable-cell .teacher-name { font-size: 10px; }
+  .card { padding: 16px; }
+  .admin-content { padding: 16px; }
+  .student-layout { padding: 16px; }
 }
 @media (max-width: 600px) {
   .navbar { padding: 12px 20px; }
@@ -780,6 +792,22 @@ tr:hover td { background: #f7fafc; }
   .student-avatar { width: 56px; height: 56px; font-size: 24px; }
   footer { padding: 24px 16px; font-size: 12px; }
   .stats-grid[style] { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .timetable-row { grid-template-columns: 50px repeat(5, 1fr) !important; }
+  .timetable-header { padding: 6px 2px; font-size: 10px; }
+  .timetable-cell { padding: 4px 2px; min-height: 36px; font-size: 10px; }
+  .timetable-cell .subject { font-size: 10px; }
+  .timetable-cell .teacher-name { font-size: 9px; }
+  .timetable-cell .tt-delete-btn { padding: 1px 4px !important; font-size: 8px !important; }
+  .cal-day { min-height: 60px; font-size: 11px; }
+  .cal-day-header { padding: 4px; font-size: 10px; }
+  .cal-event-chip { font-size: 8px; }
+  .cal-nav-title { font-size: 14px; }
+  .cal-week-period > div { min-height: 28px; font-size: 9px; }
+  .cal-week-view .cal-week-header div { font-size: 10px; padding: 4px; }
+  .feeConfigContainer .form-grid { grid-template-columns: 1fr; }
+  .card { padding: 12px; }
+  .admin-content { padding: 12px; }
+  .student-layout { padding: 12px; }
 }
 @media (max-width: 400px) {
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1406,6 +1434,15 @@ tr:hover td { background: #f7fafc; }
 .timetable-cell { background: var(--card-bg); padding: 10px 8px; font-size: 13px; min-height: 60px; text-align: center; }
 .timetable-cell .subject { font-weight: 600; color: var(--primary); }
 .timetable-cell .teacher-name { font-size: 11px; color: var(--text-light); }
+.timetable-cell[draggable="true"] { cursor: grab; }
+.timetable-cell[draggable="true"]:active { cursor: grabbing; opacity: 0.6; }
+.timetable-cell.tt-drag-over { outline: 2px dashed #3182ce; outline-offset: -2px; background: #ebf8ff !important; }
+.timetable-cell.tt-entry { transition: var(--transition); }
+.timetable-cell.tt-entry:hover { box-shadow: inset 0 0 0 2px var(--primary); }
+.timetable-cell .tt-delete-btn { opacity: 0.3; transition: var(--transition); }
+.timetable-cell:hover .tt-delete-btn { opacity: 1; }
+.timetable-cell.tt-empty { color: var(--text-light); font-size: 14px; cursor: pointer; transition: var(--transition); }
+.timetable-cell.tt-empty:hover { background: #f7fafc; color: var(--primary); }
 
 /* ===== MESSAGING STYLES ===== */
 .msg-list { display: flex; flex-direction: column; gap: 1px; background: #e2e8f0; border-radius: 8px; overflow: hidden; }
@@ -1892,6 +1929,50 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .embedded-admin-content .card-header { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px; }
 .embedded-admin-content .card-header h2 { margin:0; }
 
+/* ===== ACADEMIC CALENDAR GRID ===== */
+.cal-nav { display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px; }
+.cal-nav-title { font-size:18px;font-weight:700;color:var(--primary); }
+.cal-nav-btns { display:flex;gap:4px; }
+.cal-nav-btns button { padding:6px 12px;border:1px solid var(--border);background:var(--card-bg);border-radius:6px;cursor:pointer;font-size:13px;color:var(--text);transition:var(--transition);font-family:inherit; }
+.cal-nav-btns button:hover { background:var(--primary);color:#fff;border-color:var(--primary); }
+.cal-nav-btns button.active { background:var(--primary);color:#fff;border-color:var(--primary); }
+.cal-grid { display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden; }
+.cal-day-header { padding:8px;text-align:center;font-weight:600;font-size:12px;color:var(--text-light);background:var(--card-header-bg);border-bottom:1px solid var(--border);text-transform:uppercase; }
+.cal-day { min-height:100px;padding:4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--card-bg);position:relative;cursor:pointer;transition:var(--transition); }
+.cal-day:nth-child(7n) { border-right:none; }
+.cal-day.other-month { background:var(--bg-subtle); }
+.cal-day.other-month .cal-day-num { color:var(--text-light);opacity:0.5; }
+.cal-day.today { background:#ebf8ff; }
+.cal-day.today .cal-day-num { background:var(--primary);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center; }
+.cal-day-num { font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;padding:2px; }
+.cal-event-chip { display:block;padding:1px 4px;margin:1px 0;border-radius:3px;font-size:10px;line-height:1.4;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500; }
+.cal-event-chip:hover { opacity:0.85; }
+.cal-event-chip.dragging { opacity:0.4; }
+.cal-event-chip.draggable-chip { cursor:grab; }
+.cal-event-chip.draggable-chip:active { cursor:grabbing; }
+.cal-day.drag-over { background:#e2e8f0 !important; }
+.cal-day.drag-over .cal-day-num { color:var(--primary);font-weight:800; }
+.cal-more { font-size:10px;color:var(--primary);font-weight:600;cursor:pointer;padding:1px 4px; }
+.cal-more:hover { text-decoration:underline; }
+.cal-legend { display:flex;gap:12px;flex-wrap:wrap;margin:8px 0; }
+.cal-legend-item { display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-light); }
+.cal-legend-dot { width:10px;height:10px;border-radius:50%;display:inline-block; }
+.cal-week-view .cal-week-header { display:grid;grid-template-columns:80px repeat(5,1fr);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden; }
+.cal-week-view .cal-week-header div { padding:8px;text-align:center;font-weight:600;font-size:12px;color:var(--text-light);background:var(--card-header-bg);border-right:1px solid var(--border);text-transform:uppercase; }
+.cal-week-view .cal-week-header div:last-child { border-right:none; }
+.cal-week-period { display:grid;grid-template-columns:80px repeat(5,1fr);border-left:1px solid var(--border);border-right:1px solid var(--border); }
+.cal-week-period > div { padding:4px 6px;border-right:1px solid var(--border);min-height:36px;font-size:11px;border-bottom:1px solid var(--border); }
+.cal-week-period > div:last-child { border-right:none; }
+.cal-week-period > div:first-child { font-weight:600;color:var(--text-light);display:flex;align-items:center;font-size:11px;padding:4px 8px;background:var(--card-header-bg); }
+.cal-week-period.break-row > div { background:#fefcbf !important; }
+.cal-week-period.break-row > div:first-child { color:#744210; }
+.cal-period-event { background:var(--primary-light);color:#fff;padding:2px 6px;border-radius:3px;font-size:10px;margin:1px 0; }
+.cal-period-timetable { background:var(--accent);color:#fff;padding:2px 6px;border-radius:3px;font-size:10px;margin:1px 0; }
+.cal-filter-bar { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px; }
+.cal-filter-btn { padding:4px 12px;border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;background:var(--card-bg);color:var(--text);transition:var(--transition);font-family:inherit; }
+.cal-filter-btn.active { border-color:var(--primary);background:var(--primary);color:#fff; }
+.cal-filter-btn:hover:not(.active) { border-color:var(--primary); }
+
 /* School page tabs */
 .ev-school-nav { display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--card-bg,#fff);border-bottom:1px solid var(--border,#e2e8f0);flex-wrap:wrap; }
 .ev-school-tab { padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;border:none;background:transparent;color:var(--text-light,#718096);border-radius:6px;transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:6px; }
@@ -1900,3 +1981,38 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .ev-tab-pane { display:none; }
 .ev-tab-pane.active { display:block; }
 .ev-school-tab-content { padding:8px 16px; }
+
+/* ===== HEALTH RECORDS ===== */
+.health-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px; }
+.health-card { padding:16px;border-radius:10px;background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0); }
+.health-card h4 { font-size:13px;font-weight:600;margin-bottom:8px;color:var(--primary,#1a3a5c); }
+.health-card .label { font-size:11px;color:var(--text-light,#718096);text-transform:uppercase;font-weight:600; }
+.health-card .value { font-size:14px;font-weight:600;color:var(--text,#1a202c);margin-bottom:6px; }
+.health-immunization { display:flex;flex-wrap:wrap;gap:6px; }
+.health-immunization .badge { padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500; }
+.health-allergy { display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:#fff5f5;color:#c53030;border:1px solid #fecaca;margin:2px; }
+.health-condition { display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:#fffbeb;color:#92400e;border:1px solid #fde68a;margin:2px; }
+
+/* ===== TRANSPORT ===== */
+.transport-card { padding:16px;border-radius:10px;background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);margin-bottom:12px;transition:var(--transition); }
+.transport-card:hover { border-color:var(--accent,#f5a623); }
+.transport-card h4 { font-size:14px;font-weight:700;margin-bottom:4px;color:var(--primary,#1a3a5c); }
+.transport-card .sub { font-size:12px;color:var(--text-light,#718096);margin-bottom:8px; }
+.transport-stop { display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border,#e2e8f0);font-size:13px; }
+.transport-stop:last-child { border-bottom:none; }
+.transport-stop .stop-name { flex:1;font-weight:500; }
+.transport-stop .stop-time { color:var(--text-light);font-size:12px; }
+.transport-stop .stop-idx { width:24px;height:24px;border-radius:50%;background:var(--primary,#1a3a5c);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0; }
+.transport-student-list { display:flex;flex-wrap:wrap;gap:4px;margin-top:8px; }
+.transport-student-tag { padding:2px 8px;border-radius:4px;font-size:11px;background:var(--bg-subtle,#f7fafc);color:var(--text,#1a202c);border:1px solid var(--border,#e2e8f0); }
+
+/* ===== PT CONFERENCES ===== */
+.conf-card { padding:14px;border-radius:10px;background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px; }
+.conf-card .conf-info { flex:1; }
+.conf-card .conf-info h4 { font-size:14px;font-weight:600;margin-bottom:2px; }
+.conf-card .conf-info p { font-size:12px;color:var(--text-light);margin:0; }
+.conf-card .conf-actions { display:flex;gap:6px; }
+.conf-slot { padding:8px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;text-align:center;transition:var(--transition);background:var(--card-bg,#fff);font-family:inherit; }
+.conf-slot:hover { border-color:var(--accent,#f5a623);background:var(--bg-subtle,#f7fafc); }
+.conf-slot.selected { border-color:var(--primary,#1a3a5c);background:var(--primary,#1a3a5c);color:#fff; }
+.conf-slot.booked { border-color:#c53030;background:#fff5f5;color:#c53030;cursor:not-allowed; }

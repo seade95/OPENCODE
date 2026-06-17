@@ -216,57 +216,204 @@ function processImport(type) {
 }
 
 // ===== 3. ACADEMIC TERM SWITCHING =====
-function initTermSelector(containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <label style="font-weight:600;font-size:14px;">Active Term:</label>
-      <select id="activeTermSelect" onchange="switchActiveTerm(this.value)" style="padding:8px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:14px;">
-        ${data.academicTerms.map(t => `<option value="${t.id}" ${t.isActive ? 'selected' : ''}>${htmlEscape(t.name)}</option>`).join('')}
-      </select>
-      <button class="btn btn-sm btn-outline" onclick="showAddTermModal()" style="border-color:#e2e8f0;color:var(--text);"><i class="fas fa-plus"></i> New Term</button>
-    </div>
-    <div style="margin-top:8px;font-size:13px;color:var(--text-light);" id="currentTermInfo">
-      Current: <strong>${htmlEscape(data.currentTerm || 'Not set')}</strong>
-    </div>`;
+// Update the term badge in the admin header
+function updateTermBadge() {
+  var badge = document.getElementById('adminTermBadge');
+  var badgeText = document.getElementById('adminTermBadgeText');
+  if (badgeText) badgeText.textContent = data.currentTerm || 'No term';
+  if (badge) {
+    var active = (data.academicTerms || []).find(function(t) { return t.isActive; });
+    if (active) {
+      badge.style.background = 'var(--success)';
+      badge.title = active.name + ' (' + active.startDate + ' to ' + active.endDate + ')';
+    } else {
+      badge.style.background = 'var(--primary-light)';
+      badge.title = data.currentTerm || 'No active term';
+    }
+  }
 }
 
-function switchActiveTerm(termId) {
-  const term = data.academicTerms.find(t => t.id === termId);
-  if (!term) return;
-  data.academicTerms.forEach(t => t.isActive = (t.id === termId));
+// Show a dedicated term switcher modal with continuity options
+function showTermSwitcherModal() {
+  var termOpts = (data.academicTerms || []).map(function(t) {
+    return '<option value="' + t.id + '"' + (t.isActive ? ' selected' : '') + '>' + htmlEscape(t.name) + ' (' + htmlEscape(t.startDate) + ' to ' + htmlEscape(t.endDate) + ')</option>';
+  }).join('');
+  if (!termOpts) {
+    toast('No terms configured. Add one first.', 'error');
+    return;
+  }
+  openModal(
+    '<h3><i class="fas fa-calendar-alt"></i> Switch Academic Term</h3>' +
+    '<div style="margin:16px 0;">' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Select Active Term</label><select id="fSwitchTerm" style="width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:14px;">' + termOpts + '</select></div>' +
+    '</div>' +
+    '<div style="background:#f7fafc;border-radius:8px;padding:16px;margin-top:12px;">' +
+    '<p style="font-weight:600;font-size:14px;margin-bottom:8px;"><i class="fas fa-exchange-alt"></i> Continuity Options</p>' +
+    '<label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;"><input type="checkbox" id="fTermRolloverClasses" checked> <span>Roll over class promotions (promote students based on next class)</span></label>' +
+    '<label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;"><input type="checkbox" id="fTermRolloverFees" checked> <span>Carry forward outstanding fee balances to new term</span></label>' +
+    '<label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;"><input type="checkbox" id="fTermArchiveExams"> <span>Archive previous term exam results (keep for report cards)</span></label>' +
+    '<label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;"><input type="checkbox" id="fTermNotifyAll"> <span>Send notification to all users about term change</span></label>' +
+    '</div>' +
+    '<div style="margin-top:12px;padding:12px;background:#e2e8f0;border-radius:8px;font-size:12px;color:var(--text-light);">' +
+    '<i class="fas fa-info-circle"></i> Switching terms will update all term-dependent data. Current term: <strong>' + htmlEscape(data.currentTerm || 'None') + '</strong> → <strong id="fSwitchTermPreview"></strong>' +
+    '</div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="confirmSwitchTerm()"><i class="fas fa-check"></i> Switch Term</button></div>'
+  );
+  var sel = document.getElementById('fSwitchTerm');
+  if (sel) {
+    sel.addEventListener('change', function() {
+      var preview = document.getElementById('fSwitchTermPreview');
+      if (preview) preview.textContent = sel.options[sel.selectedIndex].text;
+    });
+    sel.dispatchEvent(new Event('change'));
+  }
+}
+
+function confirmSwitchTerm() {
+  var termId = document.getElementById('fSwitchTerm')?.value;
+  var term = data.academicTerms.find(function(t) { return t.id === termId; });
+  if (!term) { toast('Invalid term', 'error'); return; }
+  if (term.name === data.currentTerm && term.isActive) {
+    toast('Already on ' + term.name, 'info');
+    closeModal();
+    return;
+  }
+  var rolloverClasses = document.getElementById('fTermRolloverClasses')?.checked;
+  var rolloverFees = document.getElementById('fTermRolloverFees')?.checked;
+  var archiveExams = document.getElementById('fTermArchiveExams')?.checked;
+  var notifyAll = document.getElementById('fTermNotifyAll')?.checked;
+
+  // Perform the switch
+  data.academicTerms.forEach(function(t) { t.isActive = (t.id === termId); });
   data.currentTerm = term.name;
   saveData();
-  var cti = document.getElementById('currentTermInfo'); if (cti) cti.innerHTML = `Current: <strong>${htmlEscape(term.name)}</strong>`;
-  toast(`Switched to ${term.name}`);
+  updateTermBadge();
+
+  // Continuity: Archive exams
+  if (archiveExams) {
+    if (!data.archivedExams) data.archivedExams = [];
+    var prevExams = (data.exams || []).filter(function(e) { return e.term !== term.name; });
+    prevExams.forEach(function(e) {
+      if (!data.archivedExams.some(function(ae) { return ae.id === e.id; })) {
+        data.archivedExams.push(JSON.parse(JSON.stringify(e)));
+      }
+    });
+    saveData();
+    toast(prevExams.length + ' exam(s) archived');
+  }
+
+  // Continuity: Notify all
+  if (notifyAll) {
+    if (typeof addNotification === 'function') {
+      addNotification('all', 'term_change', 'Academic term has changed to ' + term.name + '. Please check your schedule.');
+    }
+    toast('Notification sent to all users');
+  }
+
+  // Update all UI selectors and badges
+  initTermSelector('adminTermSelector');
+  updateTermBadge();
+  closeModal();
+  toast('Switched to ' + term.name + ' with continuity');
+  logActivity('Switched academic term to ' + term.name);
+}
+
+function initTermSelector(containerId) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">' +
+    '<label style="font-weight:600;font-size:14px;">Active Term:</label>' +
+    '<select id="activeTermSelect" onchange="quickSwitchTerm(this.value)" style="padding:8px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:14px;">' +
+    (data.academicTerms || []).map(function(t) { return '<option value="' + t.id + '"' + (t.isActive ? ' selected' : '') + '>' + htmlEscape(t.name) + '</option>'; }).join('') +
+    '</select>' +
+    '<button class="btn btn-sm btn-outline" onclick="showAddTermModal()" style="border-color:#e2e8f0;color:var(--text);"><i class="fas fa-plus"></i> New Term</button>' +
+    '<button class="btn btn-sm btn-outline" onclick="showTermSwitcherModal()" style="border-color:var(--accent);color:var(--accent);"><i class="fas fa-exchange-alt"></i> Advanced Switch</button>' +
+    '</div>' +
+    '<div style="margin-top:8px;font-size:13px;color:var(--text-light);" id="currentTermInfo">' +
+    'Current: <strong>' + htmlEscape(data.currentTerm || 'Not set') + '</strong>' +
+    (function() { var a = (data.academicTerms || []).find(function(t){return t.isActive;}); return a ? ' (' + htmlEscape(a.startDate) + ' to ' + htmlEscape(a.endDate) + ')' : ''; })() +
+    '</div>';
+  updateTermBadge();
+}
+
+// Quick switch from dropdown (no continuity dialog)
+function quickSwitchTerm(termId) {
+  var term = data.academicTerms.find(function(t) { return t.id === termId; });
+  if (!term) return;
+  if (term.name === data.currentTerm && term.isActive) return;
+  if (!confirm('Switch active term to ' + term.name + '?\n\nThis will affect exams, fees, lesson notes, and other term-dependent data.')) {
+    var sel = document.getElementById('activeTermSelect');
+    if (sel) {
+      var active = data.academicTerms.find(function(t) { return t.isActive; });
+      sel.value = active ? active.id : '';
+    }
+    return;
+  }
+  data.academicTerms.forEach(function(t) { t.isActive = (t.id === termId); });
+  data.currentTerm = term.name;
+  saveData();
+  initTermSelector('adminTermSelector');
+  updateTermBadge();
+  toast('Switched to ' + term.name);
+  logActivity('Quick-switched academic term to ' + term.name);
 }
 
 function showAddTermModal() {
-  openModal(`
-    <h3><i class="fas fa-plus"></i> Add Academic Term</h3>
-    <div class="form-grid">
-      <div class="form-group" style="grid-column:1/-1;"><label>Term Name</label><input type="text" id="fTermName" placeholder="e.g. Term 3 2026"></div>
-      <div class="form-group"><label>Start Date</label><input type="date" id="fTermStart"></div>
-      <div class="form-group"><label>End Date</label><input type="date" id="fTermEnd"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" style="color:var(--text);border-color:#e2e8f0;" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTerm()"><i class="fas fa-save"></i> Save</button>
-    </div>
-  `);
+  openModal(
+    '<h3><i class="fas fa-plus"></i> Add Academic Term</h3>' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Term Name</label><input type="text" id="fTermName" placeholder="e.g. Term 3 2026"></div>' +
+    '<div class="form-group"><label>Start Date</label><input type="date" id="fTermStart"></div>' +
+    '<div class="form-group"><label>End Date</label><input type="date" id="fTermEnd"></div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" style="color:var(--text);border-color:#e2e8f0;" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTerm()"><i class="fas fa-save"></i> Save</button></div>'
+  );
 }
 
 function saveTerm() {
-  const name = (document.getElementById('fTermName')?.value ?? '').trim();
-  const startDate = (document.getElementById('fTermStart')?.value ?? '');
-  const endDate = (document.getElementById('fTermEnd')?.value ?? '');
+  var name = (document.getElementById('fTermName')?.value ?? '').trim();
+  var startDate = (document.getElementById('fTermStart')?.value ?? '');
+  var endDate = (document.getElementById('fTermEnd')?.value ?? '');
   if (!name || !startDate || !endDate) { toast('Please fill all fields', 'error'); return; }
-  data.academicTerms.push({ id: genId('TRM'), name, startDate, endDate, isActive: false });
+  data.academicTerms.push({ id: genId('TRM'), name: name, startDate: startDate, endDate: endDate, isActive: false });
   saveData();
   closeModal();
   initTermSelector('adminTermSelector');
+  updateTermBadge();
   toast('Term added');
+}
+
+function _checkAutoTermTransition() {
+  if (typeof data === 'undefined' || !data.academicTerms) return;
+  var activeTerm = data.academicTerms.find(function(t) { return t.isActive; });
+  if (!activeTerm) return;
+  var today = new Date();
+  var endDate = new Date(activeTerm.endDate + 'T23:59:59');
+  if (today <= endDate) return;
+  // Skip if already shown this session
+  if (window._autoTermPromptShown) return;
+  window._autoTermPromptShown = true;
+  // Find next term (the one whose startDate is closest after the current term's endDate)
+  var remaining = data.academicTerms.filter(function(t) { return !t.isActive; });
+  var nextTerm = remaining.sort(function(a, b) { return a.startDate.localeCompare(b.startDate); })[0];
+  if (!nextTerm) return;
+  // Wait a moment so other UI renders first, then prompt
+  setTimeout(function() {
+    if (!confirm('The current term "' + activeTerm.name + '" ended on ' + activeTerm.endDate + '.\n\nWould you like to switch to the next term: "' + nextTerm.name + '" (' + nextTerm.startDate + ' to ' + nextTerm.endDate + ')?')) return;
+    // Perform the switch with continuity defaults
+    data.academicTerms.forEach(function(t) { t.isActive = (t.id === nextTerm.id); });
+    data.currentTerm = nextTerm.name;
+    saveData();
+    updateTermBadge();
+    if (typeof addNotification === 'function') addNotification('all', 'term_change', 'Academic term has been automatically transitioned to ' + nextTerm.name + '.');
+    if (typeof initTermSelector === 'function') initTermSelector('adminTermSelector');
+    updateTermBadge();
+    toast('Auto-transitioned to ' + nextTerm.name);
+    logActivity('Auto-transitioned to term: ' + nextTerm.name);
+  }, 500);
 }
 
 function getTermFilteredData(arr, dateField) {
@@ -1650,11 +1797,12 @@ function processPayment() {
       f.paid += pay;
       remaining -= pay;
       f.status = f.paid >= f.amount ? 'paid' : 'partial';
+      f.lastPaymentDate = new Date().toISOString().split('T')[0];
     });
     saveData();
-    logActivity(`Payment: ${amount} via ${method} (Ref: ${ref})`);
+    logActivity('Payment: ' + amount + ' via ' + method + ' (Ref: ' + ref + ')');
     closeModal();
-    toast(`Payment of $${amount} successful! Ref: ${ref}`);
+    toast('Payment of $' + amount + ' successful! Ref: ' + ref);
     if (typeof renderStudentPortal === 'function') renderStudentPortal();
   }, 1500);
 }
@@ -1714,66 +1862,107 @@ function switchLanguage(code) {
   initLanguageSelector('tchLangSelector');
   initLanguageSelector('stuLangSelector');
   initLanguageSelector('parentLangSelector');
-  applyTranslations();
-  // Re-render current portal to apply translations to dynamic content
+  // Re-render current portal first (generates content with data-i18n attributes)
   if (typeof currentAdmin !== 'undefined' && currentAdmin && typeof renderAll === 'function') renderAll();
   else if (typeof currentTeacher !== 'undefined' && currentTeacher && typeof renderTeacherPortal === 'function') renderTeacherPortal();
   else if (typeof currentStudent !== 'undefined' && currentStudent && typeof renderStudentPortal === 'function') renderStudentPortal();
   else if (typeof currentParent !== 'undefined' && currentParent && typeof renderParentPortal === 'function') renderParentPortal();
+  // Then translate everything
+  applyTranslations();
   toast(`Language switched to ${code.toUpperCase()}`);
 }
 
 function applyTranslations() {
   const lang = data.currentLanguage || 'en';
   const t = data.translations?.[lang] || data.translations?.en || {};
-  // Apply translations to elements with data-i18n attribute
-  document.querySelectorAll('[data-i18n]').forEach(el => {
+  const en = data.translations?.en || {};
+
+  // 1. Update HTML lang attribute
+  document.documentElement.lang = lang;
+
+  // 2. Apply language-specific font via injected style
+  var langFontEl = document.getElementById('lang-font');
+  if (!langFontEl) {
+    langFontEl = document.createElement('style');
+    langFontEl.id = 'lang-font';
+    document.head.appendChild(langFontEl);
+  }
+  const fontSizes = { en: '100%', fr: '95%', yo: '100%', ha: '100%', ig: '100%' };
+  langFontEl.textContent = 'body{font-size:' + (fontSizes[lang] || '100%') + ';font-family:\'Inter\',-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif}';
+
+  // 3. Translate all elements with data-i18n attribute
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
     const key = el.dataset.i18n;
     if (t[key]) {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = t[key];
       else el.textContent = t[key];
     }
   });
-  // Translate all <th> cells by matching text
-  document.querySelectorAll('th').forEach(el => {
-    const txt = el.textContent.trim().toLowerCase();
-    for (const [key, val] of Object.entries(t)) {
-      if (txt === key.toLowerCase() || txt === val.toLowerCase()) {
-        if (typeof val === 'string') { el.textContent = val; break; }
-      }
+
+  // 4. Build reverse map: English text -> translated text
+  var textMap = {};
+  for (var key in en) {
+    if (t[key] && typeof t[key] === 'string' && typeof en[key] === 'string') {
+      textMap[en[key].toLowerCase().trim()] = t[key];
     }
-  });
-  // Translate all <h2>, <h3> panel headers by matching text
-  document.querySelectorAll('h2, h3').forEach(el => {
-    if (el.closest('.student-tabs')) return;
+  }
+
+  // 5. Walk leaf text elements and match content against reverse map
+  var selectors = 'h1,h2,h3,h4,h5,h6,th,td,span,a,label,p,li,strong,b,em,i,small,button,.btn,.badge,.stat-value,.stat-label,.empty-state *,.section-title,.subtitle,.form-label,.table-title,.filter-label';
+  document.querySelectorAll(selectors).forEach(function(el) {
     if (el.dataset.i18n) return;
-    const txt = el.textContent.trim().toLowerCase();
-    for (const [key, val] of Object.entries(t)) {
-      if (typeof val === 'string' && (txt === key.toLowerCase() || txt === val.toLowerCase())) {
-        el.textContent = val; break;
-      }
+    if (el.closest('[contenteditable]')) return;
+    if (el.querySelectorAll('*').length > 0 && !/^h[1-6]$|^th$|^td$|^button$/i.test(el.tagName)) {
+      if (el.tagName !== 'A' && el.tagName !== 'LABEL' && el.tagName !== 'SPAN') return;
+    }
+    var txt = (el.textContent || '').trim();
+    if (!txt || txt.length > 120) return;
+    var lower = txt.toLowerCase();
+    if (textMap[lower] !== undefined) {
+      el.textContent = textMap[lower];
     }
   });
-  // Translate all empty-state <p> and button text by matching
-  document.querySelectorAll('.empty-state p, .btn, .card-header h2, .card h3').forEach(el => {
-    if (el.dataset.i18n) return;
-    const txt = el.textContent.trim().toLowerCase();
-    for (const [key, val] of Object.entries(t)) {
-      if (typeof val === 'string' && (txt === key.toLowerCase() || txt === val.toLowerCase())) {
-        el.textContent = val; break;
-      }
+
+  // 6. Translate placeholder attributes
+  document.querySelectorAll('[placeholder]').forEach(function(el) {
+    var p = (el.getAttribute('placeholder') || '').trim();
+    if (!p) return;
+    var lower = p.toLowerCase();
+    if (textMap[lower] !== undefined) {
+      el.setAttribute('placeholder', textMap[lower]);
     }
   });
-  // Update title
+
+  // 7. Translate title attributes
+  document.querySelectorAll('[title]').forEach(function(el) {
+    var titleVal = (el.getAttribute('title') || '').trim();
+    if (!titleVal) return;
+    var lower = titleVal.toLowerCase();
+    if (textMap[lower] !== undefined) {
+      el.setAttribute('title', textMap[lower]);
+    }
+  });
+
+  // 8. Translate aria-label attributes
+  document.querySelectorAll('[aria-label]').forEach(function(el) {
+    var al = (el.getAttribute('aria-label') || '').trim();
+    if (!al) return;
+    var lower = al.toLowerCase();
+    if (textMap[lower] !== undefined) {
+      el.setAttribute('aria-label', textMap[lower]);
+    }
+  });
+
+  // 9. Update document title
   if (t.siteTitle) {
     document.title = t.siteTitle + ' - SCHOOL MANAGEMENT PLATFORM';
-    document.querySelectorAll('.footer-top-bar .logo').forEach(el => {
+    document.querySelectorAll('.footer-top-bar .logo').forEach(function(el) {
       var siteTitle = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EDUVERSE';
       var logoUrl = '';
       try { if (data && data.schoolProfile && data.schoolProfile.logoUrl) logoUrl = data.schoolProfile.logoUrl; } catch(e) {}
       if (el.textContent.trim().startsWith(siteTitle) || el.textContent.trim().startsWith('EDUVERSE')) {
         if (logoUrl) {
-          el.innerHTML = `<img class="school-logo-img" src="${htmlEscape(logoUrl)}" alt="${htmlEscape(siteTitle)}" style="height:36px;border-radius:4px;"> ${htmlEscape(t.siteTitle)}`;
+          el.innerHTML = '<img class="school-logo-img" src="' + htmlEscape(logoUrl) + '" alt="' + htmlEscape(siteTitle) + '" style="height:36px;border-radius:4px;"> ' + htmlEscape(t.siteTitle);
         } else {
           el.innerHTML = htmlEscape(t.siteTitle);
         }
@@ -2418,3 +2607,698 @@ window.leaveWaitlist = leaveWaitlist;
 window.removeWaitlist = removeWaitlist;
 window._processWaitlist = _processWaitlist;
 window.showCirculationStats = showCirculationStats;
+
+// ========================================================================
+// HEALTH / MEDICAL RECORDS — Admin
+// ========================================================================
+function renderHealthRecords() {
+  var container = document.getElementById('adminHealthRecords');
+  if (!container) return;
+  var records = data.healthRecords || [];
+  var html = '<div class="card-header"><h2><i class="fas fa-heartbeat" style="color:#e53e3e;"></i> Student Health Records</h2>';
+  html += '<div style="display:flex;gap:8px;"><button class="btn btn-success btn-sm" onclick="showAddHealthRecordModal()"><i class="fas fa-plus"></i> Add Record</button></div></div>';
+  html += '<p class="subtitle">Medical information, allergies, immunizations & emergency contacts for all students</p>';
+
+  var searchHtml = '<div class="cal-filter-bar"><input type="text" id="healthSearch" placeholder="Search by student name or ID..." oninput="renderHealthRecords()" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex:1;max-width:320px;"></div>';
+  html += searchHtml;
+
+  var q = (document.getElementById('healthSearch')?.value || '').toLowerCase().trim();
+  var filtered = records;
+  if (q) {
+    filtered = records.filter(function(r) {
+      var stu = getStudent(r.studentId);
+      return (stu && (stu.name.toLowerCase().includes(q) || stu.id.toLowerCase().includes(q)));
+    });
+  }
+
+  if (!filtered.length) {
+    html += '<div class="empty-state"><i class="fas fa-heartbeat"></i><p>' + (q ? 'No matching health records' : 'No health records yet. Click "Add Record" to get started.') + '</p></div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  html += '<div style="display:grid;gap:12px;">';
+  filtered.forEach(function(r) {
+    var stu = getStudent(r.studentId);
+    var stuName = stu ? htmlEscape(stu.name) : htmlEscape(r.studentId);
+    var stuClass = stu ? htmlEscape(stu.class) : '';
+    var allergyTags = (r.allergies || []).map(function(a) { return '<span class="health-allergy">' + htmlEscape(a) + '</span>'; }).join(' ');
+    var conditionTags = (r.chronicConditions || []).map(function(c) { return '<span class="health-condition">' + htmlEscape(c) + '</span>'; }).join(' ');
+    var immBadges = (r.immunizations || []).map(function(i) { return '<span class="badge badge-success">' + htmlEscape(i.name) + ' (' + htmlEscape(i.date) + ')</span>'; }).join(' ');
+
+    html += '<div class="card" style="padding:16px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:12px;">';
+    html += '<div><h4 style="font-weight:700;font-size:15px;margin-bottom:2px;"><i class="fas fa-user"></i> ' + stuName + ' <span style="font-weight:400;font-size:12px;color:var(--text-light);">(' + htmlEscape(r.studentId) + ')</span></h4>';
+    if (stuClass) html += '<span style="font-size:12px;color:var(--text-light);">Class: ' + stuClass + '</span>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:4px;"><button class="btn btn-sm btn-outline" onclick="showEditHealthRecordModal(\'' + r.id + '\')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline" style="color:#e53e3e;" onclick="deleteHealthRecord(\'' + r.id + '\')"><i class="fas fa-trash"></i></button></div>';
+    html += '</div>';
+
+    html += '<div class="health-grid">';
+    html += '<div class="health-card"><h4><i class="fas fa-tint"></i> Blood Info</h4><div class="label">Blood Group</div><div class="value">' + htmlEscape(r.bloodGroup || '—') + '</div><div class="label">Genotype</div><div class="value">' + htmlEscape(r.genotype || '—') + '</div></div>';
+    html += '<div class="health-card"><h4><i class="fas fa-exclamation-triangle" style="color:#e53e3e;"></i> Allergies & Conditions</h4><div class="label">Allergies</div><div>' + (allergyTags || '<span style="color:var(--text-light);font-size:13px;">None</span>') + '</div><div class="label" style="margin-top:8px;">Chronic Conditions</div><div>' + (conditionTags || '<span style="color:var(--text-light);font-size:13px;">None</span>') + '</div></div>';
+    html += '<div class="health-card"><h4><i class="fas fa-syringe"></i> Immunizations</h4><div class="health-immunization">' + (immBadges || '<span style="color:var(--text-light);font-size:13px;">No records</span>') + '</div></div>';
+    html += '<div class="health-card"><h4><i class="fas fa-phone"></i> Emergency Contact</h4><div class="label">Name</div><div class="value">' + htmlEscape((r.emergencyContact && r.emergencyContact.name) || '—') + '</div><div class="label">Phone</div><div class="value">' + htmlEscape((r.emergencyContact && r.emergencyContact.phone) || '—') + '</div><div class="label">Relation</div><div class="value">' + htmlEscape((r.emergencyContact && r.emergencyContact.relation) || '—') + '</div></div>';
+    html += '<div class="health-card"><h4><i class="fas fa-weight"></i> Vitals</h4><div class="label">Height</div><div class="value">' + htmlEscape(r.height || '—') + '</div><div class="label">Weight</div><div class="value">' + htmlEscape(r.weight || '—') + '</div><div class="label">Vision</div><div class="value">' + htmlEscape(r.vision || '—') + '</div></div>';
+    html += '<div class="health-card"><h4><i class="fas fa-stethoscope"></i> Last Checkup</h4><div class="value" style="font-size:16px;">' + htmlEscape(r.lastCheckup || '—') + '</div><div class="label" style="margin-top:8px;">Notes</div><div style="font-size:13px;">' + htmlEscape(r.notes || '—') + '</div></div>';
+    html += '</div></div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function showAddHealthRecordModal() {
+  var stuOpts = (data.students || []).map(function(s) {
+    return '<option value="' + htmlEscape(s.id) + '">' + htmlEscape(s.name) + ' (' + htmlEscape(s.id) + ')</option>';
+  }).join('');
+  var existingIds = (data.healthRecords || []).map(function(r) { return r.studentId; });
+  var available = (data.students || []).filter(function(s) { return !existingIds.includes(s.id); });
+  if (!available.length) {
+    toast('All students already have health records. Use edit to update.', 'info');
+    return;
+  }
+  stuOpts = available.map(function(s) {
+    return '<option value="' + htmlEscape(s.id) + '">' + htmlEscape(s.name) + ' (' + htmlEscape(s.id) + ')</option>';
+  }).join('');
+
+  openModal('<h3><i class="fas fa-heartbeat"></i> Add Health Record</h3>' +
+    '<div class="form-group"><label>Student *</label><select id="fHealthStudent">' + stuOpts + '</select></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Blood Group</label><select id="fHealthBlood"><option value="">— Select —</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>' +
+      '<div class="form-group"><label>Genotype</label><select id="fHealthGeno"><option value="">— Select —</option><option>AA</option><option>AS</option><option>SS</option><option>AC</option><option>SC</option></select></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Allergies (comma-separated)</label><input type="text" id="fHealthAllergies" placeholder="e.g. Peanuts, Dust, Penicillin"></div>' +
+    '<div class="form-group"><label>Chronic Conditions (comma-separated)</label><input type="text" id="fHealthConditions" placeholder="e.g. Asthma, Diabetes"></div>' +
+    '<div class="form-group"><label>Immunizations (Name:Date, comma-separated)</label><input type="text" id="fHealthImmunizations" placeholder="e.g. BCG:2020-01-15, Polio:2020-02-10"></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Height</label><input type="text" id="fHealthHeight" placeholder="e.g. 120cm"></div>' +
+      '<div class="form-group"><label>Weight</label><input type="text" id="fHealthWeight" placeholder="e.g. 25kg"></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Vision</label><input type="text" id="fHealthVision" placeholder="e.g. 20/20"></div>' +
+    '<div class="form-group"><label>Last Checkup Date</label><input type="date" id="fHealthCheckup"></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Emergency Contact Name</label><input type="text" id="fHealthECName" placeholder="Full name"></div>' +
+      '<div class="form-group"><label>Emergency Phone</label><input type="text" id="fHealthECPhone" placeholder="Phone number"></div>' +
+      '<div class="form-group"><label>Relation</label><input type="text" id="fHealthECRelation" placeholder="e.g. Father"></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Notes</label><textarea id="fHealthNotes" rows="2" style="resize:vertical;"></textarea></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveHealthRecord()"><i class="fas fa-save"></i> Save Record</button></div>');
+}
+
+function saveHealthRecord() {
+  var studentId = document.getElementById('fHealthStudent')?.value;
+  if (!studentId) { toast('Please select a student', 'error'); return; }
+  var record = {
+    id: genId('HLT'),
+    studentId: studentId,
+    bloodGroup: document.getElementById('fHealthBlood')?.value || '',
+    genotype: document.getElementById('fHealthGeno')?.value || '',
+    allergies: (document.getElementById('fHealthAllergies')?.value || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean),
+    chronicConditions: (document.getElementById('fHealthConditions')?.value || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean),
+    immunizations: (document.getElementById('fHealthImmunizations')?.value || '').split(',').map(function(s) {
+      var parts = s.trim().split(':');
+      return parts.length === 2 ? { name: parts[0].trim(), date: parts[1].trim() } : null;
+    }).filter(Boolean),
+    height: document.getElementById('fHealthHeight')?.value || '',
+    weight: document.getElementById('fHealthWeight')?.value || '',
+    vision: document.getElementById('fHealthVision')?.value || '',
+    lastCheckup: document.getElementById('fHealthCheckup')?.value || '',
+    emergencyContact: {
+      name: document.getElementById('fHealthECName')?.value || '',
+      phone: document.getElementById('fHealthECPhone')?.value || '',
+      relation: document.getElementById('fHealthECRelation')?.value || ''
+    },
+    notes: document.getElementById('fHealthNotes')?.value || ''
+  };
+  if (!data.healthRecords) data.healthRecords = [];
+  data.healthRecords.push(record);
+  saveData();
+  closeModal();
+  renderHealthRecords();
+  toast('Health record added for ' + (getStudent(studentId)?.name || studentId));
+}
+
+function showEditHealthRecordModal(id) {
+  var r = (data.healthRecords || []).find(function(h) { return h.id === id; });
+  if (!r) return;
+  var stuOpts = (data.students || []).map(function(s) {
+    return '<option value="' + htmlEscape(s.id) + '"' + (s.id === r.studentId ? ' selected' : '') + '>' + htmlEscape(s.name) + ' (' + htmlEscape(s.id) + ')</option>';
+  }).join('');
+  openModal('<h3><i class="fas fa-edit"></i> Edit Health Record</h3>' +
+    '<div class="form-group"><label>Student *</label><select id="fHealthStudentE">' + stuOpts + '</select></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Blood Group</label><select id="fHealthBloodE"><option value="">— Select —</option><option' + (r.bloodGroup === 'A+' ? ' selected' : '') + '>A+</option><option' + (r.bloodGroup === 'A-' ? ' selected' : '') + '>A-</option><option' + (r.bloodGroup === 'B+' ? ' selected' : '') + '>B+</option><option' + (r.bloodGroup === 'B-' ? ' selected' : '') + '>B-</option><option' + (r.bloodGroup === 'AB+' ? ' selected' : '') + '>AB+</option><option' + (r.bloodGroup === 'AB-' ? ' selected' : '') + '>AB-</option><option' + (r.bloodGroup === 'O+' ? ' selected' : '') + '>O+</option><option' + (r.bloodGroup === 'O-' ? ' selected' : '') + '>O-</option></select></div>' +
+      '<div class="form-group"><label>Genotype</label><select id="fHealthGenoE"><option value="">— Select —</option><option' + (r.genotype === 'AA' ? ' selected' : '') + '>AA</option><option' + (r.genotype === 'AS' ? ' selected' : '') + '>AS</option><option' + (r.genotype === 'SS' ? ' selected' : '') + '>SS</option><option' + (r.genotype === 'AC' ? ' selected' : '') + '>AC</option><option' + (r.genotype === 'SC' ? ' selected' : '') + '>SC</option></select></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Allergies (comma-separated)</label><input type="text" id="fHealthAllergiesE" value="' + htmlEscape((r.allergies || []).join(', ')) + '"></div>' +
+    '<div class="form-group"><label>Chronic Conditions (comma-separated)</label><input type="text" id="fHealthConditionsE" value="' + htmlEscape((r.chronicConditions || []).join(', ')) + '"></div>' +
+    '<div class="form-group"><label>Immunizations (Name:Date, comma-separated)</label><input type="text" id="fHealthImmunizationsE" value="' + htmlEscape((r.immunizations || []).map(function(i) { return i.name + ':' + i.date; }).join(', ')) + '"></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Height</label><input type="text" id="fHealthHeightE" value="' + htmlEscape(r.height || '') + '"></div>' +
+      '<div class="form-group"><label>Weight</label><input type="text" id="fHealthWeightE" value="' + htmlEscape(r.weight || '') + '"></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Vision</label><input type="text" id="fHealthVisionE" value="' + htmlEscape(r.vision || '') + '"></div>' +
+    '<div class="form-group"><label>Last Checkup Date</label><input type="date" id="fHealthCheckupE" value="' + htmlEscape(r.lastCheckup || '') + '"></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Emergency Contact Name</label><input type="text" id="fHealthECNameE" value="' + htmlEscape((r.emergencyContact && r.emergencyContact.name) || '') + '"></div>' +
+      '<div class="form-group"><label>Emergency Phone</label><input type="text" id="fHealthECPhoneE" value="' + htmlEscape((r.emergencyContact && r.emergencyContact.phone) || '') + '"></div>' +
+      '<div class="form-group"><label>Relation</label><input type="text" id="fHealthECRelationE" value="' + htmlEscape((r.emergencyContact && r.emergencyContact.relation) || '') + '"></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Notes</label><textarea id="fHealthNotesE" rows="2" style="resize:vertical;">' + htmlEscape(r.notes || '') + '</textarea></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateHealthRecord(\'' + id + '\')"><i class="fas fa-save"></i> Update</button></div>');
+}
+
+function updateHealthRecord(id) {
+  var r = (data.healthRecords || []).find(function(h) { return h.id === id; });
+  if (!r) return;
+  r.studentId = document.getElementById('fHealthStudentE')?.value || r.studentId;
+  r.bloodGroup = document.getElementById('fHealthBloodE')?.value || '';
+  r.genotype = document.getElementById('fHealthGenoE')?.value || '';
+  r.allergies = (document.getElementById('fHealthAllergiesE')?.value || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  r.chronicConditions = (document.getElementById('fHealthConditionsE')?.value || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  r.immunizations = (document.getElementById('fHealthImmunizationsE')?.value || '').split(',').map(function(s) {
+    var parts = s.trim().split(':');
+    return parts.length === 2 ? { name: parts[0].trim(), date: parts[1].trim() } : null;
+  }).filter(Boolean);
+  r.height = document.getElementById('fHealthHeightE')?.value || '';
+  r.weight = document.getElementById('fHealthWeightE')?.value || '';
+  r.vision = document.getElementById('fHealthVisionE')?.value || '';
+  r.lastCheckup = document.getElementById('fHealthCheckupE')?.value || '';
+  r.emergencyContact = {
+    name: document.getElementById('fHealthECNameE')?.value || '',
+    phone: document.getElementById('fHealthECPhoneE')?.value || '',
+    relation: document.getElementById('fHealthECRelationE')?.value || ''
+  };
+  r.notes = document.getElementById('fHealthNotesE')?.value || '';
+  saveData();
+  closeModal();
+  renderHealthRecords();
+  toast('Health record updated');
+}
+
+function deleteHealthRecord(id) {
+  if (!confirm('Delete this health record?')) return;
+  data.healthRecords = (data.healthRecords || []).filter(function(h) { return h.id !== id; });
+  saveData();
+  renderHealthRecords();
+  toast('Health record deleted');
+}
+
+// ========================================================================
+// HEALTH / MEDICAL RECORDS — Student View
+// ========================================================================
+function renderStudentHealthView() {
+  var container = document.getElementById('stuHealthView');
+  if (!container || !currentStudent) return;
+  var r = (data.healthRecords || []).find(function(h) { return h.studentId === currentStudent.id; });
+  if (!r) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-heartbeat"></i><p>No health record on file. Contact the school office.</p></div>';
+    return;
+  }
+  var allergyTags = (r.allergies || []).map(function(a) { return '<span class="health-allergy">' + htmlEscape(a) + '</span>'; }).join(' ');
+  var conditionTags = (r.chronicConditions || []).map(function(c) { return '<span class="health-condition">' + htmlEscape(c) + '</span>'; }).join(' ');
+  var immBadges = (r.immunizations || []).map(function(i) { return '<span class="badge badge-success">' + htmlEscape(i.name) + ' (' + htmlEscape(i.date) + ')</span>'; }).join(' ');
+  var html = '<h3 style="font-weight:700;margin-bottom:4px;"><i class="fas fa-heartbeat" style="color:#e53e3e;"></i> My Health Record</h3>';
+  html += '<p class="subtitle">Medical information — contact school nurse for updates</p>';
+  html += '<div class="health-grid">';
+  html += '<div class="health-card"><h4><i class="fas fa-tint"></i> Blood Info</h4><div class="label">Blood Group</div><div class="value">' + htmlEscape(r.bloodGroup || '—') + '</div><div class="label">Genotype</div><div class="value">' + htmlEscape(r.genotype || '—') + '</div></div>';
+  html += '<div class="health-card"><h4><i class="fas fa-exclamation-triangle" style="color:#e53e3e;"></i> Allergies</h4><div>' + (allergyTags || '<span style="color:var(--text-light);">None</span>') + '</div></div>';
+  html += '<div class="health-card"><h4><i class="fas fa-ambulance"></i> Chronic Conditions</h4><div>' + (conditionTags || '<span style="color:var(--text-light);">None</span>') + '</div></div>';
+  html += '<div class="health-card"><h4><i class="fas fa-syringe"></i> Immunizations</h4><div class="health-immunization">' + (immBadges || '<span style="color:var(--text-light);">No records</span>') + '</div></div>';
+  html += '<div class="health-card"><h4><i class="fas fa-weight"></i> Vitals</h4><div class="label">Height</div><div class="value">' + htmlEscape(r.height || '—') + '</div><div class="label">Weight</div><div class="value">' + htmlEscape(r.weight || '—') + '</div><div class="label">Vision</div><div class="value">' + htmlEscape(r.vision || '—') + '</div></div>';
+  html += '<div class="health-card"><h4><i class="fas fa-stethoscope"></i> Last Checkup</h4><div class="value" style="font-size:16px;">' + htmlEscape(r.lastCheckup || '—') + '</div></div>';
+  html += '</div>';
+  if (r.emergencyContact && r.emergencyContact.name) {
+    html += '<div class="card" style="padding:14px;margin-top:8px;"><h4 style="font-weight:600;margin-bottom:8px;"><i class="fas fa-phone"></i> Emergency Contact</h4>';
+    html += '<p style="font-size:14px;"><strong>' + htmlEscape(r.emergencyContact.name) + '</strong> (' + htmlEscape(r.emergencyContact.relation || '') + ') — ' + htmlEscape(r.emergencyContact.phone || '') + '</p></div>';
+  }
+  container.innerHTML = html;
+}
+
+// ========================================================================
+// TRANSPORT MANAGEMENT — Admin
+// ========================================================================
+function renderTransport() {
+  var container = document.getElementById('adminTransport');
+  if (!container) return;
+  var routes = data.transportRoutes || [];
+  var html = '<div class="card-header"><h2><i class="fas fa-bus" style="color:#dd6b20;"></i> Transport Management</h2>';
+  html += '<div style="display:flex;gap:8px;"><button class="btn btn-success btn-sm" onclick="showAddRouteModal()"><i class="fas fa-plus"></i> Add Route</button></div></div>';
+  html += '<p class="subtitle">Manage bus routes, stops, and student assignments</p>';
+
+  if (!routes.length) {
+    html += '<div class="empty-state"><i class="fas fa-bus"></i><p>No transport routes yet. Create one to get started.</p></div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  routes.forEach(function(r) {
+    html += '<div class="transport-card">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">';
+    html += '<div><h4><i class="fas fa-route"></i> ' + htmlEscape(r.name) + '</h4>';
+    html += '<div class="sub"><i class="fas fa-user"></i> ' + htmlEscape(r.driver || '—') + ' &nbsp; <i class="fas fa-phone"></i> ' + htmlEscape(r.driverPhone || '—') + ' &nbsp; <i class="fas fa-truck"></i> ' + htmlEscape(r.vehicle || '—') + ' &nbsp; <i class="fas fa-users"></i> Capacity: ' + (r.capacity || '—') + '</div></div>';
+    html += '<div style="display:flex;gap:4px;"><button class="btn btn-sm btn-outline" onclick="showEditRouteModal(\'' + r.id + '\')"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-outline" onclick="deleteRoute(\'' + r.id + '\')" style="color:#e53e3e;"><i class="fas fa-trash"></i></button></div>';
+    html += '</div>';
+
+    // Stops
+    html += '<div style="margin-top:10px;"><h5 style="font-weight:600;font-size:13px;margin-bottom:6px;">Stops</h5>';
+    var stops = r.stops || [];
+    if (stops.length) {
+      html += '<div>';
+      stops.forEach(function(s, idx) {
+        html += '<div class="transport-stop"><span class="stop-idx">' + (idx + 1) + '</span><span class="stop-name">' + htmlEscape(s.name) + '</span><span class="stop-time"><i class="far fa-clock"></i> ' + htmlEscape(s.time) + '</span>';
+        html += '<button class="btn btn-sm btn-outline" style="padding:2px 6px;font-size:10px;color:#e53e3e;" onclick="deleteStop(\'' + r.id + '\',\'' + s.id + '\')"><i class="fas fa-times"></i></button></div>';
+      });
+      html += '</div>';
+    } else {
+      html += '<p style="font-size:12px;color:var(--text-light);">No stops defined</p>';
+    }
+    html += '<button class="btn btn-sm btn-outline" style="margin-top:6px;" onclick="showAddStopModal(\'' + r.id + '\')"><i class="fas fa-plus"></i> Add Stop</button>';
+    html += '</div>';
+
+    // Assigned students
+    var assigned = r.students || [];
+    html += '<div style="margin-top:10px;"><h5 style="font-weight:600;font-size:13px;margin-bottom:6px;">Students (' + assigned.length + ' / ' + (r.capacity || '∞') + ')</h5>';
+    if (assigned.length) {
+      html += '<div class="transport-student-list">';
+      assigned.forEach(function(sid) {
+        var stu = getStudent(sid);
+        html += '<span class="transport-student-tag">' + (stu ? htmlEscape(stu.name) : htmlEscape(sid)) + ' <span style="color:#e53e3e;cursor:pointer;margin-left:4px;" onclick="removeRouteStudent(\'' + r.id + '\',\'' + sid + '\')">&times;</span></span>';
+      });
+      html += '</div>';
+    } else {
+      html += '<p style="font-size:12px;color:var(--text-light);">No students assigned</p>';
+    }
+    html += '<button class="btn btn-sm btn-primary" style="margin-top:6px;" onclick="showAssignStudentsModal(\'' + r.id + '\')"><i class="fas fa-user-plus"></i> Assign Students</button>';
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+}
+
+function showAddRouteModal() {
+  openModal('<h3><i class="fas fa-plus-circle"></i> Add Transport Route</h3>' +
+    '<div class="form-group"><label>Route Name *</label><input type="text" id="fRouteName" placeholder="e.g. Lekki Route A"></div>' +
+    '<div class="form-group"><label>Driver Name</label><input type="text" id="fRouteDriver" placeholder="e.g. Mr. Philip"></div>' +
+    '<div class="form-group"><label>Driver Phone</label><input type="text" id="fRouteDriverPhone" placeholder="e.g. 08023456789"></div>' +
+    '<div class="form-group"><label>Vehicle Number</label><input type="text" id="fRouteVehicle" placeholder="e.g. TAG-789 XYZ"></div>' +
+    '<div class="form-group"><label>Seating Capacity</label><input type="number" id="fRouteCapacity" placeholder="e.g. 24" min="1"></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveRoute()"><i class="fas fa-save"></i> Save Route</button></div>');
+}
+
+function saveRoute() {
+  var name = document.getElementById('fRouteName')?.value?.trim();
+  if (!name) { toast('Route name is required', 'error'); return; }
+  if (!data.transportRoutes) data.transportRoutes = [];
+  data.transportRoutes.push({
+    id: genId('TR'),
+    name: name,
+    driver: document.getElementById('fRouteDriver')?.value?.trim() || '',
+    driverPhone: document.getElementById('fRouteDriverPhone')?.value?.trim() || '',
+    vehicle: document.getElementById('fRouteVehicle')?.value?.trim() || '',
+    capacity: parseInt(document.getElementById('fRouteCapacity')?.value) || 0,
+    stops: [],
+    students: []
+  });
+  saveData();
+  closeModal();
+  renderTransport();
+  toast('Route "' + name + '" created');
+}
+
+function showEditRouteModal(id) {
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === id; });
+  if (!r) return;
+  openModal('<h3><i class="fas fa-edit"></i> Edit Route</h3>' +
+    '<div class="form-group"><label>Route Name *</label><input type="text" id="fRouteNameE" value="' + htmlEscape(r.name) + '"></div>' +
+    '<div class="form-group"><label>Driver Name</label><input type="text" id="fRouteDriverE" value="' + htmlEscape(r.driver || '') + '"></div>' +
+    '<div class="form-group"><label>Driver Phone</label><input type="text" id="fRouteDriverPhoneE" value="' + htmlEscape(r.driverPhone || '') + '"></div>' +
+    '<div class="form-group"><label>Vehicle Number</label><input type="text" id="fRouteVehicleE" value="' + htmlEscape(r.vehicle || '') + '"></div>' +
+    '<div class="form-group"><label>Seating Capacity</label><input type="number" id="fRouteCapacityE" value="' + (r.capacity || '') + '" min="1"></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateRoute(\'' + id + '\')"><i class="fas fa-save"></i> Update Route</button></div>');
+}
+
+function updateRoute(id) {
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === id; });
+  if (!r) return;
+  var name = document.getElementById('fRouteNameE')?.value?.trim();
+  if (!name) { toast('Route name is required', 'error'); return; }
+  r.name = name;
+  r.driver = document.getElementById('fRouteDriverE')?.value?.trim() || '';
+  r.driverPhone = document.getElementById('fRouteDriverPhoneE')?.value?.trim() || '';
+  r.vehicle = document.getElementById('fRouteVehicleE')?.value?.trim() || '';
+  r.capacity = parseInt(document.getElementById('fRouteCapacityE')?.value) || 0;
+  saveData();
+  closeModal();
+  renderTransport();
+  toast('Route updated');
+}
+
+function deleteRoute(id) {
+  if (!confirm('Delete this route and all its assignments?')) return;
+  data.transportRoutes = (data.transportRoutes || []).filter(function(rt) { return rt.id !== id; });
+  saveData();
+  renderTransport();
+  toast('Route deleted');
+}
+
+function showAddStopModal(routeId) {
+  openModal('<h3><i class="fas fa-map-marker-alt"></i> Add Stop</h3>' +
+    '<div class="form-group"><label>Stop Name *</label><input type="text" id="fStopName" placeholder="e.g. Lekki Phase 1"></div>' +
+    '<div class="form-group"><label>Pickup Time *</label><input type="text" id="fStopTime" placeholder="e.g. 6:30 AM"></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveStop(\'' + routeId + '\')"><i class="fas fa-save"></i> Add Stop</button></div>');
+}
+
+function saveStop(routeId) {
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === routeId; });
+  if (!r) return;
+  var name = document.getElementById('fStopName')?.value?.trim();
+  var time = document.getElementById('fStopTime')?.value?.trim();
+  if (!name || !time) { toast('Stop name and time are required', 'error'); return; }
+  r.stops.push({ id: genId('STP'), name: name, time: time });
+  saveData();
+  closeModal();
+  renderTransport();
+  toast('Stop "' + name + '" added');
+}
+
+function deleteStop(routeId, stopId) {
+  if (!confirm('Remove this stop?')) return;
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === routeId; });
+  if (!r) return;
+  r.stops = (r.stops || []).filter(function(s) { return s.id !== stopId; });
+  saveData();
+  renderTransport();
+  toast('Stop removed');
+}
+
+function showAssignStudentsModal(routeId) {
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === routeId; });
+  if (!r) return;
+  var assigned = r.students || [];
+  var stuOpts = (data.students || []).filter(function(s) { return !assigned.includes(s.id); }).map(function(s) {
+    return '<option value="' + htmlEscape(s.id) + '">' + htmlEscape(s.name) + ' (' + htmlEscape(s.id) + ' - ' + htmlEscape(s.class) + ')</option>';
+  }).join('');
+  var assignedHtml = assigned.map(function(sid) {
+    var stu = getStudent(sid);
+    return '<span class="transport-student-tag">' + (stu ? htmlEscape(stu.name) : htmlEscape(sid)) + '</span>';
+  }).join('');
+  openModal('<h3><i class="fas fa-user-plus"></i> Assign Students — ' + htmlEscape(r.name) + '</h3>' +
+    '<p style="font-size:13px;color:var(--text-light);margin-bottom:8px;">Capacity: ' + (r.capacity || '∞') + ' | Currently: ' + assigned.length + '</p>' +
+    (assigned.length ? '<div style="margin-bottom:10px;"><strong style="font-size:13px;">Currently Assigned:</strong> ' + assignedHtml + '</div>' : '') +
+    (stuOpts ? '<div class="form-group"><label>Add Student</label><select id="fAssignStudent"><option value="">— Select —</option>' + stuOpts + '</select></div>' : '<p style="color:var(--text-light);font-size:13px;">All students assigned</p>') +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Done</button><button class="btn btn-primary"' + (stuOpts ? ' onclick="assignRouteStudent(\'' + routeId + '\')"' : ' disabled') + '><i class="fas fa-plus"></i> Assign</button></div>');
+}
+
+function assignRouteStudent(routeId) {
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === routeId; });
+  if (!r) return;
+  var sid = document.getElementById('fAssignStudent')?.value;
+  if (!sid) { toast('Select a student', 'error'); return; }
+  if (!r.students) r.students = [];
+  if (r.capacity && r.students.length >= r.capacity) { toast('Route at capacity!', 'error'); return; }
+  r.students.push(sid);
+  saveData();
+  showAssignStudentsModal(routeId);
+  toast('Student assigned to route');
+}
+
+function removeRouteStudent(routeId, studentId) {
+  if (!confirm('Remove student from this route?')) return;
+  var r = (data.transportRoutes || []).find(function(rt) { return rt.id === routeId; });
+  if (!r) return;
+  r.students = (r.students || []).filter(function(s) { return s !== studentId; });
+  saveData();
+  renderTransport();
+  toast('Student removed from route');
+}
+
+// ========================================================================
+// TRANSPORT — Student View
+// ========================================================================
+function renderStudentTransportView() {
+  var container = document.getElementById('stuTransportView');
+  if (!container || !currentStudent) return;
+  var myRoutes = (data.transportRoutes || []).filter(function(r) { return (r.students || []).includes(currentStudent.id); });
+  if (!myRoutes.length) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-bus"></i><p>You are not assigned to any transport route. Contact the school office.</p></div>';
+    return;
+  }
+  var html = '<h3 style="font-weight:700;margin-bottom:4px;"><i class="fas fa-bus" style="color:#dd6b20;"></i> My Transport</h3>';
+  html += '<p class="subtitle">Your assigned route and pickup schedule</p>';
+  myRoutes.forEach(function(r) {
+    html += '<div class="transport-card">';
+    html += '<h4><i class="fas fa-route"></i> ' + htmlEscape(r.name) + '</h4>';
+    html += '<div class="sub"><i class="fas fa-user"></i> Driver: ' + htmlEscape(r.driver || '—') + ' &nbsp; <i class="fas fa-phone"></i> ' + htmlEscape(r.driverPhone || '—') + '</div>';
+    html += '<div class="sub" style="margin-bottom:8px;"><i class="fas fa-truck"></i> Vehicle: ' + htmlEscape(r.vehicle || '—') + '</div>';
+    var stops = r.stops || [];
+    if (stops.length) {
+      html += '<h5 style="font-weight:600;font-size:13px;margin-bottom:6px;">Pickup Stops</h5>';
+      stops.forEach(function(s, idx) {
+        html += '<div class="transport-stop"><span class="stop-idx">' + (idx + 1) + '</span><span class="stop-name">' + htmlEscape(s.name) + '</span><span class="stop-time"><i class="far fa-clock"></i> ' + htmlEscape(s.time) + '</span></div>';
+      });
+    }
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ========================================================================
+// PT CONFERENCES — Admin
+// ========================================================================
+function renderConferences() {
+  var container = document.getElementById('adminConferences');
+  if (!container) return;
+  var confs = data.conferences || [];
+  var html = '<div class="card-header"><h2><i class="fas fa-handshake" style="color:#38a169;"></i> Parent-Teacher Conferences</h2>';
+  html += '<div style="display:flex;gap:8px;"><button class="btn btn-success btn-sm" onclick="showAddConferenceModal()"><i class="fas fa-plus"></i> Schedule Conference</button></div></div>';
+  html += '<p class="subtitle">Schedule, track, and manage parent-teacher meetings</p>';
+
+  // Filter bar
+  var statusFilter = '<div class="cal-filter-bar">';
+  ['all','scheduled','completed','cancelled'].forEach(function(s) {
+    var active = (!document.getElementById('confStatusFilter') || document.getElementById('confStatusFilter')?.value === s) ? '' : '';
+    statusFilter += '<button class="cal-filter-btn' + (s === 'all' ? ' active' : '') + '" onclick="filterConferences(\'' + s + '\')">' + s.charAt(0).toUpperCase() + s.slice(1) + '</button>';
+  });
+  statusFilter += '</div>';
+  html += statusFilter;
+
+  if (!confs.length) {
+    html += '<div class="empty-state"><i class="fas fa-handshake"></i><p>No conferences scheduled. Click "Schedule Conference" to begin.</p></div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  confs.forEach(function(c) {
+    var stu = getStudent(c.studentId);
+    var tch = getTeacher(c.teacherId);
+    var statusClass = c.status === 'scheduled' ? 'badge-info' : c.status === 'completed' ? 'badge-success' : 'badge-absent';
+    html += '<div class="conf-card">';
+    html += '<div class="conf-info"><h4>' + (stu ? htmlEscape(stu.name) : htmlEscape(c.studentId)) + ' <span style="font-weight:400;font-size:12px;color:var(--text-light);">with ' + (tch ? htmlEscape(tch.name) : htmlEscape(c.teacherId)) + '</span></h4>';
+    html += '<p><i class="far fa-calendar"></i> ' + htmlEscape(c.date) + ' at ' + htmlEscape(c.time) + ' (' + (c.duration || 30) + ' min)';
+    if (c.location) html += ' &nbsp; <i class="fas fa-map-marker-alt"></i> ' + htmlEscape(c.location);
+    html += ' &nbsp; <span class="badge ' + statusClass + '">' + htmlEscape(c.status) + '</span></p></div>';
+    html += '<div class="conf-actions">';
+    if (c.status === 'scheduled') {
+      html += '<button class="btn btn-sm btn-success" onclick="completeConference(\'' + c.id + '\')"><i class="fas fa-check"></i> Complete</button>';
+    }
+    html += '<button class="btn btn-sm btn-outline" onclick="showEditConferenceModal(\'' + c.id + '\')"><i class="fas fa-edit"></i></button>';
+    html += '<button class="btn btn-sm btn-outline" style="color:#e53e3e;" onclick="deleteConference(\'' + c.id + '\')"><i class="fas fa-trash"></i></button></div>';
+    html += '</div>';
+    if (c.notes) {
+      html += '<div style="margin:-6px 0 10px 14px;font-size:12px;color:var(--text-light);padding:6px 12px;background:var(--bg-subtle);border-radius:6px;"><i class="fas fa-sticky-note"></i> ' + htmlEscape(c.notes) + '</div>';
+    }
+  });
+  container.innerHTML = html;
+}
+
+function filterConferences(status) {
+  document.querySelectorAll('#admin-conferences .cal-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (event && event.target) event.target.classList.add('active');
+  renderConferences();
+}
+
+function showAddConferenceModal() {
+  var stuOpts = (data.students || []).map(function(s) {
+    return '<option value="' + htmlEscape(s.id) + '">' + htmlEscape(s.name) + ' (' + htmlEscape(s.id) + ' - ' + htmlEscape(s.class) + ')</option>';
+  }).join('');
+  var tchOpts = (data.teachers || []).map(function(t) {
+    return '<option value="' + htmlEscape(t.id) + '">' + htmlEscape(t.name) + ' (' + htmlEscape(t.id) + ')</option>';
+  }).join('');
+  var today = new Date().toISOString().split('T')[0];
+  openModal('<h3><i class="fas fa-calendar-plus"></i> Schedule Conference</h3>' +
+    '<div class="form-group"><label>Student *</label><select id="fConfStudent">' + stuOpts + '</select></div>' +
+    '<div class="form-group"><label>Teacher *</label><select id="fConfTeacher">' + tchOpts + '</select></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Date *</label><input type="date" id="fConfDate" value="' + today + '"></div>' +
+      '<div class="form-group"><label>Time *</label><input type="time" id="fConfTime" value="10:00"></div>' +
+      '<div class="form-group"><label>Duration (min)</label><input type="number" id="fConfDuration" value="30" min="10" step="5"></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Location</label><input type="text" id="fConfLocation" placeholder="e.g. Room 203, Admin Block"></div>' +
+    '<div class="form-group"><label>Notes</label><textarea id="fConfNotes" rows="2" placeholder="Agenda, topics to discuss..." style="resize:vertical;"></textarea></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveConference()"><i class="fas fa-save"></i> Schedule</button></div>');
+}
+
+function saveConference() {
+  var studentId = document.getElementById('fConfStudent')?.value;
+  var teacherId = document.getElementById('fConfTeacher')?.value;
+  var date = document.getElementById('fConfDate')?.value;
+  var time = document.getElementById('fConfTime')?.value;
+  if (!studentId || !teacherId || !date || !time) { toast('Please fill all required fields', 'error'); return; }
+  if (!data.conferences) data.conferences = [];
+  data.conferences.push({
+    id: genId('CNF'),
+    studentId: studentId,
+    teacherId: teacherId,
+    date: date,
+    time: time,
+    duration: parseInt(document.getElementById('fConfDuration')?.value) || 30,
+    location: document.getElementById('fConfLocation')?.value?.trim() || '',
+    notes: document.getElementById('fConfNotes')?.value?.trim() || '',
+    status: 'scheduled'
+  });
+  saveData();
+  closeModal();
+  renderConferences();
+  var stu = getStudent(studentId);
+  toast('Conference scheduled for ' + (stu ? htmlEscape(stu.name) : studentId));
+}
+
+function showEditConferenceModal(id) {
+  var c = (data.conferences || []).find(function(co) { return co.id === id; });
+  if (!c) return;
+  var stuOpts = (data.students || []).map(function(s) {
+    return '<option value="' + htmlEscape(s.id) + '"' + (s.id === c.studentId ? ' selected' : '') + '>' + htmlEscape(s.name) + ' (' + htmlEscape(s.id) + ')</option>';
+  }).join('');
+  var tchOpts = (data.teachers || []).map(function(t) {
+    return '<option value="' + htmlEscape(t.id) + '"' + (t.id === c.teacherId ? ' selected' : '') + '>' + htmlEscape(t.name) + ' (' + htmlEscape(t.id) + ')</option>';
+  }).join('');
+  openModal('<h3><i class="fas fa-edit"></i> Edit Conference</h3>' +
+    '<div class="form-group"><label>Student *</label><select id="fConfStudentE">' + stuOpts + '</select></div>' +
+    '<div class="form-group"><label>Teacher *</label><select id="fConfTeacherE">' + tchOpts + '</select></div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">' +
+      '<div class="form-group"><label>Date *</label><input type="date" id="fConfDateE" value="' + htmlEscape(c.date) + '"></div>' +
+      '<div class="form-group"><label>Time *</label><input type="time" id="fConfTimeE" value="' + htmlEscape(c.time) + '"></div>' +
+      '<div class="form-group"><label>Duration</label><input type="number" id="fConfDurationE" value="' + (c.duration || 30) + '" min="10" step="5"></div>' +
+    '</div>' +
+    '<div class="form-group"><label>Location</label><input type="text" id="fConfLocationE" value="' + htmlEscape(c.location || '') + '"></div>' +
+    '<div class="form-group"><label>Notes</label><textarea id="fConfNotesE" rows="2" style="resize:vertical;">' + htmlEscape(c.notes || '') + '</textarea></div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateConference(\'' + id + '\')"><i class="fas fa-save"></i> Update</button></div>');
+}
+
+function updateConference(id) {
+  var c = (data.conferences || []).find(function(co) { return co.id === id; });
+  if (!c) return;
+  c.studentId = document.getElementById('fConfStudentE')?.value || c.studentId;
+  c.teacherId = document.getElementById('fConfTeacherE')?.value || c.teacherId;
+  c.date = document.getElementById('fConfDateE')?.value || c.date;
+  c.time = document.getElementById('fConfTimeE')?.value || c.time;
+  c.duration = parseInt(document.getElementById('fConfDurationE')?.value) || 30;
+  c.location = document.getElementById('fConfLocationE')?.value?.trim() || '';
+  c.notes = document.getElementById('fConfNotesE')?.value?.trim() || '';
+  saveData();
+  closeModal();
+  renderConferences();
+  toast('Conference updated');
+}
+
+function completeConference(id) {
+  var c = (data.conferences || []).find(function(co) { return co.id === id; });
+  if (!c) return;
+  if (!confirm('Mark this conference as completed?')) return;
+  c.status = 'completed';
+  saveData();
+  renderConferences();
+  toast('Conference marked as completed');
+}
+
+function deleteConference(id) {
+  if (!confirm('Delete this conference?')) return;
+  data.conferences = (data.conferences || []).filter(function(co) { return co.id !== id; });
+  saveData();
+  renderConferences();
+  toast('Conference deleted');
+}
+
+// ========================================================================
+// PT CONFERENCES — Teacher View
+// ========================================================================
+function renderTeacherConferencesView() {
+  var container = document.getElementById('tchConferencesView');
+  if (!container || !currentTeacher) return;
+  var confs = (data.conferences || []).filter(function(c) { return c.teacherId === currentTeacher.id; });
+  if (!confs.length) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-handshake"></i><p>No parent-teacher conferences scheduled for you.</p></div>';
+    return;
+  }
+  // Sort by date
+  confs.sort(function(a, b) { return a.date.localeCompare(b.date) || a.time.localeCompare(b.time); });
+  var html = '<h3 style="font-weight:700;margin-bottom:4px;"><i class="fas fa-handshake" style="color:#38a169;"></i> My Conferences</h3>';
+  html += '<p class="subtitle">Scheduled parent-teacher meetings</p>';
+
+  var upcoming = confs.filter(function(c) { return c.status === 'scheduled'; });
+  var past = confs.filter(function(c) { return c.status !== 'scheduled'; });
+
+  if (upcoming.length) {
+    html += '<h4 style="font-weight:600;font-size:14px;margin:12px 0 8px;"><i class="fas fa-clock"></i> Upcoming</h4>';
+    upcoming.forEach(function(c) {
+      var stu = getStudent(c.studentId);
+      html += '<div class="conf-card">';
+      html += '<div class="conf-info"><h4>' + (stu ? htmlEscape(stu.name) : htmlEscape(c.studentId)) + '</h4>';
+      html += '<p><i class="far fa-calendar"></i> ' + htmlEscape(c.date) + ' at ' + htmlEscape(c.time) + ' (' + (c.duration || 30) + ' min)';
+      if (c.location) html += ' &nbsp; <i class="fas fa-map-marker-alt"></i> ' + htmlEscape(c.location);
+      html += ' &nbsp; <span class="badge badge-info">' + htmlEscape(c.status) + '</span></p></div>';
+      html += '<div class="conf-actions"><button class="btn btn-sm btn-success" onclick="completeConference(\'' + c.id + '\')"><i class="fas fa-check"></i> Complete</button></div>';
+      html += '</div>';
+      if (c.notes) {
+        html += '<div style="margin:-6px 0 10px 14px;font-size:12px;color:var(--text-light);padding:6px 12px;background:var(--bg-subtle);border-radius:6px;"><i class="fas fa-sticky-note"></i> ' + htmlEscape(c.notes) + '</div>';
+      }
+    });
+  }
+
+  if (past.length) {
+    html += '<h4 style="font-weight:600;font-size:14px;margin:16px 0 8px;"><i class="fas fa-history"></i> Past</h4>';
+    past.forEach(function(c) {
+      var stu = getStudent(c.studentId);
+      var statusClass = c.status === 'completed' ? 'badge-success' : 'badge-absent';
+      html += '<div class="conf-card">';
+      html += '<div class="conf-info"><h4>' + (stu ? htmlEscape(stu.name) : htmlEscape(c.studentId)) + '</h4>';
+      html += '<p><i class="far fa-calendar"></i> ' + htmlEscape(c.date) + ' at ' + htmlEscape(c.time) + ' &nbsp; <span class="badge ' + statusClass + '">' + htmlEscape(c.status) + '</span></p></div>';
+      html += '</div>';
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+// ========================================================================
+// Exports
+// ========================================================================
+window.renderHealthRecords = renderHealthRecords;
+window.showAddHealthRecordModal = showAddHealthRecordModal;
+window.saveHealthRecord = saveHealthRecord;
+window.showEditHealthRecordModal = showEditHealthRecordModal;
+window.updateHealthRecord = updateHealthRecord;
+window.deleteHealthRecord = deleteHealthRecord;
+window.renderStudentHealthView = renderStudentHealthView;
+window.renderTransport = renderTransport;
+window.showAddRouteModal = showAddRouteModal;
+window.saveRoute = saveRoute;
+window.showEditRouteModal = showEditRouteModal;
+window.updateRoute = updateRoute;
+window.deleteRoute = deleteRoute;
+window.showAddStopModal = showAddStopModal;
+window.saveStop = saveStop;
+window.deleteStop = deleteStop;
+window.showAssignStudentsModal = showAssignStudentsModal;
+window.assignRouteStudent = assignRouteStudent;
+window.removeRouteStudent = removeRouteStudent;
+window.renderStudentTransportView = renderStudentTransportView;
+window.renderConferences = renderConferences;
+window.filterConferences = filterConferences;
+window.showAddConferenceModal = showAddConferenceModal;
+window.saveConference = saveConference;
+window.showEditConferenceModal = showEditConferenceModal;
+window.updateConference = updateConference;
+window.completeConference = completeConference;
+window.deleteConference = deleteConference;
+window.renderTeacherConferencesView = renderTeacherConferencesView;

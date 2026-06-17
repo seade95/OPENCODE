@@ -32,7 +32,7 @@ function toggleNav() {
 }
 
 function goHome() {
-  currentAdmin = null;
+  currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');
   if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }
@@ -173,6 +173,7 @@ function showAdminPortal() {
 
   if (typeof switchAdminPanel === 'function') switchAdminPanel('dashboard');
   if (typeof renderAll === 'function') renderAll();
+  if (typeof renderSubscriptionBanner === 'function') renderSubscriptionBanner();
   if (typeof updateNotifBadge === 'function') updateNotifBadge();
 }
 
@@ -182,7 +183,9 @@ function showStudentLogin() {
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var slp = document.getElementById('studentLoginPage');
   if (slp) slp.classList.add('active');
-  if (typeof populateStudentDatalists === 'function') populateStudentDatalists();
+  if (typeof data !== 'undefined' && data && typeof populateStudentDatalists === 'function') populateStudentDatalists();
+  if (typeof initLanguageSelector === 'function') initLanguageSelector('stuLangSelector');
+  try { if (localStorage.getItem('demoMode') === 'true') { var _id=document.getElementById('loginId'),_nm=document.getElementById('loginName'),_sh=document.getElementById('stuDemoHint'); if(_id)_id.value='STU001'; if(_nm)_nm.value='stu001'; if(_sh)_sh.style.display='block'; } } catch(e){}
 }
 
 function studentLogin() {
@@ -226,6 +229,8 @@ function showTeacherLogin() {
   var tlp = document.getElementById('teacherLoginPage');
   if (tlp) tlp.classList.add('active');
   if (typeof populateTeacherDatalists === 'function') populateTeacherDatalists();
+  if (typeof initLanguageSelector === 'function') initLanguageSelector('tchLangSelector');
+  try { if (localStorage.getItem('demoMode') === 'true') { var _id=document.getElementById('teacherLoginId'),_ps=document.getElementById('teacherLoginPass'),_th=document.getElementById('tchDemoHint'); if(_id)_id.value='TCH001'; if(_ps)_ps.value='teacher123'; if(_th)_th.style.display='block'; } } catch(e){}
 }
 
 function populateTeacherDatalists() {
@@ -302,6 +307,9 @@ function switchTeacherPanel(panel) {
     case 'aitools': if (typeof renderAITools === 'function') renderAITools(); break;
     case 'eschool': if (typeof renderESchoolView === 'function') renderESchoolView('tchESchoolView'); break;
     case 'calendar': if (typeof renderAcademicCalendarView === 'function') renderAcademicCalendarView('tchCalendarView'); break;
+    case 'handwritingocr': if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('tchHandwritingOCR'); break;
+    case 'teacherexams': if (typeof renderTeacherUpload === 'function') renderTeacherUpload('tchTeacherExams'); break;
+    case 'tchconferences': if (typeof renderTeacherConferencesView === 'function') renderTeacherConferencesView(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }
@@ -360,6 +368,12 @@ function switchAdminPanel(panel) {
     case 'activitygames': if (typeof renderAdminActivityGames === 'function') renderAdminActivityGames(); break;
     case 'alumni': if (typeof renderAlumni === 'function') renderAlumni(); break;
     case 'system': if (typeof renderSystemPanel === 'function') renderSystemPanel(); break;
+    case 'handwritingocr': if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('adminHandwritingOCR'); break;
+    case 'teacherexams': if (typeof renderAdminTeacherExams === 'function') renderAdminTeacherExams('adminTeacherExams'); break;
+    case 'subscription': if (typeof renderSubscriptionSettings === 'function') renderSubscriptionSettings(); break;
+    case 'health': if (typeof renderHealthRecords === 'function') renderHealthRecords(); break;
+    case 'transport': if (typeof renderTransport === 'function') renderTransport(); break;
+    case 'conferences': if (typeof renderConferences === 'function') renderConferences(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }
@@ -374,7 +388,7 @@ function renderAll() {
   renderCAT();
   renderActivities();
   renderAttendance();
-  if (typeof renderTimetableAdmin === 'function') renderTimetableAdmin();
+  if (typeof switchTimetableTab === 'function') switchTimetableTab('grid');
   if (typeof renderHostel === 'function') renderHostel();
   if (typeof renderGradebookAdmin === 'function') renderGradebookAdmin();
   if (typeof renderExamsAdmin === 'function') renderExamsAdmin();
@@ -390,6 +404,13 @@ function renderAll() {
   if (typeof renderReportBuilder === 'function') renderReportBuilder();
   if (typeof renderIDCards === 'function') renderIDCards('adminIDCards');
   if (typeof renderTerms === 'function') renderTerms();
+  if (typeof updateTermBadge === 'function') updateTermBadge();
+  // Update institution type badge
+  var instBadge = document.getElementById('adminInstBadgeText');
+  if (instBadge) {
+    var map = { eccde: 'Nursery', primary: 'Basic', secondary: 'Secondary', full_k12: 'K-12', tertiary: 'Tertiary' };
+    instBadge.textContent = map[data.schoolTier] || data.schoolTier || 'Not set';
+  }
   if (typeof renderPrograms === 'function') renderPrograms();
   if (typeof renderApplications === 'function') renderApplications();
   if (typeof renderExamBank === 'function') renderExamBank();
@@ -412,7 +433,18 @@ function renderAll() {
   if (typeof renderSimAttempts === 'function') renderSimAttempts();
   if (typeof renderAdminActivityGames === 'function') renderAdminActivityGames();
   if (typeof renderAlumni === 'function') renderAlumni();
+  if (typeof renderPromotionList === 'function') renderPromotionList();
+  if (typeof renderESchoolAdmin === 'function') renderESchoolAdmin();
+  if (typeof renderAcademicCalendar === 'function') renderAcademicCalendar();
+  if (typeof renderTranscriptGenerator === 'function') renderTranscriptGenerator();
+  if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('adminHandwritingOCR');
+  if (typeof renderAdminTeacherExams === 'function') renderAdminTeacherExams('adminTeacherExams');
+  if (typeof renderSubscriptionSettings === 'function') renderSubscriptionSettings();
+  if (typeof renderHealthRecords === 'function') renderHealthRecords();
+  if (typeof renderTransport === 'function') renderTransport();
+  if (typeof renderConferences === 'function') renderConferences();
   if (typeof applyTranslations === 'function') applyTranslations();
+  if (typeof _checkAutoTermTransition === 'function') _checkAutoTermTransition();
 }
 
 function logActivity(msg) {

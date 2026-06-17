@@ -24,7 +24,7 @@ function getDefaultSimQuestions() {
   function _trig(i,o) { o=o||0; var r=_r((i+o)*67+41); var ang=[0,30,45,60,90][r(0,4)]; var vals=['0','1/2','√2/2','√3/2','1']; return ['What is sin '+ang+'°?',[vals[r(0,4)],vals[r(0,4)],vals[r(0,4)],vals[r(0,4)]].map(String),0,'hard'];}
   function _set(i,o) { o=o||0; var r=_r((i+o)*71+53); var a=r(1,10),b=r(a+1,15); return ['If A = {'+a+','+b+'}, B = {'+b+','+(b+1)+'}, what is |A∪B|?',[2,3,4,1].map(String),1,'hard'];}
   function _exp(i,o) { o=o||0; var r=_r((i+o)*73+59); var b=r(2,4),p=r(2,4); return ['What is '+b+'^'+p+'?',[Math.pow(b,p)-1,Math.pow(b,p),Math.pow(b,p)+1,Math.pow(b,p)+2].map(String),1,'hard'];}
-  function _log(i,o) { o=o||0; var r=_r((i+o)*79+61); var b=[10,2,5][r(0,2)]; var v=[100,8,25][[[10,2,5].indexOf(b)]]; var a=Math.round(Math.log(v)/Math.log(b)); return ['What is log_'+b+' '+v+'?',[a-1,a,a+1,a+2].map(String),1,'hard'];}
+  function _log(i,o) { o=o||0; var r=_r((i+o)*79+61); var bases=[10,2,5]; var b=bases[r(0,2)]; var vals=[100,8,25]; var v=vals[bases.indexOf(b)]; var a=Math.round(Math.log(v)/Math.log(b)); return ['What is log_'+b+' '+v+'?',[a-1,a,a+1,a+2].map(String),1,'hard'];}
   function _place(i,o) { o=o||0; var r=_r((i+o)*83+67); var n=['thousand','hundred','ten','unit'][r(0,3)]; var p=[1000,100,10,1][['thousand','hundred','ten','unit'].indexOf(n)]; var num=r(1,9)*p+r(0,p-1); var d=Math.floor(num/p)%10; return ['What is the place value of '+d+' in '+num+'?',[d,d*10,d*100,d*1000].map(String),1,'medium'];}
   function _fibo(i,o) { o=o||0; var r=_r((i+o)*89+71); var a=r(1,5),b=r(a+1,10); return ['What is the next number: '+a+', '+b+', '+(a+b)+'?',[a+b,a+b+b,a+b*2,b*2].map(String),0,'medium'];}
 
@@ -837,34 +837,36 @@ function renderSimAttempts() {
 // ===== STUDENT: Exam Simulation Center =====
 function renderSimCenter() {
   if (!currentStudent) return;
-  var container = document.getElementById('stu-simulation');
+  var container = document.getElementById('stuSimCenter');
   if (!container) return;
-  var cls = currentStudent.class;
+  var baseClass = _stripStream(currentStudent.class);
   var questions = data.simQuestions || [];
   var myAttempts = (data.simAttempts || []).filter(function(a) { return a.studentId === currentStudent.id; });
-  var available = questions.filter(function(q) { return q.class === cls; });
+  var available = questions.filter(function(q) { return _stripStream(q.class) === baseClass; });
   var subjects = [];
   available.forEach(function(q) { if (subjects.indexOf(q.subject) === -1) subjects.push(q.subject); });
   subjects.sort();
 
   var html = '<div style="margin-bottom:16px;">' +
     '<h2 style="font-size:18px;font-weight:700;color:var(--primary);margin-bottom:4px;"><i class="fas fa-graduation-cap"></i> Exam Simulation Center</h2>' +
-    '<p style="color:var(--text-light);font-size:13px;">Practice with timed exams for ' + htmlEscape(cls) + ' following Nigerian curriculum standards</p>' +
+    '<p style="color:var(--text-light);font-size:13px;">Practice with timed exams for ' + htmlEscape(currentStudent.class) + ' following Nigerian curriculum standards</p>' +
     '</div>';
 
   // Exam type badge
-  var examType = getExamTypeForClass(cls);
+  var examType = getExamTypeForClass(baseClass);
   var examLabel = examType === 'common_entrance' ? 'Common Entrance Mode' : examType === 'bece' ? 'BECE CBT Mode' : examType === 'wassce' ? 'WASSCE/NECO Mode' : 'CBT Practice Mode';
   var examIcon = examType === 'common_entrance' ? 'fa-door-open' : examType === 'bece' ? 'fa-certificate' : examType === 'wassce' ? 'fa-scroll' : 'fa-laptop-code';
   html += '<div class="card" style="padding:16px;margin-bottom:16px;border-left:4px solid var(--accent);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">' +
     '<div><i class="fas ' + examIcon + '" style="color:var(--accent);font-size:24px;margin-right:12px;"></i>' +
     '<span style="font-weight:600;font-size:15px;">' + examLabel + '</span>' +
     '<span style="font-size:13px;color:var(--text-light);margin-left:8px;">(' + available.length + ' questions available)</span></div>' +
-    '<div style="font-size:12px;color:var(--text-light);">' + available.length + ' questions available</div>' +
     '</div>';
 
   // Subject cards
   html += '<h4 style="font-weight:600;font-size:14px;margin-bottom:8px;">Select Subject to Practice</h4>';
+  if (!subjects.length) {
+    html += '<p class="empty-state"><i class="fas fa-database"></i> No practice questions available for ' + htmlEscape(baseClass) + '. Contact the admin to seed the question bank.</p>';
+  } else {
   html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px;">';
   subjects.forEach(function(subj) {
     var subjQuestions = available.filter(function(q) { return q.subject === subj; });
@@ -879,6 +881,7 @@ function renderSimCenter() {
       '</div>';
   });
   html += '</div>';
+  }
 
   // Mixed exam option
   if (subjects.length > 1) {
@@ -937,15 +940,18 @@ function renderSimCenter() {
 }
 
 // ===== SIMULATION ENGINE =====
+function _stripStream(cls) { return cls ? cls.replace(/[A-Z]$/, '').trim() : cls; }
+
 function startSimulation(subject) {
   if (!currentStudent) { toast('Please log in as a student', 'error'); return; }
-  var questions = (data.simQuestions || []).filter(function(q) { return q.class === currentStudent.class && q.subject === subject; });
+  var baseClass = _stripStream(currentStudent.class);
+  var questions = (data.simQuestions || []).filter(function(q) { return _stripStream(q.class) === baseClass && q.subject === subject; });
   if (questions.length < 3) { toast('Not enough questions for ' + subject + '. Contact admin.', 'error'); return; }
   var shuffled = questions.sort(function() { return Math.random() - 0.5; }).slice(0, Math.min(questions.length, 20));
-  var durationMin = getExamDuration(currentStudent.class);
+  var durationMin = getExamDuration(baseClass);
   simState = {
     studentId: currentStudent.id, className: currentStudent.class, subject: subject,
-    mode: getExamTypeForClass(currentStudent.class), duration: durationMin * 60 * 1000,
+    mode: getExamTypeForClass(baseClass), duration: durationMin * 60 * 1000,
     questions: shuffled, answers: new Array(shuffled.length).fill(null),
     currentIdx: 0, startTime: Date.now(), finished: false
   };
@@ -956,13 +962,14 @@ function startSimulation(subject) {
 
 function startMixedSimulation() {
   if (!currentStudent) return;
-  var questions = (data.simQuestions || []).filter(function(q) { return q.class === currentStudent.class; });
+  var baseClass = _stripStream(currentStudent.class);
+  var questions = (data.simQuestions || []).filter(function(q) { return _stripStream(q.class) === baseClass; });
   if (questions.length < 5) { toast('Not enough questions for this class', 'error'); return; }
   var shuffled = questions.sort(function() { return Math.random() - 0.5; }).slice(0, Math.min(questions.length, 20));
-  var durationMin = getExamDuration(currentStudent.class);
+  var durationMin = getExamDuration(baseClass);
   simState = {
     studentId: currentStudent.id, className: currentStudent.class, subject: 'Mixed',
-    mode: getExamTypeForClass(currentStudent.class), duration: durationMin * 60 * 1000,
+    mode: getExamTypeForClass(baseClass), duration: durationMin * 60 * 1000,
     questions: shuffled, answers: new Array(shuffled.length).fill(null),
     currentIdx: 0, startTime: Date.now(), finished: false
   };
@@ -1144,7 +1151,7 @@ function renderSimResult(pct, correct, total, wrongBySubject, details) {
   var cls = simState ? simState.className : '';
   var subj = simState ? simState.subject : '';
   simTabSwitchCount = 0;
-  var container = document.getElementById('stu-simulation');
+  var container = document.getElementById('stuSimCenter');
   if (!container) return;
   var modeLabel = simState ? simState.mode : '';
   simState = null;

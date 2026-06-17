@@ -11,11 +11,27 @@
 <link rel="icon" type="image/png" href="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#2563eb">
+<script src="js/screen-protection.js"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(){});
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newSW = reg.installing;
+      newSW.addEventListener('statechange', function() {
+        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+          if (confirm('A new version is available. Reload to update?')) {
+            newSW.postMessage({ type: 'SKIP_WAITING' });
+            window.location.reload();
+          }
+        }
+      });
+    });
+  }).catch(function(){});
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    window.location.reload();
+  });
 }
 </script>
 </head>
@@ -281,7 +297,7 @@ if ('serviceWorker' in navigator) {
     <div class="testimonial-card">
       <div class="avatar"><i class="fas fa-user-graduate"></i></div>
       <div class="name">Alice Johnson</div>
-      <div class="role">Grade 10 Student</div>
+      <div class="role">Basic 6 Student</div>
       <div class="text">EDUVERSE has completely transformed my learning experience. The teachers are supportive, and the online portal makes it easy to track my progress.</div>
     </div>
     <div class="testimonial-card">
@@ -299,7 +315,7 @@ if ('serviceWorker' in navigator) {
     <div class="testimonial-card">
       <div class="avatar"><i class="fas fa-user-graduate"></i></div>
       <div class="name">David Brown</div>
-      <div class="role">Grade 9 Student</div>
+      <div class="role">Basic 4 Student</div>
       <div class="text">I love how I can access all my assignments, results, and CAT scores from one place. The extracurricular activities section helped me join the basketball team!</div>
     </div>
   </div>
@@ -526,19 +542,19 @@ if ('serviceWorker' in navigator) {
         <li><a href="#courses">Courses</a></li>
         <li><a href="#events">Upcoming Events</a></li>
         <li><a href="admin.html">Admin Portal</a></li>
-        <li><a href="javascript:;" onclick="showTeacherLogin()">Teacher Portal</a></li>
-        <li><a href="javascript:;" onclick="showStudentLogin()">Student Portal</a></li>
-        <li><a href="javascript:;" onclick="showAdmissionPortal()">Admission Portal</a></li>
+        <li><a href="#" onclick="showTeacherLogin();return false">Teacher Portal</a></li>
+        <li><a href="#" onclick="showStudentLogin();return false">Student Portal</a></li>
+        <li><a href="#" onclick="showAdmissionPortal();return false">Admission Portal</a></li>
       </ul>
     </div>
     <div class="footer-widget">
       <h5>Portals</h5>
       <ul>
         <li><a href="admin.html"><i class="fa fa-angle-right"></i> Administration</a></li>
-        <li><a href="javascript:;" onclick="showTeacherLogin()"><i class="fa fa-angle-right"></i> Teachers</a></li>
-        <li><a href="javascript:;" onclick="showStudentLogin()"><i class="fa fa-angle-right"></i> Students</a></li>
-        <li><a href="javascript:;" onclick="showStudentLogin()"><i class="fa fa-angle-right"></i> Parents</a></li>
-        <li><a href="javascript:;"><i class="fa fa-angle-right"></i> Alumni</a></li>
+        <li><a href="#" onclick="showTeacherLogin();return false"><i class="fa fa-angle-right"></i> Teachers</a></li>
+        <li><a href="#" onclick="showStudentLogin();return false"><i class="fa fa-angle-right"></i> Students</a></li>
+        <li><a href="#" onclick="showParentLogin();return false"><i class="fa fa-angle-right"></i> Parents</a></li>
+        <li><a href="#" onclick="showAlumniPortal();return false"><i class="fa fa-angle-right"></i> Alumni</a></li>
       </ul>
     </div>
     <div class="footer-widget">
@@ -653,7 +669,7 @@ if ('serviceWorker' in navigator) {
       <div class="student-avatar" id="studentAvatar">S</div>
       <div class="student-info">
         <h2 id="studentProfileName">Student Name</h2>
-        <p><i class="fas fa-id-card"></i> <span id="studentProfileId">--</span> &nbsp;|&nbsp; <i class="fas fa-graduation-cap"></i> <span id="studentProfileClass">--</span></p>
+        <p><i class="fas fa-id-card"></i> <span id="studentProfileId">--</span> &nbsp;|&nbsp; <i class="fas fa-graduation-cap"></i> <span id="studentProfileClass">--</span> &nbsp;|&nbsp; <i class="fas fa-calendar-alt"></i> <span id="stuCurrentTerm">--</span></p>
       </div>
     </div>
 
@@ -662,29 +678,32 @@ if ('serviceWorker' in navigator) {
     <div id="stuExamRegs"></div>
     <div id="stuGPA"></div>
 
+    <div class="sub-banner"></div>
     <div class="student-tabs">
       <button class="student-tab active" data-tab="results"><i class="fas fa-file-alt"></i> <span data-i18n="results">Results</span></button>
       <button class="student-tab" data-tab="cat"><i class="fas fa-tasks"></i> <span data-i18n="cat">Assessments</span></button>
       <button class="student-tab" data-tab="assignments"><i class="fas fa-book"></i> <span data-i18n="assignments">Assignments</span></button>
       <button class="student-tab" data-tab="fees"><i class="fas fa-file-invoice-dollar"></i> <span data-i18n="fees">Fees</span></button>
       <button class="student-tab" data-tab="activities"><i class="fas fa-futbol"></i> <span data-i18n="activities">Activities</span></button>
-      <button class="student-tab" data-tab="activitygames"><i class="fas fa-gamepad"></i> <span>Activity Games</span></button>
-      <button class="student-tab" data-tab="alumni"><i class="fas fa-user-graduate"></i> <span>Alumni</span></button>
+      <button class="student-tab" data-tab="activitygames"><i class="fas fa-gamepad"></i> <span data-i18n="activitygames">Activity Games</span></button>
+      <button class="student-tab" data-tab="alumni"><i class="fas fa-user-graduate"></i> <span data-i18n="alumni">Alumni</span></button>
       <button class="student-tab" data-tab="timetable"><i class="fas fa-table"></i> <span data-i18n="timetable">Timetable</span></button>
       <button class="student-tab" data-tab="exams"><i class="fas fa-calendar-alt"></i> <span data-i18n="exams">Exams</span></button>
       <button class="student-tab" data-tab="messages"><i class="fas fa-envelope"></i> <span data-i18n="messages">Messages</span></button>
       <button class="student-tab" data-tab="attendance"><i class="fas fa-calendar-check"></i> <span data-i18n="attendance">Attendance</span></button>
-      <button class="student-tab" data-tab="lessonnotes"><i class="fas fa-book-open"></i> <span>Lessons</span></button>
+      <button class="student-tab" data-tab="lessonnotes"><i class="fas fa-book-open"></i> <span data-i18n="lessonplans">Lessons</span></button>
       <button class="student-tab" data-tab="forum"><i class="fas fa-comments"></i> <span>Forum</span></button>
       <button class="student-tab" data-tab="filerepo"><i class="fas fa-folder-open"></i> <span>Files</span></button>
       <button class="student-tab" data-tab="library"><i class="fas fa-book"></i> <span data-i18n="library">Library</span></button>
-      <button class="student-tab" data-tab="payments"><i class="fas fa-credit-card"></i> <span>Pay Fees</span></button>
-      <button class="student-tab" data-tab="reportcard"><i class="fas fa-file-alt"></i> <span>Report Card</span></button>
-      <button class="student-tab" data-tab="eschool"><i class="fas fa-video"></i> <span>E-School</span></button>
-      <button class="student-tab" data-tab="gallery"><i class="fas fa-images"></i> <span>Gallery</span></button>
-      <button class="student-tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i> <span>Calendar</span></button>
-      <button class="student-tab" data-tab="simulation"><i class="fas fa-graduation-cap"></i> <span>Exam Sim</span></button>
-      <button class="student-tab" data-tab="hostel"><i class="fas fa-bed"></i> <span>Hostel</span></button>
+      <button class="student-tab" data-tab="payments"><i class="fas fa-credit-card"></i> <span data-i18n="payfees">Pay Fees</span></button>
+      <button class="student-tab" data-tab="reportcard"><i class="fas fa-file-alt"></i> <span data-i18n="reportcard">Report Card</span></button>
+      <button class="student-tab" data-tab="eschool"><i class="fas fa-video"></i> <span data-i18n="eschool">E-School</span></button>
+      <button class="student-tab" data-tab="gallery"><i class="fas fa-images"></i> <span data-i18n="gallery">Gallery</span></button>
+      <button class="student-tab" data-tab="calendar"><i class="fas fa-calendar-alt"></i> <span data-i18n="calendar">Calendar</span></button>
+      <button class="student-tab" data-tab="simulation"><i class="fas fa-graduation-cap"></i> <span data-i18n="examsim">Exam Sim</span></button>
+      <button class="student-tab" data-tab="hostel"><i class="fas fa-bed"></i> <span data-i18n="hostel">Hostel</span></button>
+      <button class="student-tab" data-tab="health"><i class="fas fa-heartbeat"></i> <span>Health</span></button>
+      <button class="student-tab" data-tab="transport"><i class="fas fa-bus"></i> <span>Transport</span></button>
     </div>
 
     <!-- Student Results -->
@@ -836,11 +855,18 @@ if ('serviceWorker' in navigator) {
       <div class="card"><h3><i class="fas fa-calendar-alt"></i> Academic Calendar</h3>
         <div id="stuCalendarView"></div>
       </div>
+    </div>
     <div class="student-panel" id="stu-simulation">
       <div class="card"><div id="stuSimCenter"></div></div>
     </div>
     <div class="student-panel" id="stu-hostel">
       <div class="card"><div id="stuHostelView"></div></div>
+    </div>
+    <div class="student-panel" id="stu-health">
+      <div class="card"><div id="stuHealthView"></div></div>
+    </div>
+    <div class="student-panel" id="stu-transport">
+      <div class="card"><div id="stuTransportView"></div></div>
     </div>
   </div>
 </div>
@@ -889,6 +915,10 @@ if ('serviceWorker' in navigator) {
     </div>
     <div class="portal-header-right">
       <div id="tchLangSelector" style="margin-right:8px;"></div>
+      <div id="tchTermBadge" style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--primary-light);color:#fff;border-radius:20px;font-size:12px;font-weight:600;">
+        <i class="fas fa-calendar-alt"></i>
+        <span id="tchTermBadgeText"></span>
+      </div>
       <span id="teacherNameDisplay"><i class="fas fa-chalkboard-teacher"></i> Teacher</span>
       <div class="notif-bell" onclick="toggleNotifDropdown('Tch')" style="position:relative;cursor:pointer;margin:0 8px;">
         <i class="fas fa-bell" style="font-size:16px;color:var(--text-light);"></i>
@@ -907,20 +937,24 @@ if ('serviceWorker' in navigator) {
     <div class="admin-sidebar" style="background:var(--primary);">
       <div class="admin-sidebar-item active" data-teacher-panel="dashboard"><i class="fas fa-chart-pie"></i><span data-i18n="dashboard">Dashboard</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="assignments"><i class="fas fa-book"></i><span data-i18n="assignments">Assignments</span></div>
-      <div class="admin-sidebar-item" data-teacher-panel="roster"><i class="fas fa-users"></i><span>Class Roster</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="roster"><i class="fas fa-users"></i><span data-i18n="classroster">Class Roster</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="timetable"><i class="fas fa-table"></i><span data-i18n="timetable">Timetable</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="exams"><i class="fas fa-calendar-alt"></i><span data-i18n="exams">Exams</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="messages"><i class="fas fa-envelope"></i><span data-i18n="messages">Messages</span></div>
-      <div class="admin-sidebar-item" data-teacher-panel="lessonnotes"><i class="fas fa-book-open"></i><span>Lesson Plans</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="lessonnotes"><i class="fas fa-book-open"></i><span data-i18n="lessonplans">Lesson Plans</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="behavior"><i class="fas fa-balance-scale"></i><span>Behavior</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="forum"><i class="fas fa-comments"></i><span>Forum</span></div>
       <div class="admin-sidebar-item" data-teacher-panel="filerepo"><i class="fas fa-folder-open"></i><span>File Repo</span></div>
-      <div class="admin-sidebar-item" data-teacher-panel="gallery"><i class="fas fa-images"></i><span>Gallery</span></div>
-      <div class="admin-sidebar-item" data-teacher-panel="aitools"><i class="fas fa-wand-magic"></i><span>AI Tools</span></div>
-      <div class="admin-sidebar-item" data-teacher-panel="eschool"><i class="fas fa-video"></i><span>E-School</span></div>
-      <div class="admin-sidebar-item" data-teacher-panel="calendar"><i class="fas fa-calendar-alt"></i><span>Calendar</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="gallery"><i class="fas fa-images"></i><span data-i18n="gallery">Gallery</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="aitools"><i class="fas fa-wand-magic"></i><span data-i18n="aitools">AI Tools</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="eschool"><i class="fas fa-video"></i><span data-i18n="eschool">E-School</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="calendar"><i class="fas fa-calendar-alt"></i><span data-i18n="calendar">Calendar</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="handwritingocr"><i class="fas fa-pen"></i><span data-i18n="handwritingocr">Handwriting OCR</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="teacherexams"><i class="fas fa-file-word"></i><span data-i18n="teacherexams">Upload Exam</span></div>
+      <div class="admin-sidebar-item" data-teacher-panel="tchconferences"><i class="fas fa-handshake"></i><span>PT Conferences</span></div>
     </div>
     <div class="admin-content">
+      <div class="sub-banner"></div>
 
       <!-- Teacher Dashboard Panel -->
       <div class="admin-panel active" id="teacher-dashboard">
@@ -1068,6 +1102,21 @@ if ('serviceWorker' in navigator) {
         <div class="card"><div id="tchCalendarView"></div></div>
       </div>
 
+      <!-- Teacher Handwriting OCR -->
+      <div class="admin-panel" id="teacher-handwritingocr">
+        <div id="tchHandwritingOCR"></div>
+      </div>
+
+      <!-- Teacher Upload Exam Questions -->
+      <div class="admin-panel" id="teacher-teacherexams">
+        <div id="tchTeacherExams"></div>
+      </div>
+
+      <!-- Teacher PT Conferences -->
+      <div class="admin-panel" id="teacher-tchconferences">
+        <div id="tchConferencesView"></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1099,6 +1148,7 @@ if ('serviceWorker' in navigator) {
         <label>Password</label>
         <input type="password" id="parentLoginPass" placeholder="Enter your password">
       </div>
+      <div id="parentDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — using <strong>robert@example.com</strong> / <strong>parent123</strong></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="parentLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
       <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Demo: robert@example.com / parent123</p>
     </div>
@@ -1129,6 +1179,7 @@ if ('serviceWorker' in navigator) {
     </div>
   </div>
   <div class="student-layout">
+    <div class="sub-banner"></div>
     <div style="margin-bottom:24px;">
       <h2 style="font-size:24px;font-weight:700;color:var(--primary);">My Children</h2>
       <p style="color:var(--text-light);">Overview of your children's academic progress</p>
@@ -1233,6 +1284,12 @@ if ('serviceWorker' in navigator) {
 <script src="js/alumni.js"></script>
 <script src="js/eduverse.js"></script>
 <script src="js/schoolprofile.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="js/handwriting-ocr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script src="js/teacher-upload.js"></script>
+<script src="js/subscription.js"></script>
+<script src="js/offline-sync.js"></script>
 <script src="js/app.js"></script>
 <script>
 // Initialize landing page gallery on load

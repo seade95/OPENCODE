@@ -144,7 +144,7 @@ test.describe('Teacher Portal', () => {
     await page.fill('#teacherLoginPass', 'teacher123');
     await page.click('button:has-text("Sign In")');
 
-    await expect(page.locator('text=Grade 10A')).toBeVisible();
+    await expect(page.locator('text=Basic 5A')).toBeVisible();
     await expect(page.locator('text=Assignments')).toBeVisible();
     await expect(page.locator('text=Timetable')).toBeVisible();
   });

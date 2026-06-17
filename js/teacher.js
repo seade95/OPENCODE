@@ -4,12 +4,15 @@
 function renderTeacherPortal() {
   if (!currentTeacher) return;
   switchTeacherPanel('dashboard');
-  renderTeacherDashboard();
   renderTeacherAssignments();
   renderTeacherRoster();
   if (typeof renderGalleryView === 'function') renderGalleryView('tchGalleryView');
   if (typeof renderAITools === 'function') renderAITools();
+  if (typeof renderSubscriptionBanner === 'function') renderSubscriptionBanner();
   if (typeof applyTranslations === 'function') applyTranslations();
+  // Show current term in teacher header
+  var tchBadge = document.getElementById('tchTermBadgeText');
+  if (tchBadge) tchBadge.textContent = data.currentTerm || 'No term';
 }
 
 function renderTeacherDashboard() {

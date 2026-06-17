@@ -98,6 +98,7 @@ function recordGatewayTransaction(amount, method, reference, gateway) {
     f.paid += pay;
     remaining -= pay;
     f.status = f.paid >= f.amount ? 'paid' : 'partial';
+    f.lastPaymentDate = new Date().toISOString().split('T')[0];
   });
   saveData();
   logActivity('Gateway payment: ' + amount + ' via ' + gateway + ' (Ref: ' + reference + ')');

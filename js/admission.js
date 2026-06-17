@@ -289,7 +289,7 @@ function seedExamQuestions() {
           { q: 'Who discovered penicillin?', opts: ['Louis Pasteur', 'Alexander Fleming', 'Joseph Lister', 'Robert Koch'], ans: 1 },
           { q: 'What year did World War II end?', opts: ['1943', '1944', '1945', '1946'], ans: 2 },
           { q: 'Who was the first person to walk on the moon?', opts: ['Buzz Aldrin', 'Neil Armstrong', 'Yuri Gagarin', 'John Glenn'], ans: 1 },
-          { q: 'What was the Cold War?', opts: ['Physical war', 'Tension between US and USSR', ['Trade war', 'Religious conflict'], ans: 1 },
+          { q: 'What was the Cold War?', opts: ['Physical war', 'Tension between US and USSR', 'Trade war', 'Religious conflict'], ans: 1 },
           { q: 'Who was Martin Luther King Jr.?', opts: ['President', 'Civil rights leader', 'Inventor', 'Writer'], ans: 1 },
           { q: 'What is the oldest civilization?', opts: ['Greek', 'Roman', 'Mesopotamian', 'Egyptian'], ans: 2 },
           { q: 'What year did the French Revolution begin?', opts: ['1776', '1789', '1799', '1804'], ans: 1 },
@@ -330,14 +330,14 @@ function seedExamQuestions() {
           { q: 'What year did the Korean War begin?', opts: ['1948', '1950', '1952', '1954'], ans: 1 },
           { q: 'What was the League of Nations?', opts: ['Military alliance', 'Predecessor to UN', 'European union', 'Trade bloc'], ans: 1 },
           { q: 'Who was the last Emperor of China?', opts: ['Kangxi', 'Puyi', 'Qianlong', 'Hongwu'], ans: 1 },
-          { q: 'What was the Cuban Missile Crisis?', opts: ['Nuclear war', 'US-Soviet confrontation', ['Trade dispute', 'Civil war'], ans: 1 },
+          { q: 'What was the Cuban Missile Crisis?', opts: ['Nuclear war', 'US-Soviet confrontation', 'Trade dispute', 'Civil war'], ans: 1 },
           { q: 'Who founded the Mongol Empire?', opts: ['Kublai Khan', 'Genghis Khan', 'Attila', 'Tamerlane'], ans: 1 },
           { q: 'What was the Reformation?', opts: ['Catholic reform', 'Protestant religious movement', 'Monastic movement', 'Artistic movement'], ans: 1 }
         ],
         Arts: [
           { q: 'What primary colors make green?', opts: ['Red+Blue', 'Blue+Yellow', 'Red+Yellow', 'Black+White'], ans: 1 },
           { q: 'Who painted the Mona Lisa?', opts: ['Michelangelo', 'Leonardo da Vinci', 'Raphael', 'Donatello'], ans: 1 },
-          { q: 'What is a palette in painting?', opts: ['Type of paint', 'Surface for mixing colors', ['Brush type', 'Canvas type'], ans: 1 },
+          { q: 'What is a palette in painting?', opts: ['Type of paint', 'Surface for mixing colors', 'Brush type', 'Canvas type'], ans: 1 },
           { q: 'What is perspective in art?', opts: ['Color choice', '3D depth on 2D surface', 'Subject matter', 'Brush technique'], ans: 1 },
           { q: 'Who painted The Starry Night?', opts: ['Pablo Picasso', 'Vincent van Gogh', 'Claude Monet', 'Salvador Dali'], ans: 1 },
           { q: 'What is sculpture?', opts: ['2D drawing', '3D artwork', 'Painting', 'Print'], ans: 1 },
@@ -348,7 +348,7 @@ function seedExamQuestions() {
           { q: 'What is a still life?', opts: ['Living model painting', 'Inanimate objects painting', 'Landscape', 'Portrait'], ans: 1 },
           { q: 'What is abstract art?', opts: ['Realistic representation', 'Non-representational art', 'Portrait art', 'Nature art'], ans: 1 },
           { q: 'Who is known as the Father of Modern Art?', opts: ['Picasso', 'Cézanne', 'Monet', 'Van Gogh'], ans: 1 },
-          { q: 'What is a canvas?', opts: ['Paint type', 'Surface for painting', ['Brush', 'Easel'], ans: 1 },
+          { q: 'What is a canvas?', opts: ['Paint type', 'Surface for painting', 'Brush', 'Easel'], ans: 1 },
           { q: 'What is impressionism?', opts: ['Detailed realism', 'Capturing light/impression', 'Abstract forms', 'Geometric shapes'], ans: 1 },
           { q: 'What is a mosaic?', opts: ['Single material', 'Image from small pieces', 'Drawing', 'Print'], ans: 1 },
           { q: 'Who painted The Persistence of Memory?', opts: ['Picasso', 'Salvador Dali', 'Magritte', 'Monet'], ans: 1 },
@@ -356,8 +356,8 @@ function seedExamQuestions() {
           { q: 'What is a lithograph?', opts: ['Oil painting', 'Print from stone/metal', 'Drawing', 'Sculpture'], ans: 1 },
           { q: 'What is surrealism?', opts: ['Realistic art', 'Dream-like art', 'Geometric art', 'Nature art'], ans: 1 },
           { q: 'Who painted The Scream?', opts: ['Van Gogh', 'Edvard Munch', 'Picasso', 'Klimt'], ans: 1 },
-          { q: 'What is a landscape in art?', opts: ['City view', 'Natural scenery painting', 'Portrait', ['Abstract'], ans: 1 },
-          { q: 'What is a medium in art?', opts: ['Art size', 'Material used', ['Subject', 'Style'], ans: 1 },
+          { q: 'What is a landscape in art?', opts: ['City view', 'Natural scenery painting', 'Portrait', 'Abstract'], ans: 1 },
+          { q: 'What is a medium in art?', opts: ['Art size', 'Material used', 'Subject', 'Style'], ans: 1 },
           { q: 'What is cubism?', opts: ['Realistic portraits', 'Geometric fragmented forms', 'Impressionist style', 'Abstract expression'], ans: 1 },
           { q: 'Who co-founded Cubism?', opts: ['Van Gogh+Monet', 'Picasso+Braque', 'Dali+Magritte', 'Pollock+Warhol'], ans: 1 },
           { q: 'What is an easel?', opts: ['Paint type', 'Stand for canvas', 'Brush', 'Palette'], ans: 1 },
@@ -371,12 +371,12 @@ function seedExamQuestions() {
           { q: 'Who is known for pop art?', opts: ['Picasso', 'Andy Warhol', 'Monet', 'Rembrandt'], ans: 1 },
           { q: 'What is a nude in art?', opts: ['Clothed figure', 'Unclothed human figure', 'Animal', 'Still life'], ans: 1 },
           { q: 'What is a museum?', opts: ['Art store', 'Institution displaying art', 'Studio', 'Gallery shop'], ans: 1 },
-          { q: 'What is a masterpiece?', opts: ['Student work', 'Great work of art', ['Copy', 'Sketch'], ans: 1 },
+          { q: 'What is a masterpiece?', opts: ['Student work', 'Great work of art', 'Copy', 'Sketch'], ans: 1 },
           { q: 'What is a sketch?', opts: ['Finished painting', 'Rough drawing', 'Sculpture', 'Print'], ans: 1 },
           { q: 'What is an art movement?', opts: ['Physical movement', 'Style/trend in art period', 'Art class', 'Exhibition type'], ans: 1 },
           { q: 'What is Baroque art?', opts: ['Simple style', 'Ornate/dramatic style (1600-1750)', 'Minimalist style', 'Modern style'], ans: 1 },
           { q: 'What is a commission in art?', opts: ['Art sale', 'Request for custom artwork', 'Exhibition fee', 'Art competition'], ans: 1 },
-          { q: 'What is a palette knife?', opts: ['Eating utensil', 'Tool for mixing/applying paint', ['Sculpture tool', 'Drawing tool'], ans: 1 },
+          { q: 'What is a palette knife?', opts: ['Eating utensil', 'Tool for mixing/applying paint', 'Sculpture tool', 'Drawing tool'], ans: 1 },
           { q: 'What is an art critic?', opts: ['Artist', 'Person evaluating art', 'Collector', 'Curator'], ans: 1 },
           { q: 'What is aesthetics?', opts: ['Art technique', 'Philosophy of beauty', 'Color theory', 'Art history'], ans: 1 },
           { q: 'What is a triptych?', opts: ['Single panel', 'Three-panel artwork', 'Diptych', 'Polyptych'], ans: 1 },
@@ -431,7 +431,7 @@ function seedExamQuestions() {
           { q: 'What is a product?', opts: ['Service only', 'Good or service offered for sale', 'Manufacturing process', 'Packaging'], ans: 1 },
           { q: 'What is a service business?', opts: ['Sells physical goods', 'Provides intangible services', 'Manufacturing', 'Agriculture'], ans: 1 },
           { q: 'What is a wholesale?', opts: ['Selling to consumers', 'Selling in bulk to retailers', 'Retail sales', 'Online selling'], ans: 1 },
-          { q: 'What is retail?', opts: ['Bulk selling', 'Selling directly to consumers', ['Manufacturing', 'Distribution'], ans: 1 },
+          { q: 'What is retail?', opts: ['Bulk selling', 'Selling directly to consumers', 'Manufacturing', 'Distribution'], ans: 1 },
           { q: 'What is quality control?', opts: ['Price setting', 'Ensuring product standards', 'Marketing', 'Distribution'], ans: 1 },
           { q: 'What is a business license?', opts: ['Product patent', 'Legal permission to operate', 'Tax ID', 'Insurance'], ans: 1 },
           { q: 'What is branding?', opts: ['Product creation', 'Creating unique identity for product', 'Logo design only', 'Advertising'], ans: 1 },
@@ -453,14 +453,14 @@ function seedExamQuestions() {
           { q: 'What is opportunity cost?', opts: ['Production cost', 'Value of next best alternative forgone', 'Total cost', 'Marginal cost'], ans: 1 },
           { q: 'What is a market economy?', opts: ['Government controlled', 'Decentralized decisions by consumers/producers', 'Planned economy', 'Traditional economy'], ans: 1 },
           { q: 'What is unemployment?', opts: ['Full employment', 'People without jobs seeking work', 'Retirement', 'Underemployment'], ans: 1 },
-          { q: 'What is a tax?', opts: ['Voluntary payment', 'Compulsory payment to government', ['Donation', 'Fine'], ans: 1 },
+          { q: 'What is a tax?', opts: ['Voluntary payment', 'Compulsory payment to government', 'Donation', 'Fine'], ans: 1 },
           { q: 'What is a bank?', opts: ['Government agency', 'Financial institution accepting deposits', 'Investment fund', 'Insurance company'], ans: 1 },
           { q: 'What is interest rate?', opts: ['Tax rate', 'Cost of borrowing money', 'Exchange rate', 'Inflation rate'], ans: 1 },
           { q: 'What is a recession?', opts: ['Economic growth', 'Economic decline for two+ quarters', 'Stable economy', 'Inflation period'], ans: 1 },
           { q: 'What is international trade?', opts: ['Domestic trade', 'Exchange across national borders', 'Local market', 'Online trading'], ans: 1 },
           { q: 'What is microeconomics?', opts: ['Whole economy', 'Individual markets/consumers', 'Government policy', 'Global trade'], ans: 1 },
           { q: 'What is macroeconomics?', opts: ['Individual firms', 'Economy as a whole', 'Consumer behavior', 'Market structure'], ans: 1 },
-          { q: 'What is a central bank?', opts: ['Commercial bank', 'Nation\'s monetary authority', ['Investment bank', 'Savings bank'], ans: 1 },
+          { q: 'What is a central bank?', opts: ['Commercial bank', 'Nation\'s monetary authority', 'Investment bank', 'Savings bank'], ans: 1 },
           { q: 'What is fiscal policy?', opts: ['Money supply control', 'Government spending/taxation policy', 'Trade policy', 'Labor policy'], ans: 1 },
           { q: 'What is monetary policy?', opts: ['Government spending', 'Central bank controlling money supply', 'Tax policy', 'Trade regulation'], ans: 1 },
           { q: 'What is the law of supply?', opts: ['Price up, supply down', 'Price up, supply up', 'No relation', 'Price equals supply'], ans: 1 },
@@ -471,8 +471,8 @@ function seedExamQuestions() {
           { q: 'What is a bond?', opts: ['Stock certificate', 'Debt investment', 'Insurance policy', 'Bank account'], ans: 1 },
           { q: 'What is a trade deficit?', opts: ['Exports > imports', 'Imports > exports', 'Balanced trade', 'No trade'], ans: 1 },
           { q: 'What is a progressive tax?', opts: ['Same rate all', 'Higher rate for higher income', 'Lower rate for higher income', 'No tax'], ans: 1 },
-          { q: 'What is a mixed economy?', opts: ['Only government', 'Government + market elements', 'Only market', ['Traditional'], ans: 1 },
-          { q: 'What is productivity?', opts: ['Total output', 'Output per unit of input', ['Profit', 'Revenue'], ans: 1 },
+          { q: 'What is a mixed economy?', opts: ['Only government', 'Government + market elements', 'Only market', 'Traditional'], ans: 1 },
+          { q: 'What is productivity?', opts: ['Total output', 'Output per unit of input', 'Profit', 'Revenue'], ans: 1 },
           { q: 'What is capital?', opts: ['Money only', 'Goods used for production', 'Labor force', 'Land'], ans: 1 },
           { q: 'What is labor?', opts: ['Management', 'Human effort in production', 'Machinery', 'Natural resources'], ans: 1 },
           { q: 'What is a monopoly?', opts: ['Competition', 'Single seller, no substitutes', 'Many sellers', 'Oligopoly'], ans: 1 },
@@ -484,7 +484,7 @@ function seedExamQuestions() {
           { q: 'What is national debt?', opts: ['Personal loan', 'Total government borrowing', 'Corporate debt', 'Foreign debt'], ans: 1 },
           { q: 'What is a tariff?', opts: ['Subsidy', 'Tax on imported goods', 'Export tax', 'Sales tax'], ans: 1 },
           { q: 'What is comparative advantage?', opts: ['Absolute efficiency', 'Lower opportunity cost in production', 'Higher output', 'More resources'], ans: 1 },
-          { q: 'What is a business cycle?', opts: ['Annual cycle', 'Economic expansion/contraction pattern', ['Fiscal year', 'Production cycle'], ans: 1 },
+          { q: 'What is a business cycle?', opts: ['Annual cycle', 'Economic expansion/contraction pattern', 'Fiscal year', 'Production cycle'], ans: 1 },
           { q: 'What is stagflation?', opts: ['Growth + low inflation', 'Stagnation + high inflation', 'Recession + deflation', 'Boom'], ans: 1 },
           { q: 'What is a laissez-faire economy?', opts: ['Government-controlled', 'Minimal government intervention', 'Mixed economy', 'Planned economy'], ans: 1 },
           { q: 'What is a commodity?', opts: ['Manufactured good', 'Raw material/primary product', 'Service', 'Technology'], ans: 1 },
@@ -597,7 +597,7 @@ function seedExamQuestions() {
           { q: 'What is a lens?', opts: ['Mirror', 'Transparent material focusing light', 'Prism', 'Filter'], ans: 1 },
           { q: 'What is a spectrometer?', opts: ['Measures time', 'Measures light spectrum', 'Measures distance', 'Measures mass'], ans: 1 },
           { q: 'What is a quark?', opts: ['Atom particle', 'Fundamental particle of matter', 'Molecule', 'Electron'], ans: 1 },
-          { q: 'What is dark matter?', opts: ['Visible matter', 'Invisible matter with gravitational effects', ['Antimatter', 'Regular matter'], ans: 1 },
+          { q: 'What is dark matter?', opts: ['Visible matter', 'Invisible matter with gravitational effects', 'Antimatter', 'Regular matter'], ans: 1 },
           { q: 'What is a black hole?', opts: ['Empty space', 'Region with extreme gravity, light cannot escape', 'Dark star', 'Nebula'], ans: 1 },
           { q: 'What is relativity?', opts: ['Absolute motion', 'Physics same in all inertial frames', 'Constant speed principle', 'Energy conservation'], ans: 1 },
           { q: 'What is a superconductor?', opts: ['Good conductor', 'Zero electrical resistance below critical temperature', 'Insulator', 'Semiconductor'], ans: 1 },
@@ -705,9 +705,9 @@ function seedExamQuestions() {
           { q: 'What is a graph in CS?', opts: ['Chart', 'Nodes and edges data structure', 'Tree', 'Array'], ans: 1 },
           { q: 'What is a breadth-first search?', opts: ['Depth-first traversal', 'Level-by-level graph traversal', 'Binary search', 'Merge sort'], ans: 1 },
           { q: 'What is polymorphism?', opts: ['Single form', 'Same interface, different implementations', 'Same type', 'One class'], ans: 1 },
-          { q: 'What is inheritance in OOP?', opts: ['Copying code', 'Class acquiring properties of another', ['Import', 'Encapsulation'], ans: 1 },
+          { q: 'What is inheritance in OOP?', opts: ['Copying code', 'Class acquiring properties of another', 'Import', 'Encapsulation'], ans: 1 },
           { q: 'What is encapsulation?', opts: ['Public data', 'Hiding internal state, requiring methods', 'Global variables', 'Direct access'], ans: 1 },
-          { q: 'What is abstraction?', opts: ['Full details', 'Hiding complexity, showing essentials', ['Concrete implementation', 'Low-level code'], ans: 1 }
+          { q: 'What is abstraction?', opts: ['Full details', 'Hiding complexity, showing essentials', 'Concrete implementation', 'Low-level code'], ans: 1 }
         ]
       }
     },
@@ -730,7 +730,7 @@ function seedExamQuestions() {
           { q: 'What is movement in art?', opts: ['Physical move', 'Visual flow guiding eye', 'Animation', 'Kinetic art'], ans: 1 },
           { q: 'What is rhythm in art?', opts: ['Musical rhythm', 'Repeated visual elements', 'Pattern', 'Texture'], ans: 1 },
           { q: 'What is texture in art?', opts: ['Color quality', 'Surface quality feel/appearance', 'Shape', 'Line'], ans: 1 },
-          { q: 'What is value in art?', opts: ['Monetary worth', 'Lightness or darkness of color', ['Color intensity', 'Saturation'], ans: 1 },
+          { q: 'What is value in art?', opts: ['Monetary worth', 'Lightness or darkness of color', 'Color intensity', 'Saturation'], ans: 1 },
           { q: 'What is a hue?', opts: ['Brightness', 'Pure color name', 'Value', 'Saturation'], ans: 1 },
           { q: 'What is saturation?', opts: ['Lightness', 'Color intensity/purity', 'Darkness', 'Opacity'], ans: 1 },
           { q: 'What is analogous color?', opts: ['Opposite colors', 'Adjacent colors on color wheel', 'Complementary', 'Triadic'], ans: 1 },
@@ -763,9 +763,9 @@ function seedExamQuestions() {
           { q: 'What is an art gallery?', opts: ['Studio', 'Space displaying artworks', 'Store', 'Workshop'], ans: 1 },
           { q: 'What is a museum?', opts: ['Temporary exhibition', 'Institution preserving/displaying art', 'Private collection', 'Art fair'], ans: 1 },
           { q: 'What is a biennial?', opts: ['Annual event', 'Art exhibition every two years', 'Monthly event', 'Weekly event'], ans: 1 },
-          { q: 'What is a masterpiece?', opts: ['Average work', 'Outstanding work of art', ['Student work', 'Copy'], ans: 1 },
+          { q: 'What is a masterpiece?', opts: ['Average work', 'Outstanding work of art', 'Student work', 'Copy'], ans: 1 },
           { q: 'What is a sketch?', opts: ['Finished work', 'Preliminary rough drawing', 'Sculpture', 'Print'], ans: 1 },
-          { q: 'What is art criticism?', opts: ['Art creation', 'Evaluation and interpretation of art', ['Art selling', 'Art collecting'], ans: 1 }
+          { q: 'What is art criticism?', opts: ['Art creation', 'Evaluation and interpretation of art', 'Art selling', 'Art collecting'], ans: 1 }
         ]
       }
     }
@@ -1273,44 +1273,210 @@ function renderExamResult(attempt) {
 }
 
 // ===== ADMIN: PROGRAMS =====
+var _programSearchQuery = '';
+
 function renderPrograms() {
-  const container = document.getElementById('adminPrograms');
+  var container = document.getElementById('adminPrograms');
   if (!container) return;
-  const programs = data.admissionPrograms || [];
-  container.innerHTML = `
-    <div class="table-responsive">
-      <table><thead><tr><th>Program</th><th>Academic Duration</th><th>Exam Time</th><th>Tuition</th><th>Requirements</th><th>Subjects</th><th>Actions</th></tr></thead>
-      <tbody>${programs.map(p => `<tr>
-        <td><strong>${htmlEscape(p.name)}</strong></td>
-        <td>${htmlEscape(p.duration)}</td>
-        <td style="font-weight:600;color:var(--primary);">${p.examDuration || 30} min</td>
-        <td>₦${(+p.fee).toLocaleString()}</td>
-        <td>${p.requirements.length} items</td>
-        <td>${htmlEscape(p.subjects.join(', '))}</td>
-        <td><button class="btn btn-sm btn-danger" onclick="deleteProgram('${p.id}')"><i class="fas fa-trash"></i></button></td>
-      </tr>`).join('')}</tbody>
-    </table></div>
-    ${programs.length ? '' : '<div class="empty-state"><i class="fas fa-book"></i><p>No programs created yet</p></div>'}
-  `;
+  var programs = data.admissionPrograms || [];
+  var query = _programSearchQuery.toLowerCase().trim();
+  if (query) programs = programs.filter(function(p) { return p.name.toLowerCase().indexOf(query) >= 0 || p.description.toLowerCase().indexOf(query) >= 0 || p.subjects.some(function(s) { return s.toLowerCase().indexOf(query) >= 0; }); });
+
+  var html =
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">' +
+    '<div style="flex:1;min-width:180px;position:relative;">' +
+    '<i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:13px;"></i>' +
+    '<input type="text" id="programSearchInput" placeholder="Search programs..." value="' + htmlEscape(_programSearchQuery) + '" oninput="_programSearchQuery=this.value;renderPrograms()" style="width:100%;padding:10px 14px 10px 36px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:14px;">' +
+    '</div>' +
+    '<button class="btn btn-primary btn-sm" onclick="showAddProgramModal()"><i class="fas fa-plus"></i> Add Program</button>' +
+    '<button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="seedDefaultPrograms()"><i class="fas fa-database"></i> Seed Default</button>' +
+    '<button class="btn btn-sm btn-outline" onclick="showImportProgramsModal()" style="border-color:var(--text-light);color:var(--text);"><i class="fas fa-upload"></i> Import</button>' +
+    '</div>' +
+    '<div style="font-size:13px;color:var(--text-light);margin-bottom:8px;">' + programs.length + ' program(s)' + (query ? ' matching "' + htmlEscape(query) + '"' : '') + '</div>';
+
+  if (!programs.length) {
+    html += '<div class="empty-state"><i class="fas fa-book"></i><p>' + (query ? 'No programs match your search' : 'No admission programs created yet') + '</p></div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;">';
+  programs.forEach(function(p) {
+    var examCount = (data.examQuestions || []).filter(function(q) { return q.programId === p.id; }).length;
+    var appCount = (data.applications || []).filter(function(a) { return a.programId === p.id; }).length;
+    html +=
+      '<div class="card" style="padding:16px;border-top:3px solid var(--primary);">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+      '<div style="flex:1;">' +
+      '<h4 style="font-weight:700;font-size:15px;margin-bottom:2px;">' + htmlEscape(p.name) + '</h4>' +
+      '<p style="font-size:12px;color:var(--text-light);margin-bottom:8px;">' + htmlEscape(p.description) + '</p>' +
+      '</div>' +
+      '<div style="display:flex;gap:4px;flex-shrink:0;">' +
+      '<button class="btn btn-sm btn-primary" style="padding:4px 8px;font-size:11px;" onclick="showEditProgramModal(\'' + p.id + '\')" title="Edit"><i class="fas fa-edit"></i></button>' +
+      '<button class="btn btn-sm btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteProgram(\'' + p.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>' +
+      '</div>' +
+      '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;font-size:12px;">' +
+      '<span class="badge" style="background:#bee3f8;color:#2b6cb0;"><i class="fas fa-clock"></i> ' + htmlEscape(p.duration) + '</span>' +
+      '<span class="badge" style="background:#fefcbf;color:#744210;"><i class="fas fa-timer"></i> ' + (p.examDuration || 30) + ' min exam</span>' +
+      '<span class="badge" style="background:#c6f6d5;color:#22543d;"><i class="fas fa-naira-sign"></i> ₦' + Number(p.fee).toLocaleString() + '/term</span>' +
+      '<span class="badge" style="background:#e9d8fd;color:#553c9a;"><i class="fas fa-question-circle"></i> ' + examCount + ' questions</span>' +
+      '<span class="badge" style="background:#fed7d7;color:#9b2c2c;"><i class="fas fa-users"></i> ' + appCount + ' applicants</span>' +
+      '</div>' +
+      '<div style="font-size:12px;margin-top:4px;">' +
+      '<strong>Subjects:</strong> ' + htmlEscape(p.subjects.join(', ')) +
+      '</div>' +
+      (p.requirements.length ? '<div style="font-size:12px;margin-top:4px;"><strong>Requirements:</strong> ' + p.requirements.map(function(r) { return '<span class="badge" style="background:#e2e8f0;color:#2d3748;font-size:10px;margin:1px;">' + htmlEscape(r) + '</span>'; }).join(' ') + '</div>' : '') +
+      '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function showImportProgramsModal() {
+  openModal(
+    '<h3><i class="fas fa-upload"></i> Import Admission Programs</h3>' +
+    '<div style="margin:16px 0;">' +
+    '<p style="font-size:13px;color:var(--text-light);margin-bottom:8px;">Paste JSON array or select a JSON file. Each program object should have: <code>name, description, duration, fee, examDuration, subjects[], requirements[]</code></p>' +
+    '<textarea id="fImportProgramsData" rows="8" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;" placeholder=\'[{"name":"Science","description":"...","duration":"6 years","fee":350000,"examDuration":45,"subjects":["Maths","English"],"requirements":["Exam 60%+"]}]\'></textarea>' +
+    '<div style="margin-top:8px;"><input type="file" id="fImportProgramsFile" accept=".json,.csv" onchange="_previewImportFile(this,\'fImportProgramsData\')" style="font-size:13px;"></div>' +
+    '<p style="font-size:12px;color:var(--text-light);margin-top:8px;"><i class="fas fa-info-circle"></i> CSV format: name,description,duration,fee,examDuration,subjects (pipe-separated),requirements (pipe-separated)</p>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="importProgramsFromData()"><i class="fas fa-upload"></i> Import</button></div>'
+  );
+}
+
+function importProgramsFromData() {
+  var raw = document.getElementById('fImportProgramsData')?.value?.trim();
+  if (!raw) { toast('Paste data or select a file first', 'error'); return; }
+  var parsed;
+  try { parsed = JSON.parse(raw); } catch(e) {}
+  if (!parsed && raw.indexOf(',') > 0) {
+    parsed = [];
+    var lines = raw.split('\n').filter(Boolean);
+    if (lines.length > 1) {
+      var headers = lines[0].split(',').map(function(h) { return h.trim().toLowerCase(); });
+      for (var i = 1; i < lines.length; i++) {
+        var vals = lines[i].split(',').map(function(v) { return v.trim(); });
+        var obj = {};
+        headers.forEach(function(h, idx) {
+          if (idx < vals.length) obj[h] = vals[idx];
+        });
+        if (obj.name) parsed.push(obj);
+      }
+    }
+  }
+  if (!parsed || !Array.isArray(parsed)) { toast('Could not parse data. Use valid JSON array.', 'error'); return; }
+  var count = 0;
+  parsed.forEach(function(p) {
+    if (!p.name) return;
+    if (!data.admissionPrograms.some(function(x) { return x.name === p.name; })) {
+      data.admissionPrograms.push({
+        id: genId('PG'),
+        name: p.name,
+        description: p.description || '',
+        duration: p.duration || '1 year',
+        fee: parseFloat(p.fee) || 0,
+        examDuration: parseInt(p.examDuration) || 30,
+        subjects: (typeof p.subjects === 'string' ? p.subjects.split('|') : p.subjects || []).map(function(s) { return s.trim(); }).filter(Boolean),
+        requirements: (typeof p.requirements === 'string' ? p.requirements.split('|') : p.requirements || []).map(function(r) { return r.trim(); }).filter(Boolean)
+      });
+      count++;
+    }
+  });
+  saveData();
+  closeModal();
+  renderPrograms();
+  toast('Imported ' + count + ' program(s)');
+}
+
+function showImportQuestionsModal() {
+  var programs = data.admissionPrograms || [];
+  var opts = programs.map(function(p) { return '<option value="' + p.id + '">' + htmlEscape(p.name) + '</option>'; }).join('');
+  openModal(
+    '<h3><i class="fas fa-upload"></i> Import Exam Questions</h3>' +
+    '<div style="margin:16px 0;">' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Target Program</label><select id="fImportQProgram">' + opts + '</select></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>JSON Data</label><textarea id="fImportQuestionsData" rows="8" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-family:monospace;font-size:12px;resize:vertical;box-sizing:border-box;" placeholder=\'[{"question":"What is 2+2?","options":["3","4","5","6"],"answer":1}]\'></textarea></div>' +
+    '<div style="margin-top:8px;"><input type="file" id="fImportQuestionsFile" accept=".json,.csv" onchange="_previewImportFile(this,\'fImportQuestionsData\')" style="font-size:13px;"></div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="importQuestionsFromData()"><i class="fas fa-upload"></i> Import</button></div>'
+  );
+}
+
+function importQuestionsFromData() {
+  var raw = document.getElementById('fImportQuestionsData')?.value?.trim();
+  var programId = document.getElementById('fImportQProgram')?.value;
+  if (!raw) { toast('Paste data or select a file first', 'error'); return; }
+  if (!programId) { toast('Select a target program', 'error'); return; }
+  var parsed;
+  try { parsed = JSON.parse(raw); } catch(e) {}
+  if (!parsed) { toast('Could not parse data. Use valid JSON array.', 'error'); return; }
+  if (!Array.isArray(parsed)) { toast('Data must be a JSON array of questions', 'error'); return; }
+  var count = 0;
+  parsed.forEach(function(q) {
+    if (!q.question || !q.options || !Array.isArray(q.options) || q.options.length < 2) return;
+    if (data.examQuestions.some(function(x) { return x.question === q.question && x.programId === programId; })) return;
+    data.examQuestions.push({
+      id: genId('EQ'),
+      programId: programId,
+      question: q.question,
+      options: q.options.slice(0, 4),
+      answer: typeof q.answer === 'number' ? q.answer : 0
+    });
+    count++;
+  });
+  saveData();
+  closeModal();
+  renderExamBank();
+  toast('Imported ' + count + ' question(s)');
+}
+
+function _previewImportFile(input, targetTextareaId) {
+  if (!input.files || !input.files.length) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var ta = document.getElementById(targetTextareaId);
+    if (ta) ta.value = e.target.result;
+  };
+  reader.readAsText(file);
 }
 
 function showAddProgramModal() {
-  openModal(`
-    <h3><i class="fas fa-plus-circle"></i> Add Program</h3>
-    <div class="form-grid">
-      <div class="form-group" style="grid-column:1/-1;"><label>Program Name</label><input type="text" id="fPrgName" placeholder="e.g. Science & Technology"></div>
-      <div class="form-group" style="grid-column:1/-1;"><label>Description</label><textarea id="fPrgDesc" rows="2" placeholder="Program description"></textarea></div>
-      <div class="form-group"><label>Duration</label><input type="text" id="fPrgDuration" placeholder="6 years"></div>
-      <div class="form-group"><label>Tuition (per term)</label><input type="number" id="fPrgFee" placeholder="350000"></div>
-      <div class="form-group"><label>Exam Time (minutes)</label><input type="number" id="fPrgExamTime" value="30" min="5" max="180" style="font-weight:600;"></div>
-      <div class="form-group" style="grid-column:1/-1;"><label>Subjects (comma separated)</label><input type="text" id="fPrgSubjects" placeholder="Math, English, Science"></div>
-      <div class="form-group" style="grid-column:1/-1;"><label>Requirements (one per line)</label><textarea id="fPrgReqs" rows="3" placeholder="Pass Entrance Exam (60%+)&#10;Age 10-15&#10;Previous school report"></textarea></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()" style="color:var(--text);border-color:#e2e8f0;">Cancel</button>
-      <button class="btn btn-primary" onclick="saveProgram()"><i class="fas fa-save"></i> Save</button>
-    </div>
-  `);
+  openModal(
+    '<h3><i class="fas fa-plus-circle"></i> Add Admission Program</h3>' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Program Name</label><input type="text" id="fPrgName" placeholder="e.g. Science & Technology"></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Description</label><textarea id="fPrgDesc" rows="2" placeholder="Program description"></textarea></div>' +
+    '<div class="form-group"><label>Duration</label><input type="text" id="fPrgDuration" placeholder="6 years"></div>' +
+    '<div class="form-group"><label>Tuition (per term, ₦)</label><input type="number" id="fPrgFee" placeholder="350000"></div>' +
+    '<div class="form-group"><label>Exam Time (minutes)</label><input type="number" id="fPrgExamTime" value="30" min="5" max="180" style="font-weight:600;"></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Subjects (comma separated)</label><input type="text" id="fPrgSubjects" placeholder="Mathematics, English, Science"></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Requirements (one per line)</label><textarea id="fPrgReqs" rows="3" placeholder="Pass Entrance Exam (60%+)&#10;Age 10-15&#10;Previous school report"></textarea></div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()" style="color:var(--text);border-color:#e2e8f0;">Cancel</button><button class="btn btn-primary" onclick="saveProgram()"><i class="fas fa-save"></i> Save</button></div>'
+  );
+}
+
+function showEditProgramModal(id) {
+  var p = data.admissionPrograms.find(function(pr) { return pr.id === id; });
+  if (!p) return;
+  openModal(
+    '<h3><i class="fas fa-edit"></i> Edit Program: ' + htmlEscape(p.name) + '</h3>' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Program Name</label><input type="text" id="fPrgName" value="' + htmlEscape(p.name) + '"></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Description</label><textarea id="fPrgDesc" rows="2">' + htmlEscape(p.description || '') + '</textarea></div>' +
+    '<div class="form-group"><label>Duration</label><input type="text" id="fPrgDuration" value="' + htmlEscape(p.duration || '') + '"></div>' +
+    '<div class="form-group"><label>Tuition (per term, ₦)</label><input type="number" id="fPrgFee" value="' + (p.fee || '') + '"></div>' +
+    '<div class="form-group"><label>Exam Time (minutes)</label><input type="number" id="fPrgExamTime" value="' + (p.examDuration || 30) + '" min="5" max="180" style="font-weight:600;"></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Subjects (comma separated)</label><input type="text" id="fPrgSubjects" value="' + htmlEscape((p.subjects || []).join(', ')) + '"></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Requirements (one per line)</label><textarea id="fPrgReqs" rows="3">' + htmlEscape((p.requirements || []).join('\n')) + '</textarea></div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()" style="color:var(--text);border-color:#e2e8f0;">Cancel</button><button class="btn btn-primary" onclick="updateProgram(\'' + id + '\')"><i class="fas fa-save"></i> Update</button></div>'
+  );
 }
 
 function saveProgram() {
@@ -1319,23 +1485,61 @@ function saveProgram() {
   var duration = (document.getElementById('fPrgDuration')?.value ?? '').trim();
   var fee = parseFloat(document.getElementById('fPrgFee')?.value ?? '');
   var examDuration = parseInt(document.getElementById('fPrgExamTime')?.value ?? '') || 30;
-  var subjects = (document.getElementById('fPrgSubjects')?.value ?? '').split(',').map(s => s.trim()).filter(Boolean);
-  var reqs = (document.getElementById('fPrgReqs')?.value ?? '').split('\n').map(s => s.trim()).filter(Boolean);
+  var subjects = (document.getElementById('fPrgSubjects')?.value ?? '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  var reqs = (document.getElementById('fPrgReqs')?.value ?? '').split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
   if (!name || !desc || !duration || !fee || subjects.length === 0 || reqs.length === 0) { toast('Please fill all fields', 'error'); return; }
-  data.admissionPrograms.push({ id: genId('PG'), name, description: desc, duration, fee, requirements: reqs, subjects, examDuration });
+  data.admissionPrograms.push({ id: genId('PG'), name: name, description: desc, duration: duration, fee: fee, requirements: reqs, subjects: subjects, examDuration: examDuration });
   saveData();
   closeModal();
   renderPrograms();
   toast('Program added');
 }
 
+function updateProgram(id) {
+  var p = data.admissionPrograms.find(function(pr) { return pr.id === id; });
+  if (!p) return;
+  p.name = (document.getElementById('fPrgName')?.value ?? '').trim() || p.name;
+  p.description = (document.getElementById('fPrgDesc')?.value ?? '').trim() || p.description;
+  p.duration = (document.getElementById('fPrgDuration')?.value ?? '').trim() || p.duration;
+  p.fee = parseFloat(document.getElementById('fPrgFee')?.value ?? '') || p.fee;
+  p.examDuration = parseInt(document.getElementById('fPrgExamTime')?.value ?? '') || p.examDuration || 30;
+  p.subjects = (document.getElementById('fPrgSubjects')?.value ?? '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  p.requirements = (document.getElementById('fPrgReqs')?.value ?? '').split('\n').map(function(s) { return s.trim(); }).filter(Boolean);
+  saveData();
+  closeModal();
+  renderPrograms();
+  toast('Program updated');
+}
+
 function deleteProgram(id) {
-  if (!confirm('Delete this program? This will also remove related questions.')) return;
-  data.admissionPrograms = data.admissionPrograms.filter(p => p.id !== id);
-  data.examQuestions = data.examQuestions.filter(q => q.programId !== id);
+  if (!confirm('Delete this program and all its exam questions?')) return;
+  data.admissionPrograms = data.admissionPrograms.filter(function(p) { return p.id !== id; });
+  data.examQuestions = data.examQuestions.filter(function(q) { return q.programId !== id; });
   saveData();
   renderPrograms();
   toast('Program deleted');
+}
+
+function seedDefaultPrograms() {
+  if (!confirm('Add default admission programs? This will not replace existing programs.')) return;
+  var defaults = [
+    { name: 'Science & Technology', description: 'Core sciences with advanced mathematics and technology studies', duration: '6 years (JSS1–SSS3)', fee: 350000, examDuration: 45, subjects: ['Mathematics', 'English', 'Physics', 'Chemistry', 'Biology', 'Further Mathematics'], requirements: ['Pass Entrance Exam (60%+)', 'Age 10–15', 'Previous school report', 'Interview'] },
+    { name: 'Commerce & Business', description: 'Business-focused curriculum with accounting and economics', duration: '6 years (JSS1–SSS3)', fee: 300000, examDuration: 30, subjects: ['Mathematics', 'English', 'Economics', 'Accounting', 'Commerce', 'Government'], requirements: ['Pass Entrance Exam (50%+)', 'Age 10–15', 'Previous school report'] },
+    { name: 'Arts & Humanities', description: 'Literature, history, and creative arts with language studies', duration: '6 years (JSS1–SSS3)', fee: 280000, examDuration: 30, subjects: ['English', 'Literature', 'History', 'Government', 'French', 'CRS'], requirements: ['Pass Entrance Exam (50%+)', 'Age 10–15', 'Portfolio (optional)'] },
+    { name: 'STEM Accelerated', description: 'Intensive science and technology program with robotics', duration: '6 years (JSS1–SSS3)', fee: 450000, examDuration: 60, subjects: ['Mathematics', 'English', 'Physics', 'Chemistry', 'Biology', 'Computer Science', 'Robotics'], requirements: ['Pass Entrance Exam (70%+)', 'Age 10–14', 'Previous school report', 'Aptitude test', 'Interview'] },
+    { name: 'Early Years Foundation', description: 'Foundational education for pre-primary and early primary', duration: '3 years (Creche–Reception)', fee: 180000, examDuration: 15, subjects: ['Literacy', 'Numeracy', 'Creative Arts', 'Physical Development', 'Social Skills'], requirements: ['Age 2–5', 'Birth certificate', 'Medical records'] },
+    { name: 'Junior Secondary General', description: 'Comprehensive junior secondary education across all subjects', duration: '3 years (JSS1–JSS3)', fee: 250000, examDuration: 30, subjects: ['Mathematics', 'English', 'Basic Science', 'Social Studies', 'French', 'Computer Studies'], requirements: ['Pass Entrance Exam (40%+)', 'Age 9–13', 'Primary school leaving cert'] },
+  ];
+  var count = 0;
+  defaults.forEach(function(d) {
+    if (!data.admissionPrograms.some(function(p) { return p.name === d.name; })) {
+      data.admissionPrograms.push({ id: genId('PG'), name: d.name, description: d.description, duration: d.duration, fee: d.fee, examDuration: d.examDuration, subjects: d.subjects, requirements: d.requirements });
+      count++;
+    }
+  });
+  saveData();
+  renderPrograms();
+  toast(count + ' default program(s) added');
 }
 
 // ===== ADMIN: APPLICATIONS =====
@@ -1435,59 +1639,106 @@ function viewApplicationDetail(id) {
 var letters = ['A', 'B', 'C', 'D'];
 
 function renderExamBank() {
-  const container = document.getElementById('adminExamBank');
-  const filter = document.getElementById('filterExamProgram');
+  var container = document.getElementById('adminExamBank');
+  var filter = document.getElementById('filterExamProgram');
   if (!container) return;
-  // Populate filter
+  // Populate filter dropdown
   if (filter) {
-    const programs = data.admissionPrograms || [];
-    filter.innerHTML = '<option value="">All Programs</option>' + programs.map(p => `<option value="${p.id}">${htmlEscape(p.name)}</option>`).join('');
-    const sel = filter.value;
+    var programs = data.admissionPrograms || [];
+    var currentVal = filter.value;
+    filter.innerHTML = '<option value="">All Programs</option>' + programs.map(function(p) { return '<option value="' + p.id + '">' + htmlEscape(p.name) + '</option>'; }).join('');
+    filter.value = currentVal || '';
   }
-  const selectedProgram = filter ? filter.value : '';
-  let questions = data.examQuestions || [];
-  if (selectedProgram) questions = questions.filter(q => q.programId === selectedProgram);
-  const programs = data.admissionPrograms || [];
-  container.innerHTML = `
-    <div class="table-responsive">
-      <table><thead><tr><th>#</th><th>Program</th><th>Question</th><th>Options</th><th>Answer</th><th>Actions</th></tr></thead>
-      <tbody>${questions.map((q, i) => {
-        const p = programs.find(pr => pr.id === q.programId);
-        return `<tr>
-          <td>${i + 1}</td>
-          <td>${p ? htmlEscape(p.name) : '--'}</td>
-          <td>${htmlEscape(q.question.length > 50 ? q.question.slice(0, 50) + '...' : q.question)}</td>
-          <td>${q.options.map((o, oi) => `${letters[oi] || (String.fromCharCode(65 + oi))}. ${htmlEscape(o)}`).join('<br>')}</td>
-          <td><span class="badge badge-paid">${letters[q.answer] || q.answer}</span></td>
-          <td><button class="btn btn-sm btn-danger" onclick="deleteQuestion('${q.id}')"><i class="fas fa-trash"></i></button></td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table></div>
-    ${questions.length ? '' : '<div class="empty-state"><i class="fas fa-question-circle"></i><p>No questions for this program</p></div>'}
-  `;
+  var selectedProgram = filter ? filter.value : '';
+  var questions = data.examQuestions || [];
+  if (selectedProgram) questions = questions.filter(function(q) { return q.programId === selectedProgram; });
+
+  // Search across questions
+  var searchInput = document.getElementById('examQSearch');
+  var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  if (query) questions = questions.filter(function(q) { return q.question.toLowerCase().indexOf(query) >= 0 || (q.options || []).some(function(o) { return o.toLowerCase().indexOf(query) >= 0; }); });
+
+  var programs = data.admissionPrograms || [];
+  var totalCount = questions.length;
+
+  var html =
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">' +
+    '<div style="flex:1;min-width:160px;position:relative;">' +
+    '<i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:13px;"></i>' +
+    '<input type="text" id="examQSearch" placeholder="Search questions..." oninput="renderExamBank()" style="width:100%;padding:8px 10px 8px 32px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:13px;">' +
+    '</div>' +
+    '<button class="btn btn-primary btn-sm" onclick="showAddQuestionModal()"><i class="fas fa-plus"></i> Add Question</button>' +
+    '<button class="btn btn-sm" style="background:var(--accent);color:#fff;" onclick="seedQuestionsForProgram()"><i class="fas fa-database"></i> Auto-Seed</button>' +
+    '<button class="btn btn-sm btn-outline" onclick="showImportQuestionsModal()" style="border-color:var(--text-light);color:var(--text);"><i class="fas fa-upload"></i> Import</button>' +
+    '</div>' +
+    '<div style="font-size:13px;color:var(--text-light);margin-bottom:8px;"><strong>' + totalCount + '</strong> question(s)';
+
+  if (selectedProgram) {
+    var pn = programs.find(function(p) { return p.id === selectedProgram; });
+    if (pn) html += ' for <strong>' + htmlEscape(pn.name) + '</strong>';
+  }
+  html += '</div>';
+
+  if (!questions.length) {
+    html += '<div class="empty-state"><i class="fas fa-question-circle"></i><p>' + (query ? 'No questions match your search' : selectedProgram ? 'No questions for this program. Add some or auto-seed.' : 'No exam questions yet') + '</p></div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  html += '<div class="table-responsive"><table><thead><tr><th>#</th><th>Program</th><th>Question</th><th>Options</th><th>Answer</th><th>Actions</th></tr></thead><tbody>';
+  questions.forEach(function(q, i) {
+    var p = programs.find(function(pr) { return pr.id === q.programId; });
+    html += '<tr>' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td>' + (p ? htmlEscape(p.name) : '--') + '</td>' +
+      '<td>' + htmlEscape(q.question.length > 60 ? q.question.slice(0, 60) + '...' : q.question) + '</td>' +
+      '<td style="font-size:12px;">' + q.options.map(function(o, oi) { return (letters[oi] || String.fromCharCode(65 + oi)) + '. ' + htmlEscape(o); }).join('<br>') + '</td>' +
+      '<td><span class="badge badge-paid">' + (letters[q.answer] || q.answer) + '</span></td>' +
+      '<td>' +
+      '<button class="btn btn-sm btn-primary" style="padding:4px 8px;font-size:11px;" onclick="showEditQuestionModal(\'' + q.id + '\')" title="Edit"><i class="fas fa-edit"></i></button> ' +
+      '<button class="btn btn-sm btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteQuestion(\'' + q.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>' +
+      '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
 }
 
 function showAddQuestionModal() {
-  const programs = data.admissionPrograms || [];
-  const opts = programs.map(p => `<option value="${p.id}">${htmlEscape(p.name)}</option>`).join('');
-  openModal(`
-    <h3><i class="fas fa-plus-circle"></i> Add Exam Question</h3>
-    <div class="form-grid">
-      <div class="form-group" style="grid-column:1/-1;"><label>Program</label><select id="fQProgram">${opts}</select></div>
-      <div class="form-group" style="grid-column:1/-1;"><label>Question</label><textarea id="fQQuestion" rows="2" placeholder="Enter the question text"></textarea></div>
-      <div class="form-group"><label>Option A</label><input type="text" id="fQOptA" placeholder="Option A"></div>
-      <div class="form-group"><label>Option B</label><input type="text" id="fQOptB" placeholder="Option B"></div>
-      <div class="form-group"><label>Option C</label><input type="text" id="fQOptC" placeholder="Option C"></div>
-      <div class="form-group"><label>Option D</label><input type="text" id="fQOptD" placeholder="Option D"></div>
-      <div class="form-group"><label>Correct Answer</label>
-        <select id="fQAnswer"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal()" style="color:var(--text);border-color:#e2e8f0;">Cancel</button>
-      <button class="btn btn-primary" onclick="saveQuestion()"><i class="fas fa-save"></i> Save</button>
-    </div>
-  `);
+  var programs = data.admissionPrograms || [];
+  var opts = programs.map(function(p) { return '<option value="' + p.id + '">' + htmlEscape(p.name) + '</option>'; }).join('');
+  openModal(
+    '<h3><i class="fas fa-plus-circle"></i> Add Exam Question</h3>' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Program</label><select id="fQProgram">' + opts + '</select></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Question</label><textarea id="fQQuestion" rows="2" placeholder="Enter the question text"></textarea></div>' +
+    '<div class="form-group"><label>Option A</label><input type="text" id="fQOptA" placeholder="Option A"></div>' +
+    '<div class="form-group"><label>Option B</label><input type="text" id="fQOptB" placeholder="Option B"></div>' +
+    '<div class="form-group"><label>Option C</label><input type="text" id="fQOptC" placeholder="Option C"></div>' +
+    '<div class="form-group"><label>Option D</label><input type="text" id="fQOptD" placeholder="Option D"></div>' +
+    '<div class="form-group"><label>Correct Answer</label><select id="fQAnswer"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()" style="color:var(--text);border-color:#e2e8f0;">Cancel</button><button class="btn btn-primary" onclick="saveQuestion()"><i class="fas fa-save"></i> Save</button></div>'
+  );
+}
+
+function showEditQuestionModal(id) {
+  var q = data.examQuestions.find(function(x) { return x.id === id; });
+  if (!q) return;
+  var programs = data.admissionPrograms || [];
+  var opts = programs.map(function(p) { return '<option value="' + p.id + '"' + (p.id === q.programId ? ' selected' : '') + '>' + htmlEscape(p.name) + '</option>'; }).join('');
+  openModal(
+    '<h3><i class="fas fa-edit"></i> Edit Exam Question</h3>' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Program</label><select id="fQProgram">' + opts + '</select></div>' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Question</label><textarea id="fQQuestion" rows="2">' + htmlEscape(q.question) + '</textarea></div>' +
+    '<div class="form-group"><label>Option A</label><input type="text" id="fQOptA" value="' + htmlEscape(q.options[0] || '') + '"></div>' +
+    '<div class="form-group"><label>Option B</label><input type="text" id="fQOptB" value="' + htmlEscape(q.options[1] || '') + '"></div>' +
+    '<div class="form-group"><label>Option C</label><input type="text" id="fQOptC" value="' + htmlEscape(q.options[2] || '') + '"></div>' +
+    '<div class="form-group"><label>Option D</label><input type="text" id="fQOptD" value="' + htmlEscape(q.options[3] || '') + '"></div>' +
+    '<div class="form-group"><label>Correct Answer</label><select id="fQAnswer"><option value="0"' + (q.answer === 0 ? ' selected' : '') + '>A</option><option value="1"' + (q.answer === 1 ? ' selected' : '') + '>B</option><option value="2"' + (q.answer === 2 ? ' selected' : '') + '>C</option><option value="3"' + (q.answer === 3 ? ' selected' : '') + '>D</option></select></div>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()" style="color:var(--text);border-color:#e2e8f0;">Cancel</button><button class="btn btn-primary" onclick="updateQuestion(\'' + id + '\')"><i class="fas fa-save"></i> Update</button></div>'
+  );
 }
 
 function saveQuestion() {
@@ -1500,20 +1751,311 @@ function saveQuestion() {
     (document.getElementById('fQOptD')?.value ?? '').trim()
   ];
   var answer = parseInt(document.getElementById('fQAnswer')?.value ?? '');
-  if (!question || opts.some(o => !o) || !programId) { toast('Please fill all fields', 'error'); return; }
-  data.examQuestions.push({ id: genId('EQ'), programId, question, options: opts, answer });
+  if (!question || opts.some(function(o) { return !o; }) || !programId) { toast('Please fill all fields', 'error'); return; }
+  data.examQuestions.push({ id: genId('EQ'), programId: programId, question: question, options: opts, answer: answer });
   saveData();
   closeModal();
   renderExamBank();
   toast('Question added');
 }
 
+function updateQuestion(id) {
+  var q = data.examQuestions.find(function(x) { return x.id === id; });
+  if (!q) return;
+  q.programId = document.getElementById('fQProgram')?.value ?? q.programId;
+  q.question = (document.getElementById('fQQuestion')?.value ?? '').trim() || q.question;
+  q.options = [
+    (document.getElementById('fQOptA')?.value ?? '').trim(),
+    (document.getElementById('fQOptB')?.value ?? '').trim(),
+    (document.getElementById('fQOptC')?.value ?? '').trim(),
+    (document.getElementById('fQOptD')?.value ?? '').trim()
+  ];
+  q.answer = parseInt(document.getElementById('fQAnswer')?.value ?? '');
+  saveData();
+  closeModal();
+  renderExamBank();
+  toast('Question updated');
+}
+
 function deleteQuestion(id) {
   if (!confirm('Delete this question?')) return;
-  data.examQuestions = data.examQuestions.filter(q => q.id !== id);
+  data.examQuestions = data.examQuestions.filter(function(q) { return q.id !== id; });
   saveData();
   renderExamBank();
   toast('Question deleted');
+}
+
+function seedQuestionsForProgram() {
+  var programs = data.admissionPrograms || [];
+  if (!programs.length) { toast('Add a program first', 'error'); return; }
+  var opts = programs.map(function(p) { return '<option value="' + p.id + '">' + htmlEscape(p.name) + ' (' + (p.subjects || []).length + ' subjects)</option>'; }).join('');
+  openModal(
+    '<h3><i class="fas fa-database"></i> Auto-Seed Questions</h3>' +
+    '<div style="margin:16px 0;">' +
+    '<div class="form-grid">' +
+    '<div class="form-group" style="grid-column:1/-1;"><label>Target Program</label><select id="fSeedProgram">' + opts + '</select></div>' +
+    '<div class="form-group"><label>Questions per Subject</label><input type="number" id="fSeedCount" value="10" min="1" max="100" style="font-weight:600;"></div>' +
+    '</div>' +
+    '<p style="font-size:13px;color:var(--text-light);margin-top:8px;"><i class="fas fa-info-circle"></i> This will generate sample questions for each subject in the selected program. Duplicate questions will be skipped.</p>' +
+    '</div>' +
+    '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="confirmSeedQuestions()"><i class="fas fa-play"></i> Generate</button></div>'
+  );
+}
+
+function confirmSeedQuestions() {
+  var programId = document.getElementById('fSeedProgram')?.value;
+  var count = parseInt(document.getElementById('fSeedCount')?.value ?? '') || 10;
+  var program = data.admissionPrograms.find(function(p) { return p.id === programId; });
+  if (!program) { toast('Select a program', 'error'); return; }
+  var subjects = program.subjects || [];
+  if (!subjects.length) { toast('This program has no subjects defined', 'error'); return; }
+  var added = 0;
+  var existing = data.examQuestions || [];
+
+  var sampleQs = {
+    'Mathematics': [
+      { q: 'What is 12 × 12?', o: ['124', '144', '154', '164'], a: 1 },
+      { q: 'Solve: x + 5 = 12, find x.', o: ['5', '6', '7', '8'], a: 2 },
+      { q: 'What is 25% of 200?', o: ['25', '40', '50', '75'], a: 2 },
+      { q: 'What is the square root of 144?', o: ['10', '11', '12', '14'], a: 2 },
+      { q: 'Simplify: 3(x + 2)', o: ['3x+2', '3x+5', '3x+6', 'x+6'], a: 2 },
+      { q: 'What is 15 + 27?', o: ['32', '42', '52', '62'], a: 1 },
+      { q: 'Divide 144 by 12.', o: ['10', '11', '12', '14'], a: 2 },
+      { q: 'What is the area of a 5cm × 3cm rectangle?', o: ['8 sq cm', '15 sq cm', '20 sq cm', '25 sq cm'], a: 1 },
+      { q: 'Convert 0.5 to a fraction.', o: ['1/5', '1/3', '1/4', '1/2'], a: 3 },
+      { q: 'What is 2^5?', o: ['16', '25', '32', '64'], a: 2 }
+    ],
+    'English': [
+      { q: 'Choose the correct spelling:', o: ['Recieve', 'Receive', 'Receeve', 'Reseive'], a: 1 },
+      { q: 'What is a synonym for "happy"?', o: ['Sad', 'Angry', 'Joyful', 'Tired'], a: 2 },
+      { q: 'Which sentence is grammatically correct?', o: ['He go to school', 'He goes to school', 'He going school', 'He to school go'], a: 1 },
+      { q: 'What is the past tense of "run"?', o: ['Runned', 'Ran', 'Running', 'Runs'], a: 1 },
+      { q: 'Identify the noun in: "The dog ran fast."', o: ['Ran', 'Fast', 'The', 'Dog'], a: 3 },
+      { q: 'What is an antonym for "hot"?', o: ['Warm', 'Cold', 'Cool', 'Mild'], a: 1 },
+      { q: 'Fill in: "She ___ to school every day."', o: ['go', 'goes', 'going', 'went'], a: 1 },
+      { q: 'Which word is a verb?', o: ['Beautiful', 'Happiness', 'Jump', 'Slowly'], a: 2 },
+      { q: 'What is the plural of "child"?', o: ['Childs', 'Childes', 'Children', 'Child'], a: 2 },
+      { q: 'Identify the adjective: "The tall man walked."', o: ['Tall', 'Man', 'Walked', 'The'], a: 0 }
+    ],
+    'Physics': [
+      { q: 'What is the SI unit of force?', o: ['Joule', 'Newton', 'Watt', 'Pascal'], a: 1 },
+      { q: 'What is the speed of light?', o: ['3×10^6 m/s', '3×10^8 m/s', '3×10^10 m/s', '3×10^7 m/s'], a: 1 },
+      { q: 'Which law states F = ma?', o: ['Newton\'s 1st', 'Newton\'s 2nd', 'Newton\'s 3rd', 'Law of gravity'], a: 1 },
+      { q: 'What is the unit of electric current?', o: ['Volt', 'Ohm', 'Ampere', 'Watt'], a: 2 },
+      { q: 'What is the acceleration due to gravity?', o: ['8.8 m/s²', '9.8 m/s²', '10.8 m/s²', '7.8 m/s²'], a: 1 },
+      { q: 'What type of energy does a moving car have?', o: ['Potential', 'Chemical', 'Kinetic', 'Thermal'], a: 2 },
+      { q: 'What is the refractive index of water?', o: ['1.00', '1.33', '1.50', '2.42'], a: 1 },
+      { q: 'What is Ohm\'s Law?', o: ['V=IR', 'F=ma', 'E=mc²', 'PV=nRT'], a: 0 },
+      { q: 'What is the unit of power?', o: ['Joule', 'Newton', 'Watt', 'Tesla'], a: 2 },
+      { q: 'What is the wavelength formula?', o: ['v = fλ', 'E = hf', 'F = kx', 'P = IV'], a: 0 }
+    ],
+    'Chemistry': [
+      { q: 'What is the chemical symbol for gold?', o: ['Go', 'Gd', 'Au', 'Ag'], a: 2 },
+      { q: 'What is the pH of pure water?', o: ['5', '6', '7', '8'], a: 2 },
+      { q: 'What is the atomic number of carbon?', o: ['4', '6', '8', '12'], a: 1 },
+      { q: 'What is the chemical formula for water?', o: ['CO2', 'H2O', 'NaCl', 'HCl'], a: 1 },
+      { q: 'What type of bond shares electrons?', o: ['Ionic', 'Metallic', 'Covalent', 'Hydrogen'], a: 2 },
+      { q: 'What is the most abundant gas in air?', o: ['Oxygen', 'Carbon dioxide', 'Nitrogen', 'Argon'], a: 2 },
+      { q: 'What is an acid?', o: ['pH > 7', 'pH < 7', 'pH = 7', 'pH = 14'], a: 1 },
+      { q: 'What is the periodic table?', o: ['List of elements', 'List of compounds', 'List of mixtures', 'List of atoms'], a: 0 },
+      { q: 'What is oxidation?', o: ['Gain of electrons', 'Loss of electrons', 'Neutral reaction', 'Precipitation'], a: 1 },
+      { q: 'What is the gas used in balloons?', o: ['Oxygen', 'Hydrogen', 'Helium', 'Nitrogen'], a: 2 }
+    ],
+    'Biology': [
+      { q: 'What is the basic unit of life?', o: ['Atom', 'Cell', 'Molecule', 'Tissue'], a: 1 },
+      { q: 'How many bones in the human body?', o: ['106', '206', '306', '406'], a: 1 },
+      { q: 'What organ pumps blood?', o: ['Lungs', 'Liver', 'Heart', 'Kidney'], a: 2 },
+      { q: 'What is photosynthesis?', o: ['Food making in plants', 'Digestion', 'Respiration', 'Excretion'], a: 0 },
+      { q: 'What system controls breathing?', o: ['Circulatory', 'Digestive', 'Respiratory', 'Nervous'], a: 2 },
+      { q: 'What is DNA?', o: ['Protein', 'Genetic material', 'Carbohydrate', 'Lipid'], a: 1 },
+      { q: 'What is the largest organ?', o: ['Liver', 'Heart', 'Brain', 'Skin'], a: 3 },
+      { q: 'What type of cell has a nucleus?', o: ['Prokaryotic', 'Eukaryotic', 'Bacterial', 'Viral'], a: 1 },
+      { q: 'What vitamin does sunlight provide?', o: ['Vitamin A', 'Vitamin B', 'Vitamin C', 'Vitamin D'], a: 3 },
+      { q: 'What is a habitat?', o: ['Animal name', 'Natural environment', 'Food type', 'Plant species'], a: 1 }
+    ],
+    'History': [
+      { q: 'Who discovered America in 1492?', o: ['Vasco da Gama', 'Christopher Columbus', 'Ferdinand Magellan', 'Amerigo Vespucci'], a: 1 },
+      { q: 'What year did Nigeria gain independence?', o: ['1957', '1960', '1963', '1965'], a: 1 },
+      { q: 'Who was the first president of Nigeria?', o: ['Nnamdi Azikiwe', 'Abubakar Tafawa Balewa', 'Obafemi Awolowo', 'Ahmadu Bello'], a: 0 },
+      { q: 'What was the Berlin Conference?', o: ['Europe\'s partition of Africa', 'World War meeting', 'Trade summit', 'Peace treaty'], a: 0 },
+      { q: 'What is the Trans-Atlantic Slave Trade?', o: ['Trade between African ports', 'Forced migration of Africans to Americas', 'European migration', 'Silk road trade'], a: 1 },
+      { q: 'When was the UN formed?', o: ['1918', '1945', '1950', '1960'], a: 1 },
+      { q: 'Who wrote the Nigerian national anthem?', o: ['Wole Soyinka', 'Benedict Odiase', 'Chinua Achebe', 'Fela Kuti'], a: 1 },
+      { q: 'What is the Abolition of Slave Trade Act?', o: ['1807 law banning slave trade', '1865 law freeing slaves', 'Treaty of independence', 'Colonial charter'], a: 0 },
+      { q: 'Who was the first prime minister of Nigeria?', o: ['Nnamdi Azikiwe', 'Abubakar Tafawa Balewa', 'Obafemi Awolowo', 'Shehu Shagari'], a: 1 },
+      { q: 'What year was the Nigerian Civil War?', o: ['1960-1963', '1967-1970', '1975-1979', '1980-1983'], a: 1 }
+    ],
+    'Geography': [
+      { q: 'What is the capital of Nigeria?', o: ['Lagos', 'Abuja', 'Port Harcourt', 'Kano'], a: 1 },
+      { q: 'What is the longest river in the world?', o: ['Amazon', 'Nile', 'Mississippi', 'Yangtze'], a: 1 },
+      { q: 'What is the largest continent?', o: ['Africa', 'Europe', 'Asia', 'North America'], a: 2 },
+      { q: 'What is the capital of France?', o: ['London', 'Berlin', 'Paris', 'Madrid'], a: 2 },
+      { q: 'What is a desert?', o: ['Dense forest', 'Dry region with little rain', 'Mountain range', 'Coastal area'], a: 1 },
+      { q: 'What is the equator?', o: ['Imaginary line dividing Earth', 'Mountain range', 'Ocean current', 'Climate zone'], a: 0 },
+      { q: 'How many oceans are there?', o: ['3', '4', '5', '7'], a: 2 },
+      { q: 'What is the largest country?', o: ['USA', 'China', 'Russia', 'Canada'], a: 2 },
+      { q: 'What is a mountain?', o: ['Large hill', 'Elevated landform', 'Deep valley', 'Plateau'], a: 1 },
+      { q: 'What is climate change?', o: ['Seasonal weather', 'Long-term temperature change', 'Daily forecast', 'Wind pattern'], a: 1 }
+    ],
+    'Government': [
+      { q: 'What are the three arms of government?', o: ['Federal, State, Local', 'Executive, Legislature, Judiciary', 'Senate, House, Court', 'Police, Army, Navy'], a: 1 },
+      { q: 'What is democracy?', o: ['One-person rule', 'Government by the people', 'Military rule', 'Monarchy'], a: 1 },
+      { q: 'Who is the head of state in Nigeria?', o: ['Senate President', 'Chief Justice', 'President', 'Governor'], a: 2 },
+      { q: 'What is the constitution?', o: ['Tax law', 'Supreme law of the land', 'School curriculum', 'Trade agreement'], a: 1 },
+      { q: 'What is the function of the legislature?', o: ['Enforce laws', 'Make laws', 'Interpret laws', 'Judge cases'], a: 1 },
+      { q: 'What is a political party?', o: ['Group seeking political power', 'Social club', 'Trade union', 'Religious group'], a: 0 },
+      { q: 'What is the voting age in Nigeria?', o: ['16', '18', '21', '25'], a: 1 },
+      { q: 'What is the judiciary?', o: ['Executive branch', 'Court system', 'Parliament', 'Civil service'], a: 1 },
+      { q: 'What is separation of powers?', o: ['Division of government into branches', 'Federal system', 'Local government', 'Civil service'], a: 0 },
+      { q: 'What is a referendum?', o: ['Election', 'Direct vote by citizens', 'Party meeting', 'Budget vote'], a: 1 }
+    ],
+    'Economics': [
+      { q: 'What is supply and demand?', o: ['Price mechanism', 'Government policy', 'Tax system', 'Trade agreement'], a: 0 },
+      { q: 'What is inflation?', o: ['Rising prices', 'Falling prices', 'Stable prices', 'Zero prices'], a: 0 },
+      { q: 'What is GDP?', o: ['Total value of goods and services', 'Government debt', 'National savings', 'Trade balance'], a: 0 },
+      { q: 'What is a market?', o: ['Store only', 'Buyers and sellers meeting', 'Government building', 'Stock exchange'], a: 1 },
+      { q: 'What is opportunity cost?', o: ['Cost of missed alternative', 'Total expenditure', 'Fixed cost', 'Variable cost'], a: 0 },
+      { q: 'What is a monopoly?', o: ['Many sellers', 'One seller', 'Two sellers', 'No sellers'], a: 1 },
+      { q: 'What is the law of diminishing returns?', o: ['Increasing output always', 'Declining extra output per input', 'Constant returns', 'Zero marginal product'], a: 1 },
+      { q: 'What is fiscal policy?', o: ['Central bank rates', 'Government taxing and spending', 'Trade policy', 'Wage controls'], a: 1 },
+      { q: 'What is a budget?', o: ['Annual financial plan', 'Loan agreement', 'Tax receipt', 'Price list'], a: 0 },
+      { q: 'What is interest rate?', o: ['Cost of borrowing money', 'Tax rate', 'Exchange rate', 'Wage rate'], a: 0 }
+    ],
+    'Commerce': [
+      { q: 'What is trade?', o: ['Buying and selling', 'Manufacturing', 'Farming', 'Teaching'], a: 0 },
+      { q: 'What is a sole proprietorship?', o: ['One-owner business', 'Partnership', 'Corporation', 'Cooperative'], a: 0 },
+      { q: 'What is a partnership?', o: ['Two or more owners', 'Single owner', 'Public company', 'Franchise'], a: 0 },
+      { q: 'What is e-commerce?', o: ['Online buying/selling', 'Shop trading', 'Street market', 'Auction house'], a: 0 },
+      { q: 'What is a bill of lading?', o: ['Shipping document', 'Invoice', 'Receipt', 'Contract'], a: 0 },
+      { q: 'What is insurance?', o: ['Risk protection', 'Investment', 'Savings', 'Loan'], a: 0 },
+      { q: 'What is a stock exchange?', o: ['Securities trading venue', 'Commodity market', 'Currency exchange', 'Real estate market'], a: 0 },
+      { q: 'What is marketing?', o: ['Promoting and selling products', 'Accounting', 'Manufacturing', 'Human resources'], a: 0 },
+      { q: 'What is a contract?', o: ['Legally binding agreement', 'Informal promise', 'Purchase order', 'Invoice'], a: 0 },
+      { q: 'What is a cooperative society?', o: ['Member-owned organization', 'Public company', 'Partnership', 'Sole trader'], a: 0 }
+    ],
+    'Literature': [
+      { q: 'Who wrote "Things Fall Apart"?', o: ['Wole Soyinka', 'Chinua Achebe', 'Ngugi wa Thiong\'o', 'Ben Okri'], a: 1 },
+      { q: 'What is a metaphor?', o: ['Direct comparison', 'Exaggeration', 'Sound repetition', 'Question'], a: 0 },
+      { q: 'What is the theme of a story?', o: ['Central idea', 'Main character', 'Setting', 'Plot twist'], a: 0 },
+      { q: 'What is a protagonist?', o: ['Villain', 'Main character', 'Narrator', 'Side character'], a: 1 },
+      { q: 'What is alliteration?', o: ['Repeated consonant sounds', 'Repeated vowel sounds', 'Word play', 'Rhyme scheme'], a: 0 },
+      { q: 'Who wrote "The Great Gatsby"?', o: ['Ernest Hemingway', 'F. Scott Fitzgerald', 'Mark Twain', 'William Faulkner'], a: 1 },
+      { q: 'What is a sonnet?', o: ['14-line poem', 'Short story', 'Novel chapter', '5-line poem'], a: 0 },
+      { q: 'What is the difference between prose and poetry?', o: ['Prose is everyday writing, poetry is structured verse', 'No difference', 'Poetry is longer', 'Prose uses rhyme'], a: 0 },
+      { q: 'What is a climax in a story?', o: ['Beginning stage', 'Highest tension point', 'Resolution', 'Introduction'], a: 1 },
+      { q: 'What is a simile?', o: ['Comparison using like/as', 'Direct metaphor', 'Exaggeration', 'Contradiction'], a: 0 }
+    ],
+    'Accounting': [
+      { q: 'What is a balance sheet?', o: ['Statement of financial position', 'Income statement', 'Cash flow statement', 'Budget report'], a: 0 },
+      { q: 'What is double entry bookkeeping?', o: ['Each transaction has two entries', 'Single entry system', 'Triple entry', 'Cash basis'], a: 0 },
+      { q: 'What is an asset?', o: ['Resource owned by business', 'Business debt', 'Owner equity', 'Revenue'], a: 0 },
+      { q: 'What is a liability?', o: ['Business debt', 'Resource owned', 'Income', 'Expense'], a: 0 },
+      { q: 'What is depreciation?', o: ['Asset value decrease over time', 'Asset value increase', 'Revenue growth', 'Cost reduction'], a: 0 },
+      { q: 'What is profit and loss?', o: ['Revenue minus expenses', 'Total revenue', 'Total costs', 'Gross margin'], a: 0 },
+      { q: 'What is a trial balance?', o: ['Test of ledger balances', 'Final accounts', 'Cash book', 'Sales journal'], a: 0 },
+      { q: 'What is a ledger?', o: ['Book of accounts', 'Day book', 'Invoice record', 'Payment receipt'], a: 0 },
+      { q: 'What is cash flow?', o: ['Movement of cash in/out', 'Profit amount', 'Sales total', 'Expense total'], a: 0 },
+      { q: 'What is a journal entry?', o: ['Initial transaction record', 'Final account', 'Trial balance', 'Audit report'], a: 0 }
+    ],
+    'French': [
+      { q: 'What is "bonjour" in English?', o: ['Goodbye', 'Hello', 'Thank you', 'Please'], a: 1 },
+      { q: 'What is the French word for "thank you"?', o: ['S\'il vous plaît', 'Merci', 'De rien', 'Bonjour'], a: 1 },
+      { q: 'How do you say "goodbye" in French?', o: ['Salut', 'Au revoir', 'Bonjour', 'Merci'], a: 1 },
+      { q: 'What is the French word for "water"?', o: ['Lait', 'Eau', 'Vin', 'Pain'], a: 1 },
+      { q: 'What is the translation of "How are you?"', o: ['Comment allez-vous?', 'Quel est votre nom?', 'Où habitez-vous?', 'Combien ça coûte?'], a: 0 },
+      { q: 'What is "merci" in English?', o: ['Please', 'Thank you', 'Sorry', 'Hello'], a: 1 },
+      { q: 'What color is "rouge"?', o: ['Blue', 'Red', 'Green', 'Yellow'], a: 1 },
+      { q: 'What is the French word for "house"?', o: ['Maison', 'Voiture', 'Jardin', 'École'], a: 0 },
+      { q: 'What is "au revoir" in English?', o: ['Hello', 'Goodbye', 'See you later', 'Take care'], a: 1 },
+      { q: 'What is "s\'il vous plaît" in English?', o: ['Thank you', 'Please', 'You\'re welcome', 'Excuse me'], a: 1 }
+    ],
+    'Further Mathematics': [
+      { q: 'What is the derivative of x^2?', o: ['2x', 'x', '2', 'x^2'], a: 0 },
+      { q: 'What is the integral of 2x?', o: ['x^2 + C', '2 + C', '2x^2 + C', 'x + C'], a: 0 },
+      { q: 'What is a matrix?', o: ['Rectangular array of numbers', 'Geometric shape', 'Algebraic equation', 'Linear function'], a: 0 },
+      { q: 'What is a vector?', o: ['Quantity with magnitude and direction', 'Scalar quantity', 'Matrix row', 'Number line'], a: 0 },
+      { q: 'What is the binomial theorem?', o: ['Expansion of (a+b)^n', 'Quadratic formula', 'Pythagorean theorem', 'Fundamental theorem'], a: 0 },
+      { q: 'What is a complex number?', o: ['a + bi form', 'Real number', 'Integer', 'Fraction'], a: 0 },
+      { q: 'What is the determinant of a 2×2 matrix?', o: ['ad - bc', 'ab + cd', 'a + d', 'a - d'], a: 0 },
+      { q: 'What is the limit of 1/x as x→∞?', o: ['0', '1', '∞', 'Undefined'], a: 0 },
+      { q: 'What is a logarithm?', o: ['Inverse of exponentiation', 'Power function', 'Exponential function', 'Square root'], a: 0 },
+      { q: 'What is the sum of an arithmetic series?', o: ['n/2 × (2a + (n-1)d)', 'n × a', 'a + d', 'n × d'], a: 0 }
+    ],
+    'Basic Science': [
+      { q: 'What is matter?', o: ['Anything with mass and volume', 'Only solids', 'Only liquids', 'Only gases'], a: 0 },
+      { q: 'What are the states of matter?', o: ['Solid, liquid, gas, plasma', 'Hard, soft, wet', 'Hot, cold, warm', 'Big, small, medium'], a: 0 },
+      { q: 'What is an element?', o: ['Pure substance of one atom type', 'Mixture of substances', 'Chemical compound', 'Solution'], a: 0 },
+      { q: 'What is a force?', o: ['Push or pull on an object', 'Type of energy', 'Unit of power', 'Measurement of speed'], a: 0 },
+      { q: 'What is energy?', o: ['Ability to do work', 'Force times distance', 'Mass times acceleration', 'Power over time'], a: 0 },
+      { q: 'What is a simple machine?', o: ['Device that changes force', 'Complex engine', 'Electrical device', 'Computer system'], a: 0 },
+      { q: 'What is the solar system?', o: ['Sun and orbiting bodies', 'Our galaxy', 'Asteroid belt', 'Milky Way cluster'], a: 0 },
+      { q: 'What is a magnet?', o: ['Material attracting iron', 'Electric wire', 'Chemical compound', 'Rare metal'], a: 0 },
+      { q: 'What is sound?', o: ['Vibration traveling through medium', 'Light wave', 'Electrical signal', 'Magnetic field'], a: 0 },
+      { q: 'What is a food chain?', o: ['Sequence of who eats whom', 'Cooking process', 'Nutrient cycle', 'Plant growth'], a: 0 }
+    ],
+    'Social Studies': [
+      { q: 'What is a family?', o: ['Group of related people', 'Strangers living together', 'School community', 'Workplace team'], a: 0 },
+      { q: 'What is culture?', o: ['Shared beliefs and practices', 'Government system', 'Economic system', 'Legal system'], a: 0 },
+      { q: 'What is a community?', o: ['People living in one area', 'Individual household', 'Country border', 'City council'], a: 0 },
+      { q: 'What are human rights?', o: ['Basic rights everyone has', 'Legal privileges', 'Tax obligations', 'Political duties'], a: 0 },
+      { q: 'What is citizenship?', o: ['Membership in a country', 'Right to vote', 'Tax status', 'Residence permit'], a: 0 },
+      { q: 'What is government?', o: ['System for ruling a country', 'Political party', 'Election process', 'Public service'], a: 0 },
+      { q: 'What is a tradition?', o: ['Custom passed through generations', 'New invention', 'Scientific theory', 'Legal statute'], a: 0 },
+      { q: 'What is globalization?', o: ['Worldwide integration of economies and cultures', 'Local trade', 'National policy', 'Continental union'], a: 0 },
+      { q: 'What is diversity?', o: ['Variety of differences among people', 'Uniform culture', 'Single religion', 'One language'], a: 0 },
+      { q: 'What is a value?', o: ['Principle or standard of behavior', 'Monetary cost', 'Property worth', 'Market price'], a: 0 }
+    ],
+    'Computer Science': [
+      { q: 'What is a CPU?', o: ['Central processor of computer', 'Storage device', 'Input device', 'Network equipment'], a: 0 },
+      { q: 'What is RAM?', o: ['Temporary computer memory', 'Permanent storage', 'Network address', 'Power supply'], a: 0 },
+      { q: 'What is an algorithm?', o: ['Step-by-step problem-solving procedure', 'Computer virus', 'Programming language', 'Data type'], a: 0 },
+      { q: 'What is binary code?', o: ['Base-2 number system using 0/1', 'Text encoding', 'Image format', 'Audio signal'], a: 0 },
+      { q: 'What is a programming language?', o: ['Language for writing computer instructions', 'Spoken language', 'Encryption system', 'Database type'], a: 0 },
+      { q: 'What is the internet?', o: ['Global network of connected computers', 'Single website', 'Email system', 'Social media'], a: 0 },
+      { q: 'What is a database?', o: ['Organized collection of data', 'Spreadsheet file', 'Word document', 'Email folder'], a: 0 },
+      { q: 'What is an operating system?', o: ['Software managing computer hardware', 'Application program', 'Browser extension', 'Device driver'], a: 0 },
+      { q: 'What is a computer virus?', o: ['Malicious program that replicates', 'Hardware failure', 'Network outage', 'Power surge'], a: 0 },
+      { q: 'What is a compiler?', o: ['Converts code to machine language', 'Text editor', 'Database manager', 'Web browser'], a: 0 }
+    ],
+    'CRS': [
+      { q: 'Who is the founder of Christianity?', o: ['Moses', 'Jesus Christ', 'Abraham', 'Paul'], a: 1 },
+      { q: 'How many books are in the Bible?', o: ['27', '39', '66', '73'], a: 2 },
+      { q: 'What is the first book of the Bible?', o: ['Exodus', 'Psalms', 'Genesis', 'Leviticus'], a: 2 },
+      { q: 'Who built the ark?', o: ['Abraham', 'Moses', 'Noah', 'David'], a: 2 },
+      { q: 'What is the Golden Rule?', o: ['Treat others as you wish to be treated', 'Love your enemies', 'Honor your parents', 'Do not steal'], a: 0 },
+      { q: 'How many disciples did Jesus have?', o: ['10', '12', '14', '7'], a: 1 },
+      { q: 'What is the last book of the Bible?', o: ['Acts', 'Romans', 'Revelation', 'John'], a: 2 },
+      { q: 'Who was Moses?', o: ['Prophet who led Israelites from Egypt', 'First king of Israel', 'Judge of Israel', 'Apostle'], a: 0 },
+      { q: 'What is the Ten Commandments?', o: ['Laws given by God to Moses', 'Parables of Jesus', 'Beatitudes', 'Proverbs of Solomon'], a: 0 },
+      { q: 'What is Easter?', o: ['Celebration of Jesus\' resurrection', 'Birth of Jesus', 'Harvest festival', 'Day of prayer'], a: 0 }
+    ],
+  };
+
+  subjects.forEach(function(subj) {
+    var qs = sampleQs[subj] || null;
+    if (!qs) {
+      // Generate generic questions for unknown subjects
+      qs = [];
+      for (var gi = 0; gi < 10; gi++) {
+        qs.push({
+          q: 'Question ' + (gi + 1) + ' for ' + subj,
+          o: ['Correct option about ' + subj, 'Wrong option A', 'Wrong option B', 'Wrong option C'],
+          a: 0
+        });
+      }
+    }
+    for (var i = 0; i < count && i < qs.length; i++) {
+      var qItem = qs[i];
+      if (!existing.some(function(eq) { return eq.question === qItem.q && eq.programId === programId; })) {
+        existing.push({ id: genId('EQ'), programId: programId, question: qItem.q, options: qItem.o, answer: qItem.a });
+        added++;
+      }
+    }
+  });
+  saveData();
+  closeModal();
+  renderExamBank();
+  toast('Added ' + added + ' new question(s) for ' + htmlEscape(program.name));
 }
 
 // ===== ADMIN: EXAM RESULTS =====

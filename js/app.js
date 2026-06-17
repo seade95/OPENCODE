@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch(e) {}
   }
 
-  // Auto-fill demo credentials on login forms when demo mode is active
+  // Auto-fill demo credentials on login forms and navigate to student portal when demo mode is active
   try {
     if (localStorage.getItem('demoMode') === 'true') {
       var stuId = document.getElementById('loginId');
@@ -107,6 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
       var parPass = document.getElementById('parentLoginPass');
       if (parEmail) parEmail.value = 'robert@example.com';
       if (parPass) parPass.value = 'parent123';
+      var parHint = document.getElementById('parentDemoHint');
+      if (parHint) parHint.style.display = 'block';
+
+      // Auto-navigate to student login so demo user sees the portal immediately
+      setTimeout(function() {
+        if (typeof showStudentLogin === 'function') showStudentLogin();
+      }, 150);
     }
   } catch(e) {}
 

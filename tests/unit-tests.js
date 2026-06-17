@@ -318,8 +318,8 @@ testGroup('K-12 Configuration', () => {
   assert(C.tiers.eccde.classes.includes('Reception'), 'eccde includes Reception');
 
   // Primary sub-tiers
-  assert(C.tiers.primary.subTiers.lower.classes.includes('Primary 1'), 'lower primary includes Primary 1');
-  assert(C.tiers.primary.subTiers.middle.classes.includes('Primary 6'), 'middle primary includes Primary 6');
+  assert(C.tiers.primary.subTiers.lower.classes.includes('Basic 1'), 'lower basic includes Basic 1');
+  assert(C.tiers.primary.subTiers.middle.classes.includes('Basic 6'), 'middle basic includes Basic 6');
 
   // JSS
   assert(C.tiers.juniorSecondary.classes.includes('JSS 1'), 'JSS includes JSS 1');
@@ -368,10 +368,11 @@ testGroup('getClassTier', () => {
   assertEq(EV.getClassTier('Kindergarten'), 'eccde', 'Kindergarten => eccde');
   assertEq(EV.getClassTier('Reception'), 'eccde', 'Reception => eccde');
 
-  assertEq(EV.getClassTier('Primary 1'), 'primary', 'Primary 1 => primary');
-  assertEq(EV.getClassTier('Primary 3'), 'primary', 'Primary 3 => primary');
-  assertEq(EV.getClassTier('Primary 4'), 'primary', 'Primary 4 => primary');
-  assertEq(EV.getClassTier('Primary 6'), 'primary', 'Primary 6 => primary');
+  assertEq(EV.getClassTier('Basic 1'), 'primary', 'Basic 1 => primary');
+  assertEq(EV.getClassTier('Basic 3'), 'primary', 'Basic 3 => primary');
+  assertEq(EV.getClassTier('Basic 4'), 'primary', 'Basic 4 => primary');
+  assertEq(EV.getClassTier('Basic 6'), 'primary', 'Basic 6 => primary');
+  assertEq(EV.getClassTier('Basic 5A'), 'primary', 'Basic 5A (with stream) => primary');
 
   assertEq(EV.getClassTier('JSS 1'), 'juniorSecondary', 'JSS 1 => juniorSecondary');
   assertEq(EV.getClassTier('JSS 2'), 'juniorSecondary', 'JSS 2 => juniorSecondary');
@@ -383,7 +384,7 @@ testGroup('getClassTier', () => {
 
   // Unknown class defaults to primary
   assertEq(EV.getClassTier('Unknown'), 'primary', 'Unknown => primary');
-  assertEq(EV.getClassTier('Grade 10A'), 'primary', 'Grade 10A => primary');
+  assertEq(EV.getClassTier('Grade 10A'), 'primary', 'Grade 10A => primary'); // backward compat
 });
 
 testGroup('k12GetSubjects', () => {
@@ -391,8 +392,8 @@ testGroup('k12GetSubjects', () => {
   assert(Array.isArray(eccdeSubjs), 'ECCDE subjects array');
   assert(eccdeSubjs.includes('Letter Work'), 'ECCDE includes Letter Work');
 
-  const primarySubjs = EV.k12GetSubjects('Primary 1');
-  assert(primarySubjs.includes('English Language'), 'Primary includes English');
+  const primarySubjs = EV.k12GetSubjects('Basic 1');
+  assert(primarySubjs.includes('English Language'), 'Basic includes English');
 
   const jssSubjs = EV.k12GetSubjects('JSS 1');
   assert(jssSubjs.includes('Mathematics'), 'JSS includes Mathematics');
@@ -424,12 +425,12 @@ testGroup('k12GetGrade', () => {
   assertEq(EV.k12GetGrade('Creche', 0), 'Emerging', 'ECCDE 0');
 
   // Primary - standard
-  assertEq(EV.k12GetGrade('Primary 1', 95), 'A', 'Primary 95 => A');
-  assertEq(EV.k12GetGrade('Primary 1', 80), 'A', 'Primary 80 => A');
-  assertEq(EV.k12GetGrade('Primary 1', 75), 'B+', 'Primary 75 => B+');
-  assertEq(EV.k12GetGrade('Primary 1', 70), 'B', 'Primary 70 => B');
-  assertEq(EV.k12GetGrade('Primary 1', 50), 'D', 'Primary 50 => D');
-  assertEq(EV.k12GetGrade('Primary 1', 49), 'F', 'Primary 49 => F');
+  assertEq(EV.k12GetGrade('Basic 1', 95), 'A', 'Basic 95 => A');
+  assertEq(EV.k12GetGrade('Basic 1', 80), 'A', 'Basic 80 => A');
+  assertEq(EV.k12GetGrade('Basic 1', 75), 'B+', 'Basic 75 => B+');
+  assertEq(EV.k12GetGrade('Basic 1', 70), 'B', 'Basic 70 => B');
+  assertEq(EV.k12GetGrade('Basic 1', 50), 'D', 'Basic 50 => D');
+  assertEq(EV.k12GetGrade('Basic 1', 49), 'F', 'Basic 49 => F');
 
   // JSS 1-2 - standard
   assertEq(EV.k12GetGrade('JSS 1', 80), 'A', 'JSS 1 80 => A');
@@ -469,8 +470,8 @@ testGroup('k12GetGradeLabel', () => {
   assertEq(EV.k12GetGradeLabel('JSS 3', 45), 'Pass', 'JSS 3 BECE Pass');
   assertEq(EV.k12GetGradeLabel('JSS 3', 30), 'Fail', 'JSS 3 BECE Fail');
 
-  // Primary - no label
-  assertEq(EV.k12GetGradeLabel('Primary 1', 80), '', 'Primary no label');
+  // Basic - no label
+  assertEq(EV.k12GetGradeLabel('Basic 1', 80), '', 'Basic no label');
   // SSS returns WASSCE label
   assertEq(EV.k12GetGradeLabel('SSS 1', 80), 'Very Good', 'SSS WASSCE label');
   assertEq(EV.k12GetGradeLabel('SSS 1', 95), 'Excellent', 'SSS WASSCE excellent');
@@ -641,7 +642,7 @@ testGroup('getAvatarUrl', () => {
 testGroup('National Exams Configuration', () => {
   const exams = EV.K12_CONFIG.nationalExams;
   assertEq(exams.ncee.level, 'primary', 'NCEE level primary');
-  assertEq(exams.ncee.takenBy, 'Primary 6', 'NCEE takenBy Primary 6');
+  assertEq(exams.ncee.takenBy, 'Basic 6', 'NCEE takenBy Basic 6');
   assertEq(exams.bece.level, 'jss', 'BECE level jss');
   assertEq(exams.bece.takenBy, 'JSS 3', 'BECE takenBy JSS 3');
   assertEq(exams.wassce.level, 'sss', 'WASSCE level sss');

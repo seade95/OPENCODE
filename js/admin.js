@@ -53,7 +53,7 @@ function showAddStudentModal() {
     <div class="form-grid">
       <div class="form-group"><label>Student ID <span style="font-size:11px;color:var(--text-light);">(auto-generated)</span></label><input type="text" id="fStudentId" value="${autoId}" readonly style="background:#f7fafc;"></div>
       <div class="form-group"><label>Full Name</label><input type="text" id="fStudentName" placeholder="Full name"></div>
-      <div class="form-group"><label>Class</label><input type="text" id="fStudentClass" placeholder="e.g. Grade 10A"></div>
+      <div class="form-group"><label>Class</label><input type="text" id="fStudentClass" placeholder="e.g. Basic 5A"></div>
       <div class="form-group"><label>Contact</label><input type="text" id="fStudentContact" placeholder="Email or phone"></div>
       <div class="form-group"><label>Username</label><input type="text" id="fStudentUsername" placeholder="login username"></div>
       <div class="form-group"><label>Password</label><input type="text" id="fStudentPassword" placeholder="login password" value="stu123"></div>
@@ -334,7 +334,71 @@ function deleteTeacher(id) {
 }
 
 // ===== FEES =====
+// ===== FEE CONFIGURATION =====
+function renderFeeConfig() {
+  var cfg = data.feeConfig || {};
+  var container = document.getElementById('feeConfigContainer');
+  if (!container) return;
+  container.innerHTML = '<div class="card" style="margin-bottom:16px;padding:20px;">' +
+    '<h3 style="font-weight:600;margin-bottom:12px;"><i class="fas fa-cog"></i> Fee Configuration</h3>' +
+    '<div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">' +
+      '<div class="form-group"><label>Fee Amount (₦)</label><input type="number" id="fCfgAmount" value="' + (cfg.amount || '') + '" min="0" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;width:100%;box-sizing:border-box;"></div>' +
+      '<div class="form-group"><label>Payment Window Start</label><input type="date" id="fCfgStart" value="' + (cfg.windowStart || '') + '" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;width:100%;box-sizing:border-box;"></div>' +
+      '<div class="form-group"><label>Payment Window End</label><input type="date" id="fCfgEnd" value="' + (cfg.windowEnd || '') + '" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;width:100%;box-sizing:border-box;"></div>' +
+      '<div class="form-group"><label>Current Term</label><input type="text" id="fCfgTerm" value="' + htmlEscape(cfg.currentTerm || data.currentTerm || '') + '" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;width:100%;box-sizing:border-box;"></div>' +
+      '<div class="form-group"><label>Partial Pay Grace (days)</label><input type="number" id="fCfgGrace" value="' + (cfg.partPaymentGraceDays || 7) + '" min="0" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;width:100%;box-sizing:border-box;"><span style="font-size:11px;color:var(--text-light);">Days portal stays open after a partial payment</span></div>' +
+      '<div class="form-group"><label>&nbsp;</label><button class="btn btn-primary btn-sm" onclick="saveFeeConfig()" style="width:100%;"><i class="fas fa-save"></i> Save Config</button></div>' +
+    '</div>' +
+    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">' +
+      '<button class="btn btn-outline btn-sm" onclick="applyFeeToAllStudents()"><i class="fas fa-users"></i> Apply Amount to All Students</button>' +
+      '<span style="font-size:12px;color:var(--text-light);align-self:center;">Creates fee records for all students without one for this term</span>' +
+    '</div>' +
+    '<div id="feeApplyResult" style="margin-top:8px;font-size:13px;"></div>' +
+  '</div>';
+}
+
+function saveFeeConfig() {
+  var amount = parseFloat(document.getElementById('fCfgAmount').value);
+  var windowStart = document.getElementById('fCfgStart').value;
+  var windowEnd = document.getElementById('fCfgEnd').value;
+  var currentTerm = document.getElementById('fCfgTerm').value.trim();
+  var graceDays = parseInt(document.getElementById('fCfgGrace').value) || 7;
+  if (isNaN(amount) || amount <= 0) { toast('Enter a valid fee amount', 'error'); return; }
+  data.feeConfig = {
+    amount: amount,
+    windowStart: windowStart,
+    windowEnd: windowEnd,
+    enabled: !!(windowStart && windowEnd),
+    currentTerm: currentTerm || data.currentTerm || 'Term 1',
+    partPaymentGraceDays: graceDays
+  };
+  saveData();
+  renderFeeConfig();
+  toast('Fee configuration saved');
+}
+
+function applyFeeToAllStudents() {
+  var cfg = data.feeConfig;
+  if (!cfg || !cfg.amount) { toast('Save fee configuration first', 'error'); return; }
+  var term = cfg.currentTerm || data.currentTerm || 'Term 1';
+  var count = 0;
+  (data.students || []).forEach(function(s) {
+    var existing = (data.fees || []).find(function(f) { return f.studentId === s.id && f.term === term; });
+    if (!existing) {
+      if (!data.fees) data.fees = [];
+      data.fees.push({ id: genId('FEE'), studentId: s.id, term: term, amount: cfg.amount, paid: 0, status: 'pending' });
+      count++;
+    }
+  });
+  var el = document.getElementById('feeApplyResult');
+  if (el) el.innerHTML = '<span style="color:var(--success);">✓ Created ' + count + ' fee record(s) for ' + term + '</span>';
+  saveData();
+  renderFees();
+  toast('Applied fee to ' + count + ' student(s)');
+}
+
 function renderFees() {
+  renderFeeConfig();
   var q = '';
   var searchEl = document.getElementById('feeSearch');
   if (searchEl) q = searchEl.value.toLowerCase();
@@ -385,7 +449,8 @@ function saveFee() {
   if (!term || isNaN(amount) || isNaN(paid)) { toast('Please fill all fields correctly', 'error'); return; }
   const status = paid >= amount ? 'paid' : paid > 0 ? 'partial' : 'pending';
   if (!data.fees) data.fees = [];
-  data.fees.push({ id: genId('FEE'), studentId, term, amount, paid, status });
+  var today = new Date().toISOString().split('T')[0];
+  data.fees.push({ id: genId('FEE'), studentId, term, amount, paid, status, lastPaymentDate: paid > 0 ? today : undefined });
   saveData();
   logActivity(`Recorded fee for ${getStudent(studentId)?.name}: $${paid} paid`);
   closeModal();
@@ -420,6 +485,7 @@ function updateFee(id) {
   f.amount = parseFloat(document.getElementById('fFeeAmount').value);
   f.paid = parseFloat(document.getElementById('fFeePaid').value);
   f.status = f.paid >= f.amount ? 'paid' : f.paid > 0 ? 'partial' : 'pending';
+  if (f.paid > 0) f.lastPaymentDate = new Date().toISOString().split('T')[0];
   saveData();
   closeModal();
   renderFees();

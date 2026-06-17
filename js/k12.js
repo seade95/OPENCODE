@@ -11,10 +11,10 @@ const K12_CONFIG = {
       evalLabel: 'Descriptive Performance Levels',
     },
     primary: {
-      name: 'Basic Education (Primary)',
+      name: 'Basic Education',
       subTiers: {
-        lower: { name: 'Lower Basic', classes: ['Primary 1', 'Primary 2', 'Primary 3'] },
-        middle: { name: 'Middle Basic', classes: ['Primary 4', 'Primary 5', 'Primary 6'] },
+        lower: { name: 'Lower Basic', classes: ['Basic 1', 'Basic 2', 'Basic 3'] },
+        middle: { name: 'Middle Basic', classes: ['Basic 4', 'Basic 5', 'Basic 6'] },
       },
       evalType: 'ca_exam',
       evalLabel: '40% CA + 60% Exam',
@@ -113,7 +113,7 @@ const K12_CONFIG = {
   },
 
   nationalExams: {
-    ncee: { name: 'NCEE (National Common Entrance)', level: 'primary', takenBy: 'Primary 6', subjects: ['Mathematics & General Science', 'English & Social Studies', 'Quantitative & Verbal Reasoning'], maxScore: 200 },
+    ncee: { name: 'NCEE (National Common Entrance)', level: 'primary', takenBy: 'Basic 6', subjects: ['Mathematics & General Science', 'English & Social Studies', 'Quantitative & Verbal Reasoning'], maxScore: 200 },
     bece: { name: 'BECE (Basic Education Certificate Examination)', level: 'jss', takenBy: 'JSS 3', subjects: ['English Language', 'Mathematics', 'Basic Science & Technology', 'National Values Education', 'Pre-Vocational Studies', 'Cultural & Creative Arts', 'History', 'Nigerian Languages'], maxScore: 100 },
     wassce: { name: 'WASSCE (West African Senior School Certificate)', level: 'sss', takenBy: 'SSS 3', subjects: [], maxScore: 100 },
     neco: { name: 'NECO SSCE (National Examinations Council)', level: 'sss', takenBy: 'SSS 3', subjects: [], maxScore: 100 },
@@ -127,8 +127,9 @@ const K12_CONFIG = {
 
 function getClassTier(className) {
   const c = K12_CONFIG.tiers;
+  var base = className ? className.replace(/[A-Z]$/, '').trim() : className;
   if (c.eccde.classes.includes(className)) return 'eccde';
-  if (c.primary.subTiers.lower.classes.includes(className) || c.primary.subTiers.middle.classes.includes(className)) return 'primary';
+  if (c.primary.subTiers.lower.classes.includes(base) || c.primary.subTiers.middle.classes.includes(base)) return 'primary';
   if (c.juniorSecondary.classes.includes(className)) return 'juniorSecondary';
   if (c.seniorSecondary.classes.includes(className)) return 'seniorSecondary';
   return 'primary';
@@ -189,56 +190,139 @@ function k12CalculateDescriptiveStats(studentId, term) {
 // ===== 3. ADMIN PANELS =====
 
 function renderSchoolSetup() {
-  const tier = data.schoolTier || 'full_k12';
-  const tiers = [
-    { value: 'eccde', label: 'Nursery Only (Creche – Reception)' },
-    { value: 'primary', label: 'Primary Only (Primary 1–6)' },
-    { value: 'secondary', label: 'Secondary Only (JSS 1 – SSS 3)' },
-    { value: 'full_k12', label: 'Full K-12 (Creche – SSS 3)' },
+  var tier = data.schoolTier || 'full_k12';
+  var tiers = [
+    { value: 'eccde', icon: 'fa-baby', color: '#38a169', label: 'Nursery Only', desc: 'Creche through Reception. Play-based assessment.', classes: 'Creche, Nursery 1 & 2, Reception' },
+    { value: 'primary', icon: 'fa-book-reader', color: '#3182ce', label: 'Basic/Primary Only', desc: 'Basic 1 through Basic 6. CA + Exam grading.', classes: 'Basic 1 – Basic 6 (6 classes)' },
+    { value: 'secondary', icon: 'fa-user-graduate', color: '#d69e2e', label: 'Secondary Only', desc: 'JSS 1 through SSS 3. BECE + WASSCE track.', classes: 'JSS 1–3, SSS 1–3 (6 classes)' },
+    { value: 'full_k12', icon: 'fa-graduation-cap', color: '#805ad5', label: 'Full K-12', desc: 'Complete Nigerian curriculum. Creche to SSS 3.', classes: 'Creche – SSS 3 (15+ classes)' },
+    { value: 'tertiary', icon: 'fa-university', color: '#e53e3e', label: 'Tertiary / Higher Ed', desc: 'University, polytechnic, or college. Semester-based GPA system.', classes: '100 Level – 500 Level (5 levels)' },
   ];
-  const container = document.getElementById('admin-schoolsetup');
+
+  // Build graduation options based on tier
+  function getGradOptions() {
+    if (tier === 'tertiary') {
+      return ['100 Level', '200 Level', '300 Level', '400 Level', '500 Level'].map(function(l) {
+        var sel = data.schoolProfile && data.schoolProfile.graduationClass === l;
+        return '<option value="' + l + '"' + (sel ? ' selected' : '') + '>' + l + ' — Graduates at ' + l + '</option>';
+      }).join('');
+    }
+    if (tier === 'eccde') {
+      return '<option value="Reception" ' + ((data.schoolProfile && data.schoolProfile.graduationClass === 'Reception') ? 'selected' : '') + '>Reception — Graduates at Reception</option>';
+    }
+    if (tier === 'secondary') {
+      return '<option value="SSS 3" ' + ((!data.schoolProfile || data.schoolProfile.graduationClass === 'SSS 3') ? 'selected' : '') + '>SSS 3 — Graduates at SSS 3</option>';
+    }
+    return ['Basic 5', 'Basic 6'].map(function(l) {
+      var sel = (data.schoolProfile && data.schoolProfile.graduationClass === l) || (l === 'Basic 6' && !data.schoolProfile);
+      return '<option value="' + l + '"' + (sel ? ' selected' : '') + '>Basic ' + l.slice(-1) + ' — Graduates at ' + l + '</option>';
+    }).join('');
+  }
+
+  var container = document.getElementById('admin-schoolsetup');
   if (!container) return;
-  container.innerHTML = `
-    <div style="margin-bottom:24px;">
-      <h2 style="font-size:22px;font-weight:700;color:var(--primary);"><i class="fas fa-school"></i> School Setup</h2>
-      <p style="color:var(--text-light);">Configure your institution type and academic structure</p>
-    </div>
-    <div class="card" style="padding:24px;margin-bottom:16px;">
-      <h3 style="font-weight:600;margin-bottom:12px;">Institution Type</h3>
-      <p style="font-size:14px;color:var(--text-light);margin-bottom:12px;">Select the type of school to auto-provision classes, subjects, and report card modules.</p>
-      <select id="schoolTierSelect" style="width:100%;max-width:400px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:14px;">
-        ${tiers.map(t => `<option value="${t.value}" ${t.value === tier ? 'selected' : ''}>${t.label}</option>`).join('')}
-      </select>
-      <button class="btn btn-primary" style="margin-top:12px;" onclick="saveSchoolSetup()"><i class="fas fa-save"></i> Save & Provision Classes</button>
-    </div>
-    <div class="card" style="padding:24px;margin-bottom:16px;">
-      <h3 style="font-weight:600;margin-bottom:12px;">Provisioned Classes</h3>
-      <div id="provisionedClasses"></div>
-    </div>
-    <div class="card" style="padding:24px;">
-      <h3 style="font-weight:600;margin-bottom:12px;">Tier Overview</h3>
-      <div id="tierOverview"></div>
-    </div>`;
+
+  var html =
+    '<div style="margin-bottom:24px;">' +
+    '<h2 style="font-size:22px;font-weight:700;color:var(--primary);"><i class="fas fa-school"></i> School Setup</h2>' +
+    '<p style="color:var(--text-light);">Configure your institution type and academic structure</p>' +
+    '</div>' +
+
+    // Institution Type — card selector
+    '<div class="card" style="padding:24px;margin-bottom:16px;">' +
+    '<h3 style="font-weight:600;margin-bottom:4px;">Institution Type</h3>' +
+    '<p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Select your institution type to auto-configure classes, subjects, grading, and report card modules.</p>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;" id="tierCardGrid">';
+
+  tiers.forEach(function(t) {
+    var active = t.value === tier;
+    html +=
+      '<div class="card" style="padding:16px;cursor:pointer;text-align:center;border:2px solid ' + (active ? t.color : '#e2e8f0') + ';background:' + (active ? t.color + '10' : 'var(--card-bg)') + ';transition:var(--transition);" onclick="selectSchoolTier(\'' + t.value + '\')">' +
+      '<div style="font-size:36px;color:' + (active ? t.color : 'var(--text-light)') + ';margin-bottom:8px;"><i class="fas ' + t.icon + '"></i></div>' +
+      '<h4 style="font-weight:700;font-size:14px;color:' + (active ? t.color : 'var(--text)') + ';">' + t.label + '</h4>' +
+      '<p style="font-size:12px;color:var(--text-light);margin-top:4px;">' + t.desc + '</p>' +
+      '<div style="margin-top:8px;font-size:11px;color:var(--text-light);"><i class="fas fa-layer-group"></i> ' + t.classes + '</div>' +
+      (active ? '<div style="margin-top:8px;"><span class="badge" style="background:' + t.color + ';color:#fff;">Active</span></div>' : '') +
+      '</div>';
+  });
+
+  html +=
+    '</div>' +
+    '<button class="btn btn-primary" style="margin-top:16px;" onclick="saveSchoolSetup()"><i class="fas fa-save"></i> Save & Apply Configuration</button>' +
+    '</div>' +
+
+    // Graduation Threshold
+    '<div class="card" style="padding:24px;margin-bottom:16px;">' +
+    '<h3 style="font-weight:600;margin-bottom:4px;">Graduation Threshold</h3>' +
+    '<p style="font-size:13px;color:var(--text-light);margin-bottom:8px;">Select the class at which students graduate and leave the institution.</p>' +
+    '<select id="graduationLevelSelect" style="width:100%;max-width:400px;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;font-size:14px;">' + getGradOptions() + '</select>' +
+    '<button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="saveGraduationLevel()"><i class="fas fa-save"></i> Save Graduation Level</button>' +
+    '</div>' +
+
+    // Provisioned Classes
+    '<div class="card" style="padding:24px;margin-bottom:16px;">' +
+    '<h3 style="font-weight:600;margin-bottom:4px;">Provisioned Classes <span class="badge" id="classCountBadge" style="background:var(--primary-light);color:#fff;font-size:11px;vertical-align:middle;">0</span></h3>' +
+    '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Classes that are available based on the selected institution type.</p>' +
+    '<div id="provisionedClasses"></div>' +
+    '</div>' +
+
+    // Tier Overview
+    '<div class="card" style="padding:24px;">' +
+    '<h3 style="font-weight:600;margin-bottom:4px;">Tier Overview</h3>' +
+    '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Academic structure breakdown for the selected configuration.</p>' +
+    '<div id="tierOverview"></div>' +
+    '</div>';
+
+  container.innerHTML = html;
   renderProvisionedClasses();
   renderTierOverview();
+}
+
+function selectSchoolTier(value) {
+  data.schoolTier = value;
+  // Update UI without saving
+  renderSchoolSetup();
+  toast('Selected: ' + (function() {
+    var map = { eccde: 'Nursery Only', primary: 'Basic/Primary Only', secondary: 'Secondary Only', full_k12: 'Full K-12', tertiary: 'Tertiary / Higher Ed' };
+    return map[value] || value;
+  })());
 }
 
 function saveSchoolSetup() {
-  data.schoolTier = (document.getElementById('schoolTierSelect')?.value ?? 'full_k12');
-  const classes = getClassesForTier(data.schoolTier);
-  classes.forEach(c => {
-    if (!data.students.find(s => s.class === c)) {
-      logActivity(`Provisioned class: ${c}`);
-    }
-  });
+  var sel = document.getElementById('schoolTierSelect');
+  // Use last selected from data
+  var tier = data.schoolTier || 'full_k12';
+  var classes = getClassesForTier(tier);
+
+  // Update graduation threshold options
+  if (!data.schoolProfile) data.schoolProfile = {};
+  if (tier === 'tertiary' && (!data.schoolProfile.graduationClass || data.schoolProfile.graduationClass.indexOf('Level') < 0)) {
+    data.schoolProfile.graduationClass = '500 Level';
+  }
+  if (tier === 'eccde') data.schoolProfile.graduationClass = 'Reception';
+  if (tier === 'secondary' && (!data.schoolProfile.graduationClass || data.schoolProfile.graduationClass.indexOf('SSS') < 0)) {
+    data.schoolProfile.graduationClass = 'SSS 3';
+  }
+
   saveData();
-  toast('School setup saved. Classes provisioned.');
-  renderProvisionedClasses();
-  renderTierOverview();
+  toast('Institution type set to "' + (function() {
+    var map = { eccde: 'Nursery Only', primary: 'Basic/Primary Only', secondary: 'Secondary Only', full_k12: 'Full K-12', tertiary: 'Tertiary / Higher Ed' };
+    return map[tier] || tier;
+  })() + '". ' + classes.length + ' class(es) provisioned.');
+  logActivity('Changed institution type to ' + tier);
+  renderSchoolSetup();
+}
+
+function saveGraduationLevel() {
+  if (!data.schoolProfile) data.schoolProfile = {};
+  data.schoolProfile.graduationClass = document.getElementById('graduationLevelSelect')?.value || 'Basic 6';
+  saveData();
+  toast('Graduation level set to ' + data.schoolProfile.graduationClass);
 }
 
 function getClassesForTier(tier) {
-  const c = K12_CONFIG.tiers;
+  if (tier === 'tertiary') return ['100 Level', '200 Level', '300 Level', '400 Level', '500 Level'];
+  var c = K12_CONFIG.tiers;
   switch (tier) {
     case 'eccde': return [...c.eccde.classes];
     case 'primary': return [...c.primary.subTiers.lower.classes, ...c.primary.subTiers.middle.classes];
@@ -251,44 +335,73 @@ function getClassesForTier(tier) {
 function renderProvisionedClasses() {
   var container = document.getElementById('provisionedClasses');
   if (!container) return;
-  const tier = data.schoolTier || 'full_k12';
-  const classes = getClassesForTier(tier);
+  var tier = data.schoolTier || 'full_k12';
+  var classes = getClassesForTier(tier);
+  var badge = document.getElementById('classCountBadge');
+  if (badge) badge.textContent = classes.length;
   container.innerHTML = classes.length
-    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;">${classes.map(c => `<span class="badge" style="background:#bee3f8;color:#2a4365;padding:6px 14px;font-size:13px;">${c}</span>`).join('')}</div>`
+    ? '<div style="display:flex;flex-wrap:wrap;gap:8px;">' + classes.map(function(c) { return '<span class="badge" style="background:#bee3f8;color:#2a4365;padding:6px 14px;font-size:13px;">' + c + '</span>'; }).join('') + '</div>'
     : '<p class="empty-state">No classes provisioned. Select institution type and save.</p>';
 }
 
 function renderTierOverview() {
   var container = document.getElementById('tierOverview');
   if (!container) return;
-  const t = K12_CONFIG.tiers;
-  container.innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;">
-      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:28px;color:#38a169;margin-bottom:8px;"><i class="fas fa-baby"></i></div>
-        <h4 style="font-weight:600;font-size:14px;">Early Childhood</h4>
-        <p style="font-size:12px;color:var(--text-light);">${t.eccde.classes.length} classes</p>
-        <p style="font-size:12px;color:var(--text-light);">Evaluation: ${t.eccde.evalLabel}</p>
-      </div>
-      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:28px;color:#3182ce;margin-bottom:8px;"><i class="fas fa-book-reader"></i></div>
-        <h4 style="font-weight:600;font-size:14px;">Primary</h4>
-        <p style="font-size:12px;color:var(--text-light);">${t.primary.subTiers.lower.classes.length + t.primary.subTiers.middle.classes.length} classes</p>
-        <p style="font-size:12px;color:var(--text-light);">Evaluation: ${t.primary.evalLabel}</p>
-      </div>
-      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:28px;color:#d69e2e;margin-bottom:8px;"><i class="fas fa-user-graduate"></i></div>
-        <h4 style="font-weight:600;font-size:14px;">Junior Secondary</h4>
-        <p style="font-size:12px;color:var(--text-light);">${t.juniorSecondary.classes.length} classes</p>
-        <p style="font-size:12px;color:var(--text-light);">BECE grade mapping at JSS 3</p>
-      </div>
-      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:28px;color:#805ad5;margin-bottom:8px;"><i class="fas fa-graduation-cap"></i></div>
-        <h4 style="font-weight:600;font-size:14px;">Senior Secondary</h4>
-        <p style="font-size:12px;color:var(--text-light);">${t.seniorSecondary.classes.length} classes</p>
-        <p style="font-size:12px;color:var(--text-light);">3 streams, cumulative GPA</p>
-      </div>
-    </div>`;
+  var tier = data.schoolTier || 'full_k12';
+  var t = K12_CONFIG.tiers;
+
+  if (tier === 'tertiary') {
+    container.innerHTML =
+      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;">' +
+      '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+      '<div style="font-size:28px;color:#e53e3e;margin-bottom:8px;"><i class="fas fa-university"></i></div>' +
+      '<h4 style="font-weight:600;font-size:14px;">Undergraduate</h4>' +
+      '<p style="font-size:12px;color:var(--text-light);">5 levels (100–500)</p>' +
+      '<p style="font-size:12px;color:var(--text-light);">Semester-based GPA system</p>' +
+      '</div>' +
+      '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+      '<div style="font-size:28px;color:#3182ce;margin-bottom:8px;"><i class="fas fa-calculator"></i></div>' +
+      '<h4 style="font-weight:600;font-size:14px;">GPA Calculation</h4>' +
+      '<p style="font-size:12px;color:var(--text-light);">5.0 scale, per-semester</p>' +
+      '<p style="font-size:12px;color:var(--text-light);">CGPA cumulative tracking</p>' +
+      '</div>' +
+      '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+      '<div style="font-size:28px;color:#38a169;margin-bottom:8px;"><i class="fas fa-users"></i></div>' +
+      '<h4 style="font-weight:600;font-size:14px;">Departments</h4>' +
+      '<p style="font-size:12px;color:var(--text-light);">Configure faculties & departments</p>' +
+      '<p style="font-size:12px;color:var(--text-light);">Program-based enrollment</p>' +
+      '</div>' +
+      '</div>';
+    return;
+  }
+
+  container.innerHTML =
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;">' +
+    '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+    '<div style="font-size:28px;color:#38a169;margin-bottom:8px;"><i class="fas fa-baby"></i></div>' +
+    '<h4 style="font-weight:600;font-size:14px;">Early Childhood</h4>' +
+    '<p style="font-size:12px;color:var(--text-light);">' + t.eccde.classes.length + ' classes</p>' +
+    '<p style="font-size:12px;color:var(--text-light);">Evaluation: ' + t.eccde.evalLabel + '</p>' +
+    '</div>' +
+    '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+    '<div style="font-size:28px;color:#3182ce;margin-bottom:8px;"><i class="fas fa-book-reader"></i></div>' +
+    '<h4 style="font-weight:600;font-size:14px;">Primary</h4>' +
+    '<p style="font-size:12px;color:var(--text-light);">' + (t.primary.subTiers.lower.classes.length + t.primary.subTiers.middle.classes.length) + ' classes</p>' +
+    '<p style="font-size:12px;color:var(--text-light);">Evaluation: ' + t.primary.evalLabel + '</p>' +
+    '</div>' +
+    '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+    '<div style="font-size:28px;color:#d69e2e;margin-bottom:8px;"><i class="fas fa-user-graduate"></i></div>' +
+    '<h4 style="font-weight:600;font-size:14px;">Junior Secondary</h4>' +
+    '<p style="font-size:12px;color:var(--text-light);">' + t.juniorSecondary.classes.length + ' classes</p>' +
+    '<p style="font-size:12px;color:var(--text-light);">BECE grade mapping at JSS 3</p>' +
+    '</div>' +
+    '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;">' +
+    '<div style="font-size:28px;color:#805ad5;margin-bottom:8px;"><i class="fas fa-graduation-cap"></i></div>' +
+    '<h4 style="font-weight:600;font-size:14px;">Senior Secondary</h4>' +
+    '<p style="font-size:12px;color:var(--text-light);">' + t.seniorSecondary.classes.length + ' classes</p>' +
+    '<p style="font-size:12px;color:var(--text-light);">3 streams, cumulative GPA</p>' +
+    '</div>' +
+    '</div>';
 }
 
 // ===== 4. SUBJECT MANAGEMENT =====

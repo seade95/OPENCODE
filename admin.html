@@ -11,10 +11,26 @@
 <link rel="icon" type="image/png" href="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#2563eb">
+<script src="js/screen-protection.js"></script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(function(){});
+  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newSW = reg.installing;
+      newSW.addEventListener('statechange', function() {
+        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+          if (confirm('A new version is available. Reload to update?')) {
+            newSW.postMessage({ type: 'SKIP_WAITING' });
+            window.location.reload();
+          }
+        }
+      });
+    });
+  }).catch(function(){});
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    window.location.reload();
+  });
 }
 </script>
 <style>
@@ -112,6 +128,15 @@ if ('serviceWorker' in navigator) {
     </div>
     <div class="portal-header-right">
       <div id="langSelector" style="margin-right:8px;"></div>
+      <div id="adminTermBadge" style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--primary-light);color:#fff;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;" onclick="showTermSwitcherModal()" title="Click to switch term">
+        <i class="fas fa-calendar-alt"></i>
+        <span id="adminTermBadgeText"></span>
+        <i class="fas fa-chevron-down" style="font-size:8px;"></i>
+      </div>
+      <div id="adminInstBadge" style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--accent);color:#fff;border-radius:20px;font-size:12px;font-weight:600;" title="Institution Type">
+        <i class="fas fa-school"></i>
+        <span id="adminInstBadgeText"></span>
+      </div>
       <span><i class="fas fa-user-shield"></i> Administrator</span>
       <div class="notif-bell" onclick="toggleNotifDropdown('')" style="position:relative;cursor:pointer;margin:0 8px;">
         <i class="fas fa-bell" style="font-size:16px;color:var(--text-light);"></i>
@@ -137,56 +162,65 @@ if ('serviceWorker' in navigator) {
       <div class="admin-sidebar-item" data-panel="activities"><i class="fas fa-futbol"></i><span data-i18n="activities">Activities</span></div>
       <div class="admin-sidebar-item" data-panel="attendance"><i class="fas fa-calendar-check"></i><span data-i18n="attendance">Attendance</span></div>
       <div class="admin-sidebar-item" data-panel="timetable"><i class="fas fa-table"></i><span data-i18n="timetable">Timetable</span></div>
-      <div class="admin-sidebar-item" data-panel="hostel"><i class="fas fa-bed"></i><span>Hostel</span></div>
-      <div class="admin-sidebar-item" data-panel="gradebook"><i class="fas fa-chart-line"></i><span>Gradebook</span></div>
-      <div class="admin-sidebar-item" data-panel="promotion"><i class="fas fa-arrow-up"></i><span>Promotion List</span></div>
+      <div class="admin-sidebar-item" data-panel="hostel"><i class="fas fa-bed"></i><span data-i18n="hostel">Hostel</span></div>
+      <div class="admin-sidebar-item" data-panel="gradebook"><i class="fas fa-chart-line"></i><span data-i18n="gradebook">Gradebook</span></div>
+      <div class="admin-sidebar-item" data-panel="promotion"><i class="fas fa-arrow-up"></i><span data-i18n="promotionlist">Promotion List</span></div>
       <div class="admin-sidebar-item" data-panel="exams"><i class="fas fa-calendar-alt"></i><span data-i18n="exams">Exams</span></div>
       <div class="admin-sidebar-item" data-panel="messages"><i class="fas fa-envelope"></i><span data-i18n="messages">Messages</span></div>
       <div class="admin-sidebar-item" data-panel="library"><i class="fas fa-book"></i><span data-i18n="library">Library</span></div>
-      <div class="admin-sidebar-item" data-panel="lessonnotes"><i class="fas fa-book-open"></i><span>Lesson Plans</span></div>
+      <div class="admin-sidebar-item" data-panel="lessonnotes"><i class="fas fa-book-open"></i><span data-i18n="lessonplans">Lesson Plans</span></div>
       <div class="admin-sidebar-item" data-panel="behavior"><i class="fas fa-balance-scale"></i><span>Behavior</span></div>
-      <div class="admin-sidebar-item" data-panel="hr"><i class="fas fa-user-tie"></i><span>Staff HR</span></div>
+      <div class="admin-sidebar-item" data-panel="hr"><i class="fas fa-user-tie"></i><span data-i18n="staffhr">Staff HR</span></div>
       <div class="admin-sidebar-item" data-panel="forum"><i class="fas fa-comments"></i><span>Forum</span></div>
       <div class="admin-sidebar-item" data-panel="filerepo"><i class="fas fa-folder-open"></i><span>File Repo</span></div>
-      <div class="admin-sidebar-item" data-panel="payments"><i class="fas fa-credit-card"></i><span>Payments</span></div>
-      <div class="admin-sidebar-item" data-panel="analytics"><i class="fas fa-chart-bar"></i><span>Analytics</span></div>
-      <div class="admin-sidebar-item" data-panel="reportbuilder"><i class="fas fa-object-group"></i><span>Report Builder</span></div>
-      <div class="admin-sidebar-item" data-panel="simquestions"><i class="fas fa-graduation-cap"></i><span>Exam Sim</span></div>
-      <div class="admin-sidebar-item" data-panel="simattempts"><i class="fas fa-history"></i><span>Sim Results</span></div>
-      <div class="admin-sidebar-item" data-panel="activitygames"><i class="fas fa-gamepad"></i><span>Activity Games</span></div>
-      <div class="admin-sidebar-item" data-panel="alumni"><i class="fas fa-user-graduate"></i><span>Alumni</span></div>
-      <div class="admin-sidebar-item" data-panel="predictive"><i class="fas fa-robot"></i><span>Predictive AI</span></div>
-      <div class="admin-sidebar-item" data-panel="aitools"><i class="fas fa-wand-magic"></i><span>AI Tools</span></div>
-      <div class="admin-sidebar-item" data-panel="eschool"><i class="fas fa-video"></i><span>E-School</span></div>
-      <div class="admin-sidebar-item" data-panel="academiccalendar"><i class="fas fa-calendar-alt"></i><span>Academic Calendar</span></div>
-      <div class="admin-sidebar-item" data-panel="idcards"><i class="fas fa-id-card"></i><span>ID Cards</span></div>
-      <div class="admin-sidebar-item" data-panel="terms"><i class="fas fa-calendar-alt"></i><span>Terms</span></div>
+      <div class="admin-sidebar-item" data-panel="payments"><i class="fas fa-credit-card"></i><span data-i18n="payments">Payments</span></div>
+      <div class="admin-sidebar-item" data-panel="analytics"><i class="fas fa-chart-bar"></i><span data-i18n="analytics">Analytics</span></div>
+      <div class="admin-sidebar-item" data-panel="reportbuilder"><i class="fas fa-object-group"></i><span data-i18n="reportbuilder">Report Builder</span></div>
+      <div class="admin-sidebar-item" data-panel="simquestions"><i class="fas fa-graduation-cap"></i><span data-i18n="examsim">Exam Sim</span></div>
+      <div class="admin-sidebar-item" data-panel="simattempts"><i class="fas fa-history"></i><span data-i18n="simresults">Sim Results</span></div>
+      <div class="admin-sidebar-item" data-panel="activitygames"><i class="fas fa-gamepad"></i><span data-i18n="activitygames">Activity Games</span></div>
+      <div class="admin-sidebar-item" data-panel="alumni"><i class="fas fa-user-graduate"></i><span data-i18n="alumni">Alumni</span></div>
+      <div class="admin-sidebar-item" data-panel="predictive"><i class="fas fa-robot"></i><span data-i18n="predictiveai">Predictive AI</span></div>
+      <div class="admin-sidebar-item" data-panel="aitools"><i class="fas fa-wand-magic"></i><span data-i18n="aitools">AI Tools</span></div>
+      <div class="admin-sidebar-item" data-panel="eschool"><i class="fas fa-video"></i><span data-i18n="eschool">E-School</span></div>
+      <div class="admin-sidebar-item" data-panel="academiccalendar"><i class="fas fa-calendar-alt"></i><span data-i18n="academiccalendar">Academic Calendar</span></div>
+      <div class="admin-sidebar-item" data-panel="idcards"><i class="fas fa-id-card"></i><span data-i18n="idcards">ID Cards</span></div>
+      <div class="admin-sidebar-item" data-panel="terms"><i class="fas fa-calendar-alt"></i><span data-i18n="termsession">Terms</span></div>
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">K-12 Academic Schema</div>
-      <div class="admin-sidebar-item" data-panel="schoolsetup"><i class="fas fa-school"></i><span>School Setup</span></div>
-      <div class="admin-sidebar-item" data-panel="subjects"><i class="fas fa-book-open"></i><span>Subjects</span></div>
-      <div class="admin-sidebar-item" data-panel="streams"><i class="fas fa-code-branch"></i><span>Streams</span></div>
-      <div class="admin-sidebar-item" data-panel="exammodules"><i class="fas fa-globe-africa"></i><span>Exam Modules</span></div>
-      <div class="admin-sidebar-item" data-panel="utmemock"><i class="fas fa-laptop-code"></i><span>UTME Mock</span></div>
-      <div class="admin-sidebar-item" data-panel="gallery"><i class="fas fa-images"></i><span>Gallery</span></div>
-      <div class="admin-sidebar-item" data-panel="transcript"><i class="fas fa-scroll"></i><span>Transcript</span></div>
-      <div class="admin-sidebar-item" data-panel="reportcards"><i class="fas fa-file-alt"></i><span>Report Cards</span></div>
+      <div class="admin-sidebar-item" data-panel="schoolsetup"><i class="fas fa-school"></i><span data-i18n="schoolsetup">School Setup</span></div>
+      <div class="admin-sidebar-item" data-panel="subjects"><i class="fas fa-book-open"></i><span data-i18n="subjects">Subjects</span></div>
+      <div class="admin-sidebar-item" data-panel="streams"><i class="fas fa-code-branch"></i><span data-i18n="streams">Streams</span></div>
+      <div class="admin-sidebar-item" data-panel="exammodules"><i class="fas fa-globe-africa"></i><span data-i18n="exammodules">Exam Modules</span></div>
+      <div class="admin-sidebar-item" data-panel="utmemock"><i class="fas fa-laptop-code"></i><span data-i18n="utmemock">UTME Mock</span></div>
+      <div class="admin-sidebar-item" data-panel="gallery"><i class="fas fa-images"></i><span data-i18n="gallery">Gallery</span></div>
+      <div class="admin-sidebar-item" data-panel="transcript"><i class="fas fa-scroll"></i><span data-i18n="transcript">Transcript</span></div>
+      <div class="admin-sidebar-item" data-panel="reportcards"><i class="fas fa-file-alt"></i><span data-i18n="reportcards">Report Cards</span></div>
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">School Profile</div>
-      <div class="admin-sidebar-item" data-panel="schoolprofile"><i class="fas fa-paint-brush"></i><span>Customize Portal</span></div>
-      <div class="admin-sidebar-item" data-panel="paymentgateway"><i class="fas fa-credit-card"></i><span>Payment Gateway</span></div>
+      <div class="admin-sidebar-item" data-panel="schoolprofile"><i class="fas fa-paint-brush"></i><span data-i18n="customizeportal">Customize Portal</span></div>
+      <div class="admin-sidebar-item" data-panel="paymentgateway"><i class="fas fa-credit-card"></i><span data-i18n="paymentgateway">Payment Gateway</span></div>
+      <div class="admin-sidebar-item" data-panel="subscription"><i class="fas fa-crown"></i><span data-i18n="subscription">Subscription</span></div>
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">System</div>
-      <div class="admin-sidebar-item" data-panel="notifications"><i class="fas fa-bell"></i><span>Notifications</span></div>
-      <div class="admin-sidebar-item" data-panel="system"><i class="fas fa-cogs"></i><span>System Tools</span></div>
+      <div class="admin-sidebar-item" data-panel="notifications"><i class="fas fa-bell"></i><span data-i18n="notifications">Notifications</span></div>
+      <div class="admin-sidebar-item" data-panel="system"><i class="fas fa-cogs"></i><span data-i18n="systemtools">System Tools</span></div>
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;"><span data-i18n="admissions">Admissions</span></div>
-      <div class="admin-sidebar-item" data-panel="programs"><i class="fas fa-book"></i><span>Programs</span></div>
-      <div class="admin-sidebar-item" data-panel="applications"><i class="fas fa-file-signature"></i><span>Applications</span></div>
-      <div class="admin-sidebar-item" data-panel="exambank"><i class="fas fa-question-circle"></i><span>Exam Bank</span></div>
-      <div class="admin-sidebar-item" data-panel="examresults"><i class="fas fa-chart-bar"></i><span>Exam Results</span></div>
+      <div class="admin-sidebar-item" data-panel="programs"><i class="fas fa-book"></i><span data-i18n="programs">Programs</span></div>
+      <div class="admin-sidebar-item" data-panel="applications"><i class="fas fa-file-signature"></i><span data-i18n="applications">Applications</span></div>
+      <div class="admin-sidebar-item" data-panel="exambank"><i class="fas fa-question-circle"></i><span data-i18n="exambank">Exam Bank</span></div>
+      <div class="admin-sidebar-item" data-panel="examresults"><i class="fas fa-chart-bar"></i><span data-i18n="examresults">Exam Results</span></div>
+      <div class="admin-sidebar-item" data-panel="handwritingocr"><i class="fas fa-pen"></i><span data-i18n="handwritingocr">Handwriting OCR</span></div>
+      <div class="admin-sidebar-item" data-panel="teacherexams"><i class="fas fa-file-word"></i><span data-i18n="teacherexams">Teacher Uploads</span></div>
+      <div class="sidebar-divider"></div>
+      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Student Welfare</div>
+      <div class="admin-sidebar-item" data-panel="health"><i class="fas fa-heartbeat"></i><span>Health Records</span></div>
+      <div class="admin-sidebar-item" data-panel="transport"><i class="fas fa-bus"></i><span>Transport</span></div>
+      <div class="admin-sidebar-item" data-panel="conferences"><i class="fas fa-handshake"></i><span>PT Conferences</span></div>
     </div>
     <div class="admin-content">
+      <div class="sub-banner"></div>
       <!-- Dashboard Panel -->
       <div class="admin-panel active" id="admin-dashboard">
         <h2 data-i18n="dashboard">Dashboard Overview</h2>
@@ -254,6 +288,7 @@ if ('serviceWorker' in navigator) {
           </div>
         </div>
         <p class="subtitle">Track and manage fee payments</p>
+        <div id="feeConfigContainer"></div>
         <div class="search-bar">
           <input type="text" id="feeSearch" placeholder="Search by student name..." oninput="renderFees()">
           <select id="feeStatusFilter" onchange="renderFees()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;">
@@ -680,10 +715,35 @@ if ('serviceWorker' in navigator) {
         </div>
       </div>
 
+      <!-- Subscription Panel -->
+      <div class="admin-panel" id="admin-subscription">
+        <div id="adminSubscription"></div>
+      </div>
+
       <!-- System Tools -->
       <div class="admin-panel" id="admin-system"></div>
       <!-- Notifications Panel -->
       <div class="admin-panel" id="admin-notifications"></div>
+      <!-- Handwriting OCR -->
+      <div class="admin-panel" id="admin-handwritingocr">
+        <div id="adminHandwritingOCR"></div>
+      </div>
+      <!-- Teacher Uploaded Exams -->
+      <div class="admin-panel" id="admin-teacherexams">
+        <div id="adminTeacherExams"></div>
+      </div>
+      <!-- Health Records -->
+      <div class="admin-panel" id="admin-health">
+        <div id="adminHealthRecords"></div>
+      </div>
+      <!-- Transport Management -->
+      <div class="admin-panel" id="admin-transport">
+        <div id="adminTransport"></div>
+      </div>
+      <!-- PT Conferences -->
+      <div class="admin-panel" id="admin-conferences">
+        <div id="adminConferences"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -708,6 +768,12 @@ if ('serviceWorker' in navigator) {
 <script src="js/alumni.js"></script>
 <script src="js/eduverse.js"></script>
 <script src="js/schoolprofile.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="js/handwriting-ocr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script src="js/teacher-upload.js"></script>
+<script src="js/subscription.js"></script>
+<script src="js/offline-sync.js"></script>
 <script src="js/app.js"></script>
 <script>
 // Override goHome for standalone admin page

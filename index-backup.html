@@ -1608,7 +1608,7 @@ tr:hover td { background: #f7fafc; }
     <div class="testimonial-card">
       <div class="avatar"><i class="fas fa-user-graduate"></i></div>
       <div class="name">Alice Johnson</div>
-      <div class="role">Grade 10 Student</div>
+      <div class="role">Basic 6 Student</div>
       <div class="text">EDUVERSE has completely transformed my learning experience. The teachers are supportive, and the online portal makes it easy to track my progress.</div>
     </div>
     <div class="testimonial-card">
@@ -1626,7 +1626,7 @@ tr:hover td { background: #f7fafc; }
     <div class="testimonial-card">
       <div class="avatar"><i class="fas fa-user-graduate"></i></div>
       <div class="name">David Brown</div>
-      <div class="role">Grade 9 Student</div>
+      <div class="role">Basic 4 Student</div>
       <div class="text">I love how I can access all my assignments, results, and CAT scores from one place. The extracurricular activities section helped me join the basketball team!</div>
     </div>
   </div>
@@ -2167,14 +2167,14 @@ const DATA_KEY = 'schoolData';
 function getDefaultData() {
   return {
     students: [
-      { id: 'STU001', name: 'Alice Johnson', class: 'Grade 10A', contact: 'alice@example.com' },
-      { id: 'STU002', name: 'Bob Smith', class: 'Grade 10B', contact: 'bob@example.com' },
-      { id: 'STU003', name: 'Carol Williams', class: 'Grade 11A', contact: 'carol@example.com' },
-      { id: 'STU004', name: 'David Brown', class: 'Grade 9A', contact: 'david@example.com' },
-      { id: 'STU005', name: 'Eve Davis', class: 'Grade 12A', contact: 'eve@example.com' },
-      { id: 'STU006', name: 'Frank Miller', class: 'Grade 10A', contact: 'frank@example.com' },
-      { id: 'STU007', name: 'Grace Wilson', class: 'Grade 11B', contact: 'grace@example.com' },
-      { id: 'STU008', name: 'Henry Taylor', class: 'Grade 9B', contact: 'henry@example.com' }
+{ id: 'STU001', name: 'Alice Johnson', class: 'Basic 5A', contact: 'alice@example.com' },
+{ id: 'STU002', name: 'Bob Smith', class: 'Basic 5B', contact: 'bob@example.com' },
+{ id: 'STU003', name: 'Carol Williams', class: 'Basic 6A', contact: 'carol@example.com' },
+{ id: 'STU004', name: 'David Brown', class: 'Basic 4A', contact: 'david@example.com' },
+{ id: 'STU005', name: 'Eve Davis', class: 'Basic 6C', contact: 'eve@example.com' },
+{ id: 'STU006', name: 'Frank Miller', class: 'Basic 5A', contact: 'frank@example.com' },
+{ id: 'STU007', name: 'Grace Wilson', class: 'Basic 6B', contact: 'grace@example.com' },
+{ id: 'STU008', name: 'Henry Taylor', class: 'Basic 4B', contact: 'henry@example.com' }
     ],
     fees: [
       { id: 'FEE001', studentId: 'STU001', term: 'Term 1 2026', amount: 500, paid: 500, status: 'paid' },
@@ -2211,13 +2211,13 @@ function getDefaultData() {
       { id: 'ATT008', studentId: 'STU003', date: '2026-06-02', status: 'excused' }
     ],
     teachers: [
-      { id: 'TCH001', name: 'Mr. John Doe', email: 'john@eduverse.com', password: 'teacher123', assignedClass: 'Grade 10A' },
-      { id: 'TCH002', name: 'Ms. Jane Smith', email: 'jane@eduverse.com', password: 'teacher123', assignedClass: 'Grade 10B' },
-      { id: 'TCH003', name: 'Dr. Peter Jones', email: 'peter@eduverse.com', password: 'teacher123', assignedClass: 'Grade 11A' }
+{ id: 'TCH001', name: 'Mr. John Doe', email: 'john@eduverse.com', password: 'teacher123', assignedClass: 'Basic 5A' },
+{ id: 'TCH002', name: 'Ms. Jane Smith', email: 'jane@eduverse.com', password: 'teacher123', assignedClass: 'Basic 5B' },
+{ id: 'TCH003', name: 'Dr. Peter Jones', email: 'peter@eduverse.com', password: 'teacher123', assignedClass: 'Basic 6A' }
     ],
     assignments: [
-      { id: 'ASN001', teacherId: 'TCH001', title: 'Algebra Homework', description: 'Solve problems 1-20 from Chapter 5: Linear Equations', dueDate: '2026-06-15', class: 'Grade 10A', createdAt: '2026-06-05' },
-      { id: 'ASN002', teacherId: 'TCH002', title: 'Essay on Ecology', description: 'Write a 500-word essay on ecosystem conservation and biodiversity.', dueDate: '2026-06-20', class: 'Grade 10B', createdAt: '2026-06-05' }
+{ id: 'ASN001', teacherId: 'TCH001', title: 'Algebra Homework', description: 'Solve problems 1-20 from Chapter 5: Linear Equations', dueDate: '2026-06-15', class: 'Basic 5A', createdAt: '2026-06-05' },
+{ id: 'ASN002', teacherId: 'TCH002', title: 'Essay on Ecology', description: 'Write a 500-word essay on ecosystem conservation and biodiversity.', dueDate: '2026-06-20', class: 'Basic 5B', createdAt: '2026-06-05' }
     ],
     activityLog: []
   };
@@ -2498,7 +2498,7 @@ function showAddStudentModal() {
     <div class="form-grid">
       <div class="form-group"><label>Student ID</label><input type="text" id="fStudentId" placeholder="e.g. STU009"></div>
       <div class="form-group"><label>Full Name</label><input type="text" id="fStudentName" placeholder="Full name"></div>
-      <div class="form-group"><label>Class</label><input type="text" id="fStudentClass" placeholder="e.g. Grade 10A"></div>
+      <div class="form-group"><label>Class</label><input type="text" id="fStudentClass" placeholder="e.g. Basic 5A"></div>
       <div class="form-group"><label>Contact</label><input type="text" id="fStudentContact" placeholder="Email or phone"></div>
     </div>
     <div class="modal-actions">

@@ -38,7 +38,7 @@ console.log('  translations.en.hello:', EV2.data.translations?.en?.hello);
 // Test 3: k12GetGradeLabel for SSS
 console.log('\nTest 3 - k12GetGradeLabel:');
 console.log('  SSS 1, 80:', EV2.k12GetGradeLabel('SSS 1', 80));
-console.log('  Primary 1, 80:', EV2.k12GetGradeLabel('Primary 1', 80));
+console.log('  Basic 1, 80:', EV2.k12GetGradeLabel('Basic 1', 80));
 
 // Test 4: Descriptive stats
 h.resetStorage();

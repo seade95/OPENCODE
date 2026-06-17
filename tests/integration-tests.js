@@ -26,11 +26,11 @@ function seedFresh() {
   resetStorage();
   const d = {
     students: [
-      { id: 'STU001', name: 'Alice Johnson', class: 'Grade 10A', contact: 'alice@example.com', username: 'alice.johnson', password: 'stu001' },
-      { id: 'STU002', name: 'Bob Smith', class: 'Grade 10B', contact: 'bob@example.com', username: 'bob.smith', password: 'stu002' },
+      { id: 'STU001', name: 'Alice Johnson', class: 'Basic 5A', contact: 'alice@example.com', username: 'alice.johnson', password: 'stu001' },
+      { id: 'STU002', name: 'Bob Smith', class: 'Basic 5B', contact: 'bob@example.com', username: 'bob.smith', password: 'stu002' },
     ],
     teachers: [
-      { id: 'TCH001', name: 'Mr. John Doe', email: 'john@eduverse.com', password: 'teacher123', assignedClass: 'Grade 10A' },
+      { id: 'TCH001', name: 'Mr. John Doe', email: 'john@eduverse.com', password: 'teacher123', assignedClass: 'Basic 5A' },
     ],
     fees: [
       { id: 'FEE001', studentId: 'STU001', term: 'Term 1 2026', amount: 500, paid: 500, status: 'paid' },
@@ -153,7 +153,7 @@ testGroup('Teacher CRUD', () => {
   const teachers = EV.data.teachers;
 
   // Create
-  teachers.push({ id: 'TCH002', name: 'Ms. Jane Doe', email: 'jane@test.edu', password: 'pass456', assignedClass: 'Grade 11A' });
+  teachers.push({ id: 'TCH002', name: 'Ms. Jane Doe', email: 'jane@test.edu', password: 'pass456', assignedClass: 'Basic 6A' });
   assertEq(teachers.length, 2, 'Added teacher makes 2 total');
 
   // Read
@@ -161,8 +161,8 @@ testGroup('Teacher CRUD', () => {
   assert(t !== undefined, 'Can find new teacher');
 
   // Update
-  t.assignedClass = 'Grade 12A';
-  assertEq(t.assignedClass, 'Grade 12A', 'Teacher class updated');
+  t.assignedClass = 'Basic 6C';
+  assertEq(t.assignedClass, 'Basic 6C', 'Teacher class updated');
 
   // Delete
   teachers.splice(teachers.findIndex(t => t.id === 'TCH001'), 1);
@@ -204,11 +204,11 @@ testGroup('Results & Grading', () => {
 
   // K-12 grading integration
   const stu1 = EV.data.students.find(s => s.id === 'STU001');
-  const tier = EV.getClassTier('Grade 10A');
-  assertEq(tier, 'primary', 'Grade 10A maps to primary tier');
+  const tier = EV.getClassTier('Basic 5A');
+  assertEq(tier, 'primary', 'Basic 5A maps to primary tier');
 
-  const grade = EV.k12GetGrade('Grade 10A', 85);
-  assertEq(grade, 'A', 'Primary 85 => A via k12GetGrade');
+  const grade = EV.k12GetGrade('Basic 5A', 85);
+  assertEq(grade, 'A', 'Basic 85 => A via k12GetGrade');
 
   // WASSCE grading (SSS)
   const grade2 = EV.k12GetGrade('SSS 1', 85);
@@ -261,8 +261,8 @@ testGroup('K-12 Class Hierarchy', () => {
   const tierTests = [
     ['Creche', 'eccde'], ['Toddler', 'eccde'], ['Playgroup', 'eccde'],
     ['Nursery 1', 'eccde'], ['Nursery 2', 'eccde'], ['Kindergarten', 'eccde'], ['Reception', 'eccde'],
-    ['Primary 1', 'primary'], ['Primary 2', 'primary'], ['Primary 3', 'primary'],
-    ['Primary 4', 'primary'], ['Primary 5', 'primary'], ['Primary 6', 'primary'],
+    ['Basic 1', 'primary'], ['Basic 2', 'primary'], ['Basic 3', 'primary'],
+    ['Basic 4', 'primary'], ['Basic 5', 'primary'], ['Basic 6', 'primary'],
     ['JSS 1', 'juniorSecondary'], ['JSS 2', 'juniorSecondary'], ['JSS 3', 'juniorSecondary'],
     ['SSS 1', 'seniorSecondary'], ['SSS 2', 'seniorSecondary'], ['SSS 3', 'seniorSecondary'],
   ];
@@ -279,10 +279,10 @@ testGroup('K-12 Subject Distribution', () => {
   assert(eccdeSubjs.includes('Letter Work'), 'ECCDE includes Letter Work');
   assert(eccdeSubjs.includes('Number Work'), 'ECCDE includes Number Work');
 
-  // Primary subjects
-  const primarySubjs = EV.k12GetSubjects('Primary 4');
-  assert(primarySubjs.includes('Mathematics'), 'Primary includes Mathematics');
-  assert(primarySubjs.includes('English Language'), 'Primary includes English');
+  // Basic subjects
+  const primarySubjs = EV.k12GetSubjects('Basic 4');
+  assert(primarySubjs.includes('Mathematics'), 'Basic includes Mathematics');
+  assert(primarySubjs.includes('English Language'), 'Basic includes English');
 
   // SSS Science stream
   const scienceSubjs = EV.k12GetSubjects('SSS 1', 'science');
@@ -311,13 +311,13 @@ testGroup('K-12 Grade Distribution', () => {
     ['Creche', 40, 'Developing'],
     ['Creche', 30, 'Emerging'],
     // Primary (standard)
-    ['Primary 5', 80, 'A'],
-    ['Primary 5', 75, 'B+'],
-    ['Primary 5', 70, 'B'],
-    ['Primary 5', 65, 'C+'],
-    ['Primary 5', 60, 'C'],
-    ['Primary 5', 50, 'D'],
-    ['Primary 5', 40, 'F'],
+    ['Basic 5', 80, 'A'],
+    ['Basic 5', 75, 'B+'],
+    ['Basic 5', 70, 'B'],
+    ['Basic 5', 65, 'C+'],
+    ['Basic 5', 60, 'C'],
+    ['Basic 5', 50, 'D'],
+    ['Basic 5', 40, 'F'],
     // JSS 3 (BECE)
     ['JSS 3', 75, 'A'],
     ['JSS 3', 65, 'B'],
@@ -346,7 +346,7 @@ testGroup('National Exams', () => {
   const exams = EV.K12_CONFIG.nationalExams;
 
   assertEq(exams.ncee.name, 'NCEE (National Common Entrance)', 'NCEE name');
-  assertEq(exams.ncee.takenBy, 'Primary 6', 'NCEE for Primary 6');
+  assertEq(exams.ncee.takenBy, 'Basic 6', 'NCEE for Basic 6');
   assertEq(exams.ncee.maxScore, 200, 'NCEE max 200');
 
   assertEq(exams.bece.name, 'BECE (Basic Education Certificate Examination)', 'BECE name');
@@ -431,7 +431,7 @@ testGroup('Multi-Tenant System', () => {
   assertEq(school2Data.schoolName, 'Green Valley School', 'School 2 name in data');
   assertEq(school2Data.schoolTier, 'primary', 'School 2 tier in data');
   // Add some students to school 2
-  school2Data.students.push({ id: 'STU101', name: 'Test Student', class: 'Primary 1' });
+  school2Data.students.push({ id: 'STU101', name: 'Test Student', class: 'Basic 1' });
   globalThis.window.localStorage.setItem('schoolData_' + school2.id, JSON.stringify(school2Data));
 
   // Verify school 1 data is NOT affected by school 2 changes

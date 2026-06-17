@@ -10,6 +10,7 @@ function renderStudentPortal() {
   el = document.getElementById('studentProfileName'); if (el) el.textContent = s.name;
   el = document.getElementById('studentProfileId'); if (el) el.textContent = s.id;
   el = document.getElementById('studentProfileClass'); if (el) el.textContent = s.class;
+  el = document.getElementById('stuCurrentTerm'); if (el) el.textContent = data.currentTerm || 'No active term';
 
   // Results
   var results = data.results.filter(function(r) { return r.studentId === s.id; });
@@ -37,7 +38,7 @@ function renderStudentPortal() {
     ft.innerHTML = fees.map(function(f) {
       var balance = f.amount - f.paid;
       var bClass = f.status === 'paid' ? 'badge-paid' : f.status === 'partial' ? 'badge-partial' : 'badge-absent';
-      return '<tr><td>' + htmlEscape(f.term) + '</td><td>$' + f.amount + '</td><td>$' + f.paid + '</td><td>$' + Math.max(0, balance) + '</td><td><span class="badge ' + bClass + '">' + htmlEscape(f.status) + '</span></td></tr>';
+      return '<tr><td>' + htmlEscape(f.term) + '</td><td>₦' + Number(f.amount).toLocaleString() + '</td><td>₦' + Number(f.paid).toLocaleString() + '</td><td>₦' + Math.max(0, balance).toLocaleString() + '</td><td><span class="badge ' + bClass + '">' + htmlEscape(f.status) + '</span></td></tr>';
     }).join('');
     fe.style.display = 'none';
   } else { if (ft) ft.innerHTML = ''; if (fe) fe.style.display = 'block'; }
@@ -81,21 +82,111 @@ function renderStudentPortal() {
   if (typeof renderAcademicCalendarView === 'function') renderAcademicCalendarView('stuCalendarView');
   if (typeof renderStudentHostel === 'function') renderStudentHostel();
   if (typeof renderStudentAlumni === 'function') renderStudentAlumni();
+  if (typeof renderSubscriptionBanner === 'function') renderSubscriptionBanner();
   if (typeof applyTranslations === 'function') applyTranslations();
+  checkFeeLock();
+}
+
+// ===== FEE LOCK — block access when fees unpaid (within payment window only) =====
+var _feeLockOverlay = null;
+
+function isInFeePaymentWindow() {
+  var cfg = data.feeConfig;
+  if (!cfg || !cfg.enabled || !cfg.windowStart || !cfg.windowEnd) return true; // no config = legacy behavior = lock
+  var now = new Date();
+  now.setHours(0,0,0,0);
+  var start = new Date(cfg.windowStart + 'T00:00:00');
+  var end = new Date(cfg.windowEnd + 'T23:59:59');
+  return now >= start && now <= end;
+}
+
+function checkFeeLock() {
+  if (!currentStudent) return;
+  // If outside the payment window, never lock
+  if (!isInFeePaymentWindow()) {
+    var ex = document.getElementById('stuFeeLock');
+    if (ex) ex.remove();
+    _feeLockOverlay = null;
+    return;
+  }
+  var s = currentStudent;
+  var cfg = data.feeConfig || {};
+  var graceDays = cfg.partPaymentGraceDays || 7;
+
+  var lockable = data.fees.filter(function(f) {
+    if (f.studentId !== s.id || f.status === 'paid' || f.amount <= 0) return false;
+    // Partial payers get a grace period: portal stays open for graceDays after last payment
+    if (f.status === 'partial' && f.lastPaymentDate) {
+      var deadline = new Date(f.lastPaymentDate + 'T00:00:00');
+      deadline.setDate(deadline.getDate() + graceDays);
+      if (new Date() <= deadline) return false; // grace period still active
+    }
+    return true;
+  });
+  var totalDue = lockable.reduce(function(sum, f) { return sum + (f.amount - f.paid); }, 0);
+
+  var existing = document.getElementById('stuFeeLock');
+  if (totalDue <= 0) {
+    if (existing) existing.remove();
+    _feeLockOverlay = null;
+    return;
+  }
+
+  if (existing) return; // already shown
+
+  var deadlineMsg = cfg.windowEnd ? ' Payment deadline: ' + cfg.windowEnd + '.' : '';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'stuFeeLock';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML =
+    '<div style="background:white;border-radius:16px;max-width:480px;width:100%;padding:32px;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,0.25);animation:fadeIn 0.3s ease;">' +
+      '<div style="width:80px;height:80px;border-radius:50%;background:#fff5f5;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">' +
+        '<i class="fas fa-lock" style="font-size:32px;color:#e53e3e;"></i>' +
+      '</div>' +
+      '<h2 style="font-size:22px;font-weight:800;color:#2d3748;margin-bottom:4px;">Portal Locked</h2>' +
+      '<p style="font-size:14px;color:#718096;margin-bottom:20px;">Please clear your outstanding school fees to access the portal.' + deadlineMsg + '</p>' +
+      '<div style="background:#fff5f5;border:1px solid #fed7d7;border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;">' +
+        '<p style="font-weight:600;font-size:14px;color:#e53e3e;margin-bottom:8px;"><i class="fas fa-exclamation-circle"></i> Outstanding Fees</p>' +
+        lockable.map(function(f) {
+          var bal = f.amount - f.paid;
+          return '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid #fed7d7;"><span>' + htmlEscape(f.term) + '</span><span style="font-weight:600;">₦' + bal.toLocaleString() + '</span></div>';
+        }).join('') +
+        '<div style="display:flex;justify-content:space-between;padding:8px 0 0;font-size:15px;font-weight:700;color:#e53e3e;"><span>Total Due</span><span>₦' + totalDue.toLocaleString() + '</span></div>' +
+      '</div>' +
+      '<button class="btn btn-success" style="width:100%;padding:12px;font-size:16px;" onclick="closeFeeLock();showPaymentPage();"><i class="fas fa-credit-card"></i> Pay Now</button>' +
+      '<p style="font-size:12px;color:#a0aec0;margin-top:12px;">Pay online with card, bank transfer, or USSD</p>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  _feeLockOverlay = overlay;
+}
+
+function closeFeeLock() {
+  var el = document.getElementById('stuFeeLock');
+  if (el) el.remove();
+  _feeLockOverlay = null;
 }
 
 (function() {
   var tabs = document.querySelectorAll('.student-tab');
   for (var i = 0; i < tabs.length; i++) {
     tabs[i].addEventListener('click', function() {
+      var tabName = this.dataset.tab;
+      // If fee-locked, only allow the payments tab
+      if (document.getElementById('stuFeeLock') && tabName !== 'payments') {
+        checkFeeLock();
+        return;
+      }
       var tabs2 = document.querySelectorAll('.student-tab');
       for (var j = 0; j < tabs2.length; j++) tabs2[j].classList.remove('active');
       var panels = document.querySelectorAll('.student-panel');
       for (var j = 0; j < panels.length; j++) panels[j].classList.remove('active');
       this.classList.add('active');
-      var tabName = this.dataset.tab;
       var panel = document.getElementById('stu-' + tabName);
       if (panel) panel.classList.add('active');
+      if (tabName === 'timetable' && typeof renderTimetableStudent === 'function') renderTimetableStudent();
+      if (tabName === 'exams' && typeof renderExamsStudent === 'function') renderExamsStudent();
+      if (tabName === 'messages' && typeof renderMessages === 'function') renderMessages('stuMessages', currentStudent ? currentStudent.id : '');
       if (tabName === 'lessonnotes' && typeof renderStudentLessonNotes === 'function') renderStudentLessonNotes();
       if (tabName === 'forum' && typeof renderForum === 'function') renderForum('stuForum', currentStudent ? currentStudent.class : '');
       if (tabName === 'filerepo' && typeof renderFileRepo === 'function') renderFileRepo('stuFileRepo', currentStudent ? currentStudent.class : '');
@@ -110,6 +201,8 @@ function renderStudentPortal() {
       if (tabName === 'simulation' && typeof renderSimCenter === 'function') { cleanupSim(); renderSimCenter(); }
       if (tabName === 'activitygames' && typeof renderStudentActivityGames === 'function') renderStudentActivityGames();
       if (tabName === 'alumni' && typeof renderStudentAlumni === 'function') renderStudentAlumni();
+      if (tabName === 'health' && typeof renderStudentHealthView === 'function') renderStudentHealthView();
+      if (tabName === 'transport' && typeof renderStudentTransportView === 'function') renderStudentTransportView();
       if (typeof applyTranslations === 'function') applyTranslations();
     });
   }
