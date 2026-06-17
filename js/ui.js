@@ -196,8 +196,9 @@ function studentLogin() {
   var nameOrPass = nameEl.value.trim();
   var student = (data.students || []).find(function(s) { return s.username === idOrUser && s.password === nameOrPass; });
   if (!student) student = (data.students || []).find(function(s) { return s.id === idOrUser && s.name.toLowerCase() === nameOrPass.toLowerCase(); });
+  if (!student) student = (data.students || []).find(function(s) { return s.id === idOrUser && s.password === nameOrPass; });
   if (!student) {
-    toast('Invalid credentials. Try ID + Name or Username + Password.', 'error');
+    toast('Invalid credentials. Try ID + Password or Username + Password.', 'error');
     return;
   }
   currentStudent = student;
