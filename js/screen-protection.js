@@ -47,7 +47,7 @@
     '#spBlurOverlay .sp-icon{font-size:56px;margin-bottom:16px}' +
     '#spBlurOverlay h2{color:#fff;font-size:22px;font-weight:700;margin-bottom:6px}' +
     '#spBlurOverlay p{color:#a0aec0;font-size:14px}' +
-    '#spFlashOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:999998;display:none;align-items:center;justify-content:center;flex-direction:column;animation:spFadeIn 0.2s ease}' +
+    '#spFlashOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:999998;display:none;align-items:center;justify-content:center;flex-direction:column;animation:spFadeIn 0.1s ease}' +
     '#spFlashOverlay .sp-icon{font-size:64px;margin-bottom:12px}' +
     '#spFlashOverlay h2{color:#fff;font-size:20px;font-weight:700;margin-bottom:4px}' +
     '#spFlashOverlay p{color:#fc8181;font-size:13px}' +
@@ -85,9 +85,9 @@
   }
 
   function showFlashOverlay() {
-    if (_level >= 2 && _flashOverlay) {
+    if (_level >= 1 && _flashOverlay) {
       _flashOverlay.style.display = 'flex';
-      setTimeout(function() { _flashOverlay.style.display = 'none'; }, 1200);
+      setTimeout(function() { _flashOverlay.style.display = 'none'; }, 3000);
     }
   }
 
@@ -100,7 +100,9 @@
 
   // ===== PRINTSCREEN =====
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'PrintScreen' || e.keyCode === 44) showFlashOverlay();
+    if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
+      showFlashOverlay();
+    }
   });
 
   // ===== DEVTOOLS DETECTION (level 3 only) =====
