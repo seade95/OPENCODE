@@ -285,7 +285,59 @@ function getDefaultData() {
         { platform: 'youtube', url: '' }
       ],
       heroImages: ['images/hero/slide1.jpg', 'images/hero/slide2.jpg', 'images/hero/slide3.jpg'],
-      theme: { primaryColor: '#2563eb', accentColor: '#fbbf24', successColor: '#38a169', infoColor: '#3182ce' }
+      theme: { primaryColor: '#2563eb', accentColor: '#fbbf24', successColor: '#38a169', infoColor: '#3182ce' },
+      // Branding
+      schoolMotto: '',
+      schoolSecondaryColor: '#7c3aed',
+      fontFamily: 'Inter, sans-serif',
+      borderRadius: '8px',
+      faviconUrl: 'icons/icon.svg',
+      watermarkText: '',
+      customCSS: '',
+      dashboardLogo: '',
+      loginBackground: '',
+      defaultLanguage: 'en',
+      sessionTimeout: 30,
+      dateFormat: 'DD/MM/YYYY',
+      // School info
+      foundingYear: '',
+      schoolType: 'day',
+      gender: 'coeducational',
+      curriculumLabel: 'Nigerian Curriculum',
+      operatingHours: 'Mon - Fri: 8:00 AM - 3:00 PM',
+      emergencyContact: '',
+      termNames: ['Term 1', 'Term 2', 'Term 3'],
+      // Admissions
+      admissionOpen: false,
+      admissionSeason: '2026/2027 Admissions Open',
+      admissionRequirements: [],
+      // About
+      aboutImages: [],
+      // Facilities
+      facilities: [],
+      // Staff
+      staff: [],
+      // FAQs
+      faqs: [],
+      // Footer
+      footerColumns: [],
+      accreditations: [],
+      alumniCount: '',
+      newsletterText: 'Subscribe to receive updates on school activities and academic news.',
+      // Portal feature toggles
+      enableFeatures: { library: true, transport: true, health: true, activities: true, alumni: true, hostel: true, chat: true, gallery: true, examSimulation: true },
+      // Grading
+      gradingScale: [],
+      // Announcements
+      announcementBar: { text: '', enabled: false },
+      // Custom domains
+      customDomains: [],
+      // Map embed
+      mapEmbedUrl: '',
+      // Social feed
+      socialFeed: { instagram: '', twitter: '' },
+      // Sports houses
+      sportHouses: []
     },
     academicCalendar: [
       { id: 'CAL001', title: 'First Term Begins', date: '2026-09-15', type: 'academic', description: 'Opening day for the first academic term.' },
