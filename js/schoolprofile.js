@@ -86,7 +86,22 @@ function renderSchoolProfile() {
     + '<input type="text" id="spSchoolUrl" readonly value="' + esc(typeof getCurrentSchoolUrl === 'function' ? getCurrentSchoolUrl() : '') + '" style="flex:1;min-width:180px;font-size:12px;color:var(--text-light);background:#f8fafc;cursor:text;" onclick="this.select()">'
     + '<button class="btn btn-sm btn-primary" onclick="copySchoolLink()"><i class="fas fa-copy"></i> Copy</button>'
     + '</div></div>'
-    + '</div></div>';
+    + '</div></div>'
+
+    // Social Links
+    + '<div class="profile-section"><div class="profile-section-header" onclick="toggleProfileSection(this)">'
+    + '<span><i class="fas fa-share-alt"></i> Social Media Links</span><i class="fas fa-chevron-down"></i></div>'
+    + '<div class="profile-section-body"><div id="spSocialLinks">' + renderSocialLinksEditor() + '</div></div></div>'
+
+    // Hero Images
+    + '<div class="profile-section"><div class="profile-section-header" onclick="toggleProfileSection(this)">'
+    + '<span><i class="fas fa-images"></i> Hero Slide Images <span style="font-size:11px;color:var(--text-light);font-weight:400;">(URLs for the 3 hero slides)</span></span><i class="fas fa-chevron-down"></i></div>'
+    + '<div class="profile-section-body">' + renderHeroImagesEditor() + '</div></div>'
+
+    // Theme Colors
+    + '<div class="profile-section"><div class="profile-section-header" onclick="toggleProfileSection(this)">'
+    + '<span><i class="fas fa-palette"></i> Theme Colors</span><i class="fas fa-chevron-down"></i></div>'
+    + '<div class="profile-section-body">' + renderThemeEditor() + '</div></div>';
 
   var sections = [
     { key: 'services', icon: 'fa-concierge-bell', label: 'Services', fields: ['icon','title','description'], phs: ['fa-icon','Service title','Description'] },
@@ -232,10 +247,84 @@ function resetSchoolProfile() {
   showToast('Profile reset to defaults');
 }
 
+// ===== Social Links Editor =====
+function renderSocialLinksEditor() {
+  var prof = getSchoolProfile();
+  var links = prof.socialLinks || [{ platform: 'facebook', url: '' }, { platform: 'twitter', url: '' }, { platform: 'linkedin', url: '' }, { platform: 'instagram', url: '' }, { platform: 'youtube', url: '' }];
+  var icons = { facebook: 'fab fa-facebook', twitter: 'fab fa-twitter', linkedin: 'fab fa-linkedin', instagram: 'fab fa-instagram', youtube: 'fab fa-youtube' };
+  var labels = { facebook: 'Facebook URL', twitter: 'Twitter URL', linkedin: 'LinkedIn URL', instagram: 'Instagram URL', youtube: 'YouTube URL' };
+  return links.map(function(l, i) {
+    var cls = icons[l.platform] || 'fas fa-globe';
+    var label = labels[l.platform] || l.platform;
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><i class="' + cls + '" style="width:20px;text-align:center;"></i>'
+      + '<input type="text" placeholder="' + label + '" value="' + esc(l.url || '') + '" style="flex:1;" oninput="updateSocialLink(' + i + ',this.value)"></div>';
+  }).join('');
+}
+
+function updateSocialLink(index, url) {
+  var prof = getSchoolProfile();
+  if (!prof.socialLinks) prof.socialLinks = [];
+  if (!prof.socialLinks[index]) prof.socialLinks[index] = { platform: 'facebook', url: '' };
+  prof.socialLinks[index].url = url;
+}
+
+// ===== Hero Images Editor =====
+function renderHeroImagesEditor() {
+  var prof = getSchoolProfile();
+  var imgs = prof.heroImages || ['images/hero/slide1.jpg', 'images/hero/slide2.jpg', 'images/hero/slide3.jpg'];
+  var labels = ['Slide 1 Image URL', 'Slide 2 Image URL', 'Slide 3 Image URL'];
+  return imgs.map(function(img, i) {
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'
+      + '<span style="min-width:120px;font-size:13px;color:var(--text-light);">' + labels[i] + '</span>'
+      + '<input type="text" value="' + esc(img) + '" style="flex:1;" oninput="updateHeroImage(' + i + ',this.value)">'
+      + '</div>';
+  }).join('');
+}
+
+function updateHeroImage(index, url) {
+  var prof = getSchoolProfile();
+  if (!prof.heroImages) prof.heroImages = ['images/hero/slide1.jpg', 'images/hero/slide2.jpg', 'images/hero/slide3.jpg'];
+  prof.heroImages[index] = url;
+}
+
+// ===== Theme Editor =====
+function renderThemeEditor() {
+  var prof = getSchoolProfile();
+  var t = prof.theme || {};
+  var colors = [
+    { key: 'primaryColor', label: 'Primary Color', def: '#2563eb' },
+    { key: 'accentColor', label: 'Accent Color', def: '#fbbf24' },
+    { key: 'successColor', label: 'Success Color', def: '#38a169' },
+    { key: 'infoColor', label: 'Info Color', def: '#3182ce' }
+  ];
+  return colors.map(function(c) {
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'
+      + '<label style="min-width:130px;font-size:13px;">' + c.label + '</label>'
+      + '<input type="color" value="' + (t[c.key] || c.def) + '" style="width:40px;height:36px;padding:2px;border:1px solid #ddd;border-radius:4px;cursor:pointer;" oninput="updateThemeColor(\'' + c.key + '\',this.value)">'
+      + '<input type="text" value="' + esc(t[c.key] || c.def) + '" style="flex:1;font-family:monospace;font-size:13px;" oninput="updateThemeColor(\'' + c.key + '\',this.value)">'
+      + '</div>';
+  }).join('');
+}
+
+function updateThemeColor(key, val) {
+  var prof = getSchoolProfile();
+  if (!prof.theme) prof.theme = {};
+  prof.theme[key] = val;
+}
+
+function copySchoolLink() {
+  var inp = document.getElementById('spSchoolUrl');
+  if (inp) { inp.select(); document.execCommand('copy'); showToast('School link copied!'); }
+}
+
 // ===== Landing Page Rendering =====
 
 function renderLandingPageSections() {
   var prof = getSchoolProfile();
+
+  renderHeroSlides();
+  renderSocialLinks();
+  applyTheme();
 
   // One-time migration: replace old branding strings in profile data
   var needsSave = false;
@@ -400,6 +489,59 @@ function renderLandingPageSections() {
       }
     });
   }
+}
+
+// ===== Dynamic Hero Slides =====
+function renderHeroSlides() {
+  var prof = getSchoolProfile();
+  if (!prof.heroTitle && !prof.heroSubtitle) return;
+  var slides = [
+    { el: document.getElementById('heroSlide0'), title: document.getElementById('heroTitle0'), sub: document.getElementById('heroSubtitle0'), badge: document.getElementById('heroBadge0'), img: (prof.heroImages && prof.heroImages[0]) || 'images/hero/slide1.jpg' },
+    { el: document.getElementById('heroSlide1'), title: document.getElementById('heroTitle1'), sub: document.getElementById('heroSubtitle1'), badge: document.getElementById('heroBadge1'), img: (prof.heroImages && prof.heroImages[1]) || 'images/hero/slide2.jpg' },
+    { el: document.getElementById('heroSlide2'), title: document.getElementById('heroTitle2'), sub: document.getElementById('heroSubtitle2'), badge: document.getElementById('heroBadge2'), img: (prof.heroImages && prof.heroImages[2]) || 'images/hero/slide3.jpg' }
+  ];
+  var names = (prof.schoolName || 'EDUVERSE').split(' ');
+  slides.forEach(function(s, i) {
+    if (!s.el) return;
+    if (s.img) s.el.style.backgroundImage = 'linear-gradient(135deg, rgba(15,36,64,0.35), rgba(26,58,92,0.25)), url(\'' + s.img + '\')';
+    if (i === 0) {
+      if (s.title) s.title.innerHTML = (prof.heroTitle || 'Shape Your Future') + ' <span>' + (names[0] || 'With Us') + '</span>';
+      if (s.sub) s.sub.textContent = prof.heroSubtitle || 'Empowering students with world-class education.';
+      if (s.badge) s.badge.innerHTML = '<i class="fas fa-star"></i> ' + (prof.schoolName || 'EDUVERSE');
+    } else if (i === 1) {
+      if (s.title) s.title.innerHTML = (names.length > 1 ? names.slice(1).join(' ') : 'Your School') + ', <span>Your Way</span>';
+      if (s.sub) s.sub.textContent = 'Manage students, teachers, fees, and results — all from one unified platform.';
+      if (s.badge) s.badge.innerHTML = '<i class="fas fa-graduation-cap"></i> FOR SCHOOLS, BY EDUCATORS';
+    } else if (i === 2) {
+      if (s.title) s.title.innerHTML = 'K-12, Admissions, <span>&amp; More</span>';
+      if (s.sub) s.sub.textContent = 'Full academic management from ECCDE to SSS, entrance exams, ID cards, analytics, and more.';
+      if (s.badge) s.badge.innerHTML = '<i class="fas fa-trophy"></i> ALL-IN-ONE PLATFORM';
+    }
+  });
+}
+
+// ===== Dynamic Social Links =====
+function renderSocialLinks() {
+  var prof = getSchoolProfile();
+  var links = prof.socialLinks || [];
+  var container = document.querySelector('.footer-social');
+  if (!container) return;
+  var icons = { facebook: 'fab fa-facebook', twitter: 'fab fa-twitter', linkedin: 'fab fa-linkedin', instagram: 'fab fa-instagram', youtube: 'fab fa-youtube' };
+  container.innerHTML = links.map(function(l) {
+    var cls = icons[l.platform] || 'fas fa-globe';
+    var href = l.url && l.url.trim() ? l.url : 'javascript:;';
+    return '<a href="' + href + '" aria-label="' + l.platform.charAt(0).toUpperCase() + l.platform.slice(1) + '" target="_blank" rel="noopener"><i class="' + cls + '"></i></a>';
+  }).join('');
+}
+
+// ===== Apply Theme Colors =====
+function applyTheme() {
+  var prof = getSchoolProfile();
+  var t = prof.theme || {};
+  if (t.primaryColor) document.documentElement.style.setProperty('--primary', t.primaryColor);
+  if (t.accentColor) document.documentElement.style.setProperty('--accent', t.accentColor);
+  if (t.successColor) document.documentElement.style.setProperty('--success', t.successColor);
+  if (t.infoColor) document.documentElement.style.setProperty('--info', t.infoColor);
 }
 
 // Show toast notification

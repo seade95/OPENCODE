@@ -459,11 +459,161 @@ function createNewTenant() {
 
   toast(`School "${name}" created successfully!`, 'success');
   closeModal();
-  if (typeof eduverseUser !== 'undefined' && eduverseUser && typeof showEduverseHome === 'function') {
-    showEduverseHome();
-  } else if (typeof showSuperAdminDashboard === 'function') {
-    showSuperAdminDashboard();
+
+  // Ask if they want to set up the school profile now
+  var tenantId = tenant.id;
+  setTimeout(function() {
+    showSetupPrompt(tenantId);
+  }, 500);
+}
+
+function showSetupPrompt(tenantId) {
+  var overlay = document.getElementById('modalOverlay');
+  var body = document.getElementById('modalBody');
+  if (!body) { showSchoolSetupWizard(tenantId); return; }
+  body.innerHTML = '<div style="text-align:center;padding:16px 0;">'
+    + '<i class="fas fa-check-circle" style="font-size:56px;color:var(--success,#38a169);margin-bottom:12px;"></i>'
+    + '<h2 style="margin-bottom:4px;">School Created!</h2>'
+    + '<p style="color:var(--text-light);font-size:14px;margin-bottom:8px;">Your school is ready. Would you like to customize your portal now?</p>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:20px;">Set up hero images, colors, social links and more.</p>'
+    + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'
+    + '<button class="btn btn-primary" onclick="closeModal();showSchoolSetupWizard(\'' + tenantId + '\')"><i class="fas fa-magic"></i> Customize Portal</button>'
+    + '<button class="btn btn-outline" onclick="closeModal()"><i class="fas fa-home"></i> Go to Home</button>'
+    + '</div></div>';
+  if (overlay) overlay.classList.add('active');
+}
+
+// ===== School Setup Wizard (post-creation onboarding) =====
+var _setupStep = 0;
+var _setupTenantId = '';
+
+function showSchoolSetupWizard(tenantId) {
+  _setupStep = 0;
+  _setupTenantId = tenantId;
+  showSetupStep();
+  var overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.classList.add('active');
+}
+
+function showSetupStep() {
+  var body = document.getElementById('modalBody');
+  if (!body) return;
+  var steps = [
+    { title: 'Hero Text &amp; Theme Colors', icon: 'fa-palette' },
+    { title: 'Social Media Links', icon: 'fa-share-alt' },
+    { title: 'All Set!', icon: 'fa-check-circle' }
+  ];
+  var s = steps[_setupStep] || steps[0];
+  var html = '<div style="max-width:520px;margin:0 auto;">'
+
+    // Progress bar
+    + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:24px;">'
+    + steps.map(function(st, i) {
+      var cls = i <= _setupStep ? 'var(--primary)' : '#ddd';
+      var bg = i <= _setupStep && i < _setupStep ? 'var(--primary)' : (i === _setupStep ? 'var(--accent,#fbbf24)' : '#e5e7eb');
+      return '<div style="flex:1;text-align:center;"><div style="width:28px;height:28px;border-radius:50%;background:' + bg + ';color:' + (i <= _setupStep ? 'white' : '#999') + ';display:flex;align-items:center;justify-content:center;margin:0 auto 4px;font-size:13px;font-weight:600;">' + (i + 1) + '</div><div style="font-size:10px;color:' + cls + ';">' + st.title.replace(/<[^>]+>/g,'') + '</div></div>';
+    }).join('')
+    + '</div>'
+
+    // Content
+    + '<div style="background:#f9fafb;border-radius:12px;padding:24px;margin-bottom:16px;">';
+
+  if (_setupStep === 0) {
+    html += stepHeroTheme();
+  } else if (_setupStep === 1) {
+    html += stepSocialLinks();
+  } else if (_setupStep === 2) {
+    html += stepDone();
   }
+
+  html += '</div>'
+
+    // Navigation buttons
+    + '<div style="display:flex;gap:10px;justify-content:space-between;">'
+    + (_setupStep > 0 ? '<button class="btn btn-outline" onclick="setupPrev()"><i class="fas fa-arrow-left"></i> Back</button>' : '<div></div>')
+    + (_setupStep < steps.length - 1
+      ? '<button class="btn btn-primary" onclick="setupNext()">Continue <i class="fas fa-arrow-right"></i></button>'
+      : '<button class="btn btn-success" onclick="finishSetup()"><i class="fas fa-check"></i> Go to Dashboard</button>')
+    + '</div></div>';
+
+  body.innerHTML = html;
+}
+
+function stepHeroTheme() {
+  var prof = getSchoolProfile();
+  var t = prof.theme || {};
+  return '<h3 style="margin-bottom:16px;"><i class="fas fa-palette"></i> Customize Your Look</h3>'
+    + '<div class="form-group"><label>Hero Title</label><input type="text" id="wizHeroTitle" value="' + esc(prof.heroTitle || 'Shape Your Future With Us') + '"></div>'
+    + '<div class="form-group"><label>Hero Subtitle</label><textarea rows="2" id="wizHeroSubtitle">' + esc(prof.heroSubtitle || 'Empowering students with world-class education.') + '</textarea></div>'
+    + '<div style="display:flex;gap:12px;flex-wrap:wrap;">'
+    + colorPicker('wizPrimary', 'Primary', t.primaryColor || '#2563eb')
+    + colorPicker('wizAccent', 'Accent', t.accentColor || '#fbbf24')
+    + '</div>';
+}
+
+function colorPicker(id, label, val) {
+  return '<div style="flex:1;min-width:120px;"><label>' + label + '</label>'
+    + '<div style="display:flex;gap:6px;align-items:center;"><input type="color" id="' + id + '" value="' + val + '" style="width:40px;height:36px;padding:2px;border:1px solid #ddd;border-radius:4px;cursor:pointer;">'
+    + '<input type="text" value="' + val + '" style="flex:1;font-family:monospace;font-size:13px;" oninput="document.getElementById(\'' + id + '\').value=this.value"></div></div>';
+}
+
+function stepSocialLinks() {
+  var prof = getSchoolProfile();
+  var links = prof.socialLinks || [{ platform: 'facebook', url: '' }, { platform: 'twitter', url: '' }, { platform: 'linkedin', url: '' }, { platform: 'instagram', url: '' }, { platform: 'youtube', url: '' }];
+  return '<h3 style="margin-bottom:16px;"><i class="fas fa-share-alt"></i> Connect Social Media</h3><p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Add links to your school\'s social media pages.</p>'
+    + links.map(function(l, i) {
+      var labels = { facebook: 'Facebook URL', twitter: 'Twitter URL', linkedin: 'LinkedIn URL', instagram: 'Instagram URL', youtube: 'YouTube URL' };
+      return '<div class="form-group" style="margin-bottom:10px;"><label>' + (labels[l.platform] || l.platform) + '</label>'
+        + '<input type="text" id="wizSocial' + i + '" value="' + esc(l.url || '') + '" placeholder="https://..."></div>';
+    }).join('');
+}
+
+function stepDone() {
+  var name = (getSchoolProfile().schoolName || 'Your School');
+  return '<div style="text-align:center;"><i class="fas fa-check-circle" style="font-size:56px;color:var(--success,#38a169);margin-bottom:12px;"></i>'
+    + '<h3 style="margin-bottom:4px;">' + esc(name) + ' is ready!</h3>'
+    + '<p style="color:var(--text-light);font-size:14px;margin-bottom:8px;">Your portal has been customized. Visit the admin dashboard to manage students, teachers, fees, and more.</p>'
+    + '<div style="background:#e8f5e9;border-radius:8px;padding:12px;font-size:13px;color:#2e7d32;margin-top:12px;"><i class="fas fa-lightbulb"></i> Tip: You can always change these settings later from the "Customize Your School Portal" section.</div></div>';
+}
+
+function setupNext() {
+  saveSetupStep();
+  _setupStep++;
+  showSetupStep();
+}
+
+function setupPrev() {
+  _setupStep--;
+  showSetupStep();
+}
+
+function finishSetup() {
+  saveSetupStep();
+  closeModal();
+  try { localStorage.setItem('activeTenant', _setupTenantId); } catch(e) {}
+  window.location.href = 'admin.html';
+}
+
+function saveSetupStep() {
+  var prof = getSchoolProfile();
+  if (_setupStep === 0) {
+    var ht = document.getElementById('wizHeroTitle');
+    var hs = document.getElementById('wizHeroSubtitle');
+    var pp = document.getElementById('wizPrimary');
+    var aa = document.getElementById('wizAccent');
+    if (ht) prof.heroTitle = ht.value;
+    if (hs) prof.heroSubtitle = hs.value;
+    if (!prof.theme) prof.theme = {};
+    if (pp) prof.theme.primaryColor = pp.value;
+    if (aa) prof.theme.accentColor = aa.value;
+  } else if (_setupStep === 1) {
+    if (!prof.socialLinks) prof.socialLinks = [];
+    for (var i = 0; i < 5; i++) {
+      var inp = document.getElementById('wizSocial' + i);
+      if (inp && prof.socialLinks[i]) prof.socialLinks[i].url = inp.value;
+    }
+  }
+  saveData();
 }
 
 function toggleTenantStatus(id) {

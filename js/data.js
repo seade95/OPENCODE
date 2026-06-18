@@ -276,7 +276,16 @@ function getDefaultData() {
       contactEmail: 'info@school.edu',
       contactPhone: '+234 800 000 0000',
       contactAddress: 'Education Avenue, City',
-      graduationClass: 'Basic 6'
+      graduationClass: 'Basic 6',
+      socialLinks: [
+        { platform: 'facebook', url: '' },
+        { platform: 'twitter', url: '' },
+        { platform: 'linkedin', url: '' },
+        { platform: 'instagram', url: '' },
+        { platform: 'youtube', url: '' }
+      ],
+      heroImages: ['images/hero/slide1.jpg', 'images/hero/slide2.jpg', 'images/hero/slide3.jpg'],
+      theme: { primaryColor: '#2563eb', accentColor: '#fbbf24', successColor: '#38a169', infoColor: '#3182ce' }
     },
     academicCalendar: [
       { id: 'CAL001', title: 'First Term Begins', date: '2026-09-15', type: 'academic', description: 'Opening day for the first academic term.' },
