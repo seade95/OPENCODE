@@ -798,6 +798,7 @@ function renderLibrary() {
         const hasEbook = !!(b.ebookUrl);
         return `<div class="lib-card${hasEbook?' lib-card-has-ebook':''}">
           ${hasEbook ? '<div class="lib-ebook-badge"><i class="fas fa-file-upload"></i> Ebook</div>' : ''}
+          <div class="lib-cover"><img src="${getBookCoverUrl(b)}" alt="${htmlEscape(b.title)}" loading="lazy" onerror="this.style.display='none'"></div>
           <div class="book-title">${htmlEscape(b.title)}</div>
           <div class="book-author">by ${htmlEscape(b.author)}</div>
           <div style="font-size:12px;color:var(--text-light);margin-bottom:8px;">ISBN: ${htmlEscape(b.isbn)} | ${htmlEscape(b.category)}</div>
@@ -830,6 +831,15 @@ function renderLibrary() {
 
 var _pendingEbookData = null;
 
+function getBookCoverUrl(book) {
+  if (book.coverUrl) return book.coverUrl;
+  var hash = 0;
+  var s = (book.title || '') + (book.author || '');
+  for (var i = 0; i < s.length; i++) { hash = ((hash << 5) - hash) + s.charCodeAt(i); hash |= 0; }
+  var idx = Math.abs(hash) % 6 + 1;
+  return 'images/library/book' + idx + '.jpg';
+}
+
 function showAddBookModal() {
   _pendingEbookData = null;
   openModal(`
@@ -840,6 +850,7 @@ function showAddBookModal() {
       <div class="form-group"><label>ISBN</label><input type="text" id="fBookISBN" placeholder="ISBN"></div>
       <div class="form-group"><label>Category</label><select id="fBookCat"><option>Academic</option><option>Science</option><option>Humanities</option><option>Reference</option><option>Fiction</option></select></div>
       <div class="form-group"><label>Total Copies</label><input type="number" id="fBookTotal" value="5" min="1"></div>
+      <div class="form-group" style="grid-column:1/-1;"><label>Cover Image URL <span style="font-size:11px;color:var(--text-light);">(optional — auto-generated if empty)</span></label><input type="url" id="fBookCover" placeholder="https://example.com/cover.jpg"></div>
       <div class="form-group" style="grid-column:1/-1;">
         <label>Ebook File <span style="font-size:11px;color:var(--text-light);">(PDF, Word, TXT — optional)</span></label>
         <input type="file" id="fBookEbook" accept=".pdf,.doc,.docx,.txt,.rtf,.epub" onchange="previewEbookUpload(this)" style="font-size:13px;">
@@ -876,7 +887,7 @@ function saveBook() {
   const category = (document.getElementById('fBookCat')?.value ?? '');
   const total = parseInt(document.getElementById('fBookTotal')?.value ?? '') || 1;
   if (!title || !author) { toast('Please fill title and author', 'error'); return; }
-  var book = { id: genId('LIB'), title, author, isbn, total, available: total, category };
+  var book = { id: genId('LIB'), title, author, isbn, total, available: total, category, coverUrl: document.getElementById('fBookCover')?.value?.trim() || null };
   if (_pendingEbookData) {
     book.ebookName = _pendingEbookData.name;
     book.ebookType = _pendingEbookData.type;
@@ -905,6 +916,7 @@ function showEditBookModal(id) {
       <div class="form-group"><label>Category</label><select id="fBookCat"><option ${b.category==='Academic'?'selected':''}>Academic</option><option ${b.category==='Science'?'selected':''}>Science</option><option ${b.category==='Humanities'?'selected':''}>Humanities</option><option ${b.category==='Reference'?'selected':''}>Reference</option><option ${b.category==='Fiction'?'selected':''}>Fiction</option></select></div>
       <div class="form-group"><label>Total Copies</label><input type="number" id="fBookTotal" value="${b.total}" min="1"></div>
       <div class="form-group"><label>Available</label><input type="number" id="fBookAvail" value="${b.available}" min="0" max="${b.total}"></div>
+      <div class="form-group" style="grid-column:1/-1;"><label>Cover Image URL <span style="font-size:11px;color:var(--text-light);">(optional)</span></label><input type="url" id="fBookCover" value="${b.coverUrl || ''}" placeholder="https://example.com/cover.jpg"></div>
       <div class="form-group" style="grid-column:1/-1;">
         <label>Ebook File <span style="font-size:11px;color:var(--text-light);">(PDF, Word, TXT)</span></label>
         <div style="font-size:13px;color:var(--text-light);margin-bottom:6px;" id="editEbookStatus">${ebookStatus}</div>
@@ -929,6 +941,7 @@ function updateBook(id) {
   b.category = (document.getElementById('fBookCat')?.value ?? '');
   b.total = parseInt(document.getElementById('fBookTotal')?.value ?? '') || 1;
   b.available = Math.min(parseInt(document.getElementById('fBookAvail')?.value ?? '') || 0, b.total);
+  b.coverUrl = document.getElementById('fBookCover')?.value?.trim() || null;
   if (_pendingEbookData) {
     b.ebookName = _pendingEbookData.name;
     b.ebookType = _pendingEbookData.type;
@@ -2348,6 +2361,7 @@ function renderLibrary() {
     var waitlistCount = (data.waitlists || []).filter(function(w) { return w.bookId === b.id; }).length;
     html += '<div class="lib-card' + (hasEbook ? ' lib-card-has-ebook' : '') + '">' +
       (hasEbook ? '<div class="lib-ebook-badge"><i class="fas fa-file-upload"></i> Ebook</div>' : '') +
+      '<div class="lib-cover"><img src="' + getBookCoverUrl(b) + '" alt="' + htmlEscape(b.title) + '" loading="lazy" onerror="this.style.display=\'none\'"></div>' +
       '<div class="book-title">' + htmlEscape(b.title) + '</div>' +
       '<div class="book-author">by ' + htmlEscape(b.author) + '</div>' +
       '<div style="font-size:12px;color:var(--text-light);margin-bottom:6px;">ISBN: ' + htmlEscape(b.isbn) + ' | ' + htmlEscape(b.category) + '</div>' +
@@ -2559,6 +2573,7 @@ function renderStudentLibrary() {
       var hasEbook = !!(b.ebookUrl);
       html += '<div class="lib-card' + (hasEbook ? ' lib-card-has-ebook' : '') + '">' +
         (hasEbook ? '<div class="lib-ebook-badge"><i class="fas fa-file-upload"></i> Ebook</div>' : '') +
+        '<div class="lib-cover"><img src="' + getBookCoverUrl(b) + '" alt="' + htmlEscape(b.title) + '" loading="lazy" onerror="this.style.display=\'none\'"></div>' +
         '<div class="book-title">' + htmlEscape(b.title) + '</div>' +
         '<div class="book-author">' + htmlEscape(b.author) + '</div>' +
         '<div class="book-meta"><span>ISBN: ' + htmlEscape(b.isbn) + '</span><span class="lib-availability ' + status + '">' + b.available + ' left</span></div>' +
@@ -2615,8 +2630,8 @@ function renderHealthRecords() {
   var container = document.getElementById('adminHealthRecords');
   if (!container) return;
   var records = data.healthRecords || [];
-  var html = '<div class="card-header"><h2><i class="fas fa-heartbeat" style="color:#e53e3e;"></i> Student Health Records</h2>';
-  html += '<div style="display:flex;gap:8px;"><button class="btn btn-success btn-sm" onclick="showAddHealthRecordModal()"><i class="fas fa-plus"></i> Add Record</button></div></div>';
+  var html = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:120px;"><img src="images/health/clinic.jpg" alt="" style="width:100%;height:100%;object-fit:cover;"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,62,62,0.7),rgba(0,0,0,0.3));display:flex;align-items:center;padding:20px;"><h2 style="font-weight:700;color:white;font-size:20px;"><i class="fas fa-heartbeat"></i> Student Health Records</h2></div></div>';
+  html += '<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-success btn-sm" onclick="showAddHealthRecordModal()"><i class="fas fa-plus"></i> Add Record</button></div>';
   html += '<p class="subtitle">Medical information, allergies, immunizations & emergency contacts for all students</p>';
 
   var searchHtml = '<div class="cal-filter-bar"><input type="text" id="healthSearch" placeholder="Search by student name or ID..." oninput="renderHealthRecords()" style="padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex:1;max-width:320px;"></div>';
@@ -2818,7 +2833,7 @@ function renderStudentHealthView() {
   var allergyTags = (r.allergies || []).map(function(a) { return '<span class="health-allergy">' + htmlEscape(a) + '</span>'; }).join(' ');
   var conditionTags = (r.chronicConditions || []).map(function(c) { return '<span class="health-condition">' + htmlEscape(c) + '</span>'; }).join(' ');
   var immBadges = (r.immunizations || []).map(function(i) { return '<span class="badge badge-success">' + htmlEscape(i.name) + ' (' + htmlEscape(i.date) + ')</span>'; }).join(' ');
-  var html = '<h3 style="font-weight:700;margin-bottom:4px;"><i class="fas fa-heartbeat" style="color:#e53e3e;"></i> My Health Record</h3>';
+  var html = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:160px;"><img src="images/health/clinic.jpg" alt="" style="width:100%;height:100%;object-fit:cover;"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(229,62,62,0.7),rgba(0,0,0,0.3));display:flex;align-items:center;padding:20px;"><h3 style="font-weight:700;color:white;font-size:22px;"><i class="fas fa-heartbeat"></i> My Health Record</h3></div></div>';
   html += '<p class="subtitle">Medical information — contact school nurse for updates</p>';
   html += '<div class="health-grid">';
   html += '<div class="health-card"><h4><i class="fas fa-tint"></i> Blood Info</h4><div class="label">Blood Group</div><div class="value">' + htmlEscape(r.bloodGroup || '—') + '</div><div class="label">Genotype</div><div class="value">' + htmlEscape(r.genotype || '—') + '</div></div>';
@@ -2842,8 +2857,8 @@ function renderTransport() {
   var container = document.getElementById('adminTransport');
   if (!container) return;
   var routes = data.transportRoutes || [];
-  var html = '<div class="card-header"><h2><i class="fas fa-bus" style="color:#dd6b20;"></i> Transport Management</h2>';
-  html += '<div style="display:flex;gap:8px;"><button class="btn btn-success btn-sm" onclick="showAddRouteModal()"><i class="fas fa-plus"></i> Add Route</button></div></div>';
+  var html = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:120px;"><img src="images/transport/school-bus.jpg" alt="" style="width:100%;height:100%;object-fit:cover;"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(221,107,32,0.7),rgba(0,0,0,0.3));display:flex;align-items:center;padding:20px;"><h2 style="font-weight:700;color:white;font-size:20px;"><i class="fas fa-bus"></i> Transport Management</h2></div></div>';
+  html += '<div style="display:flex;gap:8px;margin-bottom:12px;"><button class="btn btn-success btn-sm" onclick="showAddRouteModal()"><i class="fas fa-plus"></i> Add Route</button></div>';
   html += '<p class="subtitle">Manage bus routes, stops, and student assignments</p>';
 
   if (!routes.length) {
@@ -3043,7 +3058,7 @@ function renderStudentTransportView() {
     container.innerHTML = '<div class="empty-state"><i class="fas fa-bus"></i><p>You are not assigned to any transport route. Contact the school office.</p></div>';
     return;
   }
-  var html = '<h3 style="font-weight:700;margin-bottom:4px;"><i class="fas fa-bus" style="color:#dd6b20;"></i> My Transport</h3>';
+  var html = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:160px;"><img src="images/transport/school-bus.jpg" alt="" style="width:100%;height:100%;object-fit:cover;"><div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(221,107,32,0.7),rgba(0,0,0,0.3));display:flex;align-items:center;padding:20px;"><h3 style="font-weight:700;color:white;font-size:22px;"><i class="fas fa-bus"></i> My Transport</h3></div></div>';
   html += '<p class="subtitle">Your assigned route and pickup schedule</p>';
   myRoutes.forEach(function(r) {
     html += '<div class="transport-card">';

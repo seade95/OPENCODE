@@ -1921,6 +1921,9 @@ tr:hover td { background: #f7fafc; }
 .lib-availability.unavailable { background: #fed7d7; color: #9b2c2c; }
 .lib-card-has-ebook { border-left: 4px solid var(--success, #38a169); }
 .lib-ebook-badge { font-size: 11px; font-weight: 600; color: var(--success, #38a169); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+.lib-cover { width: 100%; height: 180px; overflow: hidden; border-radius: 8px; margin-bottom: 12px; background: #f0f4f8; display: flex; align-items: center; justify-content: center; }
+.lib-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; transition: transform .3s ease; }
+.lib-card:hover .lib-cover img { transform: scale(1.05); }
 
 /* ===== FORUM ===== */
 .forum-grid { display: flex; flex-direction: column; gap: 1px; background: #e2e8f0; border-radius: 8px; overflow: hidden; }

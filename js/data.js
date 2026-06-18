@@ -108,11 +108,11 @@ function getDefaultData() {
       { id: 'LEV001', teacherId: 'TCH001', startDate: '2026-07-01', endDate: '2026-07-05', reason: 'Personal leave', status: 'pending', date: '2026-06-01' }
     ],
     library: [
-      { id: 'LIB001', title: 'Introduction to Mathematics', author: 'Dr. James Wilson', isbn: '978-0-1234-5678-0', total: 10, available: 7, category: 'Academic' },
-      { id: 'LIB002', title: 'English Literature Anthology', author: 'Prof. Sarah Blake', isbn: '978-0-1234-5678-1', total: 8, available: 5, category: 'Academic' },
-      { id: 'LIB003', title: 'Physics for Beginners', author: 'Dr. Robert Brown', isbn: '978-0-1234-5678-2', total: 6, available: 3, category: 'Science' },
-      { id: 'LIB004', title: 'World History Encyclopedia', author: 'Dr. Emily Davis', isbn: '978-0-1234-5678-3', total: 5, available: 4, category: 'Humanities' },
-      { id: 'LIB005', title: 'Chemistry Lab Manual', author: 'Prof. Mark Taylor', isbn: '978-0-1234-5678-4', total: 12, available: 10, category: 'Science' }
+      { id: 'LIB001', title: 'Introduction to Mathematics', author: 'Dr. James Wilson', isbn: '978-0-1234-5678-0', total: 10, available: 7, category: 'Academic', coverUrl: null },
+      { id: 'LIB002', title: 'English Literature Anthology', author: 'Prof. Sarah Blake', isbn: '978-0-1234-5678-1', total: 8, available: 5, category: 'Academic', coverUrl: null },
+      { id: 'LIB003', title: 'Physics for Beginners', author: 'Dr. Robert Brown', isbn: '978-0-1234-5678-2', total: 6, available: 3, category: 'Science', coverUrl: null },
+      { id: 'LIB004', title: 'World History Encyclopedia', author: 'Dr. Emily Davis', isbn: '978-0-1234-5678-3', total: 5, available: 4, category: 'Humanities', coverUrl: null },
+      { id: 'LIB005', title: 'Chemistry Lab Manual', author: 'Prof. Mark Taylor', isbn: '978-0-1234-5678-4', total: 12, available: 10, category: 'Science', coverUrl: null }
     ],
     borrowings: [
       { id: 'BRW001', bookId: 'LIB001', studentId: 'STU002', borrowDate: '2026-05-20', dueDate: '2026-06-03', returnDate: null, status: 'active' },

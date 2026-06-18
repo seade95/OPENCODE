@@ -8,7 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/png" href="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="alternate icon" href="images/favicon.svg">
 <script src="js/screen-protection.js"></script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#2563eb">
@@ -61,7 +62,7 @@ if ('serviceWorker' in navigator) {
 
 <!-- Top Bar -->
 <nav class="navbar" id="navbar">
-  <a class="nav-logo" href="#"><img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE"> <span id="navSchoolName">EDUVERSE</span></a>
+  <a class="nav-logo" href="#"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE"> <span id="navSchoolName">EDUVERSE</span></a>
   <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
   <ul class="nav-links" id="navLinks">
     <li><a href="#services">Services</a></li>
@@ -80,7 +81,7 @@ if ('serviceWorker' in navigator) {
 <!-- Hero Slider -->
 <section class="hero-slider" id="heroSlider">
   <div class="slides-container" id="slidesContainer">
-    <div class="slide" style="background-image:linear-gradient(135deg, #0f2440, #1a3a5c), url('data:image/svg+xml,%3Csvg width=1200 height=800 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Crect width=1200 height=800 fill=%22%231a3a5c%22/%3E%3C/svg%3E');">
+    <div class="slide" style="background-image:linear-gradient(135deg, rgba(15,36,64,0.88), rgba(26,58,92,0.82)), url('images/hero/slide1.jpg');">
       <div class="slide-content">
         <div class="badge"><i class="fas fa-star"></i> EDUVERSE</div>
         <h1>Shape Your <span>Future</span> With Us</h1>
@@ -92,7 +93,7 @@ if ('serviceWorker' in navigator) {
         </div>
       </div>
     </div>
-    <div class="slide" style="background-image:linear-gradient(135deg, #0f2440, #2a5a8c), url('data:image/svg+xml,%3Csvg width=1200 height=800 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Crect width=1200 height=800 fill=%22%232a5a8c%22/%3E%3C/svg%3E');">
+    <div class="slide" style="background-image:linear-gradient(135deg, rgba(15,36,64,0.88), rgba(42,90,140,0.82)), url('images/hero/slide2.jpg');">
       <div class="slide-content">
         <div class="badge"><i class="fas fa-graduation-cap"></i> FOR SCHOOLS, BY EDUCATORS</div>
         <h1>Your School, <span>Your Way</span></h1>
@@ -103,7 +104,7 @@ if ('serviceWorker' in navigator) {
         </div>
       </div>
     </div>
-    <div class="slide" style="background-image:linear-gradient(135deg, #0f2440, #1a5c3a), url('data:image/svg+xml,%3Csvg width=1200 height=800 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Crect width=1200 height=800 fill=%22%231a5c3a%22/%3E%3C/svg%3E');">
+    <div class="slide" style="background-image:linear-gradient(135deg, rgba(15,36,64,0.88), rgba(26,92,58,0.82)), url('images/hero/slide3.jpg');">
       <div class="slide-content">
         <div class="badge"><i class="fas fa-trophy"></i> ALL-IN-ONE PLATFORM</div>
         <h1>K-12, Admissions, <span>&amp; More</span></h1>
@@ -142,7 +143,7 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="services-grid" id="servicesGrid">
     <div class="service-card">
-      <div class="img-box" style="background:linear-gradient(135deg, var(--primary), var(--primary-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-chalkboard-teacher" style="font-size:64px;color:var(--accent);opacity:0.6;"></i></div>
+      <div class="img-box"><img src="images/services/academics.jpg" alt="Expert Teachers" loading="lazy"></div>
       <div class="info-box">
         <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
         <h4>Expert Teachers</h4>
@@ -150,7 +151,7 @@ if ('serviceWorker' in navigator) {
       </div>
     </div>
     <div class="service-card">
-      <div class="img-box" style="background:linear-gradient(135deg, var(--primary-light), var(--primary));display:flex;align-items:center;justify-content:center;"><i class="fas fa-laptop-code" style="font-size:64px;color:var(--accent);opacity:0.6;"></i></div>
+      <div class="img-box"><img src="images/services/library.jpg" alt="Modern Curriculum" loading="lazy"></div>
       <div class="info-box">
         <div class="icon-box"><i class="fas fa-laptop-code"></i></div>
         <h4>Modern Curriculum</h4>
@@ -158,7 +159,7 @@ if ('serviceWorker' in navigator) {
       </div>
     </div>
     <div class="service-card">
-      <div class="img-box" style="background:linear-gradient(135deg, var(--primary), #1a5c3a);display:flex;align-items:center;justify-content:center;"><i class="fas fa-futbol" style="font-size:64px;color:var(--accent);opacity:0.6;"></i></div>
+      <div class="img-box"><img src="images/services/sports.jpg" alt="Rich Activities" loading="lazy"></div>
       <div class="info-box">
         <div class="icon-box"><i class="fas fa-futbol"></i></div>
         <h4>Rich Activities</h4>
@@ -216,22 +217,22 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="courses-grid" id="coursesGrid">
     <div class="course-card">
-      <div class="img-box" style="background:linear-gradient(45deg,#1a3a5c,#2a5a8c);display:flex;align-items:center;justify-content:center;"><i class="fas fa-calculator" style="font-size:48px;color:var(--accent);"></i></div>
+      <div class="img-box"><img src="images/courses/mathematics.jpg" alt="Mathematics" loading="lazy"></div>
       <div class="info-box"><h5>Mathematics</h5><span>Algebra, Calculus, Geometry</span></div>
       <div class="meta"><span><i class="fas fa-star" style="color:var(--accent);"></i> 4.8</span><span>12 Teachers</span></div>
     </div>
     <div class="course-card">
-      <div class="img-box" style="background:linear-gradient(45deg,#2a5a8c,#1a3a5c);display:flex;align-items:center;justify-content:center;"><i class="fas fa-flask" style="font-size:48px;color:var(--accent);"></i></div>
+      <div class="img-box"><img src="images/courses/science.jpg" alt="Sciences" loading="lazy"></div>
       <div class="info-box"><h5>Sciences</h5><span>Physics, Chemistry, Biology</span></div>
       <div class="meta"><span><i class="fas fa-star" style="color:var(--accent);"></i> 4.7</span><span>10 Teachers</span></div>
     </div>
     <div class="course-card">
-      <div class="img-box" style="background:linear-gradient(45deg,#1a5c3a,#2a7a4a);display:flex;align-items:center;justify-content:center;"><i class="fas fa-book" style="font-size:48px;color:var(--accent);"></i></div>
+      <div class="img-box"><img src="images/courses/english.jpg" alt="English" loading="lazy"></div>
       <div class="info-box"><h5>English</h5><span>Literature, Grammar, Writing</span></div>
       <div class="meta"><span><i class="fas fa-star" style="color:var(--accent);"></i> 4.9</span><span>8 Teachers</span></div>
     </div>
     <div class="course-card">
-      <div class="img-box" style="background:linear-gradient(45deg,#5c3a1a,#7a4a2a);display:flex;align-items:center;justify-content:center;"><i class="fas fa-globe" style="font-size:48px;color:var(--accent);"></i></div>
+      <div class="img-box"><img src="images/courses/commerce.jpg" alt="Humanities" loading="lazy"></div>
       <div class="info-box"><h5>Humanities</h5><span>History, Geography, Government</span></div>
       <div class="meta"><span><i class="fas fa-star" style="color:var(--accent);"></i> 4.6</span><span>6 Teachers</span></div>
     </div>
@@ -295,25 +296,25 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="testimonials-grid" id="testimonialsGrid">
     <div class="testimonial-card">
-      <div class="avatar"><i class="fas fa-user-graduate"></i></div>
+      <div class="avatar"><img src="images/avatars/student1.jpg" alt="Student" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
       <div class="name">Alice Johnson</div>
       <div class="role">Basic 6 Student</div>
       <div class="text">EDUVERSE has completely transformed my learning experience. The teachers are supportive, and the online portal makes it easy to track my progress.</div>
     </div>
     <div class="testimonial-card">
-      <div class="avatar"><i class="fas fa-user-tie"></i></div>
+      <div class="avatar"><img src="images/avatars/parent1.jpg" alt="Parent" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
       <div class="name">Mrs. Sarah Williams</div>
       <div class="role">Parent</div>
       <div class="text">The transparency in fee management and regular progress updates give me peace of mind. I can see exactly how my child is performing in real-time.</div>
     </div>
     <div class="testimonial-card">
-      <div class="avatar"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div class="avatar"><img src="images/avatars/teacher1.jpg" alt="Teacher" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
       <div class="name">Mr. John Doe</div>
       <div class="role">Mathematics Teacher</div>
       <div class="text">The teacher dashboard makes it effortless to upload assignments, track attendance, and communicate with students. A truly modern educational platform.</div>
     </div>
     <div class="testimonial-card">
-      <div class="avatar"><i class="fas fa-user-graduate"></i></div>
+      <div class="avatar"><img src="images/avatars/student2.jpg" alt="Student" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
       <div class="name">David Brown</div>
       <div class="role">Basic 4 Student</div>
       <div class="text">I love how I can access all my assignments, results, and CAT scores from one place. The extracurricular activities section helped me join the basketball team!</div>
@@ -329,7 +330,7 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="news-grid">
     <div class="news-card">
-      <div class="img-box" style="background:linear-gradient(135deg, var(--primary), var(--primary-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-trophy" style="font-size:56px;color:var(--accent);opacity:0.7;"></i></div>
+      <div class="img-box"><img src="images/news/news1.jpg" alt="Award" loading="lazy"></div>
       <div class="info-box">
         <div class="meta"><span><i class="fas fa-calendar-alt"></i> June 1, 2026</span><span><i class="fas fa-user"></i> Admin</span></div>
         <h5>EDUVERSE Wins Best School Award at National Education Conference</h5>
@@ -337,7 +338,7 @@ if ('serviceWorker' in navigator) {
       </div>
     </div>
     <div class="news-card">
-      <div class="img-box" style="background:linear-gradient(135deg, #1a5c3a, #2a7a4a);display:flex;align-items:center;justify-content:center;"><i class="fas fa-laptop" style="font-size:56px;color:var(--accent);opacity:0.7;"></i></div>
+      <div class="img-box"><img src="images/news/news2.jpg" alt="Digital Learning" loading="lazy"></div>
       <div class="info-box">
         <div class="meta"><span><i class="fas fa-calendar-alt"></i> May 25, 2026</span><span><i class="fas fa-user"></i> Admin</span></div>
         <h5>New Digital Learning Platform Launched for Students</h5>
@@ -345,7 +346,7 @@ if ('serviceWorker' in navigator) {
       </div>
     </div>
     <div class="news-card">
-      <div class="img-box" style="background:linear-gradient(135deg, #5c3a1a, #7a4a2a);display:flex;align-items:center;justify-content:center;"><i class="fas fa-paint-brush" style="font-size:56px;color:var(--accent);opacity:0.7;"></i></div>
+      <div class="img-box"><img src="images/news/news3.jpg" alt="Art Competition" loading="lazy"></div>
       <div class="info-box">
         <div class="meta"><span><i class="fas fa-calendar-alt"></i> May 18, 2026</span><span><i class="fas fa-user"></i> Admin</span></div>
         <h5>Inter-House Art Competition: Celebrating Student Creativity</h5>
@@ -516,7 +517,7 @@ if ('serviceWorker' in navigator) {
 <footer class="footer-enhanced">
   <div class="footer-top-bar">
     <div class="logo">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;border-radius:4px;">
       EDUVERSE
     </div>
     <div class="footer-social">
@@ -570,12 +571,12 @@ if ('serviceWorker' in navigator) {
       </div>
       <h5 style="margin-top:24px;">Gallery</h5>
       <div class="footer-gallery">
-        <a href="javascript:;" onclick="openGallery(0)"><img src="https://picsum.photos/seed/eduverse1/300/200" alt="School event" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(1)"><img src="https://picsum.photos/seed/eduverse2/300/200" alt="Graduation" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(2)"><img src="https://picsum.photos/seed/eduverse3/300/200" alt="Sports day" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(3)"><img src="https://picsum.photos/seed/eduverse4/300/200" alt="Classroom" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(4)"><img src="https://picsum.photos/seed/eduverse5/300/200" alt="Library" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(5)"><img src="https://picsum.photos/seed/eduverse6/300/200" alt="Award ceremony" loading="lazy"></a>
+        <a href="javascript:;" onclick="openGallery(0)"><img src="images/gallery/gallery1.jpg" alt="School event" loading="lazy"></a>
+        <a href="javascript:;" onclick="openGallery(1)"><img src="images/gallery/gallery2.jpg" alt="Graduation" loading="lazy"></a>
+        <a href="javascript:;" onclick="openGallery(2)"><img src="images/gallery/gallery3.jpg" alt="Sports day" loading="lazy"></a>
+        <a href="javascript:;" onclick="openGallery(3)"><img src="images/gallery/gallery4.jpg" alt="Classroom" loading="lazy"></a>
+        <a href="javascript:;" onclick="openGallery(4)"><img src="images/gallery/gallery5.jpg" alt="Library" loading="lazy"></a>
+        <a href="javascript:;" onclick="openGallery(5)"><img src="images/gallery/gallery6.jpg" alt="Award ceremony" loading="lazy"></a>
       </div>
     </div>
   </div>
@@ -590,7 +591,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="admissionPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Admissions Portal</h2>
     </div>
     <div class="portal-header-right">
@@ -609,7 +610,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="studentLoginPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Student Login</h2>
     </div>
     <div class="portal-header-right">
@@ -645,7 +646,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="studentPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Student Portal</h2>
     </div>
     <div class="portal-header-right">
@@ -666,7 +667,7 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="student-layout">
     <div class="student-profile-card">
-      <div class="student-avatar" id="studentAvatar">S</div>
+      <div class="student-avatar" id="studentAvatar"><img src="images/avatars/student1.jpg" alt="" id="studentAvatarImg" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">S</div>
       <div class="student-info">
         <h2 id="studentProfileName">Student Name</h2>
         <p><i class="fas fa-id-card"></i> <span id="studentProfileId">--</span> &nbsp;|&nbsp; <i class="fas fa-graduation-cap"></i> <span id="studentProfileClass">--</span> &nbsp;|&nbsp; <i class="fas fa-calendar-alt"></i> <span id="stuCurrentTerm">--</span></p>
@@ -875,7 +876,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="teacherLoginPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Teacher Login</h2>
     </div>
     <div class="portal-header-right">
@@ -910,7 +911,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="teacherPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Teacher Dashboard</h2>
     </div>
     <div class="portal-header-right">
@@ -1125,7 +1126,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="parentLoginPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Parent Portal</h2>
     </div>
     <div class="portal-header-right">
@@ -1159,7 +1160,7 @@ if ('serviceWorker' in navigator) {
 <div class="portal-page" id="parentPage">
   <div class="portal-header">
     <div class="portal-header-left">
-      <img class="school-logo-img" src="https://www.image2url.com/r2/default/images/1780945726878-432c5d3f-ea5d-4d3f-b4e5-fd0989f48d80.png" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
+      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;width:auto;border-radius:4px;">
       <h2>Parent Dashboard</h2>
     </div>
     <div class="portal-header-right">
@@ -1217,7 +1218,7 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="ev-topbar-right">
     <div class="ev-user-menu" onclick="document.getElementById('evUserDropdown').classList.toggle('show')">
-      <img id="evUserAvatar" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a3a5c%22/%3E%3Ctext x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22%23fff%22 font-size=%2240%22 font-weight=%22bold%22%3E?%3C/text%3E%3C/svg%3E" class="ev-avatar">
+      <img id="evUserAvatar" src="images/avatars/student1.jpg" alt="" class="ev-avatar">
       <span id="evUserName" class="ev-username">User</span>
       <i class="fas fa-caret-down"></i>
       <div id="evUserDropdown" class="ev-dropdown">

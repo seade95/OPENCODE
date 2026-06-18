@@ -526,12 +526,12 @@ if (document.readyState === 'loading') {
 
 // ===== GALLERY LIGHTBOX =====
 const galleryImages = [
-  { src: 'https://picsum.photos/seed/eduverse1/800/500', thumb: 'https://picsum.photos/seed/eduverse1/300/200', alt: 'School Event' },
-  { src: 'https://picsum.photos/seed/eduverse2/800/500', thumb: 'https://picsum.photos/seed/eduverse2/300/200', alt: 'Graduation Ceremony' },
-  { src: 'https://picsum.photos/seed/eduverse3/800/500', thumb: 'https://picsum.photos/seed/eduverse3/300/200', alt: 'Sports Day' },
-  { src: 'https://picsum.photos/seed/eduverse4/800/500', thumb: 'https://picsum.photos/seed/eduverse4/300/200', alt: 'Classroom Activities' },
-  { src: 'https://picsum.photos/seed/eduverse5/800/500', thumb: 'https://picsum.photos/seed/eduverse5/300/200', alt: 'Library Session' },
-  { src: 'https://picsum.photos/seed/eduverse6/800/500', thumb: 'https://picsum.photos/seed/eduverse6/300/200', alt: 'Award Ceremony' }
+  { src: 'images/gallery/gallery1.jpg', thumb: 'images/gallery/gallery1.jpg', alt: 'School Event' },
+  { src: 'images/gallery/gallery2.jpg', thumb: 'images/gallery/gallery2.jpg', alt: 'Graduation Ceremony' },
+  { src: 'images/gallery/gallery3.jpg', thumb: 'images/gallery/gallery3.jpg', alt: 'Sports Day' },
+  { src: 'images/gallery/gallery4.jpg', thumb: 'images/gallery/gallery4.jpg', alt: 'Classroom Activities' },
+  { src: 'images/gallery/gallery5.jpg', thumb: 'images/gallery/gallery5.jpg', alt: 'Library Session' },
+  { src: 'images/gallery/gallery6.jpg', thumb: 'images/gallery/gallery6.jpg', alt: 'Award Ceremony' }
 ];
 let currentGalleryIdx = 0;
 

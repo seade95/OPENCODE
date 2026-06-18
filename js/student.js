@@ -6,7 +6,12 @@ function renderStudentPortal() {
   var s = currentStudent;
   var el;
   el = document.getElementById('studentNameDisplay'); if (el) el.innerHTML = '<i class="fas fa-user-graduate"></i> ' + htmlEscape(s.name);
-  el = document.getElementById('studentAvatar'); if (el) el.textContent = s.name.charAt(0).toUpperCase();
+  el = document.getElementById('studentAvatar'); if (el) { 
+    var img = document.getElementById('studentAvatarImg');
+    if (img) { img.src = 'images/avatars/student' + ((parseInt(s.id.replace(/\D/g,'')) % 2) + 1) + '.jpg'; img.style.display = ''; }
+    el.textContent = '';
+    el.appendChild(img);
+  }
   el = document.getElementById('studentProfileName'); if (el) el.textContent = s.name;
   el = document.getElementById('studentProfileId'); if (el) el.textContent = s.id;
   el = document.getElementById('studentProfileClass'); if (el) el.textContent = s.class;
@@ -48,7 +53,8 @@ function renderStudentPortal() {
   var ag = document.getElementById('stuActivitiesGrid');
   var ae = document.getElementById('stuActivitiesEmpty');
   if (acts.length && ag && ae) {
-    ag.innerHTML = acts.map(function(a) { return '<div style="background:var(--card-bg);border-radius:var(--radius-sm);padding:20px;border:1px solid #e2e8f0;transition:var(--transition);"><div style="font-size:32px;color:var(--primary);margin-bottom:8px;"><i class="fas ' + (a.type === 'Sports' ? 'fa-futbol' : a.type === 'Academic' ? 'fa-book' : 'fa-palette') + '"></i></div><h4 style="font-weight:600;margin-bottom:4px;">' + htmlEscape(a.name) + '</h4><p style="font-size:13px;color:var(--text-light);"><i class="fas fa-calendar"></i> ' + htmlEscape(a.day) + '<br><i class="fas fa-clock"></i> ' + htmlEscape(a.time) + '</p></div>'; }).join('');
+    ag.innerHTML = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:100px;"><img src="images/sports/football.jpg" alt="" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.7);"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:20px;color:white;"><h3 style="font-weight:700;font-size:18px;"><i class="fas fa-futbol"></i> My Activities</h3></div></div>' + 
+    acts.map(function(a) { return '<div style="background:var(--card-bg);border-radius:var(--radius-sm);padding:20px;border:1px solid #e2e8f0;transition:var(--transition);"><div style="font-size:32px;color:var(--primary);margin-bottom:8px;"><i class="fas ' + (a.type === 'Sports' ? 'fa-futbol' : a.type === 'Academic' ? 'fa-book' : 'fa-palette') + '"></i></div><h4 style="font-weight:600;margin-bottom:4px;">' + htmlEscape(a.name) + '</h4><p style="font-size:13px;color:var(--text-light);"><i class="fas fa-calendar"></i> ' + htmlEscape(a.day) + '<br><i class="fas fa-clock"></i> ' + htmlEscape(a.time) + '</p></div>'; }).join('');
     ae.style.display = 'none';
   } else { if (ag) ag.innerHTML = ''; if (ae) ae.style.display = 'block'; }
 

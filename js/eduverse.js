@@ -786,7 +786,7 @@ function updateEduverseTopbar() {
   var nel = document.getElementById('evUserName');
   var mel = document.getElementById('evUserMenuName');
   if (eduverseUser) {
-    if (el) el.src = eduverseUser.avatar || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%231a3a5c%22/%3E%3Ctext x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22%23fff%22 font-size=%2240%22 font-weight=%22bold%22%3E' + (eduverseUser.name ? eduverseUser.name.charAt(0).toUpperCase() : '?') + '%3C/text%3E%3C/svg%3E';
+    if (el) el.src = eduverseUser.avatar || 'images/avatars/student1.jpg';
     if (nel) nel.textContent = eduverseUser.name;
     if (mel) mel.textContent = eduverseUser.name;
   }
