@@ -386,6 +386,16 @@ function loadData() {
       if (!Array.isArray(parsed.teacherExams)) parsed.teacherExams = defaults.teacherExams;
       if (!parsed.subscriptionPlans || !Array.isArray(parsed.subscriptionPlans)) parsed.subscriptionPlans = defaults.subscriptionPlans;
       if (!parsed.subscription || typeof parsed.subscription !== 'object') parsed.subscription = defaults.subscription;
+      // Deep-clean any stale OMOLOLA branding from all stored data
+      var _needsSave = false;
+      function _cleanBranding(v) {
+        if (typeof v === 'string' && v.indexOf('OMOLOLA') !== -1) { _needsSave = true; return v.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM').replace(/OMOLOLA/gi, 'EDUVERSE'); }
+        if (Array.isArray(v)) { for (var _i = 0; _i < v.length; _i++) v[_i] = _cleanBranding(v[_i]); return v; }
+        if (v && typeof v === 'object') { for (var _k in v) { try { v[_k] = _cleanBranding(v[_k]); } catch(e) {} } return v; }
+        return v;
+      }
+      parsed = _cleanBranding(parsed);
+      if (_needsSave) { localStorage.setItem(getDataKey(), JSON.stringify(parsed)); }
       return parsed;
     }
   } catch(e) {}
