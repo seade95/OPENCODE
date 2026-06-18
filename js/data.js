@@ -395,6 +395,8 @@ function loadData() {
         return v;
       }
       parsed = _cleanBranding(parsed);
+      if (typeof parsed.schoolName === 'string' && parsed.schoolName.indexOf('OMOLOLA') !== -1) { _needsSave = true; parsed.schoolName = parsed.schoolName.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM').replace(/OMOLOLA/gi, 'EDUVERSE'); }
+      if (typeof parsed.schoolMotto === 'string' && parsed.schoolMotto.indexOf('OMOLOLA') !== -1) { _needsSave = true; parsed.schoolMotto = parsed.schoolMotto.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM').replace(/OMOLOLA/gi, 'EDUVERSE'); }
       if (_needsSave) { localStorage.setItem(getDataKey(), JSON.stringify(parsed)); }
       return parsed;
     }
