@@ -60,6 +60,10 @@ if ('serviceWorker' in navigator) {
 <!-- ==================== LANDING PAGE ==================== -->
 <div id="landing-page">
 
+<!-- Scroll Buttons -->
+<button class="scroll-btn scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
+<button class="scroll-btn scroll-bottom" id="scrollBottomBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" aria-label="Scroll to bottom"><i class="fas fa-chevron-down"></i></button>
+
 <!-- Announcement Bar -->
 <div id="announcementBar" style="display:none;background:var(--accent,#fbbf24);color:var(--text,#1a202c);padding:10px 20px;text-align:center;font-size:14px;font-weight:500;"></div>
 

@@ -137,4 +137,22 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+  // Scroll buttons (top/bottom)
+  var topBtn = document.getElementById('scrollTopBtn');
+  var bottomBtn = document.getElementById('scrollBottomBtn');
+  if (topBtn && bottomBtn) {
+    var scrollTimer;
+    function toggleScrollBtns() {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      topBtn.classList.toggle('visible', scrollTop > 300);
+      bottomBtn.classList.toggle('visible', docHeight - scrollTop > 300);
+    }
+    window.addEventListener('scroll', function() {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(toggleScrollBtns, 100);
+    });
+    toggleScrollBtns();
+  }
 });

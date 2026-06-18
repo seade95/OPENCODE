@@ -2503,3 +2503,12 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .footer-accreditations img { height:40px;border-radius:4px;opacity:0.8;transition:opacity 0.2s; }
 .footer-accreditations img:hover { opacity:1; }
 .footer-accreditations span { font-size:12px;font-weight:500;color:var(--text-light);padding:4px 10px;background:#edf2f7;border-radius:4px; }
+
+/* ===== SCROLL BUTTONS ===== */
+.scroll-btn { position:fixed;right:20px;z-index:9999;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--primary,#1a3a5c);color:white;border:none;border-radius:50%;cursor:pointer;font-size:18px;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:all 0.3s;opacity:0;visibility:hidden; }
+.scroll-btn:hover { background:var(--accent,#f5a623);color:var(--primary-dark);transform:scale(1.1);box-shadow:0 6px 20px rgba(0,0,0,0.3); }
+.scroll-btn.visible { opacity:0.85;visibility:visible; }
+.scroll-btn.visible:hover { opacity:1; }
+.scroll-top { bottom:80px; }
+.scroll-bottom { bottom:20px; }
+.scroll-top i, .scroll-bottom i { pointer-events:none; }
