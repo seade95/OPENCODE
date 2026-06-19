@@ -59,6 +59,9 @@ function showSuperAdminDashboard() {
     + saNavItem('schools', 'school', 'Schools')
     + saNavItem('platform', 'cogs', 'Platform Settings')
     + saNavItem('subscriptions', 'credit-card', 'Subscription Plans')
+    + saNavItem('analytics', 'chart-line', 'Analytics')
+    + saNavItem('broadcast', 'bullhorn', 'Broadcast')
+    + saNavItem('backup', 'database', 'Backup & Data')
     + saNavItem('system', 'server', 'System')
     + '</nav>'
     + '<div class="sa-sidebar-footer"><button class="btn btn-sm btn-outline" onclick="closeSaDashboard()" style="width:100%;"><i class="fas fa-times"></i> Close</button></div>'
@@ -98,6 +101,9 @@ function renderSaTab(tab) {
     schools: 'Schools Management',
     platform: 'Platform Settings',
     subscriptions: 'Subscription Plans',
+    analytics: 'Platform Analytics',
+    broadcast: 'Broadcast Message',
+    backup: 'Backup & Data Management',
     system: 'System & Maintenance'
   };
   var titleEl = document.getElementById('saPanelTitle');
@@ -109,6 +115,9 @@ function renderSaTab(tab) {
     case 'schools': renderSaSchools(content); break;
     case 'platform': renderSaPlatform(content); break;
     case 'subscriptions': renderSaSubscriptions(content); break;
+    case 'analytics': renderSaAnalytics(content); break;
+    case 'broadcast': renderSaBroadcast(content); break;
+    case 'backup': renderSaBackup(content); break;
     case 'system': renderSaSystem(content); break;
   }
 }
@@ -546,5 +555,347 @@ function applyPlatformContact() {
   }
 }
 
-// Override showSuperAdminDashboard if it already exists in multitenant.js
-// We keep both - the modal version still works as fallback
+// ===== 5. Analytics Tab =====
+function renderSaAnalytics(container) {
+  var tenants = getTenants();
+  var cfg = getPlatformConfig();
+
+  // Plan distribution
+  var planCounts = {};
+  var tierCounts = {};
+  tenants.forEach(function(t) {
+    planCounts[t.plan] = (planCounts[t.plan] || 0) + 1;
+    tierCounts[t.tier] = (tierCounts[t.tier] || 0) + 1;
+  });
+
+  // Estimate total students (sample from first few schools)
+  var totalEstStudents = 0;
+  var sampled = 0;
+  tenants.forEach(function(t) {
+    try {
+      var raw = localStorage.getItem(getTenantDataKey(t.id));
+      if (raw) {
+        var d = JSON.parse(raw);
+        var stuCount = (d.students || []).length;
+        totalEstStudents += stuCount;
+        sampled++;
+      }
+    } catch(e) {}
+  });
+
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var createdByMonth = {};
+  tenants.forEach(function(t) {
+    var m = new Date(t.createdAt).getMonth();
+    createdByMonth[m] = (createdByMonth[m] || 0) + 1;
+  });
+
+  var html = '<div class="sa-stats-grid">'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-user-graduate"></i></div><div><div class="sa-stat-value">' + totalEstStudents + '</div><div class="sa-stat-label">Est. Total Students</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-layer-group"></i></div><div><div class="sa-stat-value">' + Object.keys(planCounts).length + '</div><div class="sa-stat-label">Plan Types</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-tag"></i></div><div><div class="sa-stat-value">' + Object.keys(tierCounts).length + '</div><div class="sa-stat-label">Tier Types</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-calendar"></i></div><div><div class="sa-stat-value">' + tenants.length + '</div><div class="sa-stat-label">Schools This Year</div></div></div>'
+    + '</div>';
+
+  // Plan Distribution
+  html += '<div class="sa-section"><h3><i class="fas fa-chart-pie"></i> Plan Distribution</h3>'
+    + '<div class="sa-chart-bars">'
+    + Object.keys(planCounts).sort().map(function(p) {
+      var pct = Math.round((planCounts[p] / tenants.length) * 100) || 0;
+      return '<div class="sa-bar-row"><span class="sa-bar-label">' + esc(p.charAt(0).toUpperCase() + p.slice(1)) + '</span>'
+        + '<div class="sa-bar-track"><div class="sa-bar-fill" style="width:' + pct + '%;background:' + (p==='basic'?'#60a5fa':p==='standard'?'#34d399':p==='premium'?'#f59e0b':p==='enterprise'?'#a78bfa':'#94a3b8') + '"></div></div>'
+        + '<span class="sa-bar-count">' + planCounts[p] + ' (' + pct + '%)</span></div>';
+    }).join('') + '</div></div>';
+
+  // Tier Distribution
+  html += '<div class="sa-section"><h3><i class="fas fa-school"></i> Tier Distribution</h3>'
+    + '<div class="sa-chart-bars">'
+    + Object.keys(tierCounts).sort().map(function(t) {
+      var pct = Math.round((tierCounts[t] / tenants.length) * 100) || 0;
+      var label = { full_k12:'Full K-12', eccde:'Nursery', primary:'Primary', secondary:'Secondary' }[t] || t;
+      return '<div class="sa-bar-row"><span class="sa-bar-label">' + label + '</span>'
+        + '<div class="sa-bar-track"><div class="sa-bar-fill" style="width:' + pct + '%;background:#818cf8;"></div></div>'
+        + '<span class="sa-bar-count">' + tierCounts[t] + ' (' + pct + '%)</span></div>';
+    }).join('') + '</div></div>';
+
+  // Schools created by month
+  html += '<div class="sa-section"><h3><i class="fas fa-chart-line"></i> Schools Created (by month)</h3>'
+    + '<div class="sa-chart-bars">'
+    + months.map(function(m, i) {
+      var cnt = createdByMonth[i] || 0;
+      var max = Math.max.apply(null, Object.values(createdByMonth).concat([1]));
+      var pct = Math.round((cnt / max) * 100) || 0;
+      return '<div class="sa-bar-row"><span class="sa-bar-label" style="min-width:40px;">' + m + '</span>'
+        + '<div class="sa-bar-track"><div class="sa-bar-fill" style="width:' + pct + '%;background:linear-gradient(90deg,#667eea,#764ba2);"></div></div>'
+        + '<span class="sa-bar-count">' + cnt + '</span></div>';
+    }).join('') + '</div></div>';
+
+  // Recent schools list
+  var recent = tenants.slice().sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); }).slice(0, 5);
+  html += '<div class="sa-section"><h3><i class="fas fa-clock"></i> Recently Created Schools</h3>'
+    + (recent.length ? '<div style="font-size:13px;">' + recent.map(function(t) {
+      return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;"><span>' + esc(t.name) + '</span><span style="color:var(--text-light);">' + new Date(t.createdAt).toLocaleDateString() + ' — ' + esc(t.plan) + '</span></div>';
+    }).join('') + '</div>' : '<p class="empty-state">No schools yet.</p>')
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+// ===== 6. Broadcast Tab =====
+function renderSaBroadcast(container) {
+  var html = '<div class="sa-settings-form" style="max-width:600px;">'
+    + '<div class="sa-section"><h3><i class="fas fa-bullhorn"></i> Broadcast to All Schools</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Send an announcement or notification to every school on the platform. The message will appear in their admin dashboard.</p>'
+    + '<div id="saBroadcastError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>'
+    + '<div class="form-group"><label>Subject</label><input type="text" id="saBroadcastSubject" placeholder="e.g. Platform Maintenance Notice"></div>'
+    + '<div class="form-group"><label>Message</label><textarea rows="6" id="saBroadcastMsg" placeholder="Type your message to all schools..."></textarea></div>'
+    + '<div class="form-group"><label>Priority</label><select id="saBroadcastPriority"><option value="info">Info</option><option value="warning">Warning</option><option value="urgent">Urgent</option></select></div>'
+    + '<button class="btn btn-primary" onclick="saSendBroadcast()"><i class="fas fa-paper-plane"></i> Send to All Schools</button>'
+    + '<p id="saBroadcastResult" style="font-size:13px;margin-top:12px;"></p>'
+    + '</div>'
+
+    // Broadcast history
+    + '<div class="sa-section"><h3><i class="fas fa-history"></i> Broadcast History</h3>'
+    + '<div id="saBroadcastHistory">' + renderBroadcastHistory() + '</div></div>'
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+function renderBroadcastHistory() {
+  var history = getBroadcastHistory();
+  if (!history.length) return '<p class="empty-state" style="margin:0;padding:12px;">No broadcasts sent yet.</p>';
+  return '<div style="font-size:13px;">' + history.map(function(b, i) {
+    var colors = { info: '#3b82f6', warning: '#f59e0b', urgent: '#ef4444' };
+    return '<div style="padding:12px;border-left:4px solid ' + (colors[b.priority] || '#3b82f6') + ';background:#f8fafc;border-radius:6px;margin-bottom:8px;">'
+      + '<div style="display:flex;justify-content:space-between;margin-bottom:4px;"><strong>' + esc(b.subject || '(no subject)') + '</strong>'
+      + '<span style="color:var(--text-light);font-size:11px;">' + esc(b.sentAt || '') + '</span></div>'
+      + '<p style="margin:0;color:var(--text-light);">' + esc(b.message || '').substring(0, 200) + '</p></div>';
+  }).join('') + '</div>';
+}
+
+function getBroadcastHistory() {
+  try {
+    var cfg = getPlatformConfig();
+    return cfg.broadcastHistory || [];
+  } catch(e) { return []; }
+}
+
+function saSendBroadcast() {
+  var subject = document.getElementById('saBroadcastSubject')?.value?.trim();
+  var msg = document.getElementById('saBroadcastMsg')?.value?.trim();
+  var priority = document.getElementById('saBroadcastPriority')?.value || 'info';
+  var err = document.getElementById('saBroadcastError');
+
+  if (!subject || !msg) {
+    if (err) { err.textContent = 'Please fill in both subject and message'; err.style.display = 'block'; }
+    return;
+  }
+  if (err) err.style.display = 'none';
+
+  // Save to each school's data
+  var tenants = getTenants();
+  var delivered = 0;
+  tenants.forEach(function(t) {
+    try {
+      var key = getTenantDataKey(t.id);
+      var raw = localStorage.getItem(key);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (!d.broadcasts) d.broadcasts = [];
+        d.broadcasts.push({ id: Date.now() + '_' + t.id, subject: subject, message: msg, priority: priority, sentAt: new Date().toISOString(), read: false });
+        localStorage.setItem(key, JSON.stringify(d));
+        delivered++;
+      }
+    } catch(e) {}
+  });
+
+  // Save to broadcast history
+  var cfg = getPlatformConfig();
+  if (!cfg.broadcastHistory) cfg.broadcastHistory = [];
+  cfg.broadcastHistory.unshift({ subject: subject, message: msg, priority: priority, sentAt: new Date().toLocaleString(), deliveredTo: delivered });
+  if (cfg.broadcastHistory.length > 50) cfg.broadcastHistory.length = 50;
+  savePlatformConfig(cfg);
+
+  logActivity('Broadcast sent: "' + subject + '" to ' + delivered + ' schools');
+
+  var result = document.getElementById('saBroadcastResult');
+  if (result) {
+    result.innerHTML = '<span style="color:#059669;"><i class="fas fa-check-circle"></i> Message sent to <strong>' + delivered + '</strong> school(s)</span>';
+    result.style.color = '#059669';
+  }
+  document.getElementById('saBroadcastSubject').value = '';
+  document.getElementById('saBroadcastMsg').value = '';
+  var history = document.getElementById('saBroadcastHistory');
+  if (history) history.innerHTML = renderBroadcastHistory();
+  toast('Broadcast sent to ' + delivered + ' schools!');
+}
+
+// ===== 7. Backup & Data Tab =====
+function renderSaBackup(container) {
+  var html = '<div class="sa-settings-form" style="max-width:600px;">'
+
+    // Export All Data
+    + '<div class="sa-section"><h3><i class="fas fa-download"></i> Export All Data</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Download a complete backup of all schools, platform settings, and super admin account as a JSON file.</p>'
+    + '<button class="btn btn-primary" onclick="saExportAll()"><i class="fas fa-file-export"></i> Export Full Backup</button>'
+    + '</div>'
+
+    // Import / Restore
+    + '<div class="sa-section"><h3><i class="fas fa-upload"></i> Import / Restore</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Restore from a previously exported backup file. This will <strong>overwrite</strong> all current data.</p>'
+    + '<input type="file" accept=".json" id="saRestoreFile" style="margin-bottom:12px;display:block;">'
+    + '<button class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;" onclick="saImportBackup()"><i class="fas fa-file-import"></i> Restore from File</button>'
+    + '<p id="saRestoreResult" style="font-size:13px;margin-top:8px;"></p>'
+    + '</div>'
+
+    // School Data Inspector
+    + '<div class="sa-section"><h3><i class="fas fa-search"></i> School Data Inspector</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Browse the stored data for any school to verify contents.</p>'
+    + '<div class="form-group"><label>Select School</label><select id="saDataInspectorSchool" onchange="saInspectSchool()">'
+    + '<option value="">-- Select a school --</option>'
+    + getTenants().map(function(t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('')
+    + '</select></div>'
+    + '<div id="saDataInspectorResult"></div>'
+    + '</div>'
+
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+function saExportAll() {
+  var exportData = {
+    exportedAt: new Date().toISOString(),
+    platform: getPlatformConfig(),
+    superAdmin: getSuperAdmin(),
+    tenants: getTenants(),
+    schools: {}
+  };
+  getTenants().forEach(function(t) {
+    try {
+      var raw = localStorage.getItem(getTenantDataKey(t.id));
+      if (raw) exportData.schools[t.id] = JSON.parse(raw);
+    } catch(e) {}
+  });
+
+  var blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'eduverse_backup_' + new Date().toISOString().split('T')[0] + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  logActivity('Full backup exported');
+  toast('Backup downloaded!');
+}
+
+function saImportBackup() {
+  var fileInput = document.getElementById('saRestoreFile');
+  var result = document.getElementById('saRestoreResult');
+  if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+    if (result) { result.innerHTML = '<span style="color:#dc2626;">Please select a backup file first.</span>'; }
+    return;
+  }
+  if (!confirm('This will OVERWRITE all current schools and platform settings. Are you sure?')) return;
+  if (!confirm('FINAL WARNING: This replaces ALL data. Proceed?')) return;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.tenants || !data.platform) {
+        if (result) result.innerHTML = '<span style="color:#dc2626;">Invalid backup file format.</span>';
+        return;
+      }
+
+      // Restore platform config
+      savePlatformConfig(data.platform);
+
+      // Restore super admin
+      if (data.superAdmin) localStorage.setItem('eduverse_super_admin', JSON.stringify(data.superAdmin));
+
+      // Restore tenants
+      localStorage.setItem('eduverse_tenants', JSON.stringify(data.tenants));
+
+      // Restore individual school data
+      var restored = 0;
+      Object.keys(data.schools || {}).forEach(function(schoolId) {
+        localStorage.setItem(getTenantDataKey(schoolId), JSON.stringify(data.schools[schoolId]));
+        restored++;
+      });
+
+      if (result) result.innerHTML = '<span style="color:#059669;"><i class="fas fa-check-circle"></i> Restored ' + data.tenants.length + ' schools and ' + restored + ' school data stores.</span>';
+      logActivity('Full backup restored: ' + data.tenants.length + ' schools');
+      toast('Backup restored successfully!');
+      switchSaTab('overview');
+    } catch(err) {
+      if (result) result.innerHTML = '<span style="color:#dc2626;">Error: ' + err.message + '</span>';
+    }
+  };
+  reader.readAsText(fileInput.files[0]);
+}
+
+function saInspectSchool() {
+  var sel = document.getElementById('saDataInspectorSchool');
+  var result = document.getElementById('saDataInspectorResult');
+  if (!sel || !result) return;
+  var id = sel.value;
+  if (!id) { result.innerHTML = ''; return; }
+  try {
+    var raw = localStorage.getItem(getTenantDataKey(id));
+    if (!raw) { result.innerHTML = '<p class="empty-state">No data found for this school.</p>'; return; }
+    var d = JSON.parse(raw);
+    var counts = {
+      students: (d.students || []).length,
+      teachers: (d.teachers || []).length,
+      admins: (d.admins || []).length,
+      classes: (d.classes || []).length,
+      subjects: (d.subjects || []).length,
+      fees: (d.fees || []).length,
+      results: (d.results || []).length,
+      exams: (d.exams || []).length,
+      assignments: (d.assignments || []).length
+    };
+    var storageSize = (raw.length / 1024).toFixed(1) + ' KB';
+
+    result.innerHTML = '<div style="margin-top:12px;background:#f8fafc;border-radius:8px;padding:16px;">'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:12px;">'
+      + Object.keys(counts).map(function(k) {
+        return '<div style="background:white;border-radius:6px;padding:8px 12px;text-align:center;">'
+          + '<div style="font-size:18px;font-weight:700;">' + counts[k] + '</div>'
+          + '<div style="font-size:11px;color:var(--text-light);">' + k.charAt(0).toUpperCase() + k.slice(1) + '</div></div>';
+      }).join('') + '</div>'
+      + '<div style="font-size:12px;color:var(--text-light);">Storage: <strong>' + storageSize + '</strong> | School Info: ' + esc(d.schoolName || 'N/A') + ' | Term: ' + esc(d.currentTerm || 'N/A') + '</div>'
+      + '<button class="btn btn-sm btn-outline" style="margin-top:8px;" onclick="saViewRawData(\'' + id + '\')"><i class="fas fa-code"></i> View Raw Data</button>'
+      + '</div>';
+  } catch(e) {
+    result.innerHTML = '<p style="color:#dc2626;font-size:13px;">Error reading data: ' + e.message + '</p>';
+  }
+}
+
+function saViewRawData(id) {
+  try {
+    var raw = localStorage.getItem(getTenantDataKey(id));
+    if (!raw) { toast('No data found'); return; }
+    var formatted = JSON.stringify(JSON.parse(raw), null, 2);
+    var overlay = document.getElementById('modalOverlay');
+    var body = document.getElementById('modalBody');
+    if (!body) return;
+    body.innerHTML = '<div style="max-width:800px;margin:0 auto;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
+      + '<h3 style="margin:0;"><i class="fas fa-code"></i> Raw School Data</h3>'
+      + '<button class="btn btn-sm btn-outline" onclick="closeModal()"><i class="fas fa-times"></i> Close</button></div>'
+      + '<pre style="background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;overflow:auto;max-height:70vh;font-size:12px;line-height:1.5;white-space:pre-wrap;">' + esc(formatted) + '</pre></div>';
+    if (overlay) overlay.classList.add('active');
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+// Add school name to overview quick actions
+// Keep the existing formatAmount
+function formatAmount(n) {
+  if (typeof n !== 'number') n = parseFloat(n) || 0;
+  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}

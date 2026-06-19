@@ -2580,3 +2580,12 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .sa-plan-features { font-size:13px;color:var(--text-light);margin-bottom:12px;line-height:1.4; }
 .sa-plan-actions { display:flex;gap:6px;flex-wrap:wrap; }
 .modal-overlay.active .sa-dashboard { max-height:85vh; }
+
+/* ===== SA ANALYTICS ===== */
+.sa-chart-bars { display:flex;flex-direction:column;gap:8px; }
+.sa-bar-row { display:flex;align-items:center;gap:12px;font-size:13px; }
+.sa-bar-label { min-width:100px;font-weight:500;text-align:right; }
+.sa-bar-track { flex:1;height:24px;background:#f1f5f9;border-radius:6px;overflow:hidden; }
+.sa-bar-fill { height:100%;border-radius:6px;transition:width 0.6s ease;min-width:2px; }
+.sa-bar-count { min-width:70px;color:var(--text-light);font-size:12px; }
+.sa-plan-card .badge { font-size:11px;padding:2px 8px;border-radius:4px; }
