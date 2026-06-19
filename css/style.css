@@ -2512,3 +2512,19 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .scroll-top { bottom:80px; }
 .scroll-bottom { bottom:20px; }
 .scroll-top i, .scroll-bottom i { pointer-events:none; }
+
+/* ===== FLOATING CHAT BUTTONS ===== */
+.chat-float { position:fixed;right:20px;bottom:136px;z-index:9998;display:flex;flex-direction:column;gap:10px; }
+.chat-btn { width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,0.2);transition:all 0.3s;cursor:pointer;position:relative; }
+.chat-btn:hover { transform:scale(1.12);box-shadow:0 6px 24px rgba(0,0,0,0.3);color:#fff; }
+.chat-btn:active { transform:scale(0.95); }
+.chat-whatsapp { background:linear-gradient(135deg,#25D366,#128C7E); }
+.chat-whatsapp:hover { background:linear-gradient(135deg,#20bd5a,#0e735f); }
+.chat-email { background:linear-gradient(135deg,#667eea,#764ba2); }
+.chat-email:hover { background:linear-gradient(135deg,#5a6fd6,#6a3f96); }
+.chat-btn i { pointer-events:none; }
+
+/* Pulse animation on first load */
+.chat-btn { animation:chatPulse 2s ease-in-out 3; }
+@keyframes chatPulse { 0%,100%{box-shadow:0 4px 16px rgba(0,0,0,0.2);} 50%{box-shadow:0 4px 24px rgba(0,0,0,0.35),0 0 0 8px rgba(37,211,102,0.15);} }
+.chat-email { animation-delay:0.3s; }

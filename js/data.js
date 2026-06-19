@@ -275,6 +275,7 @@ function getDefaultData() {
       aboutText: 'We are committed to providing quality education that nurtures academic excellence, character development, and lifelong learning.',
       contactEmail: 'info@school.edu',
       contactPhone: '+234 800 000 0000',
+      whatsappNumber: '',
       contactAddress: 'Education Avenue, City',
       graduationClass: 'Basic 6',
       socialLinks: [

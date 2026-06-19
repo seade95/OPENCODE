@@ -446,6 +446,7 @@ function renderAll() {
   if (typeof renderConferences === 'function') renderConferences();
   if (typeof applyTranslations === 'function') applyTranslations();
   if (typeof _checkAutoTermTransition === 'function') _checkAutoTermTransition();
+  if (typeof renderChatButtons === 'function') renderChatButtons();
 }
 
 function logActivity(msg) {

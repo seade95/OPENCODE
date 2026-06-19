@@ -85,6 +85,7 @@ function renderSchoolProfile() {
     + '<div class="form-row"><label>About Text</label><textarea rows="3" oninput="spUpdate(\'aboutText\',this.value)">' + esc(prof.aboutText || '') + '</textarea></div>'
     + '<div class="form-row"><label>Contact Email</label><input type="email" value="' + esc(prof.contactEmail || '') + '" oninput="spUpdate(\'contactEmail\',this.value)"></div>'
     + '<div class="form-row"><label>Contact Phone</label><input type="text" value="' + esc(prof.contactPhone || '') + '" oninput="spUpdate(\'contactPhone\',this.value)"></div>'
++ '<div class="form-row"><label>WhatsApp Number</label><div style="display:flex;gap:8px;align-items:center;"><input type="text" value="' + esc(prof.whatsappNumber || '') + '" placeholder="e.g. +2348012345678" oninput="spUpdate(\'whatsappNumber\',this.value)" style="flex:1;"><span style="font-size:12px;color:var(--text-light);"><i class="fab fa-whatsapp" style="color:#25D366;"></i> Shows as floating chat button</span></div></div>'
     + '<div class="form-row"><label>Address</label><textarea rows="2" oninput="spUpdate(\'contactAddress\',this.value)">' + esc(prof.contactAddress || '') + '</textarea></div>'
     + '<div class="form-row"><label>Emergency Contact</label><input type="text" value="' + esc(prof.emergencyContact || '') + '" placeholder="Emergency phone number" oninput="spUpdate(\'emergencyContact\',this.value)"></div>'
     + '<div class="form-row"><label>Share School Page</label><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
@@ -717,6 +718,7 @@ function renderLandingPageSections() {
   renderSportHouses();
   renderStats();
   renderFeatureToggles();
+  renderChatButtons();
 }
 
 // ===== Dynamic Hero Slides =====
@@ -1034,6 +1036,37 @@ function renderFeatureToggles() {
   });
   // Portal cards on landing page
   var portalMap = { transport: null, health: null }; // transport/health portals are in student portal, not landing
+}
+
+// ===== Render Floating Chat Buttons =====
+function renderChatButtons() {
+  var prof = getSchoolProfile();
+  var wa = document.getElementById('chatWhatsappBtn');
+  var em = document.getElementById('chatEmailBtn');
+  if (!wa && !em) return;
+  var waNum = (prof.whatsappNumber || '').replace(/[\s\-\(\)]/g, '');
+  var email = prof.contactEmail || '';
+  if (wa) {
+    if (waNum) {
+      var cleaned = waNum.startsWith('+') ? waNum.substring(1) : waNum;
+      wa.href = 'https://wa.me/' + encodeURIComponent(cleaned);
+      wa.title = 'Chat on WhatsApp: ' + (prof.whatsappNumber || '');
+    } else {
+      wa.href = 'javascript:void(0)';
+      wa.title = 'Set your WhatsApp number in School Profile';
+    }
+    wa.style.display = 'flex';
+  }
+  if (em) {
+    if (email) {
+      em.href = 'mailto:' + email;
+      em.title = 'Send email to: ' + email;
+    } else {
+      em.href = 'javascript:void(0)';
+      em.title = 'Set your contact email in School Profile';
+    }
+    em.style.display = 'flex';
+  }
 }
 
 // Show toast notification
