@@ -1,6 +1,20 @@
 ﻿// EDUVERSE - Data Layer
 // Handles localStorage persistence, default data seeding, and data access utilities
 
+// ===== APP VERSION (bump to force cache refresh) =====
+var APP_VERSION = '2026.06.19.1';
+(function() {
+  var key = 'app_cache_version';
+  try {
+    var stored = localStorage.getItem(key);
+    if (stored !== APP_VERSION) {
+      localStorage.setItem(key, APP_VERSION);
+      // Clear possibly stale computed data
+      try { localStorage.removeItem('eduverse_session'); } catch(e) {}
+    }
+  } catch(e) {}
+})();
+
 // ===== DATA LAYER =====
 const DATA_KEY = 'schoolData';
 
@@ -226,6 +240,34 @@ function getDefaultData() {
     currentLanguage: 'en',
     activityLog: [],
     admins: [],
+    broadcasts: [],
+    storeProducts: [
+      { id: 'PROD001', name: 'School Uniform - Basic', description: 'Standard school uniform shirt and trousers', price: 15000, category: 'Uniform', image: '', stock: 50 },
+      { id: 'PROD002', name: 'Mathematics Textbook Gr.5', description: 'Approved mathematics textbook for Basic 5', price: 8500, category: 'Books', image: '', stock: 30 },
+      { id: 'PROD003', name: 'School Sports Kit', description: 'Complete PE kit including shorts, jersey, and trainers', price: 25000, category: 'Sports', image: '', stock: 20 },
+      { id: 'PROD004', name: 'School Logo Mug', description: 'Ceramic mug with school emblem', price: 4500, category: 'Merchandise', image: '', stock: 100 }
+    ],
+    storeOrders: [],
+    mealPlans: [],
+    dietaryRestrictions: [],
+    websiteConfig: {
+      enabled: false,
+      subdomain: '',
+      schoolName: '',
+      motto: '',
+      logo: '',
+      banner: '',
+      primaryColor: '#1e40af',
+      secondaryColor: '#059669',
+      fontFamily: 'Inter, sans-serif',
+      sections: [
+        { id: 'sec-hero', type: 'hero', title: 'Welcome', content: '', visible: true, order: 0 },
+        { id: 'sec-about', type: 'about', title: 'About Us', content: '', visible: true, order: 1 },
+        { id: 'sec-announcements', type: 'announcements', title: 'Announcements', items: [], visible: true, order: 2 },
+        { id: 'sec-gallery', type: 'gallery', title: 'Photo Gallery', images: [], visible: true, order: 3 },
+        { id: 'sec-contact', type: 'contact', title: 'Contact Us', visible: true, order: 4 }
+      ]
+    },
     schoolTier: 'full_k12',
     examRegistrations: [],
     schoolProfile: {
@@ -407,7 +449,8 @@ function getDefaultData() {
     ],
     healthRecords: [],
     transportRoutes: [],
-    conferences: []
+    conferences: [],
+    gradebookGrid: { rows: [], term: '' }
   };
 }
 

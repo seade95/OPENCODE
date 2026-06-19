@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Version mismatch → force full page refresh to clear browser cache
+  try {
+    var ver = typeof APP_VERSION !== 'undefined' ? APP_VERSION : '';
+    var cacheKey = 'app_cache_version';
+    var storedVer = localStorage.getItem(cacheKey);
+    if (ver && storedVer !== ver) {
+      localStorage.setItem(cacheKey, ver);
+      window.location.reload(true);
+      return;
+    }
+  } catch(e) {}
+
   data = loadData();
 
   // Resolve school from URL hash/param — overrides existing activeTenant
@@ -116,6 +128,28 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 150);
     }
   } catch(e) {}
+
+  // Restore session from localStorage (cross-tab / reload persistence)
+  if (typeof syncSession === 'function') syncSession();
+  // If session restored, show the appropriate portal
+  if (currentAdmin && typeof showAdminPortal === 'function') showAdminPortal();
+  else if (currentStudent && typeof showStudentLogin === 'function') { showStudentLogin(); if (typeof renderStudentPortal === 'function') renderStudentPortal(); }
+  else if (currentTeacher && typeof showTeacherLogin === 'function') { showTeacherLogin(); if (typeof renderTeacherPortal === 'function') renderTeacherPortal(); }
+  else if (currentParent && typeof showParentLogin === 'function') { showParentLogin(); if (typeof renderParentPortal === 'function') renderParentPortal(); }
+
+  // Cross-tab session sync
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'eduverse_session') {
+      if (!e.newValue) {
+        // Session cleared in another tab
+        clearSession();
+        goHome();
+      } else {
+        // Session set in another tab — reload to pick up fresh state
+        window.location.reload();
+      }
+    }
+  });
 
   // Listen for hash changes (user navigates to a different school URL)
   window.addEventListener('hashchange', function() {

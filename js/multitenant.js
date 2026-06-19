@@ -203,8 +203,8 @@ function showSuperAdminLogin() {
   body.innerHTML = `
     <h3><i class="fas fa-user-shield"></i> Super Admin Login</h3>
     <div id="superAdminLoginError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin:8px 0;font-size:14px;"></div>
-    <div class="form-group"><label>Email</label><input type="email" id="supAdminEmail" placeholder="super@eduverse.com"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="supAdminPass" placeholder="Enter password"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="supAdminEmail" placeholder="super@eduverse.com" oninput="validateField(this,'email')"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="supAdminPass" placeholder="Enter password" oninput="validateField(this,'password')"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="superAdminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
@@ -227,9 +227,9 @@ function showSuperAdminSignup() {
   body.innerHTML = `
     <h3><i class="fas fa-user-shield"></i> Create Super Admin</h3>
     <div id="superAdminSignupError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin:8px 0;font-size:14px;"></div>
-    <div class="form-group"><label>Full Name</label><input type="text" id="supAdminName" placeholder="Super admin name"></div>
-    <div class="form-group"><label>Email</label><input type="email" id="supAdminEmail" placeholder="super@eduverse.com"></div>
-    <div class="form-group"><label>Password (min 6 chars)</label><input type="password" id="supAdminPass" placeholder="Min 6 characters"></div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="supAdminName" placeholder="Super admin name" oninput="validateField(this,'name')"></div>
+    <div class="form-group"><label>Email</label><input type="email" id="supAdminEmail" placeholder="super@eduverse.com" oninput="validateField(this,'email')"></div>
+    <div class="form-group"><label>Password (min 6 chars)</label><input type="password" id="supAdminPass" placeholder="Min 6 characters" oninput="validateField(this,'password')"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
       <button class="btn btn-success" onclick="createSuperAdminAccount()"><i class="fas fa-user-plus"></i> Create Account</button>
@@ -242,16 +242,12 @@ function superAdminLogin() {
   const email = document.getElementById('supAdminEmail')?.value?.trim();
   const pass = document.getElementById('supAdminPass')?.value?.trim();
   const err = document.getElementById('superAdminLoginError');
-  if (!email || !pass) {
-    if (err) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; }
-    return;
-  }
+  if (!email || !pass) { showError(err, 'Please fill all fields'); return; }
+  if (!isValidEmail(email)) { showError(err, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(err, 'Password must be at least 6 characters'); return; }
   const admin = verifySuperAdmin(email, pass);
-  if (!admin) {
-    if (err) { err.textContent = 'Invalid email or password'; err.style.display = 'block'; }
-    return;
-  }
-  if (err) err.style.display = 'none';
+  if (!admin) { showError(err, 'Invalid email or password'); return; }
+  hideError(err);
   closeModal();
   showSuperAdminDashboard();
 }
@@ -261,20 +257,12 @@ function createSuperAdminAccount() {
   const email = document.getElementById('supAdminEmail')?.value?.trim();
   const pass = document.getElementById('supAdminPass')?.value?.trim();
   const err = document.getElementById('superAdminSignupError');
-  if (!name || !email || !pass) {
-    if (err) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; }
-    return;
-  }
-  if (pass.length < 6) {
-    if (err) { err.textContent = 'Password must be at least 6 characters'; err.style.display = 'block'; }
-    return;
-  }
+  if (!name || !email || !pass) { showError(err, 'Please fill all fields'); return; }
+  if (!isValidEmail(email)) { showError(err, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(err, 'Password must be at least 6 characters'); return; }
   const result = createSuperAdmin(name, email, pass);
-  if (!result) {
-    if (err) { err.textContent = 'A super admin already exists'; err.style.display = 'block'; }
-    return;
-  }
-  if (err) err.style.display = 'none';
+  if (!result) { showError(err, 'A super admin already exists'); return; }
+  hideError(err);
   toast('Super admin account created!');
   closeModal();
   showSuperAdminDashboard();
@@ -354,8 +342,8 @@ function showOnboardSchool() {
     <div id="onboardError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>
 
     <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="onbSchoolName" placeholder="e.g. EDUVERSE"></div>
-      <div class="form-group"><label>School Email *</label><input type="email" id="onbSchoolEmail" placeholder="admin@school.edu"></div>
+      <div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="onbSchoolName" placeholder="e.g. EDUVERSE" oninput="validateField(this,'name')"></div>
+      <div class="form-group"><label>School Email *</label><input type="email" id="onbSchoolEmail" placeholder="admin@school.edu" oninput="validateField(this,'email')"></div>
       <div class="form-group"><label>Phone</label><input type="text" id="onbSchoolPhone" placeholder="+234 800 000 0000"></div>
       <div class="form-group"><label>Motto</label><input type="text" id="onbSchoolMotto" value="Education for Enlightenment"></div>
       <div class="form-group" style="grid-column:1/-1;"><label>Address</label><input type="text" id="onbSchoolAddress" placeholder="School address"></div>
@@ -383,10 +371,10 @@ function showOnboardSchool() {
     <h4 style="margin-top:20px;margin-bottom:12px;font-size:15px;border-top:1px solid #e2e8f0;padding-top:16px;">
       <i class="fas fa-user-shield"></i> First Administrator Account</h4>
     <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="form-group"><label>Admin Name *</label><input type="text" id="onbAdminName" placeholder="Full name"></div>
-      <div class="form-group"><label>Admin Email *</label><input type="email" id="onbAdminEmail" placeholder="admin@school.edu"></div>
-      <div class="form-group"><label>Admin Password *</label><input type="password" id="onbAdminPass" placeholder="Min 6 characters"></div>
-      <div class="form-group"><label>Confirm Password *</label><input type="password" id="onbAdminPass2" placeholder="Repeat password"></div>
+      <div class="form-group"><label>Admin Name *</label><input type="text" id="onbAdminName" placeholder="Full name" oninput="validateField(this,'name')"></div>
+      <div class="form-group"><label>Admin Email *</label><input type="email" id="onbAdminEmail" placeholder="admin@school.edu" oninput="validateField(this,'email')"></div>
+      <div class="form-group"><label>Admin Password *</label><input type="password" id="onbAdminPass" placeholder="Min 6 characters" oninput="validateField(this,'password')"></div>
+      <div class="form-group"><label>Confirm Password *</label><input type="password" id="onbAdminPass2" placeholder="Repeat password" data-confirm-target="onbAdminPass" oninput="validateField(this,'confirm')"></div>
     </div>
 
     <div class="modal-actions" style="margin-top:20px;">
@@ -417,26 +405,18 @@ function createNewTenant() {
   const err = document.getElementById('onboardError');
 
   if (!name || !email || !adminName || !adminEmail || !adminPass) {
-    if (err) { err.textContent = 'Please fill all required fields'; err.style.display = 'block'; }
-    return;
+    showError(err, 'Please fill all required fields'); return;
   }
-  if (adminPass.length < 6) {
-    if (err) { err.textContent = 'Admin password must be at least 6 characters'; err.style.display = 'block'; }
-    return;
-  }
-  if (adminPass !== adminPass2) {
-    if (err) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; }
-    return;
-  }
+  if (!isValidEmail(email)) { showError(err, 'Invalid school email format'); return; }
+  if (!isValidEmail(adminEmail)) { showError(err, 'Invalid admin email format'); return; }
+  if (!isValidPassword(adminPass)) { showError(err, 'Admin password must be at least 6 characters'); return; }
+  if (adminPass !== adminPass2) { showError(err, 'Passwords do not match'); return; }
 
   // Check duplicate email
   const tenants = getTenants();
-  if (tenants.find(t => t.email.toLowerCase() === email.toLowerCase())) {
-    if (err) { err.textContent = 'A school with this email already exists'; err.style.display = 'block'; }
-    return;
-  }
+  if (tenants.find(t => t.email.toLowerCase() === email.toLowerCase())) { showError(err, 'A school with this email already exists'); return; }
 
-  if (err) err.style.display = 'none';
+  hideError(err);
 
   const tenant = createTenant({
     name, email, phone, motto, address, logo, tier, plan, adminName, adminEmail, adminPass,

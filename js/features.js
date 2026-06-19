@@ -1204,12 +1204,16 @@ function showParentLogin() {
 function parentLogin() {
   const email = (document.getElementById('parentLoginEmail')?.value ?? '').trim();
   const pass = (document.getElementById('parentLoginPass')?.value ?? '').trim();
+  if (!email || !pass) { toast('Please enter both email and password', 'error'); return; }
+  if (!isValidEmail(email)) { toast('Invalid email format', 'error'); return; }
+  if (!isValidPassword(pass)) { toast('Password must be at least 6 characters', 'error'); return; }
   const parent = data.parents.find(p => p.email === email && p.password === pass);
   if (!parent) {
     toast('Invalid email or password', 'error');
     return;
   }
   currentParent = parent;
+  if (typeof setSession === 'function') setSession('parent', parent);
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
   var pp = document.getElementById('parentPage'); if (pp) pp.classList.add('active');
   renderParentPortal();
@@ -1218,6 +1222,7 @@ function parentLogin() {
 
 function parentLogout() {
   currentParent = null;
+  if (typeof clearSession === 'function') clearSession();
   var ple = document.getElementById('parentLoginEmail'); if (ple) ple.value = '';
   var plp = document.getElementById('parentLoginPass'); if (plp) plp.value = '';
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
@@ -4080,4 +4085,1380 @@ function _ttDropOnDayPeriod(entryId, targetDay, targetPeriod) {
 // Quick-edit timetable from calendar: show modal with prefilled day/period
 function _calQuickAddTt(day, period, cls) {
   if (typeof quickAddTimetable === 'function') quickAddTimetable(day, period);
+}
+
+// ===== INTERACTIVE SCORE GRID =====
+var SUBJECT_LIST = ['Mathematics','English','Science','History','Geography','Physics','Chemistry','Biology','Literature','French','Computer Science','Art','Music','Physical Education','Social Studies','Civic Education','Agricultural Science','Economics','Government','Commerce','Accounting'];
+var GRID_CA_MAX = 20;
+var GRID_EXAM_MAX = 100;
+
+function getGradeGrid() {
+  if (!data.gradebookGrid) data.gradebookGrid = { rows: [], term: '' };
+  return data.gradebookGrid;
+}
+
+function renderScoreGrid() {
+  var container = document.getElementById('scoreGridView');
+  var ctrl = document.getElementById('scoreGridControls');
+  if (!container) return;
+  var grid = getGradeGrid();
+  var students = data.students || [];
+  var rows = grid.rows || [];
+
+  // Controls: term selector, class filter, student+subject adder
+  var term = grid.term || data.currentTerm || 'Term 2 2026';
+  var classFilter = document.getElementById('sgClassFilter')?.value || '';
+  var ctrlHtml = '<div class="form-group" style="flex-direction:row;align-items:center;gap:8px;flex-wrap:wrap;">'
+    + '<label style="font-size:13px;font-weight:600;">Term:</label>'
+    + '<select id="sgTerm" onchange="updateScoreGridMeta()" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;">'
+    + (data.academicTerms || []).map(function(t) { return '<option value="' + esc(t.name) + '"' + (t.name === term ? ' selected' : '') + '>' + esc(t.name) + '</option>'; }).join('')
+    + '</select>'
+    + '<label style="font-size:13px;font-weight:600;margin-left:12px;">Class:</label>'
+    + '<select id="sgClassFilter" onchange="renderScoreGrid()" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;">'
+    + '<option value="">All Classes</option>'
+    + students.map(function(s) { return s.class; }).filter(function(v,i,a) { return a.indexOf(v) === i; }).sort().map(function(c) { return '<option value="' + esc(c) + '"' + (c === classFilter ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('')
+    + '</select>'
+    + '<label style="font-size:13px;font-weight:600;margin-left:12px;">Subject:</label>'
+    + '<select id="sgAddSubject" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;">'
+    + SUBJECT_LIST.map(function(s) { return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('')
+    + '</select>'
+    + '<button class="btn btn-sm btn-primary" onclick="sgAddSubjectForAll()"><i class="fas fa-plus"></i> Add Subject for All</button>'
+    + '<button class="btn btn-sm btn-outline" onclick="sgClearSubject()" style="color:#dc2626;"><i class="fas fa-trash"></i> Remove Subject</button>'
+    + '</div>';
+  ctrl.innerHTML = ctrlHtml;
+
+  if (!rows.length) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-table"></i><p>No score grid data. Click <strong>Add Row</strong> or <strong>Import</strong> to begin.</p></div>';
+    return;
+  }
+
+  // Filter rows by class
+  var filtered = classFilter ? rows.filter(function(r) { var s = students.find(function(st) { return st.id === r.studentId; }); return s && s.class === classFilter; }) : rows;
+
+  // Group by subject for column headers
+  var subjects = [];
+  filtered.forEach(function(r) { if (subjects.indexOf(r.subject) === -1) subjects.push(r.subject); });
+  subjects.sort();
+
+  // Group by student
+  var studentRows = {};
+  filtered.forEach(function(r) {
+    if (!studentRows[r.studentId]) studentRows[r.studentId] = { studentId: r.studentId, scores: {} };
+    studentRows[r.studentId].scores[r.subject] = r;
+  });
+  var studentIds = Object.keys(studentRows).sort(function(a, b) {
+    var sa = students.find(function(s) { return s.id === a; });
+    var sb = students.find(function(s) { return s.id === b; });
+    return (sa ? sa.name : a).localeCompare(sb ? sb.name : b);
+  });
+
+  // Compute per-subject totals for position ranking
+  var subjectTotals = {};
+  filtered.forEach(function(r) {
+    if (!subjectTotals[r.subject]) subjectTotals[r.subject] = {};
+    var total = (r.ca1 || 0) + (r.ca2 || 0) + (r.exam || 0);
+    subjectTotals[r.subject][r.studentId] = total;
+  });
+  // Rank per subject
+  var subjectRanks = {};
+  Object.keys(subjectTotals).forEach(function(sub) {
+    var sorted = Object.keys(subjectTotals[sub]).sort(function(a, b) { return (subjectTotals[sub][b] || 0) - (subjectTotals[sub][a] || 0); });
+    sorted.forEach(function(sid, i) {
+      if (!subjectRanks[sid]) subjectRanks[sid] = {};
+      subjectRanks[sid][sub] = i + 1;
+    });
+  });
+
+  // Build table
+  var html = '<table class="grid-table" style="width:100%;border-collapse:collapse;font-size:13px;min-width:900px;"><thead><tr style="background:var(--primary);color:white;">'
+    + '<th style="padding:8px 6px;position:sticky;left:0;background:var(--primary);z-index:2;min-width:140px;">Student</th>'
+    + '<th style="padding:8px 6px;min-width:80px;">Class</th>';
+  subjects.forEach(function(sub) {
+    html += '<th colspan="5" style="padding:8px 4px;text-align:center;border-left:2px solid rgba(255,255,255,0.2);">' + esc(sub) + '</th>';
+  });
+  html += '</tr><tr style="background:var(--primary);color:white;font-size:11px;">'
+    + '<th style="padding:4px 6px;position:sticky;left:0;background:var(--primary);z-index:2;"></th>'
+    + '<th style="padding:4px 6px;"></th>';
+  subjects.forEach(function(sub) {
+    html += '<th style="padding:4px 2px;border-left:2px solid rgba(255,255,255,0.2);min-width:32px;" title="CA1 /' + GRID_CA_MAX + '">CA1</th>'
+      + '<th style="padding:4px 2px;min-width:32px;" title="CA2 /' + GRID_CA_MAX + '">CA2</th>'
+      + '<th style="padding:4px 2px;min-width:40px;" title="Exam /' + GRID_EXAM_MAX + '">Exam</th>'
+      + '<th style="padding:4px 2px;min-width:36px;font-weight:700;">Total</th>'
+      + '<th style="padding:4px 2px;min-width:28px;">G</th>';
+  });
+  html += '<th style="padding:4px 6px;min-width:50px;">Avg %</th><th style="padding:4px 6px;min-width:30px;">Pos</th></tr></thead><tbody>';
+
+  studentIds.forEach(function(sid) {
+    var st = students.find(function(s) { return s.id === sid; });
+    var name = st ? esc(st.name) : sid;
+    var cls = st ? esc(st.class) : '';
+    var sr = studentRows[sid];
+    var totalScore = 0, totalCount = 0;
+    html += '<tr class="grid-row">'
+      + '<td style="padding:4px 6px;font-weight:600;position:sticky;left:0;background:white;z-index:1;border-right:1px solid #e2e8f0;">' + name + '</td>'
+      + '<td style="padding:4px 6px;color:var(--text-light);font-size:12px;">' + cls + '</td>';
+    subjects.forEach(function(sub) {
+      var r = sr.scores[sub];
+      var ca1 = r ? r.ca1 || 0 : 0;
+      var ca2 = r ? r.ca2 || 0 : 0;
+      var exam = r ? r.exam || 0 : 0;
+      var total = ca1 + ca2 + exam;
+      var grade = getGrade(total);
+      if (r) { totalScore += total; totalCount++; }
+      var border = 'border-left:2px solid #e2e8f0;';
+      html += '<td style="padding:2px;' + border + '"><input type="number" min="0" max="' + GRID_CA_MAX + '" value="' + ca1 + '" class="sg-cell" data-sid="' + sid + '" data-sub="' + esc(sub, true) + '" data-field="ca1" onchange="sgCellChanged(this)" onfocus="this.select()"></td>'
+        + '<td style="padding:2px;"><input type="number" min="0" max="' + GRID_CA_MAX + '" value="' + ca2 + '" class="sg-cell" data-sid="' + sid + '" data-sub="' + esc(sub, true) + '" data-field="ca2" onchange="sgCellChanged(this)" onfocus="this.select()"></td>'
+        + '<td style="padding:2px;"><input type="number" min="0" max="' + GRID_EXAM_MAX + '" value="' + exam + '" class="sg-cell sg-cell-exam" data-sid="' + sid + '" data-sub="' + esc(sub, true) + '" data-field="exam" onchange="sgCellChanged(this)" onfocus="this.select()"></td>'
+        + '<td style="padding:4px 2px;text-align:center;font-weight:700;font-size:14px;" class="sg-total">' + total + '</td>'
+        + '<td style="padding:4px 2px;text-align:center;"><span class="badge" style="background:' + (grade === 'A' || grade === 'A1' || grade === 'B2' ? '#c6f6d5' : grade === 'F' || grade === 'F9' ? '#fed7d7' : '#fefcbf') + ';color:' + (grade === 'A' || grade === 'A1' || grade === 'B2' ? '#22543d' : grade === 'F' || grade === 'F9' ? '#9b2c2c' : '#744210') + ';font-size:11px;">' + grade + '</span></td>';
+    });
+    var avg = totalCount ? Math.round(totalScore / totalCount) : 0;
+    var avgGrade = getGrade(avg);
+    html += '<td style="padding:4px 6px;text-align:center;font-weight:600;">' + avg + '%</td>'
+      + '<td style="padding:4px 6px;text-align:center;font-weight:600;font-size:14px;" class="sg-pos">-</td></tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Compute and display overall positions
+  computeScoreGridPositions();
+}
+
+function computeScoreGridPositions() {
+  var grid = getGradeGrid();
+  var students = data.students || [];
+  var rows = grid.rows || [];
+  if (!rows.length) return;
+  var classFilter = document.getElementById('sgClassFilter')?.value || '';
+
+  // Compute per-student average across all subjects
+  var avgs = {};
+  var filtered = classFilter ? rows.filter(function(r) { var s = students.find(function(st) { return st.id === r.studentId; }); return s && s.class === classFilter; }) : rows;
+  filtered.forEach(function(r) {
+    var total = (r.ca1 || 0) + (r.ca2 || 0) + (r.exam || 0);
+    if (!avgs[r.studentId]) avgs[r.studentId] = { total: 0, count: 0 };
+    avgs[r.studentId].total += total;
+    avgs[r.studentId].count++;
+  });
+  var ranked = Object.keys(avgs).sort(function(a, b) {
+    var avgA = avgs[a].count ? Math.round(avgs[a].total / avgs[a].count) : 0;
+    var avgB = avgs[b].count ? Math.round(avgs[b].total / avgs[b].count) : 0;
+    return avgB - avgA;
+  });
+  var positions = {};
+  ranked.forEach(function(sid, i) { positions[sid] = i + 1; });
+
+  // Update position cells
+  var gridView = document.getElementById('scoreGridView');
+  if (!gridView) return;
+  var posCells = gridView.querySelectorAll('.sg-pos');
+  var rows2 = gridView.querySelectorAll('.grid-row');
+  posCells.forEach(function(cell, idx) {
+    if (idx < ranked.length) {
+      var sid = rows2[idx]?.querySelector('.sg-cell')?.dataset?.sid;
+      if (sid && positions[sid]) cell.textContent = positions[sid];
+    }
+  });
+}
+
+// When a cell value changes
+function sgCellChanged(input) {
+  var sid = input.dataset.sid;
+  var sub = input.dataset.sub;
+  var field = input.dataset.field;
+  var val = parseFloat(input.value) || 0;
+  var max = field === 'exam' ? GRID_EXAM_MAX : GRID_CA_MAX;
+  if (val > max) { val = max; input.value = max; }
+  if (val < 0) { val = 0; input.value = 0; }
+
+  var grid = getGradeGrid();
+  var rows = grid.rows;
+  var r = rows.find(function(x) { return x.studentId === sid && x.subject === sub; });
+  if (r) r[field] = val;
+
+  // Update total and grade cells in the same row
+  var tr = input.closest('tr');
+  if (tr) {
+    var inputs = tr.querySelectorAll('.sg-cell');
+    var ca1 = 0, ca2 = 0, exam = 0;
+    inputs.forEach(function(inp) {
+      if (inp.dataset.sid === sid && inp.dataset.sub === sub) {
+        if (inp.dataset.field === 'ca1') ca1 = parseFloat(inp.value) || 0;
+        else if (inp.dataset.field === 'ca2') ca2 = parseFloat(inp.value) || 0;
+        else if (inp.dataset.field === 'exam') exam = parseFloat(inp.value) || 0;
+      }
+    });
+    var total = ca1 + ca2 + exam;
+    var grade = getGrade(total);
+    // Find the right total cell for this subject block
+    var cell = input.parentNode.nextElementSibling;
+    while (cell && !cell.classList.contains('sg-total')) cell = cell.nextElementSibling;
+    if (cell) {
+      cell.textContent = total;
+      // Update grade badge (next cell after total)
+      var gradeCell = cell.nextElementSibling;
+      if (gradeCell) {
+        var badge = gradeCell.querySelector('.badge');
+        if (badge) {
+          badge.textContent = grade;
+          badge.style.background = (grade === 'A' || grade === 'A1' || grade === 'B2' ? '#c6f6d5' : grade === 'F' || grade === 'F9' ? '#fed7d7' : '#fefcbf');
+          badge.style.color = (grade === 'A' || grade === 'A1' || grade === 'B2' ? '#22543d' : grade === 'F' || grade === 'F9' ? '#9b2c2c' : '#744210');
+        }
+      }
+    }
+  }
+  computeScoreGridPositions();
+}
+
+function updateScoreGridMeta() {
+  var grid = getGradeGrid();
+  var term = document.getElementById('sgTerm')?.value;
+  if (term) grid.term = term;
+}
+
+function addScoreGridRow() {
+  var students = data.students || [];
+  if (!students.length) { toast('No students found. Add students first.', 'error'); return; }
+  var grid = getGradeGrid();
+  if (!grid.rows) grid.rows = [];
+  var count = 0;
+  students.forEach(function(s) {
+    var missing = SUBJECT_LIST.every(function(sub) { return !grid.rows.find(function(r) { return r.studentId === s.id && r.subject === sub; }); });
+    if (missing) {
+      grid.rows.push({ id: 'GG' + Date.now() + count, studentId: s.id, subject: SUBJECT_LIST[0], ca1: 0, ca2: 0, exam: 0 });
+      count++;
+    }
+  });
+  if (!count) { toast('All students already have rows. Select a subject and use "Add Subject".', 'info'); return; }
+  renderScoreGrid();
+  toast(count + ' student row(s) added.');
+}
+
+function sgAddSubjectForAll() {
+  var sub = document.getElementById('sgAddSubject')?.value;
+  if (!sub) return;
+  var students = data.students || [];
+  var grid = getGradeGrid();
+  if (!grid.rows) grid.rows = [];
+  var classFilter = document.getElementById('sgClassFilter')?.value || '';
+  var targets = classFilter ? students.filter(function(s) { return s.class === classFilter; }) : students;
+  var added = 0;
+  targets.forEach(function(s) {
+    var exists = grid.rows.find(function(r) { return r.studentId === s.id && r.subject === sub; });
+    if (!exists) {
+      grid.rows.push({ id: 'GG' + Date.now() + added, studentId: s.id, subject: sub, ca1: 0, ca2: 0, exam: 0 });
+      added++;
+    }
+  });
+  renderScoreGrid();
+  toast('Added "' + sub + '" for ' + added + ' student(s).');
+}
+
+function sgClearSubject() {
+  var sub = document.getElementById('sgAddSubject')?.value;
+  if (!sub || !confirm('Remove all scores for "' + sub + '" from all students?')) return;
+  var grid = getGradeGrid();
+  grid.rows = grid.rows.filter(function(r) { return r.subject !== sub; });
+  renderScoreGrid();
+  toast('Removed "' + sub + '" from grid.');
+}
+
+function saveScoreGrid() {
+  var grid = getGradeGrid();
+  var term = document.getElementById('sgTerm')?.value;
+  if (term) grid.term = term;
+  // Recalculate totals and update
+  grid.rows.forEach(function(r) {
+    r.ca1 = r.ca1 || 0;
+    r.ca2 = r.ca2 || 0;
+    r.exam = r.exam || 0;
+  });
+  saveData();
+  toast('Score grid saved!');
+}
+
+// ===== IMPORT/EXPORT =====
+function exportScoreGridCSV() {
+  var grid = getGradeGrid();
+  var students = data.students || [];
+  var rows = grid.rows || [];
+  if (!rows.length) { toast('No data to export', 'error'); return; }
+  var subjects = [];
+  rows.forEach(function(r) { if (subjects.indexOf(r.subject) === -1) subjects.push(r.subject); });
+  subjects.sort();
+  var lines = [['StudentID','StudentName','Class'].concat(subjects.reduce(function(a, sub) { return a.concat([sub + '_CA1', sub + '_CA2', sub + '_Exam', sub + '_Total', sub + '_Grade']); }, []))];
+  var studentIds = [];
+  rows.forEach(function(r) { if (studentIds.indexOf(r.studentId) === -1) studentIds.push(r.studentId); });
+  studentIds.sort(function(a, b) {
+    var sa = students.find(function(s) { return s.id === a; });
+    var sb = students.find(function(s) { return s.id === b; });
+    return (sa ? sa.name : a).localeCompare(sb ? sb.name : b);
+  });
+  studentIds.forEach(function(sid) {
+    var st = students.find(function(s) { return s.id === sid; });
+    var line = [sid, st ? st.name : sid, st ? st.class : ''];
+    subjects.forEach(function(sub) {
+      var r = rows.find(function(x) { return x.studentId === sid && x.subject === sub; });
+      var ca1 = r ? r.ca1 || 0 : 0;
+      var ca2 = r ? r.ca2 || 0 : 0;
+      var exam = r ? r.exam || 0 : 0;
+      var total = ca1 + ca2 + exam;
+      var grade = getGrade(total);
+      line.push(ca1, ca2, exam, total, grade);
+    });
+    lines.push(line);
+  });
+  var csv = lines.map(function(l) { return l.map(function(c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'scoregrid.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  toast('Exported scoregrid.csv');
+}
+
+function exportScoreGridXLSX() {
+  if (typeof XLSX === 'undefined') { toast('Excel library not loaded. Use CSV export instead.', 'error'); return; }
+  var grid = getGradeGrid();
+  var students = data.students || [];
+  var rows = grid.rows || [];
+  if (!rows.length) { toast('No data to export', 'error'); return; }
+  var subjects = [];
+  rows.forEach(function(r) { if (subjects.indexOf(r.subject) === -1) subjects.push(r.subject); });
+  subjects.sort();
+  var header = ['StudentID', 'StudentName', 'Class'];
+  subjects.forEach(function(sub) { header.push(sub + '_CA1', sub + '_CA2', sub + '_Exam', sub + '_Total', sub + '_Grade'); });
+  var dataRows = [];
+  var studentIds = [];
+  rows.forEach(function(r) { if (studentIds.indexOf(r.studentId) === -1) studentIds.push(r.studentId); });
+  studentIds.sort(function(a, b) {
+    var sa = students.find(function(s) { return s.id === a; });
+    var sb = students.find(function(s) { return s.id === b; });
+    return (sa ? sa.name : a).localeCompare(sb ? sb.name : b);
+  });
+  studentIds.forEach(function(sid) {
+    var st = students.find(function(s) { return s.id === sid; });
+    var row = [sid, st ? st.name : sid, st ? st.class : ''];
+    subjects.forEach(function(sub) {
+      var r = rows.find(function(x) { return x.studentId === sid && x.subject === sub; });
+      var ca1 = r ? r.ca1 || 0 : 0;
+      var ca2 = r ? r.ca2 || 0 : 0;
+      var exam = r ? r.exam || 0 : 0;
+      var total = ca1 + ca2 + exam;
+      row.push(ca1, ca2, exam, total, getGrade(total));
+    });
+    dataRows.push(row);
+  });
+  var ws = XLSX.utils.aoa_to_sheet([header].concat(dataRows));
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'ScoreGrid');
+  XLSX.writeFile(wb, 'scoregrid.xlsx');
+  toast('Exported scoregrid.xlsx');
+}
+
+function importScoreGridFile(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (ext === 'csv') {
+    var reader = new FileReader();
+    reader.onload = function(e) { parseScoreGridCSV(e.target.result); input.value = ''; };
+    reader.readAsText(file);
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    if (typeof XLSX === 'undefined') { toast('Excel library not loaded.', 'error'); input.value = ''; return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var wb = XLSX.read(e.target.result, { type: 'array' });
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        var data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+        parseScoreGridArray(data);
+      } catch(err) { toast('Error reading Excel: ' + err.message, 'error'); }
+      input.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    toast('Unsupported file format. Use .csv or .xlsx', 'error');
+    input.value = '';
+  }
+}
+
+function parseScoreGridCSV(text) {
+  var lines = text.split(/\r?\n/).filter(function(l) { return l.trim(); });
+  if (lines.length < 2) { toast('CSV file is empty or has no data rows.', 'error'); return; }
+  var headers = parseCSVLine(lines[0]);
+  var data = [];
+  for (var i = 1; i < lines.length; i++) {
+    var vals = parseCSVLine(lines[i]);
+    if (vals.length >= 3) data.push(vals);
+  }
+  parseScoreGridArray(data, headers);
+}
+
+function parseCSVLine(line) {
+  var result = [], current = '', inQuotes = false;
+  for (var i = 0; i < line.length; i++) {
+    var ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+      else if (ch === '"') inQuotes = false;
+      else current += ch;
+    } else {
+      if (ch === '"') inQuotes = true;
+      else if (ch === ',') { result.push(current.trim()); current = ''; }
+      else current += ch;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+function parseScoreGridArray(data, headers) {
+  var grid = getGradeGrid();
+  if (!grid.rows) grid.rows = [];
+  var students = data.students || [];
+  var imported = 0;
+  // Detect format: if first row is array (from CSV with headers) or object keys
+  var hasColHeaders = headers && headers.length > 0;
+  var colMap = hasColHeaders ? {} : null;
+  if (hasColHeaders) {
+    headers.forEach(function(h, i) {
+      var hl = h.toLowerCase().replace(/[^a-z0-9_]/g, '');
+      if (hl === 'studentid' || hl === 'id') colMap.studentId = i;
+      else if (hl === 'studentname' || hl === 'name' || hl === 'student') colMap.name = i;
+      else if (hl === 'class') colMap.class = i;
+      else if (hl.includes('ca1') || hl.includes('_ca1')) colMap.ca1Idx = i;
+      else if (hl.includes('ca2') || hl.includes('_ca2')) colMap.ca2Idx = i;
+      else if (hl === 'exam' || hl.includes('_exam')) colMap.examIdx = i;
+      else if (hl.includes('_subject') || hl.includes('subject_')) colMap.subjectIdx = i;
+      else if (hl === 'subject') colMap.subjectIdx = i;
+    });
+  }
+
+  data.forEach(function(row) {
+    var sid, stName, cls, subject, ca1, ca2, exam;
+    if (hasColHeaders && colMap) {
+      sid = row[colMap.studentId] ? String(row[colMap.studentId]).trim() : '';
+      stName = colMap.name !== undefined ? String(row[colMap.name] || '').trim() : '';
+      cls = colMap.class !== undefined ? String(row[colMap.class] || '').trim() : '';
+      subject = colMap.subjectIdx !== undefined ? String(row[colMap.subjectIdx] || '').trim() : '';
+      ca1 = parseFloat(row[colMap.ca1Idx]) || 0;
+      ca2 = parseFloat(row[colMap.ca2Idx]) || 0;
+      exam = parseFloat(row[colMap.examIdx]) || 0;
+    } else {
+      // Assume simple format: StudentID, Name, Class, Subject, CA1, CA2, Exam
+      sid = String(row[0] || '').trim();
+      stName = String(row[1] || '').trim();
+      cls = String(row[2] || '').trim();
+      subject = String(row[3] || '').trim();
+      ca1 = parseFloat(row[4]) || 0;
+      ca2 = parseFloat(row[5]) || 0;
+      exam = parseFloat(row[6]) || 0;
+    }
+    // Look up student by ID or name
+    var student = students.find(function(s) { return s.id === sid || s.name.toLowerCase() === stName.toLowerCase(); });
+    if (!student) student = students.find(function(s) { return s.name.toLowerCase() === stName.toLowerCase(); });
+    var finalSid = student ? student.id : (sid || 'IMP_' + Date.now() + imported);
+    var finalSubject = subject || SUBJECT_LIST[0];
+    var existing = grid.rows.find(function(r) { return r.studentId === finalSid && r.subject === finalSubject; });
+    if (existing) {
+      existing.ca1 = ca1; existing.ca2 = ca2; existing.exam = exam;
+    } else {
+      grid.rows.push({ id: 'GG' + Date.now() + imported, studentId: finalSid, subject: finalSubject, ca1: ca1, ca2: ca2, exam: exam });
+    }
+    imported++;
+  });
+  renderScoreGrid();
+  toast('Imported ' + imported + ' row(s) successfully!');
+}
+
+// ===== WEBSITE BUILDER & CMS LANDING PAGE =====
+
+function getWebsiteConfig() {
+  if (!data.websiteConfig) {
+    var def = getDefaultData();
+    data.websiteConfig = JSON.parse(JSON.stringify(def.websiteConfig));
+  }
+  return data.websiteConfig;
+}
+
+function renderWebsiteBuilder() {
+  var container = document.getElementById('websiteBuilderContainer');
+  if (!container) return;
+  var cfg = getWebsiteConfig();
+  var subdomain = cfg.subdomain || data.schoolProfile?.schoolName?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'myschool';
+  var siteUrl = subdomain ? window.location.origin + '/?site=' + encodeURIComponent(subdomain) : '—';
+
+  var html = '<div class="website-builder-layout" style="display:flex;gap:20px;flex-wrap:wrap;">'
+    + '<div class="card" style="flex:1;min-width:300px;">'
+    + '<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;">'
+    + '<button class="btn btn-sm btn-primary" onclick="showWebsiteTab(\'general\')" id="wbTabGeneral" style="flex:1;">General</button>'
+    + '<button class="btn btn-sm" onclick="showWebsiteTab(\'sections\')" id="wbTabSections" style="flex:1;">Sections</button>'
+    + '<button class="btn btn-sm" onclick="showWebsiteTab(\'announce\')" id="wbTabAnnounce" style="flex:1;">Announcements</button>'
+    + '<button class="btn btn-sm" onclick="showWebsiteTab(\'gallery\')" id="wbTabGallery" style="flex:1;">Gallery</button>'
+    + '<button class="btn btn-sm" onclick="showWebsiteTab(\'contact\')" id="wbTabContact" style="flex:1;">Contact</button>'
+    + '</div>'
+    + '<div id="websiteTabContent"></div>'
+    + '</div>'
+    + '<div class="card" style="flex:0 0 280px;background:var(--surface);">'
+    + '<h4 style="font-size:14px;font-weight:600;margin-bottom:8px;"><i class="fas fa-link"></i> Your Public Website</h4>'
+    + '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">Each school gets a unique public web address. Visitors can view your announcements, gallery, and contact info.</p>'
+    + '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;word-break:break-all;"><strong>URL:</strong><br><a href="' + esc(siteUrl) + '" target="_blank" style="color:var(--primary);">' + esc(siteUrl) + '</a></div>'
+    + '<label style="display:block;margin-top:12px;font-size:13px;font-weight:500;">Subdomain</label>'
+    + '<input type="text" id="wbSubdomain" value="' + esc(subdomain) + '" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:6px;font-size:13px;margin-top:4px;" placeholder="your-school-slug">'
+    + '<label style="display:block;margin-top:8px;font-size:13px;"><input type="checkbox" id="wbEnabled" ' + (cfg.enabled ? 'checked' : '') + '> <strong>Website Published</strong></label>'
+    + '</div>'
+    + '</div>';
+  container.innerHTML = html;
+  showWebsiteTab('general');
+}
+
+var _websiteCurrentTab = 'general';
+
+function showWebsiteTab(tab) {
+  _websiteCurrentTab = tab;
+  document.querySelectorAll('[id^=wbTab]').forEach(function(b) { b.className = 'btn btn-sm'; });
+  var btn = document.getElementById('wbTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if (btn) btn.className = 'btn btn-sm btn-primary';
+  var content = document.getElementById('websiteTabContent');
+  if (!content) return;
+  if (tab === 'general') renderWebsiteGeneral(content);
+  else if (tab === 'sections') renderWebsiteSections(content);
+  else if (tab === 'announce') renderWebsiteAnnouncements(content);
+  else if (tab === 'gallery') renderWebsiteGallery(content);
+  else if (tab === 'contact') renderWebsiteContact(content);
+}
+
+function renderWebsiteGeneral(container) {
+  var cfg = getWebsiteConfig();
+  var sp = data.schoolProfile || {};
+  container.innerHTML = '<div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
+    + '<div class="form-group"><label>School Name (on website)</label><input type="text" id="wbSchoolName" value="' + esc(cfg.schoolName || sp.schoolName || '') + '" class="form-input"></div>'
+    + '<div class="form-group"><label>Motto / Tagline</label><input type="text" id="wbMotto" value="' + esc(cfg.motto || sp.schoolMotto || '') + '" class="form-input"></div>'
+    + '<div class="form-group"><label>Primary Color</label><input type="color" id="wbPrimaryColor" value="' + esc(cfg.primaryColor || '#1e40af') + '" style="width:100%;height:40px;border:2px solid #e2e8f0;border-radius:6px;cursor:pointer;"></div>'
+    + '<div class="form-group"><label>Secondary Color</label><input type="color" id="wbSecondaryColor" value="' + esc(cfg.secondaryColor || '#059669') + '" style="width:100%;height:40px;border:2px solid #e2e8f0;border-radius:6px;cursor:pointer;"></div>'
+    + '<div class="form-group" style="grid-column:1/3;"><label>Font Family</label><select id="wbFont" class="form-input"><option value="Inter, sans-serif"' + (cfg.fontFamily === 'Inter, sans-serif' ? ' selected' : '') + '>Inter</option><option value="Arial, sans-serif"' + (cfg.fontFamily === 'Arial, sans-serif' ? ' selected' : '') + '>Arial</option><option value="Georgia, serif"' + (cfg.fontFamily === 'Georgia, serif' ? ' selected' : '') + '>Georgia</option><option value="Tahoma, sans-serif"' + (cfg.fontFamily === 'Tahoma, sans-serif' ? ' selected' : '') + '>Tahoma</option><option value="Trebuchet MS, sans-serif"' + (cfg.fontFamily === 'Trebuchet MS, sans-serif' ? ' selected' : '') + '>Trebuchet MS</option></select></div>'
+    + '<div class="form-group" style="grid-column:1/3;"><label>School Logo <span style="font-size:11px;color:var(--text-light);">(recommended: 200x200px PNG)</span></label>'
+    + '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">'
+    + (cfg.logo ? '<img src="' + esc(cfg.logo) + '" style="width:60px;height:60px;object-fit:contain;border-radius:8px;border:1px solid #e2e8f0;">' : '')
+    + '<input type="file" accept="image/*" onchange="uploadWebsiteLogo(this)" style="font-size:13px;"></div></div>'
+    + '<div class="form-group" style="grid-column:1/3;"><label>Banner Image <span style="font-size:11px;color:var(--text-light);">(recommended: 1200x400px)</span></label>'
+    + '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">'
+    + (cfg.banner ? '<img src="' + esc(cfg.banner) + '" style="width:120px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;">' : '')
+    + '<input type="file" accept="image/*" onchange="uploadWebsiteBanner(this)" style="font-size:13px;"></div></div>'
+    + '</div>';
+}
+
+function renderWebsiteSections(container) {
+  var cfg = getWebsiteConfig();
+  var sections = cfg.sections || [];
+  sections.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+  var html = '<h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">Content Sections</h4>'
+    + '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">Manage which sections appear on your public website and in what order.</p>'
+    + '<div id="wbSectionList">';
+  sections.forEach(function(sec, i) {
+    html += '<div class="card" style="margin-bottom:8px;padding:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'
+      + '<div style="flex:1;min-width:150px;"><strong>' + esc(sec.title) + '</strong> <span style="font-size:11px;color:var(--text-light);text-transform:uppercase;">' + esc(sec.type) + '</span></div>'
+      + '<label style="font-size:13px;"><input type="checkbox" ' + (sec.visible !== false ? 'checked' : '') + ' onchange="websiteToggleSection(\'' + sec.id + '\')"> Visible</label>';
+    if (sec.type === 'about' || sec.type === 'hero') {
+      html += '<button class="btn btn-sm btn-outline" onclick="websiteEditSectionContent(\'' + sec.id + '\')"><i class="fas fa-edit"></i> Edit Content</button>';
+    }
+    if (i > 0) html += '<button class="btn btn-sm btn-outline" onclick="websiteMoveSection(\'' + sec.id + '\',-1)"><i class="fas fa-chevron-up"></i></button>';
+    if (i < sections.length - 1) html += '<button class="btn btn-sm btn-outline" onclick="websiteMoveSection(\'' + sec.id + '\',1)"><i class="fas fa-chevron-down"></i></button>';
+    html += '<button class="btn btn-sm btn-danger" onclick="websiteRemoveSection(\'' + sec.id + '\')"><i class="fas fa-trash"></i></button>'
+      + '</div>';
+  });
+  html += '</div>'
+    + '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">'
+    + '<button class="btn btn-sm btn-primary" onclick="websiteAddSection(\'about\')"><i class="fas fa-plus"></i> Add About Section</button>'
+    + '<button class="btn btn-sm btn-primary" onclick="websiteAddSection(\'hero\')"><i class="fas fa-plus"></i> Add Hero Section</button>'
+    + '<button class="btn btn-sm btn-primary" onclick="websiteAddSection(\'custom\')"><i class="fas fa-plus"></i> Add Custom Text</button>'
+    + '</div>';
+  container.innerHTML = html;
+}
+
+function websiteToggleSection(id) {
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.id === id; });
+  if (sec) sec.visible = !sec.visible;
+}
+
+function websiteEditSectionContent(id) {
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.id === id; });
+  if (!sec) return;
+  var content = prompt('Edit content for "' + sec.title + '":', sec.content || '');
+  if (content !== null) sec.content = content;
+  showWebsiteTab('sections');
+}
+
+function websiteAddSection(type) {
+  var cfg = getWebsiteConfig();
+  var maxOrder = 0;
+  cfg.sections.forEach(function(s) { if (s.order > maxOrder) maxOrder = s.order; });
+  var id = 'sec-' + type + '-' + Date.now();
+  var titles = { about: 'About', hero: 'Hero Section', custom: 'Custom Content' };
+  var sec = { id: id, type: type, title: titles[type] || 'New Section', content: '', visible: true, order: maxOrder + 1 };
+  if (type === 'announcements') sec.items = [];
+  if (type === 'gallery') sec.images = [];
+  cfg.sections.push(sec);
+  showWebsiteTab('sections');
+}
+
+function websiteRemoveSection(id) {
+  if (!confirm('Remove this section?')) return;
+  var cfg = getWebsiteConfig();
+  cfg.sections = cfg.sections.filter(function(s) { return s.id !== id; });
+  showWebsiteTab('sections');
+}
+
+function websiteMoveSection(id, dir) {
+  var cfg = getWebsiteConfig();
+  var sorted = cfg.sections.slice().sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+  var idx = sorted.findIndex(function(s) { return s.id === id; });
+  if (idx === -1) return;
+  var newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= sorted.length) return;
+  var temp = sorted[idx].order;
+  sorted[idx].order = sorted[newIdx].order;
+  sorted[newIdx].order = temp;
+  showWebsiteTab('sections');
+}
+
+function renderWebsiteAnnouncements(container) {
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.type === 'announcements'; });
+  var items = sec ? sec.items || [] : [];
+  var html = '<h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">Public Announcements</h4>'
+    + '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">These announcements appear on your school\'s public website.</p>';
+  if (!sec) {
+    html += '<p style="color:var(--text-light);">Add an "Announcements" section in the Sections tab first.</p>';
+  } else {
+    html += '<div class="card" style="margin-bottom:12px;padding:16px;">'
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+      + '<div class="form-group"><label>Title</label><input type="text" id="wbAnnTitle" class="form-input" placeholder="Announcement title"></div>'
+      + '<div class="form-group"><label>Date</label><input type="date" id="wbAnnDate" class="form-input" value="' + new Date().toISOString().slice(0, 10) + '"></div>'
+      + '</div>'
+      + '<div class="form-group"><label>Content</label><textarea id="wbAnnBody" class="form-input" rows="3" placeholder="Announcement details..."></textarea></div>'
+      + '<button class="btn btn-sm btn-primary" onclick="websiteAddAnnouncement()"><i class="fas fa-plus"></i> Add Announcement</button>'
+      + '</div>'
+      + '<div id="wbAnnList">';
+    items.forEach(function(item, i) {
+      html += '<div class="card" style="margin-bottom:6px;padding:12px;display:flex;gap:12px;align-items:flex-start;">'
+        + '<div style="flex:1;"><strong>' + esc(item.title) + '</strong> <span style="font-size:11px;color:var(--text-light);">' + esc(item.date || '') + '</span>'
+        + '<p style="font-size:13px;margin:4px 0 0;color:var(--text-light);">' + esc(item.content || '').substring(0, 120) + '</p></div>'
+        + '<button class="btn btn-sm btn-danger" onclick="websiteRemoveAnnouncement(' + i + ')"><i class="fas fa-times"></i></button>'
+        + '</div>';
+    });
+    if (!items.length) html += '<p style="text-align:center;color:var(--text-light);padding:20px;">No announcements yet.</p>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function websiteAddAnnouncement() {
+  var title = document.getElementById('wbAnnTitle')?.value?.trim();
+  var content = document.getElementById('wbAnnBody')?.value?.trim();
+  var date = document.getElementById('wbAnnDate')?.value;
+  if (!title) { toast('Enter a title', 'error'); return; }
+  if (!content) { toast('Enter announcement content', 'error'); return; }
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.type === 'announcements'; });
+  if (!sec) { toast('Announcements section not found. Add it in Sections tab.', 'error'); return; }
+  if (!sec.items) sec.items = [];
+  sec.items.push({ title: title, content: content, date: date || new Date().toISOString().slice(0, 10) });
+  showWebsiteTab('announce');
+  toast('Announcement added!');
+}
+
+function websiteRemoveAnnouncement(idx) {
+  if (!confirm('Remove this announcement?')) return;
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.type === 'announcements'; });
+  if (sec && sec.items) sec.items.splice(idx, 1);
+  showWebsiteTab('announce');
+}
+
+function renderWebsiteGallery(container) {
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.type === 'gallery'; });
+  var images = sec ? sec.images || [] : [];
+  var html = '<h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">Photo Gallery</h4>'
+    + '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">Photos uploaded here appear in the gallery section of your public website.</p>';
+  if (!sec) {
+    html += '<p style="color:var(--text-light);">Add a "Photo Gallery" section in the Sections tab first.</p>';
+  } else {
+    html += '<div class="card" style="margin-bottom:12px;padding:16px;">'
+      + '<div class="form-group"><label>Add Image</label><input type="file" accept="image/*" onchange="websiteAddGalleryImage(this)" style="font-size:13px;"></div>'
+      + '<div class="form-group" style="margin-top:8px;"><label>Caption (optional)</label><input type="text" id="wbGalleryCaption" class="form-input" placeholder="Image caption"></div>'
+      + '</div>'
+      + '<div id="wbGalleryGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">';
+    images.forEach(function(img, i) {
+      html += '<div style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;position:relative;">'
+        + '<img src="' + esc(img.src || '') + '" style="width:100%;height:100px;object-fit:cover;display:block;">'
+        + '<div style="padding:6px;font-size:11px;text-align:center;">' + esc(img.caption || '') + '</div>'
+        + '<button class="btn btn-sm btn-danger" onclick="websiteRemoveGalleryImage(' + i + ')" style="position:absolute;top:4px;right:4px;padding:2px 6px;font-size:10px;"><i class="fas fa-times"></i></button>'
+        + '</div>';
+    });
+    if (!images.length) html += '<p style="grid-column:1/-1;text-align:center;color:var(--text-light);padding:20px;">No images in gallery.</p>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function websiteAddGalleryImage(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var caption = document.getElementById('wbGalleryCaption')?.value?.trim() || '';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var cfg = getWebsiteConfig();
+    var sec = cfg.sections.find(function(s) { return s.type === 'gallery'; });
+    if (!sec) { toast('Gallery section not found.', 'error'); return; }
+    if (!sec.images) sec.images = [];
+    sec.images.push({ src: e.target.result, caption: caption });
+    showWebsiteTab('gallery');
+    toast('Image added to gallery!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function websiteRemoveGalleryImage(idx) {
+  if (!confirm('Remove this image?')) return;
+  var cfg = getWebsiteConfig();
+  var sec = cfg.sections.find(function(s) { return s.type === 'gallery'; });
+  if (sec && sec.images) sec.images.splice(idx, 1);
+  showWebsiteTab('gallery');
+}
+
+function renderWebsiteContact(container) {
+  var cfg = getWebsiteConfig();
+  var sp = data.schoolProfile || {};
+  var html = '<h4 style="font-size:14px;font-weight:600;margin-bottom:12px;">Contact Information</h4>'
+    + '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">This info is shown on your public website contact section.</p>'
+    + '<div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
+    + '<div class="form-group"><label>School Email</label><input type="email" id="wbContactEmail" class="form-input" value="' + esc(sp.contactEmail || '') + '" placeholder="info@school.edu"></div>'
+    + '<div class="form-group"><label>Phone Number</label><input type="text" id="wbContactPhone" class="form-input" value="' + esc(sp.contactPhone || '') + '" placeholder="+234 800 000 0000"></div>'
+    + '<div class="form-group" style="grid-column:1/3;"><label>Address</label><input type="text" id="wbContactAddress" class="form-input" value="' + esc(sp.contactAddress || '') + '" placeholder="School address"></div>'
+    + '</div>';
+  container.innerHTML = html;
+}
+
+function uploadWebsiteLogo(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var cfg = getWebsiteConfig();
+    cfg.logo = e.target.result;
+    showWebsiteTab('general');
+    toast('Logo uploaded!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadWebsiteBanner(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var cfg = getWebsiteConfig();
+    cfg.banner = e.target.result;
+    showWebsiteTab('general');
+    toast('Banner uploaded!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function collectWebsiteConfig() {
+  var cfg = getWebsiteConfig();
+  cfg.schoolName = document.getElementById('wbSchoolName')?.value?.trim() || cfg.schoolName;
+  cfg.motto = document.getElementById('wbMotto')?.value?.trim() || cfg.motto;
+  cfg.primaryColor = document.getElementById('wbPrimaryColor')?.value || cfg.primaryColor;
+  cfg.secondaryColor = document.getElementById('wbSecondaryColor')?.value || cfg.secondaryColor;
+  cfg.fontFamily = document.getElementById('wbFont')?.value || cfg.fontFamily;
+  cfg.subdomain = document.getElementById('wbSubdomain')?.value?.trim() || cfg.subdomain;
+  cfg.enabled = document.getElementById('wbEnabled')?.checked || false;
+  return cfg;
+}
+
+function saveWebsiteConfig() {
+  collectWebsiteConfig();
+  saveData();
+  toast('Website config saved!');
+  renderWebsiteBuilder();
+}
+
+function previewWebsite() {
+  collectWebsiteConfig();
+  var cfg = getWebsiteConfig();
+  var html = buildPublicWebsiteHTML(cfg);
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999;background:white;overflow:auto;';
+  var closeBtn = document.createElement('div');
+  closeBtn.style.cssText = 'position:sticky;top:0;z-index:10;text-align:right;padding:12px 24px;background:rgba(255,255,255,0.95);border-bottom:1px solid #e2e8f0;';
+  closeBtn.innerHTML = '<button onclick="this.parentElement.parentElement.remove()" style="padding:8px 20px;background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;"><i class="fas fa-times"></i> Close Preview</button>';
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:calc(100vh - 60px);border:none;';
+  iframe.srcdoc = html;
+  modal.appendChild(closeBtn);
+  modal.appendChild(iframe);
+  document.body.appendChild(modal);
+}
+
+function buildPublicWebsiteHTML(cfg) {
+  var sections = (cfg.sections || []).slice().sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+  var prim = cfg.primaryColor || '#1e40af';
+  var sec = cfg.secondaryColor || '#059669';
+  var font = cfg.fontFamily || 'Inter, sans-serif';
+  var name = cfg.schoolName || (data.schoolProfile ? data.schoolProfile.schoolName : 'My School');
+  var motto = cfg.motto || (data.schoolProfile ? data.schoolProfile.schoolMotto : '') || 'Excellence in Education';
+  var logo = cfg.logo || '';
+  var banner = cfg.banner || '';
+  var contactEmail = data.schoolProfile?.contactEmail || '';
+  var contactPhone = data.schoolProfile?.contactPhone || '';
+  var contactAddress = data.schoolProfile?.contactAddress || '';
+
+  var navItems = sections.filter(function(s) { return s.visible !== false; }).map(function(s) {
+    return '<a href="#' + esc(s.id) + '" style="color:white;text-decoration:none;padding:8px 14px;font-size:14px;border-radius:6px;transition:background 0.2s;">' + esc(s.title) + '</a>';
+  }).join('');
+
+  var sectionHTML = sections.filter(function(s) { return s.visible !== false; }).map(function(s) {
+    var bg = s.id === 'sec-hero' && (banner || true) ? 'background:linear-gradient(135deg,' + prim + 'dd,' + prim + '88),url(' + (banner ? "'" + banner + "'" : '') + ') center/cover no-repeat;' : '';
+    var style = bg || 'padding:48px 24px;';
+    var html = '<section id="' + esc(s.id) + '" style="' + style + 'min-height:' + (s.type === 'hero' ? '400px' : 'auto') + ';display:flex;align-items:center;justify-content:center;">'
+      + '<div style="max-width:1000px;width:100%;text-align:' + (s.type === 'hero' ? 'center' : 'left') + ';">';
+    if (s.type === 'hero') {
+      html += (logo ? '<img src="' + esc(logo) + '" style="height:80px;margin-bottom:16px;object-fit:contain;">' : '')
+        + '<h1 style="font-size:2.5rem;margin:0 0 8px;color:' + (s.id === 'sec-hero' && banner ? 'white' : prim) + ';">' + esc(name) + '</h1>'
+        + '<p style="font-size:1.2rem;color:' + (s.id === 'sec-hero' && banner ? 'rgba(255,255,255,0.9)' : '#666') + ';max-width:600px;margin:0 auto;">' + esc(motto) + '</p>'
+        + (s.content ? '<p style="margin-top:16px;color:' + (s.id === 'sec-hero' && banner ? 'rgba(255,255,255,0.85)' : '#555') + ';max-width:700px;margin-left:auto;margin-right:auto;">' + esc(s.content) + '</p>' : '');
+    } else if (s.type === 'about') {
+      html += '<h2 style="font-size:1.8rem;color:' + prim + ';margin:0 0 16px;">' + esc(s.title) + '</h2>'
+        + '<p style="font-size:1rem;line-height:1.8;color:#444;max-width:800px;">' + esc(s.content || data.schoolProfile?.aboutText || '') + '</p>';
+    } else if (s.type === 'announcements') {
+      var items = s.items || [];
+      html += '<h2 style="font-size:1.8rem;color:' + prim + ';margin:0 0 16px;text-align:center;">' + esc(s.title) + '</h2>';
+      if (!items.length) {
+        html += '<p style="text-align:center;color:#999;">No announcements at this time.</p>';
+      } else {
+        html += '<div style="display:grid;gap:16px;">';
+        items.forEach(function(item) {
+          html += '<div style="background:white;border-radius:10px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);border-left:4px solid ' + prim + ';">'
+            + '<strong style="font-size:1.1rem;">' + esc(item.title) + '</strong>'
+            + '<span style="font-size:0.8rem;color:#999;margin-left:12px;">' + esc(item.date || '') + '</span>'
+            + '<p style="margin:8px 0 0;color:#555;">' + esc(item.content || '') + '</p>'
+            + '</div>';
+        });
+        html += '</div>';
+      }
+    } else if (s.type === 'gallery') {
+      var images = s.images || [];
+      html += '<h2 style="font-size:1.8rem;color:' + prim + ';margin:0 0 16px;text-align:center;">' + esc(s.title) + '</h2>';
+      if (!images.length) {
+        html += '<p style="text-align:center;color:#999;">Gallery coming soon.</p>';
+      } else {
+        html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">';
+        images.forEach(function(img) {
+          html += '<div style="border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">'
+            + '<img src="' + esc(img.src || '') + '" style="width:100%;height:160px;object-fit:cover;display:block;">'
+            + (img.caption ? '<div style="padding:8px;font-size:13px;text-align:center;background:white;color:#555;">' + esc(img.caption) + '</div>' : '')
+            + '</div>';
+        });
+        html += '</div>';
+      }
+    } else if (s.type === 'contact') {
+      html += '<h2 style="font-size:1.8rem;color:' + prim + ';margin:0 0 16px;text-align:center;">' + esc(s.title) + '</h2>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:700px;margin:0 auto;">'
+        + '<div style="background:white;border-radius:10px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">'
+        + '<h4 style="margin:0 0 12px;color:' + prim + ';">Get In Touch</h4>'
+        + (contactEmail ? '<p style="margin:4px 0;font-size:14px;color:#555;"><i class="fas fa-envelope" style="color:' + sec + ';width:20px;"></i> ' + esc(contactEmail) + '</p>' : '')
+        + (contactPhone ? '<p style="margin:4px 0;font-size:14px;color:#555;"><i class="fas fa-phone" style="color:' + sec + ';width:20px;"></i> ' + esc(contactPhone) + '</p>' : '')
+        + (contactAddress ? '<p style="margin:4px 0;font-size:14px;color:#555;"><i class="fas fa-map-marker-alt" style="color:' + sec + ';width:20px;"></i> ' + esc(contactAddress) + '</p>' : '')
+        + '</div>'
+        + '<div style="background:white;border-radius:10px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">'
+        + '<h4 style="margin:0 0 12px;color:' + prim + ';">Send a Message</h4>'
+        + '<form onsubmit="alert(\'Message sent! (Demo)\');return false;">'
+        + '<input type="text" placeholder="Your Name" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;">'
+        + '<input type="email" placeholder="Your Email" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;">'
+        + '<textarea placeholder="Your Message" rows="3" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;resize:vertical;"></textarea>'
+        + '<button type="submit" style="background:' + prim + ';color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:14px;width:100%;">Send Message</button>'
+        + '</form></div></div>';
+    } else {
+      html += '<h2 style="font-size:1.8rem;color:' + prim + ';margin:0 0 16px;">' + esc(s.title) + '</h2>'
+        + '<p style="font-size:1rem;line-height:1.8;color:#444;">' + esc(s.content || '') + '</p>';
+    }
+    html += '</div></section>';
+    return html;
+  }).join('\n');
+
+  var footer = '<footer style="background:' + prim + ';color:white;text-align:center;padding:24px;font-size:14px;">'
+    + '&copy; ' + new Date().getFullYear() + ' ' + esc(name) + '. All rights reserved.</footer>';
+
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
+    + '<title>' + esc(name) + '</title>'
+    + '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">'
+    + '<style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:' + font + ';background:#f8fafc;color:#333;}'
+    + 'nav{background:' + prim + ';padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.1);}'
+    + 'nav a:hover{background:rgba(255,255,255,0.15);}'
+    + 'section{background:#f8fafc;}section:nth-child(even){background:white;}'
+    + '.wb-logo-nav{height:40px;object-fit:contain;}</style></head><body>'
+    + '<nav><div style="display:flex;align-items:center;gap:10px;">'
+    + (logo ? '<img src="' + esc(logo) + '" class="wb-logo-nav">' : '')
+    + '<strong style="color:white;font-size:1.2rem;">' + esc(name) + '</strong></div>'
+    + '<div style="display:flex;gap:4px;flex-wrap:wrap;">' + navItems + '</div></nav>'
+    + sectionHTML + footer + '</body></html>';
+}
+
+// ===== BROADCAST (WhatsApp/SMS) =====
+function renderBroadcast() {
+  var container = document.getElementById('adminBroadcast');
+  if (!container) return;
+  var msgs = data.broadcasts || [];
+  var wh = data.schoolProfile?.whatsappNumber || data.whatsappNumber || '';
+  var html = '<div class="card-header"><h2><i class="fas fa-bullhorn"></i> Broadcast Messages</h2>'
+    + '<button class="btn btn-sm btn-primary" onclick="showComposeBroadcast()"><i class="fas fa-plus"></i> New Broadcast</button></div>'
+    + '<p class="subtitle">Send announcements to parents, teachers, and students via WhatsApp. Messages are logged for history.</p>'
+    + '<div class="card" style="margin-bottom:16px;padding:16px;background:var(--bg-subtle);">'
+    + '<strong style="font-size:13px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp Number:</strong> '
+    + (wh ? '<a href="https://wa.me/' + wh.replace(/[^0-9]/g, '') + '" target="_blank" style="color:var(--primary);">' + esc(wh) + '</a>' : '<span style="color:var(--text-light);">Not configured. Set in School Profile.</span>')
+    + '</div>'
+    + '<div id="broadcastComposeArea"></div>'
+    + '<h4 style="font-size:14px;font-weight:600;margin:16px 0 8px;">Message History</h4>'
+    + '<div id="broadcastHistory">';
+  if (!msgs.length) {
+    html += '<p style="text-align:center;color:var(--text-light);padding:20px;">No broadcasts sent yet.</p>';
+  } else {
+    msgs.slice().reverse().forEach(function(m) {
+      html += '<div class="card" style="margin-bottom:8px;padding:14px;display:flex;gap:12px;align-items:flex-start;">'
+        + '<div style="flex:1;"><strong>' + esc(m.subject || '') + '</strong>'
+        + '<span style="font-size:11px;color:var(--text-light);margin-left:8px;">' + esc(m.date || '') + '</span>'
+        + '<p style="margin:4px 0;font-size:13px;color:var(--text-light);">' + esc(m.message || '') + '</p>'
+        + '<span style="font-size:11px;color:var(--text-light);">Audience: ' + esc(m.audience || 'all') + ' | Sent via: ' + esc(m.channel || 'whatsapp') + '</span></div>'
+        + '<button class="btn btn-sm btn-outline" onclick="resendBroadcast(' + msgs.indexOf(m) + ')"><i class="fas fa-share"></i> Resend</button>'
+        + '</div>';
+    });
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function showComposeBroadcast() {
+  var area = document.getElementById('broadcastComposeArea');
+  if (!area) return;
+  var wh = data.schoolProfile?.whatsappNumber || data.whatsappNumber || '';
+  area.innerHTML = '<div class="card" style="margin-bottom:16px;padding:16px;border:2px solid var(--primary);">'
+    + '<h4 style="font-size:14px;font-weight:600;margin-bottom:12px;"><i class="fas fa-edit"></i> Compose Broadcast</h4>'
+    + '<div class="form-group"><label>Subject</label><input type="text" id="bcSubject" class="form-input" placeholder="e.g. Fee Reminder"></div>'
+    + '<div class="form-group" style="margin-top:8px;"><label>Message</label><textarea id="bcMessage" class="form-input" rows="4" placeholder="Type your broadcast message..."></textarea></div>'
+    + '<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">'
+    + '<div class="form-group" style="flex:1;"><label>Audience</label><select id="bcAudience" class="form-input"><option value="all">All (Parents, Teachers, Students)</option><option value="parents">Parents Only</option><option value="teachers">Teachers Only</option><option value="students">Students Only</option></select></div>'
+    + '<div class="form-group" style="flex:1;"><label>Channel</label><select id="bcChannel" class="form-input"><option value="whatsapp">WhatsApp</option><option value="both">WhatsApp + SMS</option></select></div>'
+    + '</div>'
+    + '<div style="margin-top:12px;display:flex;gap:8px;">'
+    + '<button class="btn btn-sm btn-primary" onclick="sendBroadcast()"><i class="fas fa-paper-plane"></i> Send Broadcast</button>'
+    + '<button class="btn btn-sm btn-outline" onclick="document.getElementById(\'broadcastComposeArea\').innerHTML=\'\'"><i class="fas fa-times"></i> Cancel</button>'
+    + '</div></div>';
+}
+
+function sendBroadcast() {
+  var subject = document.getElementById('bcSubject')?.value?.trim();
+  var message = document.getElementById('bcMessage')?.value?.trim();
+  var audience = document.getElementById('bcAudience')?.value || 'all';
+  var channel = document.getElementById('bcChannel')?.value || 'whatsapp';
+  if (!subject || !message) { toast('Fill in subject and message', 'error'); return; }
+  if (!data.broadcasts) data.broadcasts = [];
+  data.broadcasts.push({ id: 'BC' + Date.now(), subject: subject, message: message, audience: audience, channel: channel, date: new Date().toISOString().slice(0, 16).replace('T', ' ') });
+  // WhatsApp deep link
+  var wh = data.schoolProfile?.whatsappNumber || data.whatsappNumber || '';
+  var waMsg = encodeURIComponent('*' + subject + '*\n\n' + message + '\n\n— ' + (data.schoolProfile?.schoolName || 'School'));
+  if (channel !== 'sms' && wh) {
+    window.open('https://wa.me/' + wh.replace(/[^0-9]/g, '') + '?text=' + waMsg, '_blank');
+  }
+  toast('Broadcast sent! Message logged to history.');
+  renderBroadcast();
+}
+
+function resendBroadcast(idx) {
+  var m = (data.broadcasts || [])[idx];
+  if (!m) return;
+  var wh = data.schoolProfile?.whatsappNumber || data.whatsappNumber || '';
+  var waMsg = encodeURIComponent('*' + m.subject + '*\n\n' + m.message + '\n\n— ' + (data.schoolProfile?.schoolName || 'School'));
+  if (wh) window.open('https://wa.me/' + wh.replace(/[^0-9]/g, '') + '?text=' + waMsg, '_blank');
+  toast('Re-sending broadcast...');
+}
+
+// ===== MEAL PLANNER / CAFETERIA =====
+function renderMealPlanner() {
+  var container = document.getElementById('adminMealPlanner');
+  if (!container) return;
+  var plans = data.mealPlans || [];
+  var restrictions = data.dietaryRestrictions || [];
+  var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  var html = '<div class="card-header"><h2><i class="fas fa-utensils"></i> Meal Planner</h2>'
+    + '<button class="btn btn-sm btn-primary" onclick="showAddMealPlan()"><i class="fas fa-plus"></i> New Weekly Menu</button></div>'
+    + '<p class="subtitle">Plan the school cafeteria menu by week. Track student dietary restrictions.</p>'
+    + '<div style="display:flex;gap:16px;flex-wrap:wrap;">'
+    + '<div class="card" style="flex:2;min-width:300px;"><h4 style="font-weight:600;margin-bottom:12px;">Weekly Meal Plans</h4><div id="mealPlanList">';
+  if (!plans.length) {
+    html += '<p style="text-align:center;color:var(--text-light);padding:20px;">No meal plans created yet.</p>';
+  } else {
+    plans.slice().reverse().forEach(function(plan, pi) {
+      html += '<div class="card" style="margin-bottom:8px;padding:12px;border-left:4px solid var(--primary);">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;">'
+        + '<strong>' + esc(plan.week || '') + '</strong>'
+        + '<button class="btn btn-sm btn-danger" onclick="deleteMealPlan(' + pi + ')"><i class="fas fa-trash"></i></button>'
+        + '</div>';
+      days.forEach(function(d) {
+        var meal = plan.meals ? plan.meals[d] : null;
+        html += '<div style="font-size:13px;margin:4px 0;padding:4px 8px;background:var(--bg-subtle);border-radius:4px;">'
+          + '<strong>' + d + ':</strong> ' + (meal ? esc(meal) : '—') + '</div>';
+      });
+      html += '</div>';
+    });
+  }
+  html += '</div></div>'
+    + '<div class="card" style="flex:1;min-width:250px;"><h4 style="font-weight:600;margin-bottom:12px;">Dietary Restrictions</h4>'
+    + '<div style="display:flex;gap:6px;margin-bottom:8px;"><input type="text" id="drStudentName" class="form-input" placeholder="Student name" style="flex:1;"><input type="text" id="drRestriction" class="form-input" placeholder="Allergy / Restriction" style="flex:1;">'
+    + '<button class="btn btn-sm btn-primary" onclick="addDietaryRestriction()"><i class="fas fa-plus"></i></button></div>'
+    + '<div id="dietaryList">';
+  restrictions.forEach(function(r, i) {
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:var(--bg-subtle);border-radius:4px;margin-bottom:4px;font-size:13px;">'
+      + '<span><strong>' + esc(r.student) + '</strong>: ' + esc(r.restriction) + '</span>'
+      + '<button class="btn btn-sm btn-danger" onclick="removeDietaryRestriction(' + i + ')" style="padding:2px 6px;font-size:10px;"><i class="fas fa-times"></i></button></div>';
+  });
+  html += '</div></div></div>';
+  container.innerHTML = html;
+}
+
+function showAddMealPlan() {
+  var week = prompt('Enter week label (e.g. "Week 1 - Sept 2026"):', 'Week ' + ((data.mealPlans || []).length + 1));
+  if (!week) return;
+  if (!data.mealPlans) data.mealPlans = [];
+  data.mealPlans.push({ id: 'MP' + Date.now(), week: week, meals: {} });
+  renderMealPlanner();
+  // Prompt for each day
+  var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  var plan = data.mealPlans[data.mealPlans.length - 1];
+  days.forEach(function(d) {
+    var meal = prompt('Enter menu for ' + d + ':', '');
+    if (meal) plan.meals[d] = meal;
+  });
+  saveData();
+  renderMealPlanner();
+  toast('Meal plan saved!');
+}
+
+function deleteMealPlan(idx) {
+  if (!confirm('Delete this meal plan?')) return;
+  data.mealPlans.splice(idx, 1);
+  saveData();
+  renderMealPlanner();
+}
+
+function addDietaryRestriction() {
+  var student = document.getElementById('drStudentName')?.value?.trim();
+  var restriction = document.getElementById('drRestriction')?.value?.trim();
+  if (!student || !restriction) { toast('Enter both student name and restriction', 'error'); return; }
+  if (!data.dietaryRestrictions) data.dietaryRestrictions = [];
+  data.dietaryRestrictions.push({ student: student, restriction: restriction });
+  document.getElementById('drStudentName').value = '';
+  document.getElementById('drRestriction').value = '';
+  saveData();
+  renderMealPlanner();
+  toast('Dietary restriction added!');
+}
+
+function removeDietaryRestriction(idx) {
+  data.dietaryRestrictions.splice(idx, 1);
+  saveData();
+  renderMealPlanner();
+}
+
+// ===== SCHOOL STORE =====
+function renderSchoolStore() {
+  var container = document.getElementById('adminSchoolStore');
+  if (!container) return;
+  var products = data.storeProducts || [];
+  var orders = data.storeOrders || [];
+  var html = '<div class="card-header"><h2><i class="fas fa-shopping-bag"></i> School Store</h2>'
+    + '<button class="btn btn-sm btn-primary" onclick="showAddProduct()"><i class="fas fa-plus"></i> Add Product</button></div>'
+    + '<p class="subtitle">Manage merchandise, uniforms, and books for sale. Students and parents can place orders.</p>'
+    + '<div style="display:flex;gap:16px;flex-wrap:wrap;">'
+    + '<div class="card" style="flex:2;min-width:300px;"><h4 style="font-weight:600;margin-bottom:12px;">Products</h4>'
+    + '<div id="storeProductList">';
+  products.forEach(function(p, i) {
+    html += '<div class="card" style="margin-bottom:8px;padding:12px;display:flex;gap:12px;align-items:center;">'
+      + (p.image ? '<img src="' + esc(p.image) + '" style="width:50px;height:50px;object-fit:cover;border-radius:6px;">' : '<div style="width:50px;height:50px;background:#e2e8f0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--text-light);"><i class="fas fa-box"></i></div>')
+      + '<div style="flex:1;"><strong>' + esc(p.name) + '</strong><br><span style="font-size:12px;color:var(--text-light);">₦' + (p.price || 0).toLocaleString() + ' | Stock: ' + (p.stock || 0) + ' | ' + esc(p.category || '') + '</span></div>'
+      + '<button class="btn btn-sm btn-outline" onclick="editProduct(' + i + ')"><i class="fas fa-edit"></i></button>'
+      + '<button class="btn btn-sm btn-danger" onclick="deleteProduct(' + i + ')"><i class="fas fa-trash"></i></button>'
+      + '</div>';
+  });
+  html += '</div></div>'
+    + '<div class="card" style="flex:1;min-width:250px;"><h4 style="font-weight:600;margin-bottom:12px;">Orders (' + orders.length + ')</h4><div id="storeOrderList">';
+  if (!orders.length) {
+    html += '<p style="text-align:center;color:var(--text-light);padding:10px;">No orders yet.</p>';
+  } else {
+    orders.slice().reverse().forEach(function(o) {
+      html += '<div style="padding:8px;border-bottom:1px solid #e2e8f0;font-size:13px;">'
+        + '<strong>' + esc(o.customer || '') + '</strong>'
+        + '<span style="float:right;">₦' + (o.total || 0).toLocaleString() + '</span>'
+        + '<br><span style="color:var(--text-light);font-size:12px;">' + esc(o.items || '') + ' | ' + esc(o.status || '') + ' | ' + esc(o.date || '') + '</span></div>';
+    });
+  }
+  html += '</div></div></div>';
+  container.innerHTML = html;
+}
+
+function showAddProduct() {
+  var name = prompt('Product name:', '');
+  if (!name) return;
+  var price = parseFloat(prompt('Price (₦):', '')) || 0;
+  var stock = parseInt(prompt('Stock quantity:', '10')) || 0;
+  var cat = prompt('Category (Uniform, Books, Sports, Merchandise):', 'Merchandise') || 'Merchandise';
+  var desc = prompt('Short description:', '') || '';
+  if (!data.storeProducts) data.storeProducts = [];
+  data.storeProducts.push({ id: 'PROD' + Date.now(), name: name, description: desc, price: price, category: cat, image: '', stock: stock });
+  saveData();
+  renderSchoolStore();
+  toast('Product added!');
+}
+
+function editProduct(idx) {
+  var p = (data.storeProducts || [])[idx];
+  if (!p) return;
+  var name = prompt('Product name:', p.name);
+  if (!name) return;
+  var price = parseFloat(prompt('Price (₦):', String(p.price))) || 0;
+  var stock = parseInt(prompt('Stock quantity:', String(p.stock))) || 0;
+  p.name = name; p.price = price; p.stock = stock;
+  saveData();
+  renderSchoolStore();
+  toast('Product updated!');
+}
+
+function deleteProduct(idx) {
+  if (!confirm('Delete this product?')) return;
+  data.storeProducts.splice(idx, 1);
+  saveData();
+  renderSchoolStore();
+}
+
+// ===== E-BOOK READER ENHANCEMENT (Bookmarks) =====
+function viewEbookWithBookmarks(bookId) {
+  var book = (data.library || []).find(function(b) { return b.id === bookId; });
+  if (!book || !book.ebookUrl) { toast('No ebook available', 'error'); return; }
+  if (!book.bookmarks) book.bookmarks = [];
+  var isPdf = book.ebookType === 'application/pdf' || book.ebookUrl.indexOf('data:application/pdf') === 0 || book.ebookUrl.indexOf('.pdf') > 0;
+  var isText = book.ebookType === 'text/plain' || book.ebookType === 'text/html' || book.ebookUrl.indexOf('.txt') > 0;
+
+  var modal = document.getElementById('ebookReaderModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'ebookReaderModal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:99998;background:white;display:flex;flex-direction:column;';
+    document.body.appendChild(modal);
+  }
+  var closeBtn = '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--primary);color:white;flex-shrink:0;">'
+    + '<span style="font-weight:600;">' + esc(book.title) + '</span>'
+    + '<div style="display:flex;gap:8px;">'
+    + '<button onclick="addBookmark(' + bookId + ')" style="padding:6px 12px;background:rgba(255,255,255,0.2);color:white;border:none;border-radius:4px;cursor:pointer;"><i class="fas fa-bookmark"></i> Bookmark</button>'
+    + '<button onclick="showBookmarks(' + bookId + ')" style="padding:6px 12px;background:rgba(255,255,255,0.2);color:white;border:none;border-radius:4px;cursor:pointer;"><i class="fas fa-list"></i> ' + (book.bookmarks.length || 0) + '</button>'
+    + '<button onclick="closeEbookReader()" style="padding:6px 12px;background:rgba(255,0,0,0.3);color:white;border:none;border-radius:4px;cursor:pointer;"><i class="fas fa-times"></i> Close</button>'
+    + '</div></div>';
+
+  var readerHtml = '';
+  if (isPdf) {
+    readerHtml = '<iframe src="' + esc(book.ebookUrl) + '" style="width:100%;flex:1;border:none;"></iframe>';
+  } else if (isText) {
+    readerHtml = '<div id="ebookTextContent" style="flex:1;overflow:auto;padding:24px;font-size:16px;line-height:1.8;max-width:800px;margin:0 auto;white-space:pre-wrap;"></div>';
+  } else {
+    readerHtml = '<div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--text-light);">'
+      + '<i class="fas fa-file" style="font-size:64px;"></i>'
+      + '<p>Preview not available for this format. <a href="' + esc(book.ebookUrl) + '" download style="color:var(--primary);">Download file</a></p></div>';
+  }
+
+  modal.innerHTML = closeBtn + readerHtml;
+
+  // For text files, fetch and render
+  if (isText && book.ebookUrl.indexOf('data:') === 0) {
+    var textContent = atob(book.ebookUrl.split(',')[1] || '');
+    document.getElementById('ebookTextContent').textContent = textContent;
+  }
+}
+
+function closeEbookReader() {
+  var modal = document.getElementById('ebookReaderModal');
+  if (modal) modal.remove();
+}
+
+function addBookmark(bookId) {
+  var book = (data.library || []).find(function(b) { return b.id === bookId; });
+  if (!book) return;
+  if (!book.bookmarks) book.bookmarks = [];
+  var label = prompt('Bookmark label:', 'Page ' + (book.bookmarks.length + 1));
+  if (!label) return;
+  book.bookmarks.push({ label: label, date: new Date().toISOString().slice(0, 10) });
+  saveData();
+  toast('Bookmark added!');
+}
+
+function showBookmarks(bookId) {
+  var book = (data.library || []).find(function(b) { return b.id === bookId; });
+  if (!book || !book.bookmarks || !book.bookmarks.length) { toast('No bookmarks', 'info'); return; }
+  var html = '<div style="padding:16px;"><h4 style="margin-bottom:12px;">Bookmarks</h4>';
+  book.bookmarks.forEach(function(bm, i) {
+    html += '<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid #e2e8f0;font-size:13px;">'
+      + '<span><i class="fas fa-bookmark" style="color:var(--accent);"></i> ' + esc(bm.label) + ' <span style="color:var(--text-light);font-size:11px;">' + esc(bm.date || '') + '</span></span>'
+      + '<button onclick="removeBookmark(\'' + bookId + '\',' + i + ')" style="background:none;border:none;color:var(--danger);cursor:pointer;">Remove</button>'
+      + '</div>';
+  });
+  html += '</div>';
+  var modal = document.getElementById('ebookReaderModal');
+  if (modal) {
+    var div = document.createElement('div');
+    div.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.2);z-index:99999;min-width:300px;';
+    div.innerHTML = html + '<div style="text-align:right;padding:0 16px 12px;"><button onclick="this.parentElement.parentElement.remove()" class="btn btn-sm btn-outline">Close</button></div>';
+    document.body.appendChild(div);
+  }
+}
+
+function removeBookmark(bookId, idx) {
+  var book = (data.library || []).find(function(b) { return b.id === bookId; });
+  if (book && book.bookmarks) book.bookmarks.splice(idx, 1);
+  saveData();
+  showBookmarks(bookId);
+}
+
+// ===== ONLINE ADMISSION PAYMENT =====
+function processAdmissionPayment(appId) {
+  var app = (data.applications || []).find(function(a) { return a.id === appId; });
+  if (!app) { toast('Application not found', 'error'); return; }
+  var program = (data.admissionPrograms || []).find(function(p) { return p.id === app.programId; });
+  var fee = program ? (program.fee || 0) : 0;
+  if (fee <= 0) { toast('No fee required for this program', 'info'); return; }
+  var email = app.email || '';
+  var name = (app.firstName || '') + ' ' + (app.lastName || '');
+  if (typeof initiateGatewayPayment === 'function') {
+    initiateGatewayPayment(fee, email, name, 'ADM-' + appId + '-' + Date.now(), function() {
+      toast('Admission payment successful!');
+      app.feePaid = true;
+      app.status = 'fee_paid';
+      saveData();
+      if (typeof renderApplications === 'function') renderApplications();
+    }, function() {
+      toast('Payment cancelled or failed', 'error');
+    });
+  } else {
+    toast('Payment gateway not configured', 'error');
+  }
+}
+
+// Override the existing "Pay" button in applications view via a helper
+function patchAdmissionPayButtons() {
+  document.querySelectorAll('.adm-pay-btn').forEach(function(btn) {
+    btn.onclick = function() { processAdmissionPayment(this.dataset.appId); };
+  });
+}
+
+// ===== STUDENT STORE VIEW (for student/parent portals) =====
+function renderStudentStore() {
+  var container = document.getElementById('studentStoreView');
+  if (!container) return;
+  var products = data.storeProducts || [];
+  var cart = JSON.parse(localStorage.getItem('eduverse_store_cart') || '[]');
+  var html = '<div class="card-header"><h2><i class="fas fa-shopping-bag"></i> School Store</h2>'
+    + '<span style="font-size:14px;"><i class="fas fa-shopping-cart"></i> Cart: <strong>' + cart.reduce(function(s, i) { return s + i.qty; }, 0) + '</strong> items</span></div>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">';
+  products.forEach(function(p, i) {
+    var inCart = cart.find(function(c) { return c.id === p.id; });
+    html += '<div class="card" style="text-align:center;padding:16px;">'
+      + (p.image ? '<img src="' + esc(p.image) + '" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;">' : '<div style="width:100%;height:120px;background:#e2e8f0;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:36px;color:var(--text-light);"><i class="fas fa-box"></i></div>')
+      + '<h4 style="font-size:14px;font-weight:600;">' + esc(p.name) + '</h4>'
+      + '<p style="font-size:12px;color:var(--text-light);margin:4px 0;">₦' + (p.price || 0).toLocaleString() + '</p>'
+      + '<div style="display:flex;gap:6px;justify-content:center;margin-top:8px;">'
+      + (inCart
+        ? '<button class="btn btn-sm btn-danger" onclick="removeFromCart(\'' + p.id + '\')"><i class="fas fa-minus"></i> Remove</button><span style="padding:6px;">' + inCart.qty + '</span>'
+        : '<button class="btn btn-sm btn-primary" onclick="addToCart(\'' + p.id + '\')"><i class="fas fa-cart-plus"></i> Add to Cart</button>')
+      + '</div></div>';
+  });
+  html += '</div>'
+    + '<div id="studentCartView" style="margin-top:16px;"></div>';
+  container.innerHTML = html;
+  renderStudentCart();
+}
+
+function renderStudentCart() {
+  var container = document.getElementById('studentCartView');
+  if (!container) return;
+  var cart = JSON.parse(localStorage.getItem('eduverse_store_cart') || '[]');
+  if (!cart.length) { container.innerHTML = ''; return; }
+  var total = cart.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 0); }, 0);
+  var html = '<div class="card"><h4 style="font-weight:600;margin-bottom:8px;">Your Cart</h4>';
+  cart.forEach(function(item, i) {
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:13px;">'
+      + '<span><strong>' + esc(item.name) + '</strong> x' + item.qty + '</span>'
+      + '<span>₦' + ((item.price || 0) * item.qty).toLocaleString() + ' <button onclick="removeFromCart(\'' + item.id + '\')" style="background:none;border:none;color:var(--danger);cursor:pointer;margin-left:8px;"><i class="fas fa-times"></i></button></span></div>';
+  });
+  html += '<div style="display:flex;justify-content:space-between;font-weight:700;padding:8px 0;font-size:15px;">'
+    + '<span>Total:</span><span>₦' + total.toLocaleString() + '</span></div>'
+    + '<button class="btn btn-primary btn-sm" onclick="checkoutStore()" style="width:100%;margin-top:8px;"><i class="fas fa-credit-card"></i> Checkout</button></div>';
+  container.innerHTML = html;
+}
+
+function addToCart(productId) {
+  var p = (data.storeProducts || []).find(function(x) { return x.id === productId; });
+  if (!p) return;
+  var cart = JSON.parse(localStorage.getItem('eduverse_store_cart') || '[]');
+  var existing = cart.find(function(c) { return c.id === productId; });
+  if (existing) { existing.qty++; } else { cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 }); }
+  localStorage.setItem('eduverse_store_cart', JSON.stringify(cart));
+  renderStudentStore();
+  toast('Added to cart!');
+}
+
+function removeFromCart(productId) {
+  var cart = JSON.parse(localStorage.getItem('eduverse_store_cart') || '[]');
+  var idx = cart.findIndex(function(c) { return c.id === productId; });
+  if (idx > -1) {
+    if (cart[idx].qty > 1) { cart[idx].qty--; } else { cart.splice(idx, 1); }
+  }
+  localStorage.setItem('eduverse_store_cart', JSON.stringify(cart));
+  renderStudentStore();
+}
+
+function checkoutStore() {
+  var cart = JSON.parse(localStorage.getItem('eduverse_store_cart') || '[]');
+  if (!cart.length) { toast('Cart is empty', 'error'); return; }
+  var total = cart.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 0); }, 0);
+  // Record order
+  if (!data.storeOrders) data.storeOrders = [];
+  data.storeOrders.push({
+    id: 'ORD' + Date.now(),
+    customer: currentStudent?.name || currentParent?.name || 'Walk-in',
+    items: cart.map(function(i) { return i.name + ' x' + i.qty; }).join(', '),
+    total: total,
+    status: 'pending',
+    date: new Date().toISOString().slice(0, 10)
+  });
+  saveData();
+  // Initiate payment if gateway available
+  if (typeof initiateGatewayPayment === 'function' && currentStudent?.contact) {
+    initiateGatewayPayment(total, currentStudent.contact, currentStudent.name, 'STR-' + Date.now(), function() {
+      var order = data.storeOrders[data.storeOrders.length - 1];
+      if (order) order.status = 'paid';
+      saveData();
+      toast('Payment successful! Order placed.');
+    }, function() {
+      toast('Payment cancelled. Order saved as pending.', 'info');
+    });
+  } else {
+    toast('Order placed! Pay on pickup.', 'info');
+  }
+  localStorage.removeItem('eduverse_store_cart');
+  var container = document.getElementById('studentStoreView');
+  if (container) renderStudentStore();
 }

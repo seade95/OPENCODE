@@ -11,7 +11,6 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 <link rel="alternate icon" href="images/favicon.svg">
-<script src="js/screen-protection.js"></script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#2563eb">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -50,6 +49,28 @@ if ('serviceWorker' in navigator) {
 </style>
 </head>
 <body>
+<script>
+(function() {
+  var ver = window.APP_VERSION;
+  if (!ver) { try { ver = '20260619'; } catch(e) { ver = '1'; } }
+  var observer = new MutationObserver(function(muts) {
+    muts.forEach(function(m) {
+      m.addedNodes.forEach(function(n) {
+        try {
+          if (n.tagName === 'SCRIPT' && n.src && !n.src.includes('?v='))
+            n.src = n.src + (n.src.includes('?') ? '&v=' : '?v=') + ver;
+          if (n.tagName === 'LINK' && n.rel === 'stylesheet' && n.href && !n.href.includes('?v='))
+            n.href = n.href + (n.href.includes('?') ? '&v=' : '?v=') + ver;
+        } catch(e) {}
+      });
+    });
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(function(l) {
+    if (l.href && !l.href.includes('?v=')) l.href = l.href + (l.href.includes('?') ? '&v=' : '?v=') + ver;
+  });
+})();
+</script>
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
@@ -78,11 +99,11 @@ if ('serviceWorker' in navigator) {
     <div id="adminLoginError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:16px;font-size:14px;"></div>
     <div class="form-group" style="margin-bottom:16px;">
       <label><i class="fas fa-envelope"></i> Email</label>
-      <input type="email" id="adminLoginEmail" placeholder="admin@school.edu" value="">
+      <input type="email" id="adminLoginEmail" placeholder="admin@school.edu" value="" oninput="validateField(this,'email')">
     </div>
     <div class="form-group" style="margin-bottom:24px;">
       <label><i class="fas fa-lock"></i> Password</label>
-      <input type="password" id="adminLoginPass" placeholder="Enter password" value="">
+      <input type="password" id="adminLoginPass" placeholder="Enter password" value="" oninput="validateField(this,'password')">
     </div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="adminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
     <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">No account? <a href="javascript:;" onclick="showAdminSignup()" style="color:var(--primary);font-weight:600;">Create Admin Account</a></p>
@@ -104,15 +125,15 @@ if ('serviceWorker' in navigator) {
     <div id="adminSignupError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:16px;font-size:14px;"></div>
     <div class="form-group" style="margin-bottom:16px;">
       <label><i class="fas fa-user"></i> Full Name</label>
-      <input type="text" id="adminSignupName" placeholder="Admin full name">
+      <input type="text" id="adminSignupName" placeholder="Admin full name" oninput="validateField(this,'name')">
     </div>
     <div class="form-group" style="margin-bottom:16px;">
       <label><i class="fas fa-envelope"></i> Email</label>
-      <input type="email" id="adminSignupEmail" placeholder="admin@school.edu">
+      <input type="email" id="adminSignupEmail" placeholder="admin@school.edu" oninput="validateField(this,'email')">
     </div>
     <div class="form-group" style="margin-bottom:24px;">
       <label><i class="fas fa-lock"></i> Password</label>
-      <input type="password" id="adminSignupPass" placeholder="Min 6 characters">
+      <input type="password" id="adminSignupPass" placeholder="Min 6 characters" oninput="validateField(this,'password')">
     </div>
     <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="adminSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
     <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Already have an account? <a href="javascript:;" onclick="showAdminLogin()" style="color:var(--primary);font-weight:600;">Sign In</a></p>
@@ -166,6 +187,7 @@ if ('serviceWorker' in navigator) {
       <div class="admin-sidebar-item" data-panel="timetable"><i class="fas fa-table"></i><span data-i18n="timetable">Timetable</span></div>
       <div class="admin-sidebar-item" data-panel="hostel"><i class="fas fa-bed"></i><span data-i18n="hostel">Hostel</span></div>
       <div class="admin-sidebar-item" data-panel="gradebook"><i class="fas fa-chart-line"></i><span data-i18n="gradebook">Gradebook</span></div>
+      <div class="admin-sidebar-item" data-panel="scoregrid"><i class="fas fa-table"></i><span>Score Grid</span></div>
       <div class="admin-sidebar-item" data-panel="promotion"><i class="fas fa-arrow-up"></i><span data-i18n="promotionlist">Promotion List</span></div>
       <div class="admin-sidebar-item" data-panel="exams"><i class="fas fa-calendar-alt"></i><span data-i18n="exams">Exams</span></div>
       <div class="admin-sidebar-item" data-panel="messages"><i class="fas fa-envelope"></i><span data-i18n="messages">Messages</span></div>
@@ -201,6 +223,7 @@ if ('serviceWorker' in navigator) {
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">School Profile</div>
       <div class="admin-sidebar-item" data-panel="schoolprofile"><i class="fas fa-paint-brush"></i><span data-i18n="customizeportal">Customize Portal</span></div>
+      <div class="admin-sidebar-item" data-panel="website"><i class="fas fa-globe"></i><span>Website Builder</span></div>
       <div class="admin-sidebar-item" data-panel="paymentgateway"><i class="fas fa-credit-card"></i><span data-i18n="paymentgateway">Payment Gateway</span></div>
       <div class="admin-sidebar-item" data-panel="subscription"><i class="fas fa-crown"></i><span data-i18n="subscription">Subscription</span></div>
       <div class="sidebar-divider"></div>
@@ -216,10 +239,17 @@ if ('serviceWorker' in navigator) {
       <div class="admin-sidebar-item" data-panel="handwritingocr"><i class="fas fa-pen"></i><span data-i18n="handwritingocr">Handwriting OCR</span></div>
       <div class="admin-sidebar-item" data-panel="teacherexams"><i class="fas fa-file-word"></i><span data-i18n="teacherexams">Teacher Uploads</span></div>
       <div class="sidebar-divider"></div>
+      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Communications</div>
+      <div class="admin-sidebar-item" data-panel="broadcast"><i class="fas fa-bullhorn"></i><span>Broadcast</span></div>
+      <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Student Welfare</div>
       <div class="admin-sidebar-item" data-panel="health"><i class="fas fa-heartbeat"></i><span>Health Records</span></div>
       <div class="admin-sidebar-item" data-panel="transport"><i class="fas fa-bus"></i><span>Transport</span></div>
+      <div class="admin-sidebar-item" data-panel="mealplanner"><i class="fas fa-utensils"></i><span>Meal Planner</span></div>
       <div class="admin-sidebar-item" data-panel="conferences"><i class="fas fa-handshake"></i><span>PT Conferences</span></div>
+      <div class="sidebar-divider"></div>
+      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Commerce</div>
+      <div class="admin-sidebar-item" data-panel="schoolstore"><i class="fas fa-shopping-bag"></i><span>School Store</span></div>
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Support</div>
       <div class="admin-sidebar-item" data-panel="support"><i class="fas fa-headset"></i><span>Support Tickets</span></div>
@@ -370,6 +400,23 @@ if ('serviceWorker' in navigator) {
         <div class="card">
           <div id="gradebookView"></div>
         </div>
+      </div>
+      <!-- Score Grid Panel -->
+      <div class="admin-panel" id="admin-scoregrid">
+        <div class="card-header">
+          <h2><i class="fas fa-table"></i> Interactive Score Grid</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-export btn-sm" onclick="exportScoreGridCSV()"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-export btn-sm" onclick="exportScoreGridXLSX()"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="document.getElementById('scoreGridFileInput').click()"><i class="fas fa-upload"></i> Import</button>
+            <input type="file" id="scoreGridFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importScoreGridFile(this)">
+            <button class="btn btn-sm btn-outline" onclick="addScoreGridRow()"><i class="fas fa-plus"></i> Add Row</button>
+            <button class="btn btn-sm btn-success" onclick="saveScoreGrid()"><i class="fas fa-save"></i> Save Grid</button>
+          </div>
+        </div>
+        <p class="subtitle">Click cells to edit scores. CA1 + CA2 + Exam → Total → Grade auto-calculated.</p>
+        <div id="scoreGridControls" style="margin-bottom:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;"></div>
+        <div class="card"><div id="scoreGridView" style="overflow-x:auto;"></div></div>
       </div>
       <!-- Promotion List Panel -->
       <div class="admin-panel" id="admin-promotion">
@@ -706,6 +753,19 @@ if ('serviceWorker' in navigator) {
         <div id="schoolProfileEditor"></div>
       </div>
 
+      <!-- Website Builder Panel -->
+      <div class="admin-panel" id="admin-website">
+        <div class="card-header">
+          <h2><i class="fas fa-globe"></i> Website Builder</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-success" onclick="saveWebsiteConfig()"><i class="fas fa-save"></i> Save Website</button>
+            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="previewWebsite()"><i class="fas fa-eye"></i> Preview</button>
+          </div>
+        </div>
+        <p class="subtitle">Build and customize your school's public website. Manage branding, content sections, announcements, gallery &amp; contact form.</p>
+        <div id="websiteBuilderContainer"></div>
+      </div>
+
       <!-- Payment Gateway Panel -->
       <div class="admin-panel" id="admin-paymentgateway">
         <div class="card-header">
@@ -749,6 +809,18 @@ if ('serviceWorker' in navigator) {
       <div class="admin-panel" id="admin-conferences">
         <div id="adminConferences"></div>
       </div>
+      <!-- Meal Planner -->
+      <div class="admin-panel" id="admin-mealplanner">
+        <div id="adminMealPlanner"></div>
+      </div>
+      <!-- Broadcast -->
+      <div class="admin-panel" id="admin-broadcast">
+        <div id="adminBroadcast"></div>
+      </div>
+      <!-- School Store -->
+      <div class="admin-panel" id="admin-schoolstore">
+        <div id="adminSchoolStore"></div>
+      </div>
       <!-- Support Tickets -->
       <div class="admin-panel" id="admin-support">
         <div id="adminSupportTickets"></div>
@@ -757,6 +829,8 @@ if ('serviceWorker' in navigator) {
   </div>
 </div>
 
+<script src="js/screen-protection.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script src="https://checkout.flutterwave.com/v3.js"></script>
 <script src="js/data.js"></script>
@@ -857,15 +931,17 @@ showAdminLogin = function() {
 adminLogin = function() {
   const email = document.getElementById('adminLoginEmail').value.trim();
   const pass = document.getElementById('adminLoginPass').value.trim();
+  const errEl = document.getElementById('adminLoginError');
+  if (!email || !pass) { showError(errEl, 'Please enter both email and password'); return; }
+  if (!isValidEmail(email)) { showError(errEl, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(errEl, 'Password must be at least 6 characters'); return; }
   const admin = (data.admins || []).find(a => a.email === email && a.password === pass);
-  if (!admin) {
-    document.getElementById('adminLoginError').textContent = 'Invalid email or password';
-    document.getElementById('adminLoginError').style.display = 'block'; return;
-  }
+  if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
+  setSession('admin', admin);
   document.getElementById('adminLoginEmail').value = '';
   document.getElementById('adminLoginPass').value = '';
-  document.getElementById('adminLoginError').style.display = 'none';
+  hideError(errEl);
   document.querySelectorAll('.admin-login-wrapper').forEach(el => el.style.display = 'none');
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
   document.getElementById('adminPage').classList.add('active');

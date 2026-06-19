@@ -807,7 +807,7 @@ function renderLibrary() {
             <span class="lib-availability ${status}">${b.available} available</span>
           </div>
           <div class="book-actions">
-            ${hasEbook ? '<button class="btn btn-sm btn-success" onclick="viewEbook(\'' + b.id + '\')" style="font-size:11px;" title="View Ebook"><i class="fas fa-book-open"></i> Read</button>' : ''}
+            ${hasEbook ? '<button class="btn btn-sm btn-success" onclick="viewEbookWithBookmarks(\'' + b.id + '\')" style="font-size:11px;" title="View Ebook"><i class="fas fa-book-open"></i> Read</button>' : ''}
             <button class="btn btn-sm btn-outline" onclick="showEditBookModal('${b.id}')" style="font-size:11px;"><i class="fas fa-edit"></i></button>
             <button class="btn btn-sm btn-outline" onclick="deleteBook('${b.id}')" style="font-size:11px;color:var(--danger);"><i class="fas fa-trash"></i></button>
           </div>
@@ -2263,7 +2263,7 @@ function renderStudentLibrary() {
           <div class="book-title">${htmlEscape(b.title)}</div>
           <div class="book-author">${htmlEscape(b.author)}</div>
           <div class="book-meta"><span>ISBN: ${htmlEscape(b.isbn)}</span><span class="lib-availability ${status}">${b.available} left</span></div>
-          ${hasEbook ? '<div style="margin-top:8px;"><button class="btn btn-sm btn-success" onclick="viewEbook(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read Ebook</button></div>' : ''}
+          ${hasEbook ? '<div style="margin-top:8px;"><button class="btn btn-sm btn-success" onclick="viewEbookWithBookmarks(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read Ebook</button></div>' : ''}
         </div>`;
       }).join('')}
     </div>
@@ -2368,7 +2368,7 @@ function renderLibrary() {
       '<div class="book-meta"><span>Total: ' + b.total + '</span><span class="lib-availability ' + status + '">' + b.available + ' avail</span></div>' +
       (b.available <= 0 && waitlistCount > 0 ? '<div style="font-size:11px;color:#dd6b20;margin-top:4px;"><i class="fas fa-clock"></i> ' + waitlistCount + ' on waitlist</div>' : '') +
       '<div class="book-actions">' +
-      (hasEbook ? '<button class="btn btn-sm btn-success" onclick="viewEbook(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read</button>' : '') +
+      (hasEbook ? '<button class="btn btn-sm btn-success" onclick="viewEbookWithBookmarks(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read</button>' : '') +
       '<button class="btn btn-sm btn-outline" onclick="showEditBookModal(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-edit"></i></button>' +
       '<button class="btn btn-sm btn-outline" onclick="deleteBook(\'' + b.id + '\')" style="font-size:11px;color:var(--danger);"><i class="fas fa-trash"></i></button>' +
       '</div></div>';
@@ -2577,7 +2577,7 @@ function renderStudentLibrary() {
         '<div class="book-title">' + htmlEscape(b.title) + '</div>' +
         '<div class="book-author">' + htmlEscape(b.author) + '</div>' +
         '<div class="book-meta"><span>ISBN: ' + htmlEscape(b.isbn) + '</span><span class="lib-availability ' + status + '">' + b.available + ' left</span></div>' +
-        (hasEbook ? '<div style="margin-top:8px;"><button class="btn btn-sm btn-success" onclick="viewEbook(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read Ebook</button></div>' : '') +
+        (hasEbook ? '<div style="margin-top:8px;"><button class="btn btn-sm btn-success" onclick="viewEbookWithBookmarks(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read Ebook</button></div>' : '') +
         '</div>';
     });
     html += '</div>';

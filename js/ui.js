@@ -13,6 +13,90 @@ function toast(msg, type) {
   setTimeout(function() { t.style.opacity = '0'; t.style.transform = 'translateX(100px)'; t.style.transition = 'all 0.3s'; setTimeout(function() { if (t.parentNode) t.remove(); }, 300); }, 3000);
 }
 
+// ===== AUTH VALIDATION HELPERS =====
+var AUTH_REGEX = {
+  email: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+  studentId: /^[A-Za-z]{2,4}\d{2,4}$/,
+  username: /^[a-zA-Z][a-zA-Z0-9._-]{1,30}$/,
+  name: /^[a-zA-Z][a-zA-Z0-9\s.'-]{1,50}$/,
+  passwordMin: 6
+};
+function isValidEmail(v) { return AUTH_REGEX.email.test(v); }
+function isValidStudentId(v) { return AUTH_REGEX.studentId.test(v); }
+function isValidUsername(v) { return AUTH_REGEX.username.test(v); }
+function isValidName(v) { return AUTH_REGEX.name.test(v.trim()); }
+function isValidPassword(v) { return typeof v === 'string' && v.length >= AUTH_REGEX.passwordMin; }
+function showError(el, msg) { if (el) { el.textContent = msg; el.style.display = 'block'; } }
+function hideError(el) { if (el) { el.textContent = ''; el.style.display = 'none'; } }
+
+// ===== UNIFIED SESSION MANAGER =====
+var SESSION_KEY = 'eduverse_session';
+var SESSION_VERSION = 1;
+function getSession() {
+  try {
+    var raw = localStorage.getItem(SESSION_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      if (s && s.version === SESSION_VERSION) return s;
+    }
+  } catch(e) {}
+  return { version: SESSION_VERSION, type: null, user: null, timestamp: 0, tenantId: null };
+}
+function saveSession(s) {
+  s.timestamp = Date.now();
+  s.version = SESSION_VERSION;
+  localStorage.setItem(SESSION_KEY, JSON.stringify(s));
+}
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+  currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
+}
+function setSession(type, user, tenantId) {
+  var s = getSession();
+  s.type = type;
+  s.user = { id: user.id, name: user.name, email: user.email || '' };
+  s.tenantId = tenantId || null;
+  saveSession(s);
+}
+function syncSession() {
+  var s = getSession();
+  if (!s.type) { clearSession(); return; }
+  // Restore the correct current* variable from the persisted session
+  if (s.type === 'admin') {
+    if (!currentAdmin && data.admins) currentAdmin = data.admins.find(function(a) { return a.id === s.user.id; }) || currentAdmin;
+  } else if (s.type === 'student') {
+    if (!currentStudent && data.students) currentStudent = data.students.find(function(st) { return st.id === s.user.id; }) || currentStudent;
+  } else if (s.type === 'teacher') {
+    if (!currentTeacher && data.teachers) currentTeacher = data.teachers.find(function(t) { return t.id === s.user.id; }) || currentTeacher;
+  } else if (s.type === 'parent') {
+    if (!currentParent && data.parents) currentParent = data.parents.find(function(p) { return p.id === s.user.id; }) || currentParent;
+  }
+}
+
+function validateField(el, type) {
+  if (!el) return;
+  var valid = false;
+  var msg = '';
+  var v = el.value;
+  if (type === 'email') { valid = isValidEmail(v); msg = 'Invalid email format'; }
+  else if (type === 'password') { valid = isValidPassword(v); msg = 'Min ' + AUTH_REGEX.passwordMin + ' characters'; }
+  else if (type === 'name') { valid = isValidName(v); msg = 'Must start with a letter, 2-50 chars'; }
+  else if (type === 'required') { valid = v.trim().length > 0; msg = 'Required'; }
+  else if (type === 'confirm') {
+    var target = document.getElementById(el.getAttribute('data-confirm-target'));
+    var targetVal = target ? target.value : '';
+    valid = v.length > 0 && v === targetVal;
+    msg = valid ? '' : 'Passwords do not match';
+  }
+  el.classList.toggle('field-invalid', !valid && v.length > 0);
+  el.classList.toggle('field-valid', valid);
+  var err = el.parentNode.querySelector('.field-error');
+  if (!valid && v.length > 0) {
+    if (!err) { err = document.createElement('span'); err.className = 'field-error'; el.parentNode.appendChild(err); }
+    err.textContent = msg;
+  } else if (err) { err.remove(); }
+}
+
 function openModal(html) {
   const body = document.getElementById('modalBody');
   const overlay = document.getElementById('modalOverlay');
@@ -32,7 +116,7 @@ function toggleNav() {
 }
 
 function goHome() {
-  currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
+  clearSession();
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');
   if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }
@@ -88,18 +172,19 @@ function adminLogin() {
   const emailEl = document.getElementById('adminLoginEmail');
   const passEl = document.getElementById('adminLoginPass');
   const errEl = document.getElementById('adminLoginError');
-  if (!emailEl || !passEl) { if (errEl) { errEl.textContent = 'Login form unavailable'; errEl.style.display = 'block'; } return; }
+  if (!emailEl || !passEl) { showError(errEl, 'Login form unavailable'); return; }
   const email = emailEl.value.trim();
   const pass = passEl.value.trim();
+  if (!email || !pass) { showError(errEl, 'Please enter both email and password'); return; }
+  if (!isValidEmail(email)) { showError(errEl, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(errEl, 'Password must be at least 6 characters'); return; }
   const admin = (data.admins || []).find(function(a) { return a.email === email && a.password === pass; });
-  if (!admin) {
-    if (errEl) { errEl.textContent = 'Invalid email or password'; errEl.style.display = 'block'; }
-    return;
-  }
+  if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
+  setSession('admin', admin);
   emailEl.value = '';
   passEl.value = '';
-  if (errEl) errEl.style.display = 'none';
+  hideError(errEl);
   showAdminPortal();
   updateNotifBadge();
 }
@@ -109,36 +194,30 @@ function adminSignup() {
   const emailEl = document.getElementById('adminSignupEmail');
   const passEl = document.getElementById('adminSignupPass');
   const errEl = document.getElementById('adminSignupError');
-  if (!nameEl || !emailEl || !passEl) { if (errEl) { errEl.textContent = 'Signup form unavailable'; errEl.style.display = 'block'; } return; }
+  if (!nameEl || !emailEl || !passEl) { showError(errEl, 'Signup form unavailable'); return; }
   const name = nameEl.value.trim();
   const email = emailEl.value.trim();
   const pass = passEl.value.trim();
-  if (!name || !email || !pass) {
-    if (errEl) { errEl.textContent = 'Please fill all fields'; errEl.style.display = 'block'; }
-    return;
-  }
-  if (pass.length < 6) {
-    if (errEl) { errEl.textContent = 'Password must be at least 6 characters'; errEl.style.display = 'block'; }
-    return;
-  }
-  if ((data.admins || []).find(function(a) { return a.email === email; })) {
-    if (errEl) { errEl.textContent = 'An admin with this email already exists'; errEl.style.display = 'block'; }
-    return;
-  }
+  if (!name || !email || !pass) { showError(errEl, 'Please fill all fields'); return; }
+  if (!isValidName(name)) { showError(errEl, 'Name must start with a letter and be 2-50 characters'); return; }
+  if (!isValidEmail(email)) { showError(errEl, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(errEl, 'Password must be at least 6 characters'); return; }
+  if ((data.admins || []).find(function(a) { return a.email === email; })) { showError(errEl, 'An admin with this email already exists'); return; }
   if (!data.admins) data.admins = [];
   const admin = { id: 'ADM' + Date.now(), name: name, email: email, password: pass };
   data.admins.push(admin);
   saveData();
-  if (errEl) errEl.style.display = 'none';
+  hideError(errEl);
   nameEl.value = '';
   emailEl.value = '';
   passEl.value = '';
   currentAdmin = admin;
+  setSession('admin', admin);
   showAdminPortal();
 }
 
 function adminLogout() {
-  currentAdmin = null;
+  clearSession();
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const page = document.getElementById('adminLoginPage');
   if (page) page.classList.add('active');
@@ -194,6 +273,7 @@ function studentLogin() {
   if (!idEl || !nameEl) { toast('Login form unavailable', 'error'); return; }
   var idOrUser = idEl.value.trim();
   var nameOrPass = nameEl.value.trim();
+  if (!idOrUser || !nameOrPass) { toast('Please enter both ID/Username and Password', 'error'); return; }
   var student = (data.students || []).find(function(s) { return s.username === idOrUser && s.password === nameOrPass; });
   if (!student) student = (data.students || []).find(function(s) { return s.id === idOrUser && s.name.toLowerCase() === nameOrPass.toLowerCase(); });
   if (!student) student = (data.students || []).find(function(s) { return s.id === idOrUser && s.password === nameOrPass; });
@@ -202,6 +282,7 @@ function studentLogin() {
     return;
   }
   currentStudent = student;
+  setSession('student', student);
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var sp = document.getElementById('studentPage');
   if (sp) sp.classList.add('active');
@@ -210,7 +291,7 @@ function studentLogin() {
 }
 
 function studentLogout() {
-  currentStudent = null;
+  clearSession();
   var idEl = document.getElementById('loginId');
   var nameEl = document.getElementById('loginName');
   if (idEl) idEl.value = '';
@@ -245,6 +326,7 @@ function teacherLogin() {
   if (!idEl || !passEl) { toast('Login form unavailable', 'error'); return; }
   var idOrUser = idEl.value.trim();
   var pass = passEl.value.trim();
+  if (!idOrUser || !pass) { toast('Please enter both ID and password', 'error'); return; }
   var teacher = (data.teachers || []).find(function(t) { return t.id === idOrUser && t.password === pass; });
   if (!teacher) teacher = (data.teachers || []).find(function(t) { return t.username === idOrUser && t.password === pass; });
   if (!teacher) {
@@ -252,6 +334,7 @@ function teacherLogin() {
     return;
   }
   currentTeacher = teacher;
+  setSession('teacher', teacher);
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var tp = document.getElementById('teacherPage');
   if (tp) tp.classList.add('active');
@@ -260,7 +343,7 @@ function teacherLogin() {
 }
 
 function teacherLogout() {
-  currentTeacher = null;
+  clearSession();
   var idEl = document.getElementById('teacherLoginId');
   var passEl = document.getElementById('teacherLoginPass');
   if (idEl) idEl.value = '';
@@ -331,6 +414,7 @@ function switchAdminPanel(panel) {
     case 'timetable': if (typeof switchTimetableTab === 'function') switchTimetableTab('grid'); break;
     case 'hostel': if (typeof renderHostel === 'function') renderHostel(); break;
     case 'gradebook': if (typeof renderGradebookAdmin === 'function') renderGradebookAdmin(); break;
+    case 'scoregrid': if (typeof renderScoreGrid === 'function') renderScoreGrid(); break;
     case 'promotion': if (typeof renderPromotionList === 'function') renderPromotionList(); break;
     case 'exams': if (typeof renderExamsAdmin === 'function') renderExamsAdmin(); break;
     case 'messages': if (typeof renderMessages === 'function') renderMessages('adminMessages', 'Admin'); break;
@@ -362,6 +446,7 @@ function switchAdminPanel(panel) {
     case 'transcript': if (typeof renderTranscriptGenerator === 'function') renderTranscriptGenerator(); break;
     case 'reportcards': if (typeof renderReportCardsAdmin === 'function') renderReportCardsAdmin(); break;
     case 'schoolprofile': if (typeof renderSchoolProfile === 'function') renderSchoolProfile(); break;
+    case 'website': if (typeof renderWebsiteBuilder === 'function') renderWebsiteBuilder(); break;
     case 'paymentgateway': if (typeof renderPaymentGatewaySettings === 'function') renderPaymentGatewaySettings(); if (typeof renderPaymentTransactionLog === 'function') renderPaymentTransactionLog(); break;
     case 'notifications': if (typeof renderNotificationComposer === 'function') renderNotificationComposer(); break;
     case 'simquestions': if (typeof renderSimQuestionBank === 'function') renderSimQuestionBank(); break;
@@ -375,6 +460,9 @@ function switchAdminPanel(panel) {
     case 'health': if (typeof renderHealthRecords === 'function') renderHealthRecords(); break;
     case 'transport': if (typeof renderTransport === 'function') renderTransport(); break;
     case 'conferences': if (typeof renderConferences === 'function') renderConferences(); break;
+    case 'mealplanner': if (typeof renderMealPlanner === 'function') renderMealPlanner(); break;
+    case 'broadcast': if (typeof renderBroadcast === 'function') renderBroadcast(); break;
+    case 'schoolstore': if (typeof renderSchoolStore === 'function') renderSchoolStore(); break;
     case 'support': if (typeof renderSupportPanel === 'function') renderSupportPanel(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();

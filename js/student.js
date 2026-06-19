@@ -209,6 +209,7 @@ function closeFeeLock() {
       if (tabName === 'alumni' && typeof renderStudentAlumni === 'function') renderStudentAlumni();
       if (tabName === 'health' && typeof renderStudentHealthView === 'function') renderStudentHealthView();
       if (tabName === 'transport' && typeof renderStudentTransportView === 'function') renderStudentTransportView();
+      if (tabName === 'store' && typeof renderStudentStore === 'function') renderStudentStore();
       if (typeof applyTranslations === 'function') applyTranslations();
     });
   }

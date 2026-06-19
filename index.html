@@ -11,7 +11,6 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 <link rel="alternate icon" href="images/favicon.svg">
-<script src="js/screen-protection.js"></script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#2563eb">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,6 +37,29 @@ if ('serviceWorker' in navigator) {
 </script>
 </head>
 <body>
+<script>
+(function() {
+  var ver = window.APP_VERSION;
+  if (!ver) { try { ver = '20260619'; } catch(e) { ver = '1'; } }
+  var observer = new MutationObserver(function(muts) {
+    muts.forEach(function(m) {
+      m.addedNodes.forEach(function(n) {
+        try {
+          if (n.tagName === 'SCRIPT' && n.src && !n.src.includes('?v='))
+            n.src = n.src + (n.src.includes('?') ? '&v=' : '?v=') + ver;
+          if (n.tagName === 'LINK' && n.rel === 'stylesheet' && n.href && !n.href.includes('?v='))
+            n.href = n.href + (n.href.includes('?') ? '&v=' : '?v=') + ver;
+        } catch(e) {}
+      });
+    });
+  });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  // Patch existing <link> tags in head (CSS)
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(function(l) {
+    if (l.href && !l.href.includes('?v=')) l.href = l.href + (l.href.includes('?') ? '&v=' : '?v=') + ver;
+  });
+})();
+</script>
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
@@ -692,12 +714,12 @@ if ('serviceWorker' in navigator) {
       <div id="stuDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — use <strong>STU001</strong> / <strong>stu001</strong></div>
       <div class="form-group" style="margin-bottom:16px;">
         <label data-i18n="username">Student ID / Username</label>
-        <input type="text" id="loginId" placeholder="e.g. STU001" list="studentIdList">
+        <input type="text" id="loginId" placeholder="e.g. STU001" list="studentIdList" oninput="validateField(this,'required')">
         <datalist id="studentIdList"></datalist>
       </div>
       <div class="form-group" style="margin-bottom:24px;">
         <label data-i18n="password">Name / Password</label>
-        <input type="text" id="loginName" placeholder="Full name or password" list="studentNameList">
+        <input type="text" id="loginName" placeholder="Full name or password" list="studentNameList" oninput="validateField(this,'required')">
         <datalist id="studentNameList"></datalist>
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="studentLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Access Portal</button>
@@ -769,6 +791,7 @@ if ('serviceWorker' in navigator) {
       <button class="student-tab" data-tab="hostel"><i class="fas fa-bed"></i> <span data-i18n="hostel">Hostel</span></button>
       <button class="student-tab" data-tab="health"><i class="fas fa-heartbeat"></i> <span>Health</span></button>
       <button class="student-tab" data-tab="transport"><i class="fas fa-bus"></i> <span>Transport</span></button>
+      <button class="student-tab" data-tab="store"><i class="fas fa-shopping-bag"></i> <span>Store</span></button>
     </div>
 
     <!-- Student Results -->
@@ -933,6 +956,9 @@ if ('serviceWorker' in navigator) {
     <div class="student-panel" id="stu-transport">
       <div class="card"><div id="stuTransportView"></div></div>
     </div>
+    <div class="student-panel" id="stu-store">
+      <div id="studentStoreView"></div>
+    </div>
   </div>
 </div>
 
@@ -958,12 +984,12 @@ if ('serviceWorker' in navigator) {
       <div id="tchDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — use <strong>TCH001</strong> / <strong>teacher123</strong></div>
       <div class="form-group" style="margin-bottom:16px;">
         <label><i class="fas fa-id-card"></i> Teacher ID / Username</label>
-        <input type="text" id="teacherLoginId" placeholder="TCH001 or username" list="teacherIdList">
+        <input type="text" id="teacherLoginId" placeholder="TCH001 or username" list="teacherIdList" oninput="validateField(this,'required')">
         <datalist id="teacherIdList"></datalist>
       </div>
       <div class="form-group" style="margin-bottom:24px;">
         <label><i class="fas fa-lock"></i> Password</label>
-        <input type="password" id="teacherLoginPass" placeholder="Enter your password">
+        <input type="password" id="teacherLoginPass" placeholder="Enter your password" oninput="validateField(this,'password')">
       </div>
       <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="teacherLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
       <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Default password: <strong>teacher123</strong></p>
@@ -1207,11 +1233,11 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="form-group" style="margin-bottom:16px;">
         <label>Email Address</label>
-        <input type="email" id="parentLoginEmail" placeholder="your@email.com">
+        <input type="email" id="parentLoginEmail" placeholder="your@email.com" oninput="validateField(this,'email')">
       </div>
       <div class="form-group" style="margin-bottom:24px;">
         <label>Password</label>
-        <input type="password" id="parentLoginPass" placeholder="Enter your password">
+        <input type="password" id="parentLoginPass" placeholder="Enter your password" oninput="validateField(this,'password')">
       </div>
       <div id="parentDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — using <strong>robert@example.com</strong> / <strong>parent123</strong></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="parentLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
@@ -1329,6 +1355,8 @@ if ('serviceWorker' in navigator) {
   </div>
 </div>
 
+<script src="js/screen-protection.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script src="https://checkout.flutterwave.com/v3.js"></script>
 <script src="js/data.js"></script>

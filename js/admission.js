@@ -1564,7 +1564,9 @@ function renderApplications() {
             <button class="btn btn-sm btn-primary" onclick="viewApplicationDetail('${a.id}')"><i class="fas fa-eye"></i></button>
             ${!a.examScheduled && a.status === 'pending' ? `<button class="btn btn-sm btn-success" onclick="approveApplication('${a.id}')"><i class="fas fa-check"></i> Approve</button>` : ''}
             ${!a.examCompleted && a.examScheduled ? `<button class="btn btn-sm btn-info" onclick="resetExam('${a.id}')" style="background:var(--info);color:white;"><i class="fas fa-redo"></i> Reset</button>` : ''}
-            ${a.status === 'pending' ? `<button class="btn btn-sm btn-danger" onclick="rejectApplication('${a.id}')"><i class="fas fa-times"></i></button>` : ''}
+            ${a.status === 'pending' || a.status === 'fee_paid' ? `<button class="btn btn-sm btn-danger" onclick="rejectApplication('${a.id}')"><i class="fas fa-times"></i></button>` : ''}
+            ${a.examPassed === true && !a.feePaid ? `<button class="btn btn-sm btn-success adm-pay-btn" data-app-id="${a.id}" onclick="processAdmissionPayment('${a.id}')" style="background:var(--accent);color:var(--text);"><i class="fas fa-credit-card"></i> Pay Fee</button>` : ''}
+            ${a.feePaid ? `<span class="badge badge-paid"><i class="fas fa-check-circle"></i> Fee Paid</span>` : ''}
           </td>
         </tr>`;
       }).join('')}</tbody>

@@ -234,8 +234,9 @@ function saResetSchoolPassword(id) {
     var raw = localStorage.getItem(key);
     if (raw) {
       var d = JSON.parse(raw);
-      // Hash the password using btoa (simple base64) for demo purposes
-      d.password = btoa(newPass);
+      d.password = newPass;
+      // Update admin in data.admins array if present
+      if (d.admins && d.admins.length) { d.admins[0].password = newPass; }
       localStorage.setItem(key, JSON.stringify(d));
       logActivity('Password reset for school: ' + t.name);
       toast('Password for "' + t.name + '" has been reset successfully!');

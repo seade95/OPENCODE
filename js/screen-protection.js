@@ -166,8 +166,8 @@
     wm.className = 'sp-watermark';
     var session = '';
     try {
-      var user = window.currentAdmin || window.currentTeacher || window.currentStudent || window.currentParent;
-      if (user) session = user.name || user.email || user.id;
+      var s = JSON.parse(localStorage.getItem('eduverse_session'));
+      if (s && s.user) session = s.user.name || s.user.email || s.user.id;
     } catch(e) {}
     wm.textContent = 'EDUVERSE ' + (session ? '| ' + session + ' ' : '') + '| ' + new Date().toLocaleDateString();
     document.body.appendChild(wm);

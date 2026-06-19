@@ -147,6 +147,7 @@ function eduverseLogout() {
   eduverseUser = null;
   eduverseCurrentSchool = null;
   localStorage.removeItem('eduverseUser');
+  if (typeof clearSession === 'function') clearSession();
   if (typeof updateAuthGating === 'function') updateAuthGating();
   showLanding();
 }
@@ -819,7 +820,7 @@ function showEduverseSignup() {
   var overlay = document.getElementById('modalOverlay');
   var body = document.getElementById('modalBody');
   if (!body) return;
-  body.innerHTML = '<div style="text-align:center;padding:8px 0;"><i class="fas fa-graduation-cap" style="font-size:48px;color:var(--primary);margin-bottom:8px;"></i><h2 style="margin-bottom:4px;">Join EduVerse</h2><p style="color:var(--text-light);font-size:14px;margin-bottom:20px;">Create your account to access school management</p><div id="evSignupError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:14px;"></div><div class="form-group"><label>Full Name</label><input type="text" id="evSignupName" placeholder="John Doe"></div><div class="form-group"><label>Email</label><input type="email" id="evSignupEmail" placeholder="john@example.com"></div><div class="form-group"><label>Password (min 6 chars)</label><input type="password" id="evSignupPass" placeholder="Create a password"></div><button class="btn btn-success" style="width:100%;margin-top:8px;" onclick="handleEduverseSignup()"><i class="fas fa-user-plus"></i> Create Account</button><p style="margin-top:16px;font-size:13px;color:var(--text-light);">Already have an account? <a href="javascript:;" onclick="closeModal();showEduverseLogin()" style="color:var(--primary);font-weight:600;">Log In</a></p></div>';
+  body.innerHTML = '<div style="text-align:center;padding:8px 0;"><i class="fas fa-graduation-cap" style="font-size:48px;color:var(--primary);margin-bottom:8px;"></i><h2 style="margin-bottom:4px;">Join EduVerse</h2><p style="color:var(--text-light);font-size:14px;margin-bottom:20px;">Create your account to access school management</p><div id="evSignupError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:14px;"></div><div class="form-group"><label>Full Name</label><input type="text" id="evSignupName" placeholder="John Doe" oninput="validateField(this,\'name\')"></div><div class="form-group"><label>Email</label><input type="email" id="evSignupEmail" placeholder="john@example.com" oninput="validateField(this,\'email\')"></div><div class="form-group"><label>Password (min 6 chars)</label><input type="password" id="evSignupPass" placeholder="Create a password" oninput="validateField(this,\'password\')"></div><button class="btn btn-success" style="width:100%;margin-top:8px;" onclick="handleEduverseSignup()"><i class="fas fa-user-plus"></i> Create Account</button><p style="margin-top:16px;font-size:13px;color:var(--text-light);">Already have an account? <a href="javascript:;" onclick="closeModal();showEduverseLogin()" style="color:var(--primary);font-weight:600;">Log In</a></p></div>';
   if (overlay) overlay.classList.add('active');
 }
 
@@ -835,7 +836,7 @@ function showEduverseLogin() {
     try { saved = localStorage.getItem('evRememberEmail') || ''; savedPass = localStorage.getItem('evRememberPass') || ''; if (savedPass) savedPass = atob(savedPass); } catch(e) {}
   }
   var checked = saved ? ' checked' : '';
-  body.innerHTML = '<div style="text-align:center;padding:8px 0;"><i class="fas fa-graduation-cap" style="font-size:48px;color:var(--primary);margin-bottom:8px;"></i><h2 style="margin-bottom:4px;">Welcome to EduVerse</h2><p style="color:var(--text-light);font-size:14px;margin-bottom:20px;">Sign in to manage your schools</p><div id="evLoginError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:14px;"></div>' + (isDemo ? '<div style="background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — using <strong>demo@eduverse.com</strong> / <strong>demo123</strong></div>' : '') + '<div class="form-group"><label>Email</label><input type="email" id="evLoginEmail" placeholder="john@example.com" value="' + esc(saved) + '"></div><div class="form-group"><label>Password</label><input type="password" id="evLoginPass" placeholder="Your password" value="' + esc(savedPass) + '"></div><label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;margin-bottom:12px;"><input type="checkbox" id="evRememberMe"' + checked + '> Remember me</label><button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="handleEduverseLogin()"><i class="fas fa-arrow-right"></i> Sign In</button><p style="margin-top:16px;font-size:13px;color:var(--text-light);">Don\'t have an account? <a href="javascript:;" onclick="closeModal();showEduverseSignup()" style="color:var(--primary);font-weight:600;">Sign Up</a></p></div>';
+  body.innerHTML = '<div style="text-align:center;padding:8px 0;"><i class="fas fa-graduation-cap" style="font-size:48px;color:var(--primary);margin-bottom:8px;"></i><h2 style="margin-bottom:4px;">Welcome to EduVerse</h2><p style="color:var(--text-light);font-size:14px;margin-bottom:20px;">Sign in to manage your schools</p><div id="evLoginError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:14px;"></div>' + (isDemo ? '<div style="background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — using <strong>demo@eduverse.com</strong> / <strong>demo123</strong></div>' : '') + '<div class="form-group"><label>Email</label><input type="email" id="evLoginEmail" placeholder="john@example.com" value="' + esc(saved) + '" oninput="validateField(this,\'email\')"></div><div class="form-group"><label>Password</label><input type="password" id="evLoginPass" placeholder="Your password" value="' + esc(savedPass) + '" oninput="validateField(this,\'password\')"></div><label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;margin-bottom:12px;"><input type="checkbox" id="evRememberMe"' + checked + '> Remember me</label><button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="handleEduverseLogin()"><i class="fas fa-arrow-right"></i> Sign In</button><p style="margin-top:16px;font-size:13px;color:var(--text-light);">Don\'t have an account? <a href="javascript:;" onclick="closeModal();showEduverseSignup()" style="color:var(--primary);font-weight:600;">Sign Up</a></p></div>';
   if (overlay) overlay.classList.add('active');
 }
 
@@ -844,9 +845,10 @@ function handleEduverseSignup() {
   var email = document.getElementById('evSignupEmail')?.value?.trim();
   var pass = document.getElementById('evSignupPass')?.value;
   var err = document.getElementById('evSignupError');
-  if (!name || !email || !pass) { if (err) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; } return; }
-  if (pass.length < 6) { if (err) { err.textContent = 'Password must be at least 6 characters'; err.style.display = 'block'; } return; }
-  if (err) err.style.display = 'none';
+  if (!name || !email || !pass) { showError(err, 'Please fill all fields'); return; }
+  if (!isValidEmail(email)) { showError(err, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(err, 'Password must be at least 6 characters'); return; }
+  hideError(err);
   var result = eduverseSignup(name, email, pass);
   if (result.error) { if (err) { err.textContent = result.error; err.style.display = 'block'; } return; }
   closeModal();
@@ -864,8 +866,10 @@ function handleEduverseLogin() {
   var email = document.getElementById('evLoginEmail')?.value?.trim();
   var pass = document.getElementById('evLoginPass')?.value;
   var err = document.getElementById('evLoginError');
-  if (!email || !pass) { if (err) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; } return; }
-  if (err) err.style.display = 'none';
+  if (!email || !pass) { showError(err, 'Please fill all fields'); return; }
+  if (!isValidEmail(email)) { showError(err, 'Invalid email format'); return; }
+  if (!isValidPassword(pass)) { showError(err, 'Password must be at least 6 characters'); return; }
+  hideError(err);
   var result = eduverseLogin(email, pass);
   if (result.error) { if (err) { err.textContent = result.error; err.style.display = 'block'; } return; }
   closeModal();
