@@ -2528,3 +2528,55 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .chat-btn { animation:chatPulse 2s ease-in-out 3; }
 @keyframes chatPulse { 0%,100%{box-shadow:0 4px 16px rgba(0,0,0,0.2);} 50%{box-shadow:0 4px 24px rgba(0,0,0,0.35),0 0 0 8px rgba(37,211,102,0.15);} }
 .chat-email { animation-delay:0.3s; }
+
+/* ===== SUPER ADMIN DASHBOARD ===== */
+.sa-dashboard { display:flex;min-height:80vh;background:var(--bg,#f0f4f8);border-radius:var(--radius);overflow:hidden; }
+.sa-sidebar { width:220px;background:var(--primary-dark,#0f2440);color:white;display:flex;flex-direction:column;flex-shrink:0; }
+.sa-sidebar-header { padding:20px 16px;font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.1); }
+.sa-sidebar-header i { font-size:22px;color:var(--accent,#f5a623); }
+.sa-sidebar-user { padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.08);line-height:1.4; }
+.sa-nav { flex:1;padding:8px 0; }
+.sa-nav-item { display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;transition:all 0.2s;border-left:3px solid transparent; }
+.sa-nav-item:hover { background:rgba(255,255,255,0.08);color:white; }
+.sa-nav-item.active { background:rgba(255,255,255,0.12);color:white;border-left-color:var(--accent,#f5a623); }
+.sa-nav-item i { width:20px;text-align:center;font-size:15px; }
+.sa-sidebar-footer { padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1); }
+.sa-main { flex:1;display:flex;flex-direction:column;min-width:0; }
+.sa-main-header { padding:20px 24px;background:white;border-bottom:1px solid #e2e8f0; }
+.sa-main-header h2 { font-size:20px;font-weight:700;margin:0; }
+.sa-content { flex:1;padding:20px 24px;overflow-y:auto; }
+.sa-section { background:white;border-radius:var(--radius-sm);padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+.sa-section h3 { font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px; }
+.sa-stats-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:16px; }
+.sa-stat-card { background:white;border-radius:var(--radius-sm);padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);display:flex;align-items:center;gap:14px; }
+.sa-stat-card.mini { flex-direction:column;text-align:center;padding:20px; }
+.sa-stat-icon { width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+.sa-stat-value { font-size:24px;font-weight:700;line-height:1.2; }
+.sa-stat-label { font-size:13px;color:var(--text-light); }
+.sa-log { }
+.sa-log-item { display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:13px; }
+.sa-log-item:last-child { border-bottom:none; }
+.sa-log-time { color:var(--text-light);white-space:nowrap;min-width:160px; }
+.sa-log-msg { flex:1; }
+.sa-settings-form { max-width:700px; }
+.sa-settings-form .form-row { margin-bottom:14px; }
+.sa-settings-form .form-row label { display:block;font-size:13px;font-weight:500;margin-bottom:4px;color:var(--text); }
+.sa-settings-form .form-row input,.sa-settings-form .form-row textarea,.sa-settings-form .form-row select { width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:14px;font-family:inherit;box-sizing:border-box; }
+.sa-settings-form .form-row textarea { resize:vertical;min-height:60px; }
+.field-hint { font-size:11px;color:var(--text-light);margin:2px 0 0; }
+.sa-bank-card { background:#f8fafc;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid #e2e8f0; }
+.sa-bank-card input,.sa-bank-card select { padding:6px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;font-family:inherit; }
+.sa-plans-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px; }
+.sa-plan-card { background:white;border-radius:var(--radius-sm);padding:20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);border:1px solid #e2e8f0;transition:var(--transition); }
+.sa-plan-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.sa-plan-card.inactive { opacity:0.6; }
+.sa-plan-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:8px; }
+.sa-plan-header h4 { font-size:16px;font-weight:600;margin:0; }
+.sa-plan-status { font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500; }
+.sa-plan-status.active { background:#d1fae5;color:#065f46; }
+.sa-plan-status.disabled { background:#f3f4f6;color:#6b7280; }
+.sa-plan-amount { font-size:22px;font-weight:700;margin-bottom:4px;color:var(--primary); }
+.sa-plan-interval { font-size:13px;font-weight:400;color:var(--text-light); }
+.sa-plan-features { font-size:13px;color:var(--text-light);margin-bottom:12px;line-height:1.4; }
+.sa-plan-actions { display:flex;gap:6px;flex-wrap:wrap; }
+.modal-overlay.active .sa-dashboard { max-height:85vh; }

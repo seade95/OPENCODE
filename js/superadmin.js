@@ -1,0 +1,550 @@
+// ===== Super Admin Dashboard =====
+
+var PLATFORM_CONFIG_KEY = 'eduverse_platform_config';
+var _saCurrentTab = 'overview';
+
+// ===== Platform Config Store (separate from school data) =====
+function getPlatformConfig() {
+  try {
+    var raw = localStorage.getItem(PLATFORM_CONFIG_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return getDefaultPlatformConfig();
+}
+
+function savePlatformConfig(cfg) {
+  localStorage.setItem(PLATFORM_CONFIG_KEY, JSON.stringify(cfg));
+}
+
+function getDefaultPlatformConfig() {
+  return {
+    whatsappNumber: '',
+    contactEmail: '',
+    bankAccounts: [],
+    currency: 'NGN',
+    platformName: 'EDUVERSE',
+    subscriptionPlans: [
+      { id: 'plan_free', name: 'Free', interval: 'free', amount: 0, active: true, features: 'Basic school management, up to 50 students' },
+      { id: 'plan_basic', name: 'Basic', interval: 'monthly', amount: 5000, active: true, features: 'Up to 200 students, all modules' },
+      { id: 'plan_standard', name: 'Standard', interval: 'monthly', amount: 15000, active: true, features: 'Up to 500 students, priority support' },
+      { id: 'plan_premium', name: 'Premium', interval: 'monthly', amount: 35000, active: true, features: 'Unlimited students, dedicated support, custom branding' },
+      { id: 'plan_enterprise', name: 'Enterprise', interval: 'yearly', amount: 300000, active: true, features: 'Unlimited everything, SLA, white-label' }
+    ],
+    settings: {
+      allowSchoolRegistration: true,
+      maintenanceMode: false,
+      maintenanceMessage: 'System is under maintenance. Please check back shortly.'
+    },
+    lastBackupDate: null
+  };
+}
+
+// ===== Show Full-Page Super Admin Dashboard =====
+function showSuperAdminDashboard() {
+  var admin = getSuperAdmin();
+  if (!admin) { showSuperAdminLogin(); return; }
+
+  // Render the dashboard into a full-page overlay
+  var overlay = document.getElementById('modalOverlay');
+  var body = document.getElementById('modalBody');
+  if (!body) return;
+
+  _saCurrentTab = 'overview';
+
+  body.innerHTML = '<div class="sa-dashboard"><div class="sa-sidebar" id="saSidebar">'
+    + '<div class="sa-sidebar-header"><i class="fas fa-user-shield"></i><span>Super Admin</span></div>'
+    + '<div class="sa-sidebar-user">' + esc(admin.name) + '<br><span style="font-size:11px;color:var(--text-light);">' + esc(admin.email) + '</span></div>'
+    + '<nav class="sa-nav">'
+    + saNavItem('overview', 'chart-pie', 'Overview')
+    + saNavItem('schools', 'school', 'Schools')
+    + saNavItem('platform', 'cogs', 'Platform Settings')
+    + saNavItem('subscriptions', 'credit-card', 'Subscription Plans')
+    + saNavItem('system', 'server', 'System')
+    + '</nav>'
+    + '<div class="sa-sidebar-footer"><button class="btn btn-sm btn-outline" onclick="closeSaDashboard()" style="width:100%;"><i class="fas fa-times"></i> Close</button></div>'
+    + '</div><div class="sa-main" id="saMain"><div class="sa-main-header"><h2 id="saPanelTitle">Overview</h2></div><div class="sa-content" id="saContent"></div></div></div>';
+
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.style.overflowY = 'auto';
+  }
+
+  renderSaTab('overview');
+}
+
+function saNavItem(tab, icon, label) {
+  return '<a href="javascript:;" class="sa-nav-item" data-tab="' + tab + '" onclick="switchSaTab(\'' + tab + '\')"><i class="fas fa-' + icon + '"></i> ' + label + '</a>';
+}
+
+function closeSaDashboard() {
+  var overlay = document.getElementById('modalOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    overlay.style.overflowY = '';
+  }
+}
+
+function switchSaTab(tab) {
+  _saCurrentTab = tab;
+  document.querySelectorAll('.sa-nav-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.tab === tab);
+  });
+  renderSaTab(tab);
+}
+
+function renderSaTab(tab) {
+  var titles = {
+    overview: 'Overview',
+    schools: 'Schools Management',
+    platform: 'Platform Settings',
+    subscriptions: 'Subscription Plans',
+    system: 'System & Maintenance'
+  };
+  var titleEl = document.getElementById('saPanelTitle');
+  if (titleEl) titleEl.textContent = titles[tab] || 'Overview';
+  var content = document.getElementById('saContent');
+  if (!content) return;
+  switch (tab) {
+    case 'overview': renderSaOverview(content); break;
+    case 'schools': renderSaSchools(content); break;
+    case 'platform': renderSaPlatform(content); break;
+    case 'subscriptions': renderSaSubscriptions(content); break;
+    case 'system': renderSaSystem(content); break;
+  }
+}
+
+// ===== 1. Overview Tab =====
+function renderSaOverview(container) {
+  var admin = getSuperAdmin();
+  var cfg = getPlatformConfig();
+  var tenants = getTenants();
+  var totalSchools = tenants.length;
+  var activeSchools = tenants.filter(function(t) { return t.status === 'active'; }).length;
+  var suspendedSchools = tenants.filter(function(t) { return t.status === 'suspended'; }).length;
+  var bankCount = (cfg.bankAccounts || []).length;
+
+  var html = '<div class="sa-stats-grid">'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + totalSchools + '</div><div class="sa-stat-label">Total Schools</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-check-circle"></i></div><div><div class="sa-stat-value">' + activeSchools + '</div><div class="sa-stat-label">Active</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-pause-circle"></i></div><div><div class="sa-stat-value">' + suspendedSchools + '</div><div class="sa-stat-label">Suspended</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-university"></i></div><div><div class="sa-stat-value">' + bankCount + '</div><div class="sa-stat-label">Bank Accounts</div></div></div>'
+    + '</div>';
+
+  // Recent activity log
+  var log = getActivityLog().slice(0, 10);
+  html += '<div class="sa-section"><h3><i class="fas fa-history"></i> Recent Activity</h3>'
+    + (log.length ? '<div class="sa-log">' + log.map(function(l) {
+      return '<div class="sa-log-item"><span class="sa-log-time">' + (l.time || '') + '</span><span class="sa-log-msg">' + esc(l.msg) + '</span></div>';
+    }).join('') + '</div>' : '<p class="empty-state" style="padding:20px;">No activity recorded yet.</p>')
+    + '</div>';
+
+  // Quick actions
+  html += '<div class="sa-section"><h3><i class="fas fa-bolt"></i> Quick Actions</h3>'
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+    + '<button class="btn btn-primary" onclick="closeSaDashboard();showOnboardSchool()"><i class="fas fa-plus-circle"></i> Add New School</button>'
+    + '<button class="btn btn-outline" onclick="switchSaTab(\'platform\')"><i class="fas fa-cogs"></i> Configure Platform</button>'
+    + '<button class="btn btn-outline" onclick="switchSaTab(\'subscriptions\')"><i class="fas fa-credit-card"></i> Manage Plans</button>'
+    + '</div></div>';
+
+  container.innerHTML = html;
+}
+
+// ===== 2. Schools Tab =====
+function renderSaSchools(container) {
+  var tenants = getTenants();
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
+    + '<p style="color:var(--text-light);font-size:14px;margin:0;">' + tenants.length + ' school(s) registered</p>'
+    + '<button class="btn btn-primary btn-sm" onclick="closeSaDashboard();showOnboardSchool()"><i class="fas fa-plus"></i> Add School</button></div>';
+
+  if (!tenants.length) {
+    html += '<div class="empty-state"><i class="fas fa-school"></i><p>No schools registered yet.</p></div>';
+  } else {
+    html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
+      + '<thead><tr><th>School</th><th>Email</th><th>Tier</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
+      + tenants.map(function(t) {
+        return '<tr><td><strong>' + esc(t.name) + '</strong></td><td>' + esc(t.email) + '</td>'
+          + '<td><span class="badge badge-grade">' + esc(t.tier) + '</span></td>'
+          + '<td><span class="badge" style="background:#dbeafe;color:#1e40af;">' + esc(t.plan) + '</span></td>'
+          + '<td><span class="badge ' + (t.status === 'active' ? 'badge-paid' : 'badge-absent') + '">' + esc(t.status) + '</span></td>'
+          + '<td><div style="display:flex;gap:4px;">'
+          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open"><i class="fas fa-external-link-alt"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
+          + '<button class="btn btn-sm btn-outline" style="color:#dc2626;" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>'
+          + '</div></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  container.innerHTML = html;
+}
+
+function saToggleTenant(id) {
+  var tenants = getTenants();
+  var t = tenants.find(function(x) { return x.id === id; });
+  if (!t) return;
+  t.status = t.status === 'active' ? 'suspended' : 'active';
+  saveTenants(tenants);
+  logActivity((t.status === 'active' ? 'Activated' : 'Suspended') + ' school: ' + t.name);
+  renderSaTab('schools');
+  toast('School "' + t.name + '" ' + (t.status === 'active' ? 'activated' : 'suspended'));
+}
+
+function saDeleteTenant(id) {
+  var tenants = getTenants();
+  var t = tenants.find(function(x) { return x.id === id; });
+  if (!t) return;
+  if (!confirm('Permanently delete "' + t.name + '" and all its data? This cannot be undone.')) return;
+  var dataKey = getTenantDataKey(id);
+  localStorage.removeItem(dataKey);
+  saveTenants(tenants.filter(function(x) { return x.id !== id; }));
+  logActivity('Deleted school: ' + t.name);
+  renderSaTab('schools');
+  toast('School "' + t.name + '" deleted');
+}
+
+// ===== 3. Platform Settings Tab =====
+function renderSaPlatform(container) {
+  var cfg = getPlatformConfig();
+  var banks = cfg.bankAccounts || [];
+  var html = '<div class="sa-settings-form">'
+
+    // Contact Section
+    + '<div class="sa-section"><h3><i class="fas fa-phone-alt"></i> Platform Contact</h3>'
+    + '<div class="form-row"><label>Platform Name</label><input type="text" id="saPlatformName" value="' + esc(cfg.platformName || 'EDUVERSE') + '" oninput="updateSaConfig(\'platformName\',this.value)"></div>'
+    + '<div class="form-row"><label>WhatsApp Number</label><input type="text" id="saWhatsApp" value="' + esc(cfg.whatsappNumber || '') + '" placeholder="e.g. +2348012345678" oninput="updateSaConfig(\'whatsappNumber\',this.value)"><p class="field-hint">Shows as floating WhatsApp button on the landing page</p></div>'
+    + '<div class="form-row"><label>Contact Email</label><input type="email" id="saContactEmail" value="' + esc(cfg.contactEmail || '') + '" placeholder="super@eduverse.com" oninput="updateSaConfig(\'contactEmail\',this.value)"><p class="field-hint">Shows as floating email button on the landing page</p></div>'
+    + '<div class="form-row"><label>Currency</label><select onchange="updateSaConfig(\'currency\',this.value)"><option value="NGN"' + (cfg.currency==='NGN'?' selected':'') + '>NGN (₦)</option><option value="USD"' + (cfg.currency==='USD'?' selected':'') + '>USD ($)</option><option value="GBP"' + (cfg.currency==='GBP'?' selected':'') + '>GBP (£)</option><option value="EUR"' + (cfg.currency==='EUR'?' selected':'') + '>EUR (€)</option></select></div>'
+    + '</div>'
+
+    // Bank Accounts
+    + '<div class="sa-section"><h3><i class="fas fa-university"></i> Bank Accounts <span style="font-size:12px;color:var(--text-light);font-weight:400;">(for subscription payments)</span></h3>'
+    + '<div id="saBankList">' + renderBankList(banks) + '</div>'
+    + '<button class="btn btn-sm btn-primary" onclick="saAddBank()" style="margin-top:8px;"><i class="fas fa-plus"></i> Add Bank Account</button>'
+    + '</div>'
+
+    // Save button
+    + '<div style="margin-top:20px;text-align:right;"><button class="btn btn-success" onclick="saSavePlatform()"><i class="fas fa-save"></i> Save Platform Settings</button></div>'
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+function renderBankList(banks) {
+  if (!banks || !banks.length) return '<p class="empty-state" style="margin:0;padding:12px;">No bank accounts added yet.</p>';
+  return '<div style="display:grid;gap:10px;">' + banks.map(function(b, i) {
+    return '<div class="sa-bank-card"><div style="flex:1;">'
+      + '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'
+      + '<input type="text" value="' + esc(b.bankName || '') + '" placeholder="Bank name" style="flex:1;min-width:140px;" onchange="updateSaBank(' + i + ',\'bankName\',this.value)">'
+      + '<input type="text" value="' + esc(b.accountName || '') + '" placeholder="Account name" style="flex:1;min-width:140px;" onchange="updateSaBank(' + i + ',\'accountName\',this.value)">'
+      + '<input type="text" value="' + esc(b.accountNumber || '') + '" placeholder="Account number" style="flex:1;min-width:120px;" onchange="updateSaBank(' + i + ',\'accountNumber\',this.value)">'
+      + '<select onchange="updateSaBank(' + i + ',\'currency\',this.value)" style="width:80px;"><option value="NGN"' + (b.currency==='NGN'?' selected':'') + '>NGN</option><option value="USD"' + (b.currency==='USD'?' selected':'') + '>USD</option><option value="GBP"' + (b.currency==='GBP'?' selected':'') + '>GBP</option><option value="EUR"' + (b.currency==='EUR'?' selected':'') + '>EUR</option></select>'
+      + '<button class="btn btn-sm btn-outline" style="color:#dc2626;" onclick="saRemoveBank(' + i + ')" title="Remove"><i class="fas fa-times"></i></button>'
+      + '</div></div></div>';
+  }).join('') + '</div>';
+}
+
+function updateSaConfig(field, val) {
+  var cfg = getPlatformConfig();
+  cfg[field] = val;
+  savePlatformConfig(cfg);
+}
+
+function updateSaBank(index, field, val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.bankAccounts) cfg.bankAccounts = [];
+  if (!cfg.bankAccounts[index]) cfg.bankAccounts[index] = {};
+  cfg.bankAccounts[index][field] = val;
+  savePlatformConfig(cfg);
+}
+
+function saAddBank() {
+  var cfg = getPlatformConfig();
+  if (!cfg.bankAccounts) cfg.bankAccounts = [];
+  cfg.bankAccounts.push({ bankName: '', accountName: '', accountNumber: '', currency: 'NGN' });
+  savePlatformConfig(cfg);
+  var list = document.getElementById('saBankList');
+  if (list) list.innerHTML = renderBankList(cfg.bankAccounts);
+}
+
+function saRemoveBank(index) {
+  var cfg = getPlatformConfig();
+  if (cfg.bankAccounts) cfg.bankAccounts.splice(index, 1);
+  savePlatformConfig(cfg);
+  var list = document.getElementById('saBankList');
+  if (list) list.innerHTML = renderBankList(cfg.bankAccounts);
+}
+
+function saSavePlatform() {
+  // Re-read all inputs to make sure changes are captured
+  var pn = document.getElementById('saPlatformName');
+  var wa = document.getElementById('saWhatsApp');
+  var ce = document.getElementById('saContactEmail');
+  var cfg = getPlatformConfig();
+  if (pn) cfg.platformName = pn.value;
+  if (wa) cfg.whatsappNumber = wa.value;
+  if (ce) cfg.contactEmail = ce.value;
+  savePlatformConfig(cfg);
+
+  // Update chat buttons on the live page
+  if (typeof renderChatButtons === 'function') renderChatButtons();
+  if (typeof renderLandingPageSections === 'function') renderLandingPageSections();
+
+  logActivity('Platform settings updated');
+  toast('Platform settings saved!');
+}
+
+// ===== 4. Subscription Plans Tab =====
+function renderSaSubscriptions(container) {
+  var cfg = getPlatformConfig();
+  var plans = cfg.subscriptionPlans || [];
+
+  var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
+    + '<p style="color:var(--text-light);font-size:14px;margin:0;">' + plans.length + ' plan(s) configured</p>'
+    + '<button class="btn btn-primary btn-sm" onclick="saAddPlan()"><i class="fas fa-plus"></i> Add Plan</button></div>';
+
+  if (!plans.length) {
+    html += '<div class="empty-state"><i class="fas fa-credit-card"></i><p>No subscription plans yet.</p></div>';
+  } else {
+    html += '<div class="sa-plans-grid">'
+      + plans.map(function(p, i) {
+        var active = p.active !== false;
+        var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
+        return '<div class="sa-plan-card' + (!active ? ' inactive' : '') + '">'
+          + '<div class="sa-plan-header"><h4>' + esc(p.name) + '</h4><span class="sa-plan-status ' + (active ? 'active' : 'disabled') + '">' + (active ? 'Active' : 'Disabled') + '</span></div>'
+          + '<div class="sa-plan-amount">' + (p.interval === 'free' ? 'Free' : sym + formatAmount(p.amount || 0) + ' <span class="sa-plan-interval">/ ' + p.interval + '</span>') + '</div>'
+          + '<div class="sa-plan-features">' + esc(p.features || '') + '</div>'
+          + '<div class="sa-plan-actions"><button class="btn btn-sm btn-outline" onclick="saEditPlan(' + i + ')"><i class="fas fa-edit"></i> Edit</button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saTogglePlan(' + i + ')"><i class="fas ' + (active ? 'fa-pause' : 'fa-play') + '"></i> ' + (active ? 'Disable' : 'Enable') + '</button>'
+          + '<button class="btn btn-sm btn-outline" style="color:#dc2626;" onclick="saDeletePlan(' + i + ')"><i class="fas fa-trash"></i></button></div></div>';
+      }).join('') + '</div>';
+  }
+
+  // Show bank accounts info for payment
+  var banks = cfg.bankAccounts || [];
+  if (banks.length) {
+    html += '<div class="sa-section" style="margin-top:24px;"><h3><i class="fas fa-university"></i> Payment Instructions</h3>'
+      + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Subscribers will be asked to pay into any of these accounts:</p>'
+      + '<div style="display:grid;gap:8px;">' + banks.map(function(b) {
+        return '<div style="background:#f8fafc;border-radius:8px;padding:12px 16px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap;">'
+          + '<span><strong>Bank:</strong> ' + esc(b.bankName) + '</span>'
+          + '<span><strong>Name:</strong> ' + esc(b.accountName) + '</span>'
+          + '<span><strong>Number:</strong> ' + esc(b.accountNumber) + '</span>'
+          + '<span><strong>Currency:</strong> ' + esc(b.currency || 'NGN') + '</span></div>';
+      }).join('') + '</div></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function formatAmount(n) {
+  if (typeof n !== 'number') n = parseFloat(n) || 0;
+  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function saAddPlan() {
+  var cfg = getPlatformConfig();
+  if (!cfg.subscriptionPlans) cfg.subscriptionPlans = [];
+  cfg.subscriptionPlans.push({ id: 'plan_' + Date.now(), name: 'New Plan', interval: 'monthly', amount: 10000, active: true, features: '' });
+  savePlatformConfig(cfg);
+  renderSaTab('subscriptions');
+  logActivity('Added new subscription plan');
+}
+
+function saEditPlan(index) {
+  var cfg = getPlatformConfig();
+  var p = (cfg.subscriptionPlans || [])[index];
+  if (!p) return;
+  var overlay = document.getElementById('modalOverlay');
+  var body = document.getElementById('modalBody');
+  if (!body) return;
+  body.innerHTML = '<div style="max-width:500px;margin:0 auto;"><h3><i class="fas fa-edit"></i> Edit Plan</h3>'
+    + '<div id="saPlanError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>'
+    + '<div class="form-group"><label>Plan Name</label><input type="text" id="saEditPlanName" value="' + esc(p.name) + '"></div>'
+    + '<div class="form-group"><label>Interval</label><select id="saEditPlanInterval"><option value="free"' + (p.interval==='free'?' selected':'') + '>Free</option><option value="monthly"' + (p.interval==='monthly'?' selected':'') + '>Monthly</option><option value="yearly"' + (p.interval==='yearly'?' selected':'') + '>Yearly</option><option value="one_time"' + (p.interval==='one_time'?' selected':'') + '>One Time</option></select></div>'
+    + '<div class="form-group"><label>Amount</label><input type="number" id="saEditPlanAmount" value="' + (p.amount || 0) + '" min="0"></div>'
+    + '<div class="form-group"><label>Features Description</label><textarea rows="3" id="saEditPlanFeatures" placeholder="Comma-separated features">' + esc(p.features || '') + '</textarea></div>'
+    + '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+    + '<button class="btn btn-success" onclick="saSaveEditPlan(' + index + ')"><i class="fas fa-save"></i> Save</button></div></div>';
+  if (overlay) overlay.classList.add('active');
+}
+
+function saSaveEditPlan(index) {
+  var name = document.getElementById('saEditPlanName')?.value?.trim();
+  var interval = document.getElementById('saEditPlanInterval')?.value;
+  var amount = parseFloat(document.getElementById('saEditPlanAmount')?.value) || 0;
+  var features = document.getElementById('saEditPlanFeatures')?.value?.trim();
+  var err = document.getElementById('saPlanError');
+  if (!name) { if (err) { err.textContent = 'Plan name is required'; err.style.display = 'block'; } return; }
+  if (err) err.style.display = 'none';
+  var cfg = getPlatformConfig();
+  var p = (cfg.subscriptionPlans || [])[index];
+  if (!p) return;
+  p.name = name;
+  p.interval = interval || 'monthly';
+  p.amount = amount;
+  p.features = features || '';
+  savePlatformConfig(cfg);
+  closeModal();
+  renderSaTab('subscriptions');
+  logActivity('Updated plan: ' + name);
+  toast('Plan updated!');
+}
+
+function saTogglePlan(index) {
+  var cfg = getPlatformConfig();
+  var p = (cfg.subscriptionPlans || [])[index];
+  if (!p) return;
+  p.active = p.active === false ? true : false;
+  savePlatformConfig(cfg);
+  renderSaTab('subscriptions');
+  logActivity((p.active ? 'Enabled' : 'Disabled') + ' plan: ' + p.name);
+}
+
+function saDeletePlan(index) {
+  if (!confirm('Delete this subscription plan?')) return;
+  var cfg = getPlatformConfig();
+  var p = (cfg.subscriptionPlans || [])[index];
+  if (!p) return;
+  cfg.subscriptionPlans.splice(index, 1);
+  savePlatformConfig(cfg);
+  renderSaTab('subscriptions');
+  logActivity('Deleted plan: ' + p.name);
+  toast('Plan deleted');
+}
+
+// ===== 5. System Tab =====
+function renderSaSystem(container) {
+  var cfg = getPlatformConfig();
+  var settings = cfg.settings || {};
+  var tenants = getTenants();
+
+  // Calculate storage
+  var totalSize = 0;
+  var storageItems = 0;
+  for (var key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      totalSize += localStorage[key].length;
+      storageItems++;
+    }
+  }
+  var sizeKB = (totalSize / 1024).toFixed(1);
+  var sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+
+  var html = '<div class="sa-settings-form">'
+
+    // Maintenance
+    + '<div class="sa-section"><h3><i class="fas fa-tools"></i> Maintenance Mode</h3>'
+    + '<div class="form-row"><label>Enable Maintenance</label><label class="toggle-switch"><input type="checkbox" ' + (settings.maintenanceMode ? 'checked' : '') + ' onchange="saSetMaintenance(this.checked)"><span class="toggle-slider"></span></label></div>'
+    + '<div class="form-row"><label>Maintenance Message</label><textarea rows="2" id="saMaintenanceMsg" oninput="saSetMaintenanceMsg(this.value)">' + esc(settings.maintenanceMessage || '') + '</textarea></div>'
+    + '</div>'
+
+    // School Registration
+    + '<div class="sa-section"><h3><i class="fas fa-door-open"></i> School Registration</h3>'
+    + '<div class="form-row"><label>Allow New School Registration</label><label class="toggle-switch"><input type="checkbox" ' + (settings.allowSchoolRegistration !== false ? 'checked' : '') + ' onchange="saSetRegistration(this.checked)"><span class="toggle-slider"></span></label></div>'
+    + '</div>'
+
+    // Storage Info
+    + '<div class="sa-section"><h3><i class="fas fa-database"></i> Storage</h3>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">'
+    + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + sizeKB + ' KB</div><div class="sa-stat-label">Total localStorage (' + sizeMB + ' MB)</div></div>'
+    + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + storageItems + '</div><div class="sa-stat-label">LocalStorage Keys</div></div>'
+    + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + tenants.length + '</div><div class="sa-stat-label">Schools</div></div>'
+    + '</div>'
+
+    // Danger Zone
+    + '<div class="sa-section" style="margin-top:20px;border:1px solid #fecaca;background:#fff5f5;"><h3 style="color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">These actions cannot be undone.</p>'
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+    + '<button class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;" onclick="saClearAllData()"><i class="fas fa-trash-alt"></i> Clear All Data</button>'
+    + '<button class="btn btn-outline" style="border-color:#dc2626;color:#dc2626;" onclick="saResetPlatform()"><i class="fas fa-undo"></i> Reset Platform Settings</button>'
+    + '</div></div>'
+
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+function saSetMaintenance(val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.settings) cfg.settings = {};
+  cfg.settings.maintenanceMode = val;
+  savePlatformConfig(cfg);
+  logActivity(val ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
+  toast(val ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
+}
+
+function saSetMaintenanceMsg(val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.settings) cfg.settings = {};
+  cfg.settings.maintenanceMessage = val;
+  savePlatformConfig(cfg);
+}
+
+function saSetRegistration(val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.settings) cfg.settings = {};
+  cfg.settings.allowSchoolRegistration = val;
+  savePlatformConfig(cfg);
+  logActivity(val ? 'School registration opened' : 'School registration closed');
+}
+
+function saClearAllData() {
+  if (!confirm('Are you sure? This will delete ALL schools, ALL data, and reset the entire platform. This cannot be undone!')) return;
+  if (!confirm('FINAL WARNING: This removes every school and every record. Type "yes" to confirm.')) return;
+  var keys = [];
+  for (var key in localStorage) {
+    if (localStorage.hasOwnProperty(key) && (key.startsWith('schoolData_') || key === 'eduverse_tenants')) {
+      keys.push(key);
+    }
+  }
+  keys.forEach(function(k) { localStorage.removeItem(k); });
+  logActivity('All school data cleared');
+  toast('All school data cleared. ' + keys.length + ' stores removed.');
+  renderSaTab('system');
+}
+
+function saResetPlatform() {
+  if (!confirm('Reset platform settings to defaults? This does not affect school data.')) return;
+  savePlatformConfig(getDefaultPlatformConfig());
+  toast('Platform settings reset to defaults');
+  renderSaTab('platform');
+}
+
+// ===== Activity Log =====
+function getActivityLog() {
+  try {
+    var raw = localStorage.getItem('eduverse_activity_log');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function logActivity(msg) {
+  var log = getActivityLog();
+  log.unshift({ time: new Date().toLocaleString(), msg: msg });
+  if (log.length > 100) log.length = 100;
+  localStorage.setItem('eduverse_activity_log', JSON.stringify(log));
+}
+
+// ===== Init on load: propagate platform contact info to the landing page =====
+// This is called from renderLandingPageSections in schoolprofile.js
+function applyPlatformContact() {
+  var cfg = getPlatformConfig();
+  if (cfg.whatsappNumber || cfg.contactEmail) {
+    // Update the floating chat buttons with platform-level contact details
+    var wa = document.getElementById('chatWhatsappBtn');
+    var em = document.getElementById('chatEmailBtn');
+    if (wa && cfg.whatsappNumber) {
+      var cleaned = cfg.whatsappNumber.replace(/[\s\-\(\)]/g, '');
+      cleaned = cleaned.startsWith('+') ? cleaned.substring(1) : cleaned;
+      wa.href = 'https://wa.me/' + encodeURIComponent(cleaned);
+      wa.title = 'Chat with us on WhatsApp';
+      wa.style.display = 'flex';
+    }
+    if (em && cfg.contactEmail) {
+      em.href = 'mailto:' + cfg.contactEmail;
+      em.title = 'Email us at ' + cfg.contactEmail;
+      em.style.display = 'flex';
+    }
+  }
+}
+
+// Override showSuperAdminDashboard if it already exists in multitenant.js
+// We keep both - the modal version still works as fallback

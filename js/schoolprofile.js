@@ -1041,19 +1041,25 @@ function renderFeatureToggles() {
 // ===== Render Floating Chat Buttons =====
 function renderChatButtons() {
   var prof = getSchoolProfile();
+  var cfg = (typeof getPlatformConfig === 'function') ? getPlatformConfig() : null;
+  var waNum = (prof.whatsappNumber || '').replace(/[\s\-\(\)]/g, '');
+  var email = prof.contactEmail || '';
+
+  // Fall back to platform-level config if school has not set their own
+  if (!waNum && cfg) waNum = (cfg.whatsappNumber || '').replace(/[\s\-\(\)]/g, '');
+  if (!email && cfg) email = cfg.contactEmail || '';
+
   var wa = document.getElementById('chatWhatsappBtn');
   var em = document.getElementById('chatEmailBtn');
   if (!wa && !em) return;
-  var waNum = (prof.whatsappNumber || '').replace(/[\s\-\(\)]/g, '');
-  var email = prof.contactEmail || '';
   if (wa) {
     if (waNum) {
       var cleaned = waNum.startsWith('+') ? waNum.substring(1) : waNum;
       wa.href = 'https://wa.me/' + encodeURIComponent(cleaned);
-      wa.title = 'Chat on WhatsApp: ' + (prof.whatsappNumber || '');
+      wa.title = 'Chat on WhatsApp';
     } else {
       wa.href = 'javascript:void(0)';
-      wa.title = 'Set your WhatsApp number in School Profile';
+      wa.title = 'Set your WhatsApp number in School Profile or Super Admin';
     }
     wa.style.display = 'flex';
   }
@@ -1063,7 +1069,7 @@ function renderChatButtons() {
       em.title = 'Send email to: ' + email;
     } else {
       em.href = 'javascript:void(0)';
-      em.title = 'Set your contact email in School Profile';
+      em.title = 'Set your contact email in School Profile or Super Admin';
     }
     em.style.display = 'flex';
   }
