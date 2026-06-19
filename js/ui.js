@@ -375,6 +375,7 @@ function switchAdminPanel(panel) {
     case 'health': if (typeof renderHealthRecords === 'function') renderHealthRecords(); break;
     case 'transport': if (typeof renderTransport === 'function') renderTransport(); break;
     case 'conferences': if (typeof renderConferences === 'function') renderConferences(); break;
+    case 'support': if (typeof renderSupportPanel === 'function') renderSupportPanel(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }

@@ -927,3 +927,92 @@ function deleteAttendance(id) {
   renderAttendance();
   toast('Attendance record deleted');
 }
+
+// ===== Support Tickets Panel =====
+function renderSupportPanel() {
+  var container = document.getElementById('adminSupportTickets');
+  if (!container) return;
+
+  var tickets = data.supportTickets || [];
+
+  var openTickets = tickets.filter(function(t) { return t.status === 'open' || t.status === 'pending'; });
+  var closedTickets = tickets.filter(function(t) { return t.status === 'closed'; });
+
+  var html = '<div class="card-header"><h2><i class="fas fa-headset"></i> Support Tickets</h2></div>'
+    + '<p class="subtitle">Submit and track support requests to the platform administrator.</p>'
+
+    // Stats
+    + '<div class="stats-grid" style="margin-bottom:16px;grid-template-columns:repeat(3,1fr);">'
+    + '<div class="stat-card" style="text-align:center;"><div style="font-size:24px;font-weight:700;">' + openTickets.length + '</div><p style="margin:0;font-size:13px;color:var(--text-light);">Open</p></div>'
+    + '<div class="stat-card" style="text-align:center;"><div style="font-size:24px;font-weight:700;">' + closedTickets.length + '</div><p style="margin:0;font-size:13px;color:var(--text-light);">Closed</p></div>'
+    + '<div class="stat-card" style="text-align:center;"><div style="font-size:24px;font-weight:700;">' + tickets.length + '</div><p style="margin:0;font-size:13px;color:var(--text-light);">Total</p></div>'
+    + '</div>'
+
+    // New ticket form
+    + '<div class="card" style="margin-bottom:16px;"><h3 style="margin-bottom:12px;"><i class="fas fa-plus-circle"></i> Open a New Ticket</h3>'
+    + '<div id="supportFormError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>'
+    + '<div class="form-group"><label>Subject</label>'
+    + '<select id="supportSubject" class="form-control" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;">'
+    + '<option value="Technical Issue">Technical Issue</option>'
+    + '<option value="Billing / Payment">Billing / Payment</option>'
+    + '<option value="Account">Account</option>'
+    + '<option value="Feature Request">Feature Request</option>'
+    + '<option value="Bug Report">Bug Report</option>'
+    + '<option value="Other">Other</option>'
+    + '</select></div>'
+    + '<div class="form-group"><label>Description</label>'
+    + '<textarea id="supportMessage" class="form-control" style="width:100%;padding:8px;border:1px solid #d1d5db;border-radius:6px;min-height:100px;font-family:inherit;" placeholder="Describe your issue or request in detail..."></textarea></div>'
+    + '<button class="btn btn-primary" onclick="submitSupportTicket()"><i class="fas fa-paper-plane"></i> Submit Ticket</button>'
+    + '</div>';
+
+  // Ticket list
+  html += '<div class="card"><h3 style="margin-bottom:12px;"><i class="fas fa-list"></i> Your Tickets</h3>';
+  if (!tickets.length) {
+    html += '<p class="empty-state" style="padding:20px;">No support tickets submitted yet.</p>';
+  } else {
+    html += tickets.slice().reverse().map(function(tk) {
+      var statusColor = tk.status === 'closed' ? '#059669' : (tk.status === 'pending' ? '#d97706' : '#dc2626');
+      var statusBg = tk.status === 'closed' ? '#d1fae5' : (tk.status === 'pending' ? '#fef3c7' : '#fee2e2');
+      return '<div style="border:1px solid #e2e8f0;border-radius:8px;margin-bottom:10px;overflow:hidden;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'block\'?\'none\':\'block\'">'
+        + '<div><strong>' + esc(tk.subject || 'No subject') + '</strong><br><span style="font-size:12px;color:var(--text-light);">' + esc(tk.createdAt || '') + '</span></div>'
+        + '<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:' + statusBg + ';color:' + statusColor + ';font-weight:500;">' + esc(tk.status || 'open') + '</span></div>'
+        + '<div style="display:none;padding:12px 16px;border-top:1px solid #e2e8f0;">'
+        + '<p style="font-size:14px;margin-bottom:12px;">' + esc(tk.message || '') + '</p>'
+        + (tk.response ? '<div style="padding:8px 12px;background:#f0fdf4;border-radius:6px;border-left:3px solid #059669;font-size:13px;"><strong>Response (' + esc(tk.respondedAt || '') + '):</strong><br>' + esc(tk.response) + '</div>' : '')
+        + (tk.status !== 'closed' ? '<p style="font-size:12px;color:var(--text-light);margin-top:8px;"><i class="fas fa-clock"></i> Awaiting response</p>' : '')
+        + '</div></div>';
+    }).join('');
+  }
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function submitSupportTicket() {
+  var subject = document.getElementById('supportSubject')?.value;
+  var message = document.getElementById('supportMessage')?.value?.trim();
+  var error = document.getElementById('supportFormError');
+
+  if (!message || message.length < 10) {
+    if (error) { error.textContent = 'Please provide a detailed description (at least 10 characters).'; error.style.display = 'block'; }
+    return;
+  }
+  if (error) error.style.display = 'none';
+
+  if (!data.supportTickets) data.supportTickets = [];
+  data.supportTickets.push({
+    id: 'TK-' + Date.now().toString(36).toUpperCase(),
+    subject: subject || 'General',
+    message: message,
+    status: 'open',
+    createdAt: new Date().toLocaleString(),
+    respondedAt: null,
+    response: null
+  });
+  saveData();
+
+  document.getElementById('supportMessage').value = '';
+  renderSupportPanel();
+  toast('Support ticket submitted! You will receive a response soon.');
+}

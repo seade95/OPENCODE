@@ -32,9 +32,18 @@ function getDefaultPlatformConfig() {
     ],
     settings: {
       allowSchoolRegistration: true,
+      requireApproval: false,
       maintenanceMode: false,
       maintenanceMessage: 'System is under maintenance. Please check back shortly.'
     },
+    smtpConfig: { host: '', port: 587, secure: false, user: '', pass: '', fromName: '', fromEmail: '' },
+    globalFeatureFlags: {
+      examSimulation: true, aiTools: true, activityGames: true, alumni: true,
+      hostel: true, library: true, transport: true, health: true, chat: true,
+      gallery: true, reportBuilder: true, idCards: true, handwritingOcr: true,
+      paymentGateway: true, eschool: true, gradebook: true
+    },
+    revenueRecords: [],
     lastBackupDate: null
   };
 }
@@ -61,6 +70,9 @@ function showSuperAdminDashboard() {
     + saNavItem('subscriptions', 'credit-card', 'Subscription Plans')
     + saNavItem('analytics', 'chart-line', 'Analytics')
     + saNavItem('broadcast', 'bullhorn', 'Broadcast')
+    + saNavItem('revenue', 'money-bill-wave', 'Revenue')
+    + saNavItem('tickets', 'headset', 'Support Tickets')
+    + saNavItem('features', 'toggle-on', 'Feature Flags')
     + saNavItem('backup', 'database', 'Backup & Data')
     + saNavItem('system', 'server', 'System')
     + '</nav>'
@@ -103,6 +115,9 @@ function renderSaTab(tab) {
     subscriptions: 'Subscription Plans',
     analytics: 'Platform Analytics',
     broadcast: 'Broadcast Message',
+    revenue: 'Revenue & Payments',
+    tickets: 'Support Tickets',
+    features: 'Global Feature Flags',
     backup: 'Backup & Data Management',
     system: 'System & Maintenance'
   };
@@ -117,6 +132,9 @@ function renderSaTab(tab) {
     case 'subscriptions': renderSaSubscriptions(content); break;
     case 'analytics': renderSaAnalytics(content); break;
     case 'broadcast': renderSaBroadcast(content); break;
+    case 'revenue': renderSaRevenue(content); break;
+    case 'tickets': renderSaTickets(content); break;
+    case 'features': renderSaFeatures(content); break;
     case 'backup': renderSaBackup(content); break;
     case 'system': renderSaSystem(content); break;
   }
@@ -161,8 +179,12 @@ function renderSaOverview(container) {
 // ===== 2. Schools Tab =====
 function renderSaSchools(container) {
   var tenants = getTenants();
+  var pendingCount = tenants.filter(function(t) { return t.status === 'pending'; }).length;
+
   var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
-    + '<p style="color:var(--text-light);font-size:14px;margin:0;">' + tenants.length + ' school(s) registered</p>'
+    + '<p style="color:var(--text-light);font-size:14px;margin:0;">' + tenants.length + ' school(s) registered'
+    + (pendingCount ? ' (<strong style="color:#d97706;">' + pendingCount + ' pending</strong>)' : '')
+    + '</p>'
     + '<button class="btn btn-primary btn-sm" onclick="closeSaDashboard();showOnboardSchool()"><i class="fas fa-plus"></i> Add School</button></div>';
 
   if (!tenants.length) {
@@ -171,18 +193,56 @@ function renderSaSchools(container) {
     html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
       + '<thead><tr><th>School</th><th>Email</th><th>Tier</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
       + tenants.map(function(t) {
+        var statusBadgeClass = t.status === 'active' ? 'badge-paid' : (t.status === 'pending' ? 'badge-grade' : 'badge-absent');
+        var statusActions = (t.status === 'pending')
+          ? '<button class="btn btn-sm btn-success" onclick="saApproveSchool(\'' + t.id + '\')" title="Approve"><i class="fas fa-check"></i> Approve</button>'
+          : '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
         return '<tr><td><strong>' + esc(t.name) + '</strong></td><td>' + esc(t.email) + '</td>'
           + '<td><span class="badge badge-grade">' + esc(t.tier) + '</span></td>'
           + '<td><span class="badge" style="background:#dbeafe;color:#1e40af;">' + esc(t.plan) + '</span></td>'
-          + '<td><span class="badge ' + (t.status === 'active' ? 'badge-paid' : 'badge-absent') + '">' + esc(t.status) + '</span></td>'
-          + '<td><div style="display:flex;gap:4px;">'
+          + '<td><span class="badge ' + statusBadgeClass + '">' + esc(t.status) + '</span></td>'
+          + '<td><div style="display:flex;gap:4px;flex-wrap:wrap;">'
           + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open"><i class="fas fa-external-link-alt"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
+          + statusActions
           + '<button class="btn btn-sm btn-outline" style="color:#dc2626;" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>'
           + '</div></td></tr>';
       }).join('') + '</tbody></table></div>';
   }
   container.innerHTML = html;
+}
+
+function saApproveSchool(id) {
+  var tenants = getTenants();
+  var t = tenants.find(function(x) { return x.id === id; });
+  if (!t) return;
+  t.status = 'active';
+  saveTenants(tenants);
+  logActivity('Approved school registration: ' + t.name);
+  renderSaSchools(document.getElementById('saContent'));
+  toast('School "' + t.name + '" approved and activated!');
+}
+
+function saResetSchoolPassword(id) {
+  var tenants = getTenants();
+  var t = tenants.find(function(x) { return x.id === id; });
+  if (!t) return;
+  var newPass = prompt('Enter new password for "' + t.name + '":', 'password123');
+  if (!newPass || newPass.length < 4) { toast('Password must be at least 4 characters'); return; }
+  try {
+    var key = getTenantDataKey(id);
+    var raw = localStorage.getItem(key);
+    if (raw) {
+      var d = JSON.parse(raw);
+      // Hash the password using btoa (simple base64) for demo purposes
+      d.password = btoa(newPass);
+      localStorage.setItem(key, JSON.stringify(d));
+      logActivity('Password reset for school: ' + t.name);
+      toast('Password for "' + t.name + '" has been reset successfully!');
+    } else {
+      toast('No data found for this school.');
+    }
+  } catch(e) { toast('Error: ' + e.message); }
 }
 
 function saToggleTenant(id) {
@@ -227,6 +287,19 @@ function renderSaPlatform(container) {
     + '<div class="sa-section"><h3><i class="fas fa-university"></i> Bank Accounts <span style="font-size:12px;color:var(--text-light);font-weight:400;">(for subscription payments)</span></h3>'
     + '<div id="saBankList">' + renderBankList(banks) + '</div>'
     + '<button class="btn btn-sm btn-primary" onclick="saAddBank()" style="margin-top:8px;"><i class="fas fa-plus"></i> Add Bank Account</button>'
+    + '</div>'
+
+    // SMTP / Email
+    + '<div class="sa-section"><h3><i class="fas fa-envelope-open-text"></i> Email (SMTP) Configuration <span style="font-size:12px;color:var(--text-light);font-weight:400;">— for broadcasts &amp; password resets</span></h3>'
+    + '<div class="form-row"><label>SMTP Host</label><input type="text" id="saSmtpHost" value="' + esc((cfg.smtpConfig||{}).host || '') + '" placeholder="smtp.gmail.com" onchange="updateSaSmtp(\'host\',this.value)"></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+    + '<div class="form-row"><label>Port</label><input type="number" id="saSmtpPort" value="' + ((cfg.smtpConfig||{}).port || 587) + '" onchange="updateSaSmtp(\'port\',parseInt(this.value)||587)"></div>'
+    + '<div class="form-row"><label>Secure (TLS)</label><select id="saSmtpSecure" onchange="updateSaSmtp(\'secure\',this.value===\'true\')"><option value="true"' + ((cfg.smtpConfig||{}).secure ? ' selected':'') + '>Yes</option><option value="false"' + (!(cfg.smtpConfig||{}).secure ? ' selected':'') + '>No</option></select></div>'
+    + '</div>'
+    + '<div class="form-row"><label>Username</label><input type="text" id="saSmtpUser" value="' + esc((cfg.smtpConfig||{}).user || '') + '" placeholder="your@email.com" onchange="updateSaSmtp(\'user\',this.value)"></div>'
+    + '<div class="form-row"><label>Password</label><input type="password" id="saSmtpPass" value="' + esc((cfg.smtpConfig||{}).pass || '') + '" placeholder="App password" onchange="updateSaSmtp(\'pass\',this.value)"></div>'
+    + '<div class="form-row"><label>From Name</label><input type="text" id="saSmtpFromName" value="' + esc((cfg.smtpConfig||{}).fromName || cfg.platformName || 'EDUVERSE') + '" onchange="updateSaSmtp(\'fromName\',this.value)"></div>'
+    + '<div class="form-row"><label>From Email</label><input type="email" id="saSmtpFromEmail" value="' + esc((cfg.smtpConfig||{}).fromEmail || cfg.contactEmail || '') + '" onchange="updateSaSmtp(\'fromEmail\',this.value)"></div>'
     + '</div>'
 
     // Save button
@@ -279,6 +352,13 @@ function saRemoveBank(index) {
   savePlatformConfig(cfg);
   var list = document.getElementById('saBankList');
   if (list) list.innerHTML = renderBankList(cfg.bankAccounts);
+}
+
+function updateSaSmtp(field, val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.smtpConfig) cfg.smtpConfig = {};
+  cfg.smtpConfig[field] = val;
+  savePlatformConfig(cfg);
 }
 
 function saSavePlatform() {
@@ -893,7 +973,290 @@ function saViewRawData(id) {
   } catch(e) { toast('Error: ' + e.message); }
 }
 
-// Add school name to overview quick actions
+// ===== Revenue Tab =====
+function renderSaRevenue(container) {
+  var cfg = getPlatformConfig();
+  var records = cfg.revenueRecords || [];
+  var tenants = getTenants();
+
+  // Aggregate by plan
+  var planRevenue = {};
+  var totalRevenue = 0;
+  records.forEach(function(r) {
+    var amt = parseFloat(r.amount) || 0;
+    totalRevenue += amt;
+    planRevenue[r.plan] = (planRevenue[r.plan] || 0) + amt;
+  });
+
+  // Count paid schools
+  var paidSchools = {};
+  records.forEach(function(r) { paidSchools[r.schoolId] = true; });
+
+  var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
+
+  var html = '<div class="sa-stats-grid">'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-money-bill-wave"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(totalRevenue) + '</div><div class="sa-stat-label">Total Revenue</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + Object.keys(paidSchools).length + '</div><div class="sa-stat-label">Paying Schools</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-receipt"></i></div><div><div class="sa-stat-value">' + records.length + '</div><div class="sa-stat-label">Transactions</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-chart-line"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(records.length ? (totalRevenue / records.length) : 0) + '</div><div class="sa-stat-label">Avg per Transaction</div></div></div>'
+    + '</div>';
+
+  // Record a payment
+  html += '<div class="sa-section"><h3><i class="fas fa-plus-circle"></i> Record a Payment</h3>'
+    + '<div id="saRevError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">'
+    + '<div class="form-group"><label>School</label><select id="saRevSchool"><option value="">-- Select --</option>'
+    + tenants.map(function(t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('')
+    + '</select></div>'
+    + '<div class="form-group"><label>Plan</label><select id="saRevPlan"><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="enterprise">Enterprise</option></select></div>'
+    + '<div class="form-group"><label>Amount (' + cfg.currency + ')</label><input type="number" id="saRevAmount" min="0" step="0.01"></div>'
+    + '<div class="form-group"><label>Payment Method</label><select id="saRevMethod"><option value="bank_transfer">Bank Transfer</option><option value="online">Online Gateway</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></div>'
+    + '</div>'
+    + '<button class="btn btn-primary" onclick="saRecordPayment()" style="margin-top:8px;"><i class="fas fa-check"></i> Record Payment</button>'
+    + '</div>';
+
+  // Transaction history
+  html += '<div class="sa-section"><h3><i class="fas fa-list"></i> Payment History (' + records.length + ')</h3>';
+  if (!records.length) {
+    html += '<p class="empty-state" style="margin:0;padding:12px;">No payments recorded yet.</p>';
+  } else {
+    html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
+      + '<thead><tr><th>Date</th><th>School</th><th>Plan</th><th>Amount</th><th>Method</th><th>Ref</th></tr></thead><tbody>'
+      + records.slice().reverse().map(function(r) {
+        var t = tenants.find(function(x) { return x.id === r.schoolId; });
+        return '<tr><td>' + esc(r.date || '') + '</td><td>' + esc(t ? t.name : 'Unknown') + '</td><td>' + esc(r.plan || '') + '</td>'
+          + '<td><strong>' + sym + formatAmount(r.amount) + '</strong></td><td>' + esc(r.method || '') + '</td><td style="font-size:11px;">' + esc(r.ref || '') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function saRecordPayment() {
+  var schoolId = document.getElementById('saRevSchool')?.value;
+  var plan = document.getElementById('saRevPlan')?.value;
+  var amount = parseFloat(document.getElementById('saRevAmount')?.value) || 0;
+  var method = document.getElementById('saRevMethod')?.value || 'bank_transfer';
+  var err = document.getElementById('saRevError');
+
+  if (!schoolId || amount <= 0) {
+    if (err) { err.textContent = 'Select a school and enter a valid amount'; err.style.display = 'block'; }
+    return;
+  }
+  if (err) err.style.display = 'none';
+
+  var cfg = getPlatformConfig();
+  if (!cfg.revenueRecords) cfg.revenueRecords = [];
+  cfg.revenueRecords.push({
+    schoolId: schoolId, plan: plan, amount: amount, method: method,
+    date: new Date().toLocaleDateString(), ref: 'PAY-' + Date.now().toString(36).toUpperCase(),
+    recordedBy: (getSuperAdmin() || {}).name || 'Super Admin'
+  });
+  savePlatformConfig(cfg);
+
+  // Update the school's subscription plan
+  try {
+    var key = getTenantDataKey(schoolId);
+    var raw = localStorage.getItem(key);
+    if (raw) {
+      var d = JSON.parse(raw);
+      d.subscription = d.subscription || {};
+      d.subscription.plan = plan;
+      d.subscription.status = 'active';
+      d.subscription.lastPaymentDate = new Date().toISOString();
+      d.subscription.lastPaymentRef = 'PAY-' + Date.now().toString(36).toUpperCase();
+      localStorage.setItem(key, JSON.stringify(d));
+    }
+  } catch(e) {}
+
+  logActivity('Payment recorded: ' + formatAmount(amount) + ' for school ' + schoolId);
+  document.getElementById('saRevAmount').value = '';
+  renderSaRevenue(document.getElementById('saContent'));
+  toast('Payment recorded successfully!');
+}
+
+// ===== Support Tickets Tab =====
+function renderSaTickets(container) {
+  var tenants = getTenants();
+
+  // Collect all tickets from all schools
+  var allTickets = [];
+  var tenantMap = {};
+  tenants.forEach(function(t) {
+    tenantMap[t.id] = t.name;
+    try {
+      var raw = localStorage.getItem(getTenantDataKey(t.id));
+      if (raw) {
+        var d = JSON.parse(raw);
+        var tickets = d.supportTickets || [];
+        tickets.forEach(function(tk) {
+          allTickets.push({ schoolId: t.id, schoolName: t.name, ticket: tk });
+        });
+      }
+    } catch(e) {}
+  });
+
+  // Sort by date descending
+  allTickets.sort(function(a, b) { return new Date(b.ticket.createdAt) - new Date(a.ticket.createdAt); });
+
+  var openCount = allTickets.filter(function(x) { return x.ticket.status === 'open' || x.ticket.status === 'pending'; }).length;
+  var closedCount = allTickets.filter(function(x) { return x.ticket.status === 'closed'; }).length;
+
+  var html = '<div class="sa-stats-grid">'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-ticket-alt"></i></div><div><div class="sa-stat-value">' + openCount + '</div><div class="sa-stat-label">Open Tickets</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-check-circle"></i></div><div><div class="sa-stat-value">' + closedCount + '</div><div class="sa-stat-label">Closed</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + allTickets.length + '</div><div class="sa-stat-label">Total</div></div></div>'
+    + '</div>';
+
+  html += '<div class="sa-section"><h3><i class="fas fa-list"></i> All Tickets</h3>';
+  if (!allTickets.length) {
+    html += '<p class="empty-state" style="margin:0;padding:12px;">No support tickets from any school yet.</p>';
+  } else {
+    html += allTickets.map(function(item) {
+      var tk = item.ticket;
+      var statusColor = tk.status === 'closed' ? '#059669' : (tk.status === 'pending' ? '#d97706' : '#dc2626');
+      var statusBg = tk.status === 'closed' ? '#d1fae5' : (tk.status === 'pending' ? '#fef3c7' : '#fee2e2');
+      return '<div style="border:1px solid #e2e8f0;border-radius:8px;margin-bottom:10px;overflow:hidden;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;cursor:pointer;" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'block\'?\'none\':\'block\'">'
+        + '<div><strong>' + esc(tk.subject || 'No subject') + '</strong><br><span style="font-size:12px;color:var(--text-light);">from ' + esc(item.schoolName) + ' &middot; ' + esc(tk.createdAt || '') + '</span></div>'
+        + '<span style="font-size:11px;padding:2px 8px;border-radius:4px;background:' + statusBg + ';color:' + statusColor + ';font-weight:500;">' + esc(tk.status || 'open') + '</span></div>'
+        + '<div style="display:none;padding:12px 16px;border-top:1px solid #e2e8f0;">'
+        + '<p style="font-size:14px;margin-bottom:12px;">' + esc(tk.message || '') + '</p>'
+        + (tk.status !== 'closed' ? '<div style="display:flex;gap:8px;"><textarea rows="2" id="saTicketReply_' + tk.id + '" placeholder="Type your response..." style="flex:1;padding:8px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;font-size:13px;"></textarea>'
+          + '<button class="btn btn-sm btn-primary" onclick="saRespondTicket(\'' + item.schoolId + '\',\'' + tk.id + '\')"><i class="fas fa-reply"></i> Reply &amp; Close</button></div>' : '')
+        + (tk.response ? '<div style="margin-top:8px;padding:8px 12px;background:#f0fdf4;border-radius:6px;border-left:3px solid #059669;font-size:13px;"><strong>Response:</strong> ' + esc(tk.response) + '</div>' : '')
+        + '</div></div>';
+    }).join('');
+  }
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function saRespondTicket(schoolId, ticketId) {
+  var reply = document.getElementById('saTicketReply_' + ticketId)?.value?.trim();
+  if (!reply) { toast('Please type a response before closing.'); return; }
+  try {
+    var key = getTenantDataKey(schoolId);
+    var raw = localStorage.getItem(key);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    if (!d.supportTickets) d.supportTickets = [];
+    var tk = d.supportTickets.find(function(x) { return x.id === ticketId; });
+    if (tk) {
+      tk.status = 'closed';
+      tk.response = reply;
+      tk.respondedAt = new Date().toLocaleString();
+      localStorage.setItem(key, JSON.stringify(d));
+      logActivity('Closed ticket: ' + tk.subject + ' from ' + schoolId);
+      toast('Ticket closed! School admin can view the response.');
+      renderSaTickets(document.getElementById('saContent'));
+    }
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+// ===== Global Feature Flags Tab =====
+function renderSaFeatures(container) {
+  var cfg = getPlatformConfig();
+  var flags = cfg.globalFeatureFlags || {};
+
+  var featureLabels = {
+    examSimulation: 'Exam Simulation',
+    aiTools: 'AI Tools',
+    activityGames: 'Activity Games',
+    alumni: 'Alumni Portal',
+    hostel: 'Hostel Management',
+    library: 'Library',
+    transport: 'Transport',
+    health: 'Health Records',
+    chat: 'Chat / Community',
+    gallery: 'Gallery',
+    reportBuilder: 'Report Builder',
+    idCards: 'ID Cards',
+    handwritingOcr: 'Handwriting OCR',
+    paymentGateway: 'Payment Gateway',
+    eschool: 'E-School',
+    gradebook: 'Gradebook'
+  };
+
+  var html = '<div class="sa-section"><h3><i class="fas fa-toggle-on"></i> Global Feature Toggles</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Toggle features ON/OFF for ALL schools at once. Disabled features will be hidden from school portals.</p>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">'
+    + Object.keys(featureLabels).map(function(k) {
+      var enabled = flags[k] !== false;
+      return '<label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;padding:10px 12px;background:' + (enabled ? '#f0fdf4' : '#f8fafc') + ';border-radius:8px;border:1px solid ' + (enabled ? '#bbf7d0' : '#e2e8f0') + ';">'
+        + '<input type="checkbox" ' + (enabled ? 'checked' : '') + ' onchange="saToggleGlobalFeature(\'' + k + '\',this.checked)" style="width:16px;height:16px;">'
+        + '<span style="flex:1;">' + featureLabels[k] + '</span>'
+        + '<span style="font-size:11px;color:' + (enabled ? '#059669' : '#9ca3af') + ';">' + (enabled ? 'ON' : 'OFF') + '</span></label>';
+    }).join('')
+    + '</div></div>'
+
+    // Apply to all schools button
+    + '<div class="sa-section"><h3><i class="fas fa-sync-alt"></i> Apply Flags to All Schools</h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Pushes the current feature flag settings into each school\'s data so their portals respect the changes.</p>'
+    + '<button class="btn btn-primary" onclick="saApplyFeatureFlags()"><i class="fas fa-check-double"></i> Apply to All Schools Now</button>'
+    + '<p id="saFeatureResult" style="font-size:13px;margin-top:8px;"></p>'
+    + '</div>'
+
+    // Registration approval toggle
+    + '<div class="sa-section"><h3><i class="fas fa-door-open"></i> School Registration</h3>'
+    + '<div class="form-row"><label>Require Admin Approval for New Schools</label><label class="toggle-switch"><input type="checkbox" ' + ((cfg.settings||{}).requireApproval ? 'checked' : '') + ' onchange="saSetApproval(this.checked)"><span class="toggle-slider"></span></label></div>'
+    + '<p style="font-size:12px;color:var(--text-light);margin-top:4px;">When enabled, new schools will be marked "pending" and must be approved manually.</p>'
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+function saToggleGlobalFeature(key, val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.globalFeatureFlags) cfg.globalFeatureFlags = {};
+  cfg.globalFeatureFlags[key] = val;
+  savePlatformConfig(cfg);
+}
+
+function saApplyFeatureFlags() {
+  var cfg = getPlatformConfig();
+  var flags = cfg.globalFeatureFlags || {};
+  var tenants = getTenants();
+  var updated = 0;
+
+  tenants.forEach(function(t) {
+    try {
+      var key = getTenantDataKey(t.id);
+      var raw = localStorage.getItem(key);
+      if (raw) {
+        var d = JSON.parse(raw);
+        if (!d.schoolProfile) d.schoolProfile = {};
+        if (!d.schoolProfile.enableFeatures) d.schoolProfile.enableFeatures = {};
+        Object.keys(flags).forEach(function(f) {
+          d.schoolProfile.enableFeatures[f] = flags[f];
+        });
+        localStorage.setItem(key, JSON.stringify(d));
+        updated++;
+      }
+    } catch(e) {}
+  });
+
+  logActivity('Feature flags applied to ' + updated + ' schools');
+  var result = document.getElementById('saFeatureResult');
+  if (result) result.innerHTML = '<span style="color:#059669;"><i class="fas fa-check-circle"></i> Flags applied to ' + updated + ' school(s)</span>';
+  toast('Feature flags applied to ' + updated + ' schools!');
+}
+
+function saSetApproval(val) {
+  var cfg = getPlatformConfig();
+  if (!cfg.settings) cfg.settings = {};
+  cfg.settings.requireApproval = val;
+  savePlatformConfig(cfg);
+  logActivity(val ? 'School approval required' : 'School approval disabled');
+  toast(val ? 'New schools will require approval' : 'Schools can register freely');
+}
+
+// ===== Update Schools tab with approval controls + password reset =====
+// The schools tab is already rendered by renderSaSchools. 
+// Add password reset and approval toggles per school.
+
 // Keep the existing formatAmount
 function formatAmount(n) {
   if (typeof n !== 'number') n = parseFloat(n) || 0;
