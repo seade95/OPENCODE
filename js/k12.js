@@ -344,6 +344,46 @@ function renderProvisionedClasses() {
     : '<p class="empty-state">No classes provisioned. Select institution type and save.</p>';
 }
 
+function renderClassManagement() {
+  var container = document.getElementById('classTeacherView');
+  if (!container) return;
+  var tier = data.schoolTier || 'full_k12';
+  var classes = getClassesForTier(tier);
+  var teachers = data.teachers || [];
+  if (!data.classTeachers) data.classTeachers = {};
+  if (!classes.length) { container.innerHTML = '<div class="empty-state"><i class="fas fa-school"></i><p>No classes provisioned. Go to School Setup first.</p></div>'; return; }
+  var html = '<div class="table-responsive"><table><thead><tr><th>Class</th><th>Assigned Class Teacher</th><th style="width:120px;">Actions</th></tr></thead><tbody>';
+  classes.forEach(function(c) {
+    var current = data.classTeachers[c] || '';
+    html += '<tr><td><strong>' + c + '</strong></td><td><select id="ctSelect_' + c.replace(/\s+/g,'_') + '" style="width:100%;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;">';
+    html += '<option value="">— None —</option>';
+    teachers.forEach(function(t) {
+      var sel = t.id === current ? ' selected' : '';
+      html += '<option value="' + t.id + '"' + sel + '>' + htmlEscape(t.name) + (t.assignedClass ? ' (' + htmlEscape(t.assignedClass) + ')' : '') + '</option>';
+    });
+    html += '</select></td><td><button class="btn btn-sm btn-primary" onclick="saveClassTeacher(\'' + c.replace(/'/g, "\\'") + '\')"><i class="fas fa-save"></i> Assign</button></td></tr>';
+  });
+  html += '</tbody></table></div>';
+  html += '<div style="margin-top:12px;padding:12px;background:#fefcbf;border-radius:8px;font-size:13px;color:#744210;"><i class="fas fa-info-circle"></i> Each class can have only one class teacher. Teacher\'s current <strong>assignedClass</strong> is shown in parentheses for reference — this field is separate from the class teacher role.</div>';
+  container.innerHTML = html;
+}
+
+function saveClassTeacher(className) {
+  var key = 'ctSelect_' + className.replace(/\s+/g,'_');
+  var sel = document.getElementById(key);
+  if (!sel) return;
+  if (!data.classTeachers) data.classTeachers = {};
+  var teacherId = sel.value;
+  if (teacherId) {
+    data.classTeachers[className] = teacherId;
+  } else {
+    delete data.classTeachers[className];
+  }
+  saveData();
+  toast('Class teacher ' + (teacherId ? 'assigned' : 'removed') + ' for ' + className);
+  renderClassManagement();
+}
+
 function renderTierOverview() {
   var container = document.getElementById('tierOverview');
   if (!container) return;

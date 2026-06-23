@@ -1214,6 +1214,7 @@ function parentLogin() {
   }
   currentParent = parent;
   if (typeof setSession === 'function') setSession('parent', parent);
+  if (typeof resetSessionActivity === 'function') resetSessionActivity();
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
   var pp = document.getElementById('parentPage'); if (pp) pp.classList.add('active');
   renderParentPortal();
@@ -5100,8 +5101,8 @@ function renderMealPlanner() {
   var html = '<div class="card-header"><h2><i class="fas fa-utensils"></i> Meal Planner</h2>'
     + '<button class="btn btn-sm btn-primary" onclick="showAddMealPlan()"><i class="fas fa-plus"></i> New Weekly Menu</button></div>'
     + '<p class="subtitle">Plan the school cafeteria menu by week. Track student dietary restrictions.</p>'
-    + '<div style="display:flex;gap:16px;flex-wrap:wrap;">'
-    + '<div class="card" style="flex:2;min-width:300px;"><h4 style="font-weight:600;margin-bottom:12px;">Weekly Meal Plans</h4><div id="mealPlanList">';
+    + '<div style="display:flex;gap:16px;flex-wrap:wrap;width:100%;box-sizing:border-box;overflow-x:hidden;">'
+    + '<div class="card" style="flex:2;min-width:300px;width:100%;box-sizing:border-box;"><h4 style="font-weight:600;margin-bottom:12px;">Weekly Meal Plans</h4><div id="mealPlanList">';
   if (!plans.length) {
     html += '<p style="text-align:center;color:var(--text-light);padding:20px;">No meal plans created yet.</p>';
   } else {
@@ -5120,7 +5121,7 @@ function renderMealPlanner() {
     });
   }
   html += '</div></div>'
-    + '<div class="card" style="flex:1;min-width:250px;"><h4 style="font-weight:600;margin-bottom:12px;">Dietary Restrictions</h4>'
+    + '<div class="card" style="flex:1;min-width:250px;width:100%;box-sizing:border-box;"><h4 style="font-weight:600;margin-bottom:12px;">Dietary Restrictions</h4>'
     + '<div style="display:flex;gap:6px;margin-bottom:8px;"><input type="text" id="drStudentName" class="form-input" placeholder="Student name" style="flex:1;"><input type="text" id="drRestriction" class="form-input" placeholder="Allergy / Restriction" style="flex:1;">'
     + '<button class="btn btn-sm btn-primary" onclick="addDietaryRestriction()"><i class="fas fa-plus"></i></button></div>'
     + '<div id="dietaryList">';
@@ -5461,4 +5462,202 @@ function checkoutStore() {
   localStorage.removeItem('eduverse_store_cart');
   var container = document.getElementById('studentStoreView');
   if (container) renderStudentStore();
+}
+
+// ===== SCIENTIFIC CALCULATOR =====
+var _calcState = { expr: '', memory: 0, isRadian: false, history: [] };
+
+function openCalculator() {
+  openModal('<div class="calc-wrapper"><div class="calc-display"><div class="calc-expr" id="calcExpr"></div><div class="calc-result" id="calcResult">0</div></div><div class="calc-grid" id="calcGrid"></div><div class="calc-footer"><button class="btn btn-sm" onclick="calcHistory()"><i class="fas fa-history"></i> History</button> <span id="calcMode" style="font-size:11px;color:var(--text-light);margin-left:8px;">DEG</span></div></div>');
+  document.getElementById('modalContent').style.maxWidth = '380px';
+  _calcState.expr = '';
+  _calcRenderButtons();
+  _calcUpdateDisplay();
+}
+
+function _calcRenderButtons() {
+  var grid = document.getElementById('calcGrid');
+  if (!grid) return;
+  var rows = [
+    [{l:'sin',a:'sin(',c:'sci'},{l:'cos',a:'cos(',c:'sci'},{l:'tan',a:'tan(',c:'sci'},{l:'(',a:'('},{l:')',a:')'}],
+    [{l:'log',a:'log(',c:'sci'},{l:'ln',a:'ln(',c:'sci'},{l:'√',a:'sqrt(',c:'sci'},{l:'x²',a:'^2',c:'sci'},{l:'x³',a:'^3',c:'sci'}],
+    [{l:'π',a:'pi',c:'sci'},{l:'e',a:'euler',c:'sci'},{l:'!',a:'!',c:'sci'},{l:'1/x',a:'inv',c:'sci'},{l:'|x|',a:'abs(',c:'sci'}],
+    [{l:'MC',a:'mc',c:'mem'},{l:'MR',a:'mr',c:'mem'},{l:'M+',a:'mplus',c:'mem'},{l:'M-',a:'mminus',c:'mem'},{l:'C',a:'clear',c:'danger'}],
+    [{l:'⌫',a:'back',c:'danger'},{l:'±',a:'neg',c:'danger'},{l:'%',a:'%'},{l:'÷',a:'/',c:'op'},{l:'×',a:'*',c:'op'}],
+    [{l:'7',a:'7'},{l:'8',a:'8'},{l:'9',a:'9'},{l:'-',a:'-',c:'op'},{l:'+',a:'+',c:'op'}],
+    [{l:'4',a:'4'},{l:'5',a:'5'},{l:'6',a:'6'},{l:'.',a:'.'},{l:'=',a:'=',c:'eq'}],
+    [{l:'1',a:'1'},{l:'2',a:'2'},{l:'3',a:'3'},{l:'0',a:'0'},{l:'DEG',a:'mode',c:'sci'}]
+  ];
+  grid.innerHTML = rows.map(function(row) {
+    return '<div style="display:contents">' + row.map(function(b) {
+      var cls = 'calc-btn' + (b.c ? ' calc-' + b.c : '');
+      return '<button class="' + cls + '" onclick="calcInput(\'' + b.a.replace(/'/g, "\\'") + '\')">' + b.l + '</button>';
+    }).join('') + '</div>';
+  }).join('');
+}
+
+function calcInput(val) {
+  if (val === 'clear') { _calcState.expr = ''; _calcUpdateDisplay(); return; }
+  if (val === 'back') { _calcState.expr = _calcState.expr.slice(0, -1); _calcUpdateDisplay(); return; }
+  if (val === 'neg') {
+    var e = _calcState.expr;
+    var m = e.match(/([\d.]+)$/);
+    if (m) { var pre = e.slice(0, -m[1].length); _calcState.expr = pre + (m[1].charAt(0)==='-' ? m[1].slice(1) : '-' + m[1]); }
+    else _calcState.expr = e + '(-';
+    _calcUpdateDisplay();
+    return;
+  }
+  if (val === 'mc') { _calcState.memory = 0; toast('Memory cleared'); return; }
+  if (val === 'mr') { _calcState.expr += _calcState.memory; _calcUpdateDisplay(); return; }
+  if (val === 'mplus') { try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) _calcState.memory += r; } catch(e){} return; }
+  if (val === 'mminus') { try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) _calcState.memory -= r; } catch(e){} return; }
+  if (val === 'mode') { _calcState.isRadian = !_calcState.isRadian; var m = document.getElementById('calcMode'); if (m) m.textContent = _calcState.isRadian ? 'RAD' : 'DEG'; return; }
+  if (val === '=') {
+    try {
+      var r = _calcEvaluate(_calcState.expr);
+      if (typeof r === 'number' && isFinite(r)) {
+        _calcState.history.push({ expr: _calcState.expr, result: r });
+        _calcState.expr = String(r);
+      } else throw new Error('Invalid');
+    } catch(e) {
+      var d = document.getElementById('calcResult');
+      if (d) { d.textContent = 'Error'; d.classList.add('error'); }
+      return;
+    }
+    _calcUpdateDisplay();
+    return;
+  }
+  _calcState.expr += val;
+  _calcUpdateDisplay();
+}
+
+function _calcEvaluate(expr) {
+  var s = expr;
+  s = s.replace(/÷/g, '/').replace(/×/g, '*');
+  s = s.replace(/π/g, 'Math.PI').replace(/euler/g, 'Math.E');
+  s = s.replace(/sin\(/g, '_sin(').replace(/cos\(/g, '_cos(').replace(/tan\(/g, '_tan(');
+  s = s.replace(/log\(/g, '_log(').replace(/ln\(/g, '_ln(');
+  s = s.replace(/sqrt\(/g, 'Math.sqrt(').replace(/abs\(/g, 'Math.abs(');
+  s = s.replace(/\^/g, '**');
+  s = s.replace(/inv/g, '(1/');
+  s = s.replace(/(\d+)!/g, 'factorial($1)');
+  s = s.replace(/\)!/g, ')!');
+  s = s.replace(/%/g, '/100');
+  var fn = new Function('_sin', '_cos', '_tan', '_log', '_ln', 'factorial', 'return (' + s + ')');
+  return fn(
+    function(x) { return Math.sin(_calcState.isRadian ? x : x * Math.PI / 180); },
+    function(x) { return Math.cos(_calcState.isRadian ? x : x * Math.PI / 180); },
+    function(x) { return Math.tan(_calcState.isRadian ? x : x * Math.PI / 180); },
+    function(x) { return Math.log10 ? Math.log10(x) : Math.log(x) / Math.LN10; },
+    function(x) { return Math.log(x); },
+    function(n) { if (n < 0 || !Number.isInteger(n)) return NaN; if (n === 0 || n === 1) return 1; for (var i = n - 1; i > 0; i--) n *= i; return n; }
+  );
+}
+
+function _calcUpdateDisplay() {
+  var ex = document.getElementById('calcExpr');
+  var res = document.getElementById('calcResult');
+  if (ex) ex.textContent = _calcState.expr || '\u200B';
+  if (res) {
+    if (_calcState.expr) {
+      try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) { res.textContent = r; res.classList.remove('error'); } else { res.textContent = '...'; res.classList.remove('error'); } } catch(e) { res.textContent = '...'; res.classList.remove('error'); }
+    } else { res.textContent = '0'; res.classList.remove('error'); }
+  }
+}
+
+function calcHistory() {
+  if (!_calcState.history.length) { toast('No history', 'info'); return; }
+  var h = _calcState.history.map(function(item, i) {
+    return '<div style="padding:8px 12px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>' + htmlEscape(item.expr) + ' = <strong>' + item.result + '</strong></span><button class="btn btn-sm" onclick="closeModal();_calcState.expr=' + JSON.stringify(item.expr) + ';_calcUpdateDisplay()"><i class="fas fa-redo"></i></button></div>';
+  }).join('');
+  openModal('<h3><i class="fas fa-history"></i> Calculation History</h3>' + (h || '<div class="empty-state"><i class="fas fa-calculator"></i><p>No calculations yet</p></div>') + '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal();openCalculator()">Back</button><button class="btn btn-danger" onclick="if(confirm(\'Clear all history?\')){_calcState.history=[];calcHistory()}">Clear All</button></div>');
+}
+
+// ===== GLOBAL EDUCATION NEWS FEED =====
+var _eduNewsFeeds = {
+  scholarships: 'https://news.google.com/rss/search?q=international+scholarships+for+students+2026&hl=en-US&gl=US&ceid=US:en',
+  competitions: 'https://news.google.com/rss/search?q=student+competitions+olympiads+contests+2026&hl=en-US&gl=US&ceid=US:en',
+  africa: 'https://news.google.com/rss/search?q=education+Africa+schools+universities+students+2026&hl=en-US&gl=US&ceid=US:en',
+  americas: 'https://news.google.com/rss/search?q=education+USA+Canada+schools+scholarships+students+2026&hl=en-US&gl=US&ceid=US:en',
+  asia: 'https://news.google.com/rss/search?q=education+Asia+India+China+Japan+schools+universities+2026&hl=en-US&gl=US&ceid=US:en'
+};
+var _eduNewsTab = 'scholarships';
+
+function renderEducationNews(tab) {
+  if (tab) _eduNewsTab = tab;
+  var container = document.getElementById('eduNewsView');
+  if (!container) return;
+  var cats = [
+    { key: 'scholarships', label: 'Scholarships', icon: 'fa-graduation-cap' },
+    { key: 'competitions', label: 'Competitions', icon: 'fa-trophy' },
+    { key: 'africa', label: 'Africa', icon: 'fa-globe-africa' },
+    { key: 'americas', label: 'Americas', icon: 'fa-globe-americas' },
+    { key: 'asia', label: 'Asia', icon: 'fa-globe-asia' }
+  ];
+  var html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid #e2e8f0;padding-bottom:12px;">';
+  cats.forEach(function(c) {
+    var active = c.key === _eduNewsTab ? ' style="background:var(--primary);color:#fff;border-color:var(--primary);"' : '';
+    html += '<button class="btn btn-sm" onclick="renderEducationNews(\'' + c.key + '\')"' + active + '><i class="fas ' + c.icon + '"></i> ' + c.label + '</button>';
+  });
+  html += '</div><div id="eduNewsGrid" style="min-height:200px;"><div class="loading-overlay active" style="display:flex;position:relative;min-height:200px;"><div class="loading-spinner"></div></div></div>';
+  container.innerHTML = html;
+  _eduFetchAndRender();
+}
+
+function _eduFetchAndRender() {
+  var grid = document.getElementById('eduNewsGrid');
+  if (!grid) return;
+  var feedUrl = _eduNewsFeeds[_eduNewsTab];
+  if (!feedUrl) { grid.innerHTML = '<div class="empty-state"><i class="fas fa-rss"></i><p>No feed configured</p></div>'; return; }
+  var cacheKey = '_eduNews_' + _eduNewsTab;
+  try {
+    var cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      var parsed = JSON.parse(cached);
+      if (parsed && parsed.ts && Date.now() - parsed.ts < 3600000) {
+        _eduRenderItems(grid, parsed.items || []);
+        return;
+      }
+    }
+  } catch(e) {}
+  var proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feedUrl) + '&api_key=ustkz6qg6w4jbmzkwcferwcrv2cjjbtvv89htnni&count=20';
+  fetch(proxyUrl).then(function(r) { return r.json(); }).then(function(data) {
+    var items = [];
+    if (data && data.items && data.items.length) {
+      items = data.items.map(function(item) {
+        var desc = item.description || '';
+        var img = '';
+        var m = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (m) img = m[1];
+        desc = desc.replace(/<[^>]+>/g, '').substring(0, 200);
+        return { title: item.title, link: item.link, description: desc, image: img, pubDate: item.pubDate, source: item.source || item.author || 'Google News' };
+      });
+    }
+    try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), items: items })); } catch(e) {}
+    _eduRenderItems(grid, items);
+  }).catch(function() {
+    grid.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Unable to load news. Check your internet connection or try again later.</p></div>';
+  });
+}
+
+function _eduRenderItems(grid, items) {
+  if (!grid) return;
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><p>No news articles found for this category. Try again later.</p></div>';
+    return;
+  }
+  var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
+  items.forEach(function(item) {
+    var imgHtml = item.image ? '<div style="height:160px;overflow:hidden;border-radius:8px 8px 0 0;"><img src="' + htmlEscape(item.image) + '" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display=\'none\'"></div>' : '';
+    html += '<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:var(--transition);display:flex;flex-direction:column;">' +
+      imgHtml +
+      '<div style="padding:14px;flex:1;display:flex;flex-direction:column;">' +
+      '<div style="font-size:11px;color:var(--text-light);margin-bottom:4px;"><i class="fas fa-clock"></i> ' + htmlEscape((item.pubDate || '').split(' ')[0]) + ' &middot; ' + htmlEscape(item.source) + '</div>' +
+      '<h4 style="font-size:14px;font-weight:600;margin-bottom:6px;line-height:1.4;">' + htmlEscape(item.title) + '</h4>' +
+      '<p style="font-size:13px;color:var(--text-light);flex:1;line-height:1.5;">' + htmlEscape(item.description) + '</p>' +
+      '<div style="margin-top:10px;"><a href="' + htmlEscape(item.link) + '" target="_blank" rel="noopener" class="btn btn-sm btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-external-link-alt"></i> Read More</a></div>' +
+      '</div></div>';
+  });
+  html += '</div>';
+  grid.innerHTML = html;
 }

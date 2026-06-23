@@ -228,26 +228,43 @@ function resetSessionActivity() {
 
 function checkSession() {
   try {
+    // 1. Check inactivity timeout via sessionStorage activity tracker
     var lastStr = sessionStorage.getItem('lastActivity');
-    if (!lastStr) return;
-    var last = parseInt(lastStr, 10);
-    if (isNaN(last)) return;
-    var elapsed = Date.now() - last;
-    if (elapsed > SESSION_TIMEOUT && elapsed < 86400000) {
-      if (typeof currentAdmin !== 'undefined' && currentAdmin) {
-        if (typeof adminLogout === 'function') adminLogout();
-        toast('Session expired due to inactivity', 'warning');
+    if (lastStr) {
+      var last = parseInt(lastStr, 10);
+      if (!isNaN(last)) {
+        var elapsed = Date.now() - last;
+        if (elapsed > SESSION_TIMEOUT) {
+          _doSessionExpiry('Session expired due to inactivity');
+          return;
+        }
+      }
+    }
+    // 2. Fallback: check persisted session absolute TTL (catches tab-reopen-after-days)
+    if (typeof getSession === 'function') {
+      var s = getSession();
+      if (s && s.initialLogin && Date.now() - s.initialLogin > SESSION_TTL) {
+        _doSessionExpiry('Session expired — please log in again');
         return;
       }
-      if (typeof currentStudent !== 'undefined' && currentStudent) {
-        if (typeof studentLogout === 'function') studentLogout();
-        toast('Session expired due to inactivity', 'warning');
-        return;
-      }
-      if (typeof currentTeacher !== 'undefined' && currentTeacher) {
-        if (typeof teacherLogout === 'function') teacherLogout();
-        toast('Session expired due to inactivity', 'warning');
-      }
+    }
+  } catch(e) {}
+}
+
+function _doSessionExpiry(msg) {
+  try {
+    if (typeof currentAdmin !== 'undefined' && currentAdmin && typeof adminLogout === 'function') {
+      adminLogout();
+      toast(msg, 'warning');
+    } else if (typeof currentStudent !== 'undefined' && currentStudent && typeof studentLogout === 'function') {
+      studentLogout();
+      toast(msg, 'warning');
+    } else if (typeof currentTeacher !== 'undefined' && currentTeacher && typeof teacherLogout === 'function') {
+      teacherLogout();
+      toast(msg, 'warning');
+    } else if (typeof currentParent !== 'undefined' && currentParent && typeof parentLogout === 'function') {
+      parentLogout();
+      toast(msg, 'warning');
     }
   } catch(e) {}
 }
@@ -545,13 +562,22 @@ document.addEventListener('keydown', function(e) {
 // ===== 8. OFFLINE DETECTION =====
 function updateConnectionStatus() {
   var online = navigator.onLine;
-  var banner = document.getElementById('offlineBanner');
-  if (banner) banner.style.display = online ? 'none' : 'flex';
   var indicators = document.querySelectorAll('.conn-status');
   indicators.forEach(function(el) {
     el.title = online ? 'Connected' : 'Offline';
     el.innerHTML = online ? '<i class="fas fa-circle" style="color:#22c55e;font-size:10px;"></i>' : '<i class="fas fa-circle" style="color:#ef4444;font-size:10px;animation:pulse 1.5s infinite;"></i>';
   });
+  // Show a brief toast on connectivity change (only when the status actually toggles)
+  var prev = sessionStorage.getItem('_prevConn');
+  var cur = online ? 'online' : 'offline';
+  if (prev && prev !== cur) {
+    if (online) {
+      if (typeof toast === 'function') toast('<i class="fas fa-wifi"></i> Back online', 'success');
+    } else {
+      if (typeof toast === 'function') toast('<i class="fas fa-wifi-slash"></i> You are offline — data saves locally', 'warning');
+    }
+  }
+  sessionStorage.setItem('_prevConn', cur);
 }
 window.addEventListener('online', updateConnectionStatus);
 window.addEventListener('offline', updateConnectionStatus);

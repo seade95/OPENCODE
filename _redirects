@@ -1,0 +1,4 @@
+# EDUVERSE - Netlify Redirects
+# Serves index.html for all SPA routes
+
+/*    /index.html   200

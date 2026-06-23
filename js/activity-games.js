@@ -786,6 +786,8 @@ function _agUpdateTyping(val) {
   _agState.correctChars = correct;
   _agState.errors = errors;
   _agRenderTyping();
+  var inp = document.getElementById('agTypingInput');
+  if (inp) { inp.value = _agState.typedSoFar; inp.focus(); }
 }
 
 function _agCalcAccuracy() {

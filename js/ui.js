@@ -32,12 +32,20 @@ function hideError(el) { if (el) { el.textContent = ''; el.style.display = 'none
 // ===== UNIFIED SESSION MANAGER =====
 var SESSION_KEY = 'eduverse_session';
 var SESSION_VERSION = 1;
+var SESSION_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days absolute max lifetime
 function getSession() {
   try {
     var raw = localStorage.getItem(SESSION_KEY);
     if (raw) {
       var s = JSON.parse(raw);
-      if (s && s.version === SESSION_VERSION) return s;
+      if (s && s.version === SESSION_VERSION) {
+        // Reject expired sessions (absolute TTL from initial login)
+        if (s.initialLogin && Date.now() - s.initialLogin > SESSION_TTL) {
+          localStorage.removeItem(SESSION_KEY);
+          return { version: SESSION_VERSION, type: null, user: null, timestamp: 0, tenantId: null };
+        }
+        return s;
+      }
     }
   } catch(e) {}
   return { version: SESSION_VERSION, type: null, user: null, timestamp: 0, tenantId: null };
@@ -45,10 +53,12 @@ function getSession() {
 function saveSession(s) {
   s.timestamp = Date.now();
   s.version = SESSION_VERSION;
+  if (!s.initialLogin) s.initialLogin = Date.now();
   localStorage.setItem(SESSION_KEY, JSON.stringify(s));
 }
 function clearSession() {
   localStorage.removeItem(SESSION_KEY);
+  try { sessionStorage.removeItem('lastActivity'); } catch(e) {}
   currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
 }
 function setSession(type, user, tenantId) {
@@ -182,6 +192,7 @@ function adminLogin() {
   if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
   setSession('admin', admin);
+  if (typeof resetSessionActivity === 'function') resetSessionActivity();
   emailEl.value = '';
   passEl.value = '';
   hideError(errEl);
@@ -283,6 +294,7 @@ function studentLogin() {
   }
   currentStudent = student;
   setSession('student', student);
+  if (typeof resetSessionActivity === 'function') resetSessionActivity();
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var sp = document.getElementById('studentPage');
   if (sp) sp.classList.add('active');
@@ -335,6 +347,7 @@ function teacherLogin() {
   }
   currentTeacher = teacher;
   setSession('teacher', teacher);
+  if (typeof resetSessionActivity === 'function') resetSessionActivity();
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var tp = document.getElementById('teacherPage');
   if (tp) tp.classList.add('active');
@@ -440,6 +453,7 @@ function switchAdminPanel(panel) {
     case 'schoolsetup': if (typeof renderSchoolSetup === 'function') renderSchoolSetup(); break;
     case 'subjects': if (typeof renderSubjectManagement === 'function') renderSubjectManagement(); break;
     case 'streams': if (typeof renderStreamManagement === 'function') renderStreamManagement(); break;
+    case 'class': if (typeof renderClassManagement === 'function') renderClassManagement(); break;
     case 'exammodules': if (typeof renderExamModules === 'function') renderExamModules(); break;
     case 'utmemock': if (typeof renderUTMEMock === 'function') renderUTMEMock(); break;
     case 'gallery': if (typeof renderGalleryAdmin === 'function') renderGalleryAdmin(); break;
@@ -462,8 +476,10 @@ function switchAdminPanel(panel) {
     case 'conferences': if (typeof renderConferences === 'function') renderConferences(); break;
     case 'mealplanner': if (typeof renderMealPlanner === 'function') renderMealPlanner(); break;
     case 'broadcast': if (typeof renderBroadcast === 'function') renderBroadcast(); break;
+    case 'edunews': if (typeof renderEducationNews === 'function') renderEducationNews(); break;
     case 'schoolstore': if (typeof renderSchoolStore === 'function') renderSchoolStore(); break;
     case 'support': if (typeof renderSupportPanel === 'function') renderSupportPanel(); break;
+    case 'higherinstitutions': if (typeof renderHigherInstitutions === 'function') renderHigherInstitutions(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }

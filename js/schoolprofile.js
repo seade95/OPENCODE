@@ -597,14 +597,41 @@ function renderLandingPageSections() {
   // Update auth-gated elements on landing page
   if (typeof updateAuthGating === 'function') updateAuthGating();
 
-  // Show demo mode banner
+  // Show demo mode bottom-center bar (unobtrusive, fade-in)
   try {
-    if (localStorage.getItem('demoMode') === 'true' && !document.getElementById('demoModeBanner')) {
-      var banner = document.createElement('div');
-      banner.id = 'demoModeBanner';
-      banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#744210,#975a16);color:#fff;padding:10px 20px;text-align:center;font-size:14px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;';
-      banner.innerHTML = '<span><i class="fas fa-flask"></i> <strong>Demo Mode</strong> — Exploring Demo International School</span><span style="font-size:12px;opacity:0.9;">Admin: admin@demo.com / demo123 &nbsp;|&nbsp; Student: STU001 / stu001 &nbsp;|&nbsp; Teacher: TCH001 / teacher123</span><button class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.3);" onclick="exitDemoMode()"><i class="fas fa-times"></i> Exit Demo</button>';
-      document.body.appendChild(banner);
+    if (localStorage.getItem('demoMode') === 'true' && !document.getElementById('demoModePopup')) {
+      var bar = document.createElement('div');
+      bar.id = 'demoModePopup';
+      bar.style.cssText = 'position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#744210,#975a16);color:#fff;padding:8px 20px;font-size:12px;display:flex;align-items:center;gap:16px;border-radius:10px 10px 0 0;box-shadow:0 -2px 12px rgba(0,0,0,0.15);animation:demoFadeIn 0.5s ease forwards;max-width:95vw;white-space:nowrap;';
+      bar.innerHTML =
+        '<span><i class="fas fa-flask"></i> <strong>Demo Mode</strong></span>' +
+        '<span style="opacity:0.8;display:flex;gap:12px;font-size:11px;">' +
+          '<span><strong>Admin:</strong> admin@demo.com / demo123</span>' +
+          '<span><strong>Student:</strong> STU001 / stu001</span>' +
+          '<span><strong>Teacher:</strong> TCH001 / teacher123</span>' +
+          '<span><strong>Parent:</strong> robert@example.com / parent123</span>' +
+        '</span>' +
+        '<button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.25);padding:3px 12px;font-size:11px;cursor:pointer;border-radius:6px;" onclick="exitDemoMode()"><i class="fas fa-times"></i> Exit</button>';
+      document.body.appendChild(bar);
+
+      // Collapse/expand on click (toggle compact vs full view)
+      bar.style.cursor = 'pointer';
+      var expanded = true;
+      bar.onclick = function(e) {
+        if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+        var info = bar.querySelector('span:nth-child(2)');
+        if (info) {
+          if (expanded) {
+            info.style.display = 'none';
+            bar.style.padding = '6px 16px';
+            expanded = false;
+          } else {
+            info.style.display = '';
+            bar.style.padding = '8px 20px';
+            expanded = true;
+          }
+        }
+      };
     }
   } catch(e) {}
 

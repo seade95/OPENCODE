@@ -410,6 +410,7 @@ function getDefaultData() {
       { id: 'RM005', name: 'Library', capacity: 50 }
     ],
     teacherSubjects: [],
+    classTeachers: {},
     timetableSettings: { periodsPerDay: 8, startHour: 8, breaks: [3] },
     notifLog: [],
     hostels: [
@@ -450,7 +451,8 @@ function getDefaultData() {
     healthRecords: [],
     transportRoutes: [],
     conferences: [],
-    gradebookGrid: { rows: [], term: '' }
+    gradebookGrid: { rows: [], term: '' },
+    customInstitutions: []
   };
 }
 
@@ -469,7 +471,7 @@ function loadData() {
         }
       }
       // Add new keys that might be missing from old localStorage
-      const newKeys = ['timetables', 'gradebook', 'messages', 'exams', 'parents', 'leaveRequests', 'library', 'borrowings', 'lessonNotes', 'behaviorLog', 'staffHR', 'payrollRecords', 'forumPosts', 'fileRepo', 'notifications', 'academicTerms', 'admissionPrograms', 'applications', 'examQuestions', 'examAttempts', 'idCards', 'paymentTransactions', 'admins', 'examRegistrations', 'academicCalendar', 'virtualClasses', 'submissions', 'gallery', 'notifLog', 'rooms', 'teacherSubjects', 'hostels', 'hostelRooms', 'hostelAllocations', 'maintenanceReqs', 'hostelPayments', 'waitlists', 'simQuestions', 'simAttempts', 'customReports', 'activityScores', 'alumni', 'reunions', 'donations', 'teacherExams', 'healthRecords', 'transportRoutes', 'conferences'];
+      const newKeys = ['timetables', 'gradebook', 'messages', 'exams', 'parents', 'leaveRequests', 'library', 'borrowings', 'lessonNotes', 'behaviorLog', 'staffHR', 'payrollRecords', 'forumPosts', 'fileRepo', 'notifications', 'academicTerms', 'admissionPrograms', 'applications', 'examQuestions', 'examAttempts', 'idCards', 'paymentTransactions', 'admins', 'examRegistrations', 'academicCalendar', 'virtualClasses', 'submissions', 'gallery', 'notifLog', 'rooms', 'teacherSubjects', 'hostels', 'hostelRooms', 'hostelAllocations', 'maintenanceReqs', 'hostelPayments', 'waitlists', 'simQuestions', 'simAttempts', 'customReports', 'activityScores', 'alumni', 'reunions', 'donations', 'teacherExams', 'healthRecords', 'transportRoutes', 'conferences', 'customInstitutions'];
       for (const nk of newKeys) {
         if (!parsed[nk] || !Array.isArray(parsed[nk])) {
           parsed[nk] = defaults[nk];
@@ -487,6 +489,7 @@ function loadData() {
       if (!Array.isArray(parsed.activityScores)) parsed.activityScores = defaults.activityScores;
       if (!Array.isArray(parsed.alumni)) parsed.alumni = defaults.alumni;
       if (!Array.isArray(parsed.reunions)) parsed.reunions = defaults.reunions;
+      if (!Array.isArray(parsed.customInstitutions)) parsed.customInstitutions = defaults.customInstitutions;
       if (!Array.isArray(parsed.donations)) parsed.donations = defaults.donations;
       if (!Array.isArray(parsed.teacherExams)) parsed.teacherExams = defaults.teacherExams;
       if (!parsed.subscriptionPlans || !Array.isArray(parsed.subscriptionPlans)) parsed.subscriptionPlans = defaults.subscriptionPlans;

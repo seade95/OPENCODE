@@ -191,16 +191,21 @@ function renderSaSchools(container) {
     html += '<div class="empty-state"><i class="fas fa-school"></i><p>No schools registered yet.</p></div>';
   } else {
     html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
-      + '<thead><tr><th>School</th><th>Email</th><th>Tier</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
+      + '<thead><tr><th>School</th><th>Slug</th><th>Email</th><th>Tier</th><th>Plan</th><th>Premium</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
       + tenants.map(function(t) {
+        var isPremium = _saCheckPremium(t.id);
         var statusBadgeClass = t.status === 'active' ? 'badge-paid' : (t.status === 'pending' ? 'badge-grade' : 'badge-absent');
         var statusActions = (t.status === 'pending')
           ? '<button class="btn btn-sm btn-success" onclick="saApproveSchool(\'' + t.id + '\')" title="Approve"><i class="fas fa-check"></i> Approve</button>'
           : '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
           + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
-        return '<tr><td><strong>' + esc(t.name) + '</strong></td><td>' + esc(t.email) + '</td>'
+        return '<tr><td><strong>' + esc(t.name) + '</strong></td><td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;">' + esc(t.slug || '—') + '</code></td><td>' + esc(t.email) + '</td>'
           + '<td><span class="badge badge-grade">' + esc(t.tier) + '</span></td>'
           + '<td><span class="badge" style="background:#dbeafe;color:#1e40af;">' + esc(t.plan) + '</span></td>'
+          + '<td>' + (isPremium
+            ? '<span class="badge" style="background:#c6f6d5;color:#22543d;cursor:pointer;" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to revoke"><i class="fas fa-crown"></i> Active</span>'
+            : '<span class="badge" style="background:#e2e8f0;color:#4a5568;cursor:pointer;" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to grant"><i class="fas fa-lock"></i> Free</span>')
+          + '</td>'
           + '<td><span class="badge ' + statusBadgeClass + '">' + esc(t.status) + '</span></td>'
           + '<td><div style="display:flex;gap:4px;flex-wrap:wrap;">'
           + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open"><i class="fas fa-external-link-alt"></i></button>'
@@ -268,6 +273,54 @@ function saDeleteTenant(id) {
   logActivity('Deleted school: ' + t.name);
   renderSaTab('schools');
   toast('School "' + t.name + '" deleted');
+}
+
+function _saCheckPremium(tenantId) {
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) return false;
+    var d = JSON.parse(raw);
+    return d.subscription && d.subscription.premiumOverride === true;
+  } catch(e) { return false; }
+}
+
+function saTogglePremium(tenantId) {
+  var tenants = getTenants();
+  var t = tenants.find(function(x) { return x.id === tenantId; });
+  if (!t) { toast('School not found', 'error'); return; }
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) { toast('No data for this school', 'error'); return; }
+    var d = JSON.parse(raw);
+    if (!d.subscription) d.subscription = {};
+    if (d.subscription.premiumOverride === true) {
+      delete d.subscription.premiumOverride;
+      d.subscription.plan = 'free';
+      d.subscription.status = 'active';
+      delete d.subscription.endDate;
+      localStorage.setItem(key, JSON.stringify(d));
+      logActivity('Revoked Premium Access for: ' + t.name);
+      toast('Premium Access revoked for ' + t.name);
+    } else {
+      d.subscription.plan = 'premium';
+      d.subscription.status = 'active';
+      d.subscription.amount = 0;
+      d.subscription.currency = 'NGN';
+      d.subscription.premiumOverride = true;
+      d.subscription.startDate = new Date().toISOString().split('T')[0];
+      d.subscription.endDate = '2099-12-31';
+      d.subscription.autoRenew = true;
+      d.subscription.lastPaymentDate = new Date().toISOString().split('T')[0];
+      d.subscription.lastPaymentRef = 'SA_OVERRIDE_' + Date.now();
+      d.subscription.planName = 'Premium (SA Override)';
+      localStorage.setItem(key, JSON.stringify(d));
+      logActivity('Granted Premium Access to: ' + t.name);
+      toast('Premium Access granted to ' + t.name + '! All features unlocked.');
+    }
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+  renderSaTab('schools');
 }
 
 // ===== 3. Platform Settings Tab =====

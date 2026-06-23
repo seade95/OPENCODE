@@ -21,6 +21,15 @@ function renderTeacherDashboard() {
   var el;
   el = document.getElementById('teacherNameDisplay'); if (el) el.innerHTML = '<i class="fas fa-chalkboard-teacher"></i> ' + htmlEscape(t.name);
   el = document.getElementById('teacherClassInfo'); if (el) el.textContent = 'Class: ' + t.assignedClass;
+  el = document.getElementById('tchClassTeacherInfo'); if (el) {
+    var ctClass = null;
+    if (data.classTeachers) {
+      for (var c in data.classTeachers) {
+        if (data.classTeachers[c] === t.id) { ctClass = c; break; }
+      }
+    }
+    el.innerHTML = ctClass ? '<i class="fas fa-star"></i> Class Teacher of <strong>' + htmlEscape(ctClass) + '</strong>' : '';
+  }
 
   var classStudents = data.students.filter(function(s) { return s.class === t.assignedClass; });
   el = document.getElementById('tDashStudents'); if (el) el.textContent = String(classStudents.length);

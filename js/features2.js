@@ -482,11 +482,15 @@ function markNotifRead(id) {
 function toggleNotifDropdown(suffix) {
   suffix = suffix || '';
   var dd = document.getElementById('notifDropdown' + suffix);
-  if (dd) {
-    dd.classList.toggle('open');
-    var userId = suffix === 'Stu' ? (currentStudent ? currentStudent.id : null) : suffix === 'Tch' ? (currentTeacher ? currentTeacher.id : null) : suffix === 'Par' ? (currentParent ? currentParent.email : null) : currentAdmin ? 'admin' : null;
-    if (userId && dd.classList.contains('open')) renderNotifications('notifDropdownContent' + suffix, userId);
+  if (!dd) return;
+  var userId = suffix === 'Stu' ? (currentStudent ? currentStudent.id : null) : suffix === 'Tch' ? (currentTeacher ? currentTeacher.id : null) : suffix === 'Par' ? (currentParent ? currentParent.email : null) : currentAdmin ? 'admin' : null;
+  // Only open if there are notifications to show
+  if (userId) {
+    var count = (data.notifications || []).filter(function(n) { return n.to === userId; }).length;
+    if (count === 0) { dd.classList.remove('open'); return; }
   }
+  dd.classList.toggle('open');
+  if (userId && dd.classList.contains('open')) renderNotifications('notifDropdownContent' + suffix, userId);
 }
 
 // ===== NOTIFICATION TEMPLATES & COMPOSER =====
@@ -2095,7 +2099,7 @@ function previewCardPhoto(e) {
   reader.onload = function(ev) {
     pendingCardPhoto = ev.target.result;
     const preview = document.getElementById('cardPhotoPreview');
-    if (preview) preview.innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    if (preview) { preview.innerHTML = ''; var img = document.createElement('img'); img.src = ev.target.result; img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;'; preview.appendChild(img); }
   };
   reader.readAsDataURL(file);
 }

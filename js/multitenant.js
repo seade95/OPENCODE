@@ -4,18 +4,90 @@
 const TENANT_KEY = 'eduverse_tenants';
 const SUPER_ADMIN_KEY = 'eduverse_super_admin';
 
+// ===== Subdomain / Slug System =====
+var RESERVED_SLUGS = ['www', 'app', 'api', 'admin', 'mail', 'smtp', 'pop3', 'webmail', 'cpanel', 'whm', 'ftp', 'ssh', 'mysql', 'test', 'dev', 'staging', 'demo', 'beta', 'help', 'support', 'docs', 'wiki', 'blog', 'forum', 'community', 'status', 'cdn', 'static', 'assets', 'media', 'files', 'img', 'css', 'js', 'download', 'uploads', 'store', 'shop', 'billing', 'pay', 'secure', 'login', 'signup', 'register', 'auth', 'oauth', 'saml', 'ldap', 'portal', 'dashboard', 'manage', 'system', 'server', 'host', 'hosting', 'cloud', 'edu', 'education', 'school', 'schools', 'my', 'your', 'the'];
+
+function normalizeSlug(str) {
+  return str.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/^[^a-z]/, '');
+}
+
+function generateSlug(name, excludeId) {
+  var base = normalizeSlug(name);
+  if (!base) base = 'school';
+  var slug = base;
+  var counter = 1;
+  while (isSlugTaken(slug, excludeId)) {
+    slug = base + '-' + counter;
+    counter++;
+    if (counter > 9999) break;
+  }
+  return slug;
+}
+
+function isSlugTaken(slug, excludeId) {
+  if (RESERVED_SLUGS.indexOf(slug) !== -1) return true;
+  var tenants = getTenants();
+  for (var i = 0; i < tenants.length; i++) {
+    if (tenants[i].slug === slug && tenants[i].id !== excludeId) return true;
+  }
+  return false;
+}
+
+function resolveSchoolFromSubdomain() {
+  try {
+    var hostname = window.location.hostname.toLowerCase();
+    // Must be a subdomain (e.g. myschool.yourdomain.com = 3+ parts)
+    var parts = hostname.split('.');
+    if (parts.length < 3) return null;
+    // localhost / 127.0.0.1 / IP — skip subdomain resolution
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || /^\d+\.\d+\.\d+\.\d+$/.test(hostname)) return null;
+
+    var sub = parts[0];
+    if (!sub || RESERVED_SLUGS.indexOf(sub) !== -1) return null;
+
+    var tenants = getTenants();
+    var tenant = tenants.find(function(t) { return t.slug === sub; });
+    if (tenant) return tenant.id;
+  } catch(e) {}
+  return null;
+}
+
 function getTenants() {
   try {
     var t = JSON.parse(localStorage.getItem(TENANT_KEY)) || [];
-    // One-time migration: clean old OMOLOLA branding from tenant names
     var changed = false;
     for (var i = 0; i < t.length; i++) {
+      // One-time migration: clean old OMOLOLA branding from tenant names
       if (t[i].name && t[i].name.includes('OMOLOLA')) {
         t[i].name = t[i].name.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM').replace(/OMOLOLA/gi, 'EDUVERSE');
         changed = true;
       }
+      // One-time migration: auto-generate slug for existing tenants
+      if (!t[i].slug) {
+        t[i].slug = normalizeSlug(t[i].name);
+        if (!t[i].slug) t[i].slug = 'school-' + t[i].id.substring(0, 6).toLowerCase();
+        changed = true;
+      }
     }
-    if (changed) saveTenants(t);
+    // Ensure slug uniqueness after migration (handles duplicates)
+    if (changed) {
+      var slugs = {};
+      for (var j = 0; j < t.length; j++) {
+        var base = t[j].slug;
+        var slug = base;
+        var c = 1;
+        while (slugs[slug] || RESERVED_SLUGS.indexOf(slug) !== -1) {
+          slug = base + '-' + c;
+          c++;
+        }
+        t[j].slug = slug;
+        slugs[slug] = true;
+      }
+      saveTenants(t);
+    }
     return t;
   } catch(e) { return []; }
 }
@@ -61,8 +133,10 @@ function switchTenant(tenantId) {
 
 // Create a new school tenant
 function createTenant(schoolData) {
+  var slug = schoolData.slug || generateSlug(schoolData.name);
   const tenant = {
     id: genTenantId(),
+    slug: slug,
     name: schoolData.name,
     email: schoolData.email,
     phone: schoolData.phone || '',
@@ -112,7 +186,7 @@ function verifySuperAdmin(email, password) {
 // Create super admin account
 function createSuperAdmin(name, email, password) {
   if (getSuperAdmin()) return null;
-  saveSuperAdmin({ id: 'SUP001', name, email, password, createdAt: new Date().toISOString() });
+  saveSuperAdmin({ id: 'SUP001', name, email, password, super_admin_level: 'super', createdAt: new Date().toISOString() });
   return getSuperAdmin();
 }
 
@@ -134,6 +208,7 @@ function initDemoTenant() {
 
   var tenant = createTenant({
     name: 'Demo International School',
+    slug: 'demo-international',
     email: 'demo@demo.com',
     phone: '+234 800 000 0000',
     motto: 'Excellence in Education — Try It Free!',
@@ -300,12 +375,13 @@ function showSuperAdminDashboard() {
         <div style="overflow-x:auto;">
           <table class="table" style="width:100%;font-size:14px;">
             <thead><tr>
-              <th>School</th><th>Email</th><th>Tier</th><th>Plan</th><th>Created</th><th>Status</th><th>Actions</th>
+              <th>School</th><th>Slug</th><th>Email</th><th>Tier</th><th>Plan</th><th>Created</th><th>Status</th><th>Actions</th>
             </tr></thead>
             <tbody>
               ${tenants.map(t => `
                 <tr>
                   <td><strong>${htmlEscape(t.name)}</strong></td>
+                  <td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;">${htmlEscape(t.slug || '—')}</code></td>
                   <td>${htmlEscape(t.email)}</td>
                   <td><span class="badge">${t.tier}</span></td>
                   <td><span class="badge" style="background:#bee3f8;color:#2a4365;">${t.plan}</span></td>
@@ -342,7 +418,14 @@ function showOnboardSchool() {
     <div id="onboardError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>
 
     <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="onbSchoolName" placeholder="e.g. EDUVERSE" oninput="validateField(this,'name')"></div>
+      <div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="onbSchoolName" placeholder="e.g. EDUVERSE" oninput="onbUpdateSlug()"></div>
+      <div class="form-group"><label>URL Slug *</label>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="text" id="onbSchoolSlug" placeholder="my-school" oninput="validateField(this,'name')" style="font-family:monospace;font-size:13px;">
+          <button type="button" class="btn btn-sm btn-outline" onclick="onbRegenerateSlug()" title="Regenerate from name"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <p style="font-size:11px;color:var(--text-light);margin:4px 0 0;">Your school will be accessible at <strong id="onbSlugPreview">slug.yourdomain.com</strong></p>
+      </div>
       <div class="form-group"><label>School Email *</label><input type="email" id="onbSchoolEmail" placeholder="admin@school.edu" oninput="validateField(this,'email')"></div>
       <div class="form-group"><label>Phone</label><input type="text" id="onbSchoolPhone" placeholder="+234 800 000 0000"></div>
       <div class="form-group"><label>Motto</label><input type="text" id="onbSchoolMotto" value="Education for Enlightenment"></div>
@@ -386,6 +469,35 @@ function showOnboardSchool() {
     overlay.classList.add('active');
     overlay.style.overflowY = 'auto';
   }
+  setTimeout(onbUpdateSlug, 100);
+}
+
+function onbUpdateSlug() {
+  var nameInput = document.getElementById('onbSchoolName');
+  var slugInput = document.getElementById('onbSchoolSlug');
+  if (!nameInput || !slugInput) return;
+  // Only auto-update if slug field hasn't been manually edited
+  var autoSlug = generateSlug(nameInput.value);
+  slugInput.placeholder = autoSlug || 'my-school';
+  onbPreviewSlug();
+}
+
+function onbRegenerateSlug() {
+  var nameInput = document.getElementById('onbSchoolName');
+  var slugInput = document.getElementById('onbSchoolSlug');
+  if (!nameInput || !slugInput) return;
+  slugInput.value = generateSlug(nameInput.value);
+  onbPreviewSlug();
+}
+
+function onbPreviewSlug() {
+  var slugInput = document.getElementById('onbSchoolSlug');
+  var preview = document.getElementById('onbSlugPreview');
+  if (!preview) return;
+  var slug = slugInput ? (slugInput.value.trim() || slugInput.placeholder) : 'slug';
+  var parts = window.location.hostname.split('.');
+  var domain = parts.length >= 2 ? parts.slice(parts.length - 2).join('.') : 'yourdomain.com';
+  preview.textContent = slug + '.' + domain;
 }
 
 function createNewTenant() {
@@ -412,6 +524,14 @@ function createNewTenant() {
   if (!isValidPassword(adminPass)) { showError(err, 'Admin password must be at least 6 characters'); return; }
   if (adminPass !== adminPass2) { showError(err, 'Passwords do not match'); return; }
 
+  // Validate slug
+  var slug = document.getElementById('onbSchoolSlug')?.value?.trim().toLowerCase() || generateSlug(name);
+  if (!slug) { showError(err, 'URL slug could not be generated'); return; }
+  if (!/^[a-z][a-z0-9-]*$/.test(slug)) { showError(err, 'Slug must start with a letter and contain only letters, numbers, and hyphens'); return; }
+  if (slug.length < 2 || slug.length > 63) { showError(err, 'Slug must be between 2 and 63 characters'); return; }
+  if (RESERVED_SLUGS.indexOf(slug) !== -1) { showError(err, 'This slug is reserved. Please choose another.'); return; }
+  if (isSlugTaken(slug)) { showError(err, 'This slug is already taken by another school'); return; }
+
   // Check duplicate email
   const tenants = getTenants();
   if (tenants.find(t => t.email.toLowerCase() === email.toLowerCase())) { showError(err, 'A school with this email already exists'); return; }
@@ -419,7 +539,7 @@ function createNewTenant() {
   hideError(err);
 
   const tenant = createTenant({
-    name, email, phone, motto, address, logo, tier, plan, adminName, adminEmail, adminPass,
+    name, slug, email, phone, motto, address, logo, tier, plan, adminName, adminEmail, adminPass,
   });
 
   // If EduVerse user is logged in, add membership to global social store
@@ -618,10 +738,15 @@ function confirmDeleteTenant(id) {
   toast(`School "${t.name}" deleted permanently`);
 }
 
-// ===== SHAREABLE SCHOOL URLS (Hash-based routing) =====
-// Supports:  /#/school/SCHOOL_ID   or   ?tenant=SCHOOL_ID
+// ===== SHAREABLE SCHOOL URLS (Hash-based routing + subdomain) =====
+// Priority: subdomain > hash (#/school/ID) > query param (?tenant=ID)
 function resolveSchoolFromUrl() {
   try {
+    // 1. Subdomain (e.g. myschool.yourdomain.com)
+    var subId = resolveSchoolFromSubdomain();
+    if (subId) return subId;
+
+    // 2. Hash-based:  #/school/SCHOOL_ID
     var hash = window.location.hash.replace(/^#\/?/, '');
     if (hash.startsWith('school/')) {
       var id = hash.replace('school/', '');
@@ -629,6 +754,8 @@ function resolveSchoolFromUrl() {
       var tenant = tenants.find(function(t) { return t.id === id; });
       if (tenant) return id;
     }
+
+    // 3. Query param:  ?tenant=SCHOOL_ID
     var params = new URLSearchParams(window.location.search);
     var tid = params.get('tenant');
     if (tid) {
@@ -643,6 +770,16 @@ function getCurrentSchoolUrl() {
   try {
     var activeTenant = localStorage.getItem('activeTenant');
     if (activeTenant) {
+      var tenants = getTenants();
+      var t = tenants.find(function(x) { return x.id === activeTenant; });
+      // If tenant has a slug and we're not already on a subdomain, return subdomain URL
+      if (t && t.slug) {
+        var parts = window.location.hostname.split('.');
+        if (parts.length >= 2) {
+          var domain = parts.slice(parts.length - 2).join('.');
+          return window.location.protocol + '//' + encodeURIComponent(t.slug) + '.' + domain + window.location.pathname;
+        }
+      }
       return window.location.origin + window.location.pathname + '#/school/' + encodeURIComponent(activeTenant);
     }
   } catch(e) {}

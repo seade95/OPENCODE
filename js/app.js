@@ -13,6 +13,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
   data = loadData();
 
+  // Try subdomain-based tenant resolution first (e.g., myschool.yourdomain.com)
+  var _detectedUnknownSchool = false;
+  if (typeof resolveSchoolFromSubdomain === 'function') {
+    var subdomainSchoolId = resolveSchoolFromSubdomain();
+    if (subdomainSchoolId) {
+      var current = localStorage.getItem('activeTenant');
+      if (subdomainSchoolId !== current && typeof switchTenant === 'function') {
+        switchTenant(subdomainSchoolId);
+        return;
+      }
+    } else {
+      // Check if we're on a subdomain (not www, not apex) but no tenant matched
+      var hostParts = window.location.hostname.toLowerCase().split('.');
+      if (hostParts.length >= 3 && ['localhost','127.0.0.1'].indexOf(window.location.hostname) === -1 && !/^\d+\.\d+\.\d+\.\d+$/.test(window.location.hostname)) {
+        var sub = hostParts[0];
+        if (sub && ['www'].indexOf(sub) === -1) {
+          _detectedUnknownSchool = sub;
+        }
+      }
+    }
+  }
+
   // Resolve school from URL hash/param — overrides existing activeTenant
   if (typeof resolveSchoolFromUrl === 'function') {
     var urlSchoolId = resolveSchoolFromUrl();
@@ -80,22 +102,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // ===== EduVerse Facebook-style platform init =====
-  if (typeof initEduVerse === 'function') {
-    initEduVerse();
-    // Restore session: if user was logged in, show app
-    try {
-      var saved = localStorage.getItem('eduverseUser');
-      if (saved && JSON.parse(saved)) {
-        // Short delay to let everything render, then show app
-        setTimeout(function() {
-          if (typeof showApp === 'function' && typeof showEduverseHome === 'function') {
-            showApp();
-            showEduverseHome();
-          }
-        }, 50);
-      }
-    } catch(e) {}
+  // ===== EduVerse platform init (silent session restore, no auto-navigation) =====
+  if (typeof initEduVerse === 'function') initEduVerse();
+
+  // Show "Unknown School" banner if accessed via unknown subdomain
+  if (_detectedUnknownSchool) {
+    // Inject keyframe animation once
+    if (!document.getElementById('_ueAnimStyle')) {
+      var styleEl = document.createElement('style');
+      styleEl.id = '_ueAnimStyle';
+      styleEl.textContent = '@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}';
+      document.head.appendChild(styleEl);
+    }
+    var ueContainer = document.createElement('div');
+    ueContainer.id = 'unknownSchoolBanner';
+    ueContainer.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:16px 24px;text-align:center;font-family:Inter,system-ui,sans-serif;box-shadow:0 4px 15px rgba(0,0,0,0.2);animation:slideDown 0.3s ease;';
+    ueContainer.innerHTML = '<div style="max-width:600px;margin:0 auto;">'
+      + '<h3 style="margin:0 0 4px;font-size:18px;"><i class="fas fa-map-signs"></i> School Not Found</h3>'
+      + '<p style="margin:0;font-size:14px;opacity:0.9;">The subdomain <strong style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;font-family:monospace;">' + esc(_detectedUnknownSchool) + '</strong> does not match any registered school on EDUVERSE.</p>'
+      + '<p style="margin:8px 0 0;font-size:13px;opacity:0.8;">If you own this school, please contact your super administrator or visit the <a href="' + window.location.origin + window.location.pathname + '" style="color:#fbbf24;font-weight:600;text-decoration:underline;">main portal</a>.</p>'
+      + '</div>';
+    document.body.prepend(ueContainer);
+    // Push main content down so banner is visible
+    var mainEl = document.querySelector('main, .main-content, #app, .landing-page');
+    if (mainEl) mainEl.style.marginTop = '100px';
   }
 
   // Auto-fill demo credentials on login forms and navigate to student portal when demo mode is active
@@ -122,20 +152,12 @@ document.addEventListener('DOMContentLoaded', function() {
       var parHint = document.getElementById('parentDemoHint');
       if (parHint) parHint.style.display = 'block';
 
-      // Auto-navigate to student login so demo user sees the portal immediately
-      setTimeout(function() {
-        if (typeof showStudentLogin === 'function') showStudentLogin();
-      }, 150);
+      // Fields are pre-filled — user clicks a portal card to enter
     }
   } catch(e) {}
 
-  // Restore session from localStorage (cross-tab / reload persistence)
+  // Silently restore session data from localStorage (no auto-navigation — user clicks a portal card to enter)
   if (typeof syncSession === 'function') syncSession();
-  // If session restored, show the appropriate portal
-  if (currentAdmin && typeof showAdminPortal === 'function') showAdminPortal();
-  else if (currentStudent && typeof showStudentLogin === 'function') { showStudentLogin(); if (typeof renderStudentPortal === 'function') renderStudentPortal(); }
-  else if (currentTeacher && typeof showTeacherLogin === 'function') { showTeacherLogin(); if (typeof renderTeacherPortal === 'function') renderTeacherPortal(); }
-  else if (currentParent && typeof showParentLogin === 'function') { showParentLogin(); if (typeof renderParentPortal === 'function') renderParentPortal(); }
 
   // Cross-tab session sync
   window.addEventListener('storage', function(e) {
@@ -152,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // Listen for hash changes (user navigates to a different school URL)
+  // Also re-check subdomain in case hostname changed (edge case for dev)
   window.addEventListener('hashchange', function() {
     if (typeof resolveSchoolFromUrl === 'function') {
       var urlSchoolId = resolveSchoolFromUrl();

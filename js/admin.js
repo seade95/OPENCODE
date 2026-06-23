@@ -18,14 +18,101 @@ function renderDashboard() {
 
   recent = (data.activityLog || []).slice(-5).reverse();
   var container = document.getElementById('recentActivity');
-  if (!container) return;
-  if (recent.length) {
-    container.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' +
-      recent.map(function(a) { return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7fafc;border-radius:8px;font-size:13px;"><i class="fas fa-circle" style="font-size:6px;color:var(--accent);"></i> ' + htmlEscape(a) + '</div>'; }).join('') +
-      '</div>';
-  } else {
-    container.innerHTML = '<p class="empty-state">No recent activity</p>';
+  if (container) {
+    if (recent.length) {
+      container.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        recent.map(function(a) { return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f7fafc;border-radius:8px;font-size:13px;"><i class="fas fa-circle" style="font-size:6px;color:var(--accent);"></i> ' + htmlEscape(a) + '</div>'; }).join('') +
+        '</div>';
+    } else {
+      container.innerHTML = '<p class="empty-state">No recent activity</p>';
+    }
   }
+  // Dashboard news widget
+  _loadDashNews();
+}
+
+function _loadDashNews() {
+  var widget = document.getElementById('dashNewsWidget');
+  var dateEl = document.getElementById('dashNewsDate');
+  if (!widget) return;
+  widget.innerHTML = '<div class="loading-overlay active" style="display:flex;position:relative;min-height:100px;"><div class="loading-spinner"></div></div>';
+  var loadedAny = false;
+  var keys = ['scholarships', 'competitions', 'africa', 'americas', 'asia'];
+  var collected = [];
+  keys.forEach(function(k) {
+    try {
+      var cached = localStorage.getItem('_eduNews_' + k);
+      if (cached) {
+        var parsed = JSON.parse(cached);
+        if (parsed && parsed.items && parsed.items.length) {
+          parsed.items.forEach(function(item) {
+            if (!collected.some(function(c) { return c.title === item.title; })) {
+              collected.push(item);
+            }
+          });
+        }
+      }
+    } catch(e) {}
+  });
+  if (collected.length) {
+    var sorted = collected.slice(0, 5);
+    widget.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' +
+      sorted.map(function(item) {
+        return '<a href="' + htmlEscape(item.link) + '" target="_blank" rel="noopener" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:inherit;transition:background 0.2s;" onmouseover="this.style.background=\'var(--hover-bg, #f7fafc)\'" onmouseout="this.style.background=\'transparent\'">' +
+          '<div style="font-size:11px;color:var(--primary);white-space:nowrap;min-width:12px;"><i class="fas fa-newspaper"></i></div>' +
+          '<div><div style="font-size:13px;font-weight:500;line-height:1.4;">' + htmlEscape(item.title) + '</div>' +
+          '<div style="font-size:11px;color:var(--text-light);margin-top:2px;">' + htmlEscape(item.source) + ' &middot; ' + htmlEscape((item.pubDate || '').split(' ')[0]) + '</div></div></a>';
+      }).join('') + '</div>';
+    loadedAny = true;
+  }
+  if (!loadedAny) {
+    _tryFetchDashNews(widget, dateEl);
+  } else {
+    var latestDate = collected.reduce(function(m, item) {
+      var d = item.pubDate || '';
+      return d > m ? d : m;
+    }, '');
+    if (dateEl) dateEl.textContent = latestDate ? new Date(latestDate).toLocaleDateString() : 'cached';
+    // Refresh cache if older than 30 min
+    var oldestTs = Infinity;
+    keys.forEach(function(k) {
+      try {
+        var cached = localStorage.getItem('_eduNews_' + k);
+        if (cached) {
+          var parsed = JSON.parse(cached);
+          if (parsed && parsed.ts) oldestTs = Math.min(oldestTs, parsed.ts);
+        }
+      } catch(e) {}
+    });
+    if (oldestTs < Date.now() - 1800000) {
+      _tryFetchDashNews(widget, dateEl);
+    }
+  }
+}
+
+function _tryFetchDashNews(widget, dateEl) {
+  if (!widget) widget = document.getElementById('dashNewsWidget');
+  if (!dateEl) dateEl = document.getElementById('dashNewsDate');
+  var feedUrl = 'https://news.google.com/rss/search?q=education+school+scholarships+students+2026&hl=en-US&gl=US&ceid=US:en';
+  var proxyUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(feedUrl) + '&api_key=ustkz6qg6w4jbmzkwcferwcrv2cjjbtvv89htnni&count=5';
+  fetch(proxyUrl).then(function(r) { return r.json(); }).then(function(data) {
+    if (data && data.items && data.items.length) {
+      var items = data.items.slice(0, 5).map(function(item) { return { title: item.title, link: item.link, pubDate: item.pubDate, source: item.source || item.author || 'Google News' }; });
+      widget.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        items.map(function(item) {
+          return '<a href="' + htmlEscape(item.link) + '" target="_blank" rel="noopener" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:8px;text-decoration:none;color:inherit;transition:background 0.2s;" onmouseover="this.style.background=\'var(--hover-bg, #f7fafc)\'" onmouseout="this.style.background=\'transparent\'">' +
+            '<div style="font-size:11px;color:var(--primary);white-space:nowrap;min-width:12px;"><i class="fas fa-newspaper"></i></div>' +
+            '<div><div style="font-size:13px;font-weight:500;line-height:1.4;">' + htmlEscape(item.title) + '</div>' +
+            '<div style="font-size:11px;color:var(--text-light);margin-top:2px;">' + htmlEscape(item.source) + ' &middot; ' + htmlEscape((item.pubDate || '').split(' ')[0]) + '</div></div></a>';
+        }).join('') + '</div>';
+      try { localStorage.setItem('_eduNews_all', JSON.stringify({ ts: Date.now(), items: items })); } catch(e) {}
+    } else {
+      widget.innerHTML = '<p class="empty-state" style="margin:0;padding:8px;">Could not load news</p>';
+    }
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString();
+  }).catch(function() {
+    widget.innerHTML = '<p class="empty-state" style="margin:0;padding:8px;">News unavailable offline</p>';
+  });
 }
 
 // ===== STUDENTS =====

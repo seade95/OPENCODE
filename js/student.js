@@ -16,47 +16,16 @@ function renderStudentPortal() {
   el = document.getElementById('studentProfileId'); if (el) el.textContent = s.id;
   el = document.getElementById('studentProfileClass'); if (el) el.textContent = s.class;
   el = document.getElementById('stuCurrentTerm'); if (el) el.textContent = data.currentTerm || 'No active term';
+  el = document.getElementById('stuClassTeacher'); if (el) {
+    var ctId = data.classTeachers ? data.classTeachers[s.class] : null;
+    var ct = ctId ? (data.teachers || []).find(function(t) { return t.id === ctId; }) : null;
+    el.innerHTML = ct ? '<i class="fas fa-chalkboard-teacher"></i> Class Teacher: ' + htmlEscape(ct.name) : '';
+  }
 
-  // Results
-  var results = (data.results || []).filter(function(r) { return r.studentId === s.id; });
-  var rt = document.getElementById('stuResultsTable');
-  var re = document.getElementById('stuResultsEmpty');
-  if (results.length && rt && re) {
-    rt.innerHTML = results.map(function(r) { return '<tr><td>' + htmlEscape(r.subject) + '</td><td><strong>' + r.score + '</strong></td><td><span class="badge" style="background:' + (r.score >= 80 ? '#c6f6d5' : r.score >= 60 ? '#fefcbf' : '#fed7d7') + ';color:' + (r.score >= 80 ? '#22543d' : r.score >= 60 ? '#744210' : '#9b2c2c') + '">' + htmlEscape(r.grade) + '</span></td><td>' + htmlEscape(r.term) + '</td></tr>'; }).join('');
-    re.style.display = 'none';
-  } else { if (rt) rt.innerHTML = ''; if (re) re.style.display = 'block'; }
-
-  // CAT
-  var cat = (data.cat || []).filter(function(c) { return c.studentId === s.id; });
-  var ct = document.getElementById('stuCatTable');
-  var ce = document.getElementById('stuCatEmpty');
-  if (cat.length && ct && ce) {
-    ct.innerHTML = cat.map(function(c) { return '<tr><td>' + htmlEscape(c.subject) + '</td><td>' + c.test1 + '/20</td><td>' + c.test2 + '/20</td><td>' + c.test3 + '/20</td><td><strong>' + Math.round((c.test1 + c.test2 + c.test3) / 3) + '/20</strong></td></tr>'; }).join('');
-    ce.style.display = 'none';
-  } else { if (ct) ct.innerHTML = ''; if (ce) ce.style.display = 'block'; }
-
-  // Fees
-  var fees = (data.fees || []).filter(function(f) { return f.studentId === s.id; });
-  var ft = document.getElementById('stuFeesTable');
-  var fe = document.getElementById('stuFeesEmpty');
-  if (fees.length && ft && fe) {
-    ft.innerHTML = fees.map(function(f) {
-      var balance = f.amount - f.paid;
-      var bClass = f.status === 'paid' ? 'badge-paid' : f.status === 'partial' ? 'badge-partial' : 'badge-absent';
-      return '<tr><td>' + htmlEscape(f.term) + '</td><td>₦' + Number(f.amount).toLocaleString() + '</td><td>₦' + Number(f.paid).toLocaleString() + '</td><td>₦' + Math.max(0, balance).toLocaleString() + '</td><td><span class="badge ' + bClass + '">' + htmlEscape(f.status) + '</span></td></tr>';
-    }).join('');
-    fe.style.display = 'none';
-  } else { if (ft) ft.innerHTML = ''; if (fe) fe.style.display = 'block'; }
-
-  // Activities
-  var acts = (data.activities || []).filter(function(a) { return (a.participants || []).indexOf(s.id) >= 0; });
-  var ag = document.getElementById('stuActivitiesGrid');
-  var ae = document.getElementById('stuActivitiesEmpty');
-  if (acts.length && ag && ae) {
-    ag.innerHTML = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:100px;"><img src="images/sports/football.jpg" alt="" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.7);"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:20px;color:white;"><h3 style="font-weight:700;font-size:18px;"><i class="fas fa-futbol"></i> My Activities</h3></div></div>' + 
-    acts.map(function(a) { return '<div style="background:var(--card-bg);border-radius:var(--radius-sm);padding:20px;border:1px solid #e2e8f0;transition:var(--transition);"><div style="font-size:32px;color:var(--primary);margin-bottom:8px;"><i class="fas ' + (a.type === 'Sports' ? 'fa-futbol' : a.type === 'Academic' ? 'fa-book' : 'fa-palette') + '"></i></div><h4 style="font-weight:600;margin-bottom:4px;">' + htmlEscape(a.name) + '</h4><p style="font-size:13px;color:var(--text-light);"><i class="fas fa-calendar"></i> ' + htmlEscape(a.day) + '<br><i class="fas fa-clock"></i> ' + htmlEscape(a.time) + '</p></div>'; }).join('');
-    ae.style.display = 'none';
-  } else { if (ag) ag.innerHTML = ''; if (ae) ae.style.display = 'block'; }
+  renderStudentResults();
+  renderStudentCAT();
+  renderStudentFees();
+  renderStudentActivities();
 
   // Assignments — render dynamically with submission status
   if (typeof renderStudentAssignments === 'function') renderStudentAssignments();
@@ -70,16 +39,7 @@ function renderStudentPortal() {
   if (typeof renderStudentGPA === 'function') renderStudentGPA();
   if (typeof renderStudentReportCard === 'function') renderStudentReportCard();
 
-  var att = (data.attendance || []).filter(function(a) { return a.studentId === s.id; }).sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-  var at = document.getElementById('stuAttendanceTable');
-  var ate = document.getElementById('stuAttendanceEmpty');
-  if (att.length && at && ate) {
-    at.innerHTML = att.map(function(a) {
-      var bClass = a.status === 'present' ? 'badge-paid' : a.status === 'absent' ? 'badge-absent' : 'badge-excused';
-      return '<tr><td>' + htmlEscape(a.date) + '</td><td><span class="badge ' + bClass + '">' + htmlEscape(a.status) + '</span></td></tr>';
-    }).join('');
-    ate.style.display = 'none';
-  } else { if (at) at.innerHTML = ''; if (ate) ate.style.display = 'block'; }
+  renderStudentAttendance();
 
   if (typeof renderStudentLessonNotes === 'function') renderStudentLessonNotes();
   if (typeof renderStudentLibrary === 'function') renderStudentLibrary();
@@ -91,6 +51,74 @@ function renderStudentPortal() {
   if (typeof renderSubscriptionBanner === 'function') renderSubscriptionBanner();
   if (typeof applyTranslations === 'function') applyTranslations();
   checkFeeLock();
+}
+
+function renderStudentResults() {
+  if (!currentStudent) return;
+  var s = currentStudent;
+  var results = (data.results || []).filter(function(r) { return r.studentId === s.id; });
+  var rt = document.getElementById('stuResultsTable');
+  var re = document.getElementById('stuResultsEmpty');
+  if (results.length && rt && re) {
+    rt.innerHTML = results.map(function(r) { return '<tr><td>' + htmlEscape(r.subject) + '</td><td><strong>' + r.score + '</strong></td><td><span class="badge" style="background:' + (r.score >= 80 ? '#c6f6d5' : r.score >= 60 ? '#fefcbf' : '#fed7d7') + ';color:' + (r.score >= 80 ? '#22543d' : r.score >= 60 ? '#744210' : '#9b2c2c') + '">' + htmlEscape(r.grade) + '</span></td><td>' + htmlEscape(r.term) + '</td></tr>'; }).join('');
+    re.style.display = 'none';
+  } else { if (rt) rt.innerHTML = ''; if (re) re.style.display = 'block'; }
+}
+
+function renderStudentCAT() {
+  if (!currentStudent) return;
+  var s = currentStudent;
+  var cat = (data.cat || []).filter(function(c) { return c.studentId === s.id; });
+  var ct = document.getElementById('stuCatTable');
+  var ce = document.getElementById('stuCatEmpty');
+  if (cat.length && ct && ce) {
+    ct.innerHTML = cat.map(function(c) { return '<tr><td>' + htmlEscape(c.subject) + '</td><td>' + c.test1 + '/20</td><td>' + c.test2 + '/20</td><td>' + c.test3 + '/20</td><td><strong>' + Math.round((c.test1 + c.test2 + c.test3) / 3) + '/20</strong></td></tr>'; }).join('');
+    ce.style.display = 'none';
+  } else { if (ct) ct.innerHTML = ''; if (ce) ce.style.display = 'block'; }
+}
+
+function renderStudentFees() {
+  if (!currentStudent) return;
+  var s = currentStudent;
+  var fees = (data.fees || []).filter(function(f) { return f.studentId === s.id; });
+  var ft = document.getElementById('stuFeesTable');
+  var fe = document.getElementById('stuFeesEmpty');
+  if (fees.length && ft && fe) {
+    ft.innerHTML = fees.map(function(f) {
+      var balance = f.amount - f.paid;
+      var bClass = f.status === 'paid' ? 'badge-paid' : f.status === 'partial' ? 'badge-partial' : 'badge-absent';
+      return '<tr><td>' + htmlEscape(f.term) + '</td><td>₦' + Number(f.amount).toLocaleString() + '</td><td>₦' + Number(f.paid).toLocaleString() + '</td><td>₦' + Math.max(0, balance).toLocaleString() + '</td><td><span class="badge ' + bClass + '">' + htmlEscape(f.status) + '</span></td></tr>';
+    }).join('');
+    fe.style.display = 'none';
+  } else { if (ft) ft.innerHTML = ''; if (fe) fe.style.display = 'block'; }
+}
+
+function renderStudentActivities() {
+  if (!currentStudent) return;
+  var s = currentStudent;
+  var acts = (data.activities || []).filter(function(a) { return (a.participants || []).indexOf(s.id) >= 0; });
+  var ag = document.getElementById('stuActivitiesGrid');
+  var ae = document.getElementById('stuActivitiesEmpty');
+  if (acts.length && ag && ae) {
+    ag.innerHTML = '<div style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:16px;height:100px;"><img src="images/sports/football.jpg" alt="" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.7);"><div style="position:absolute;inset:0;display:flex;align-items:center;padding:20px;color:white;"><h3 style="font-weight:700;font-size:18px;"><i class="fas fa-futbol"></i> My Activities</h3></div></div>' + 
+    acts.map(function(a) { return '<div style="background:var(--card-bg);border-radius:var(--radius-sm);padding:20px;border:1px solid #e2e8f0;transition:var(--transition);"><div style="font-size:32px;color:var(--primary);margin-bottom:8px;"><i class="fas ' + (a.type === 'Sports' ? 'fa-futbol' : a.type === 'Academic' ? 'fa-book' : 'fa-palette') + '"></i></div><h4 style="font-weight:600;margin-bottom:4px;">' + htmlEscape(a.name) + '</h4><p style="font-size:13px;color:var(--text-light);"><i class="fas fa-calendar"></i> ' + htmlEscape(a.day) + '<br><i class="fas fa-clock"></i> ' + htmlEscape(a.time) + '</p></div>'; }).join('');
+    ae.style.display = 'none';
+  } else { if (ag) ag.innerHTML = ''; if (ae) ae.style.display = 'block'; }
+}
+
+function renderStudentAttendance() {
+  if (!currentStudent) return;
+  var s = currentStudent;
+  var att = (data.attendance || []).filter(function(a) { return a.studentId === s.id; }).sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+  var at = document.getElementById('stuAttendanceTable');
+  var ate = document.getElementById('stuAttendanceEmpty');
+  if (att.length && at && ate) {
+    at.innerHTML = att.map(function(a) {
+      var bClass = a.status === 'present' ? 'badge-paid' : a.status === 'absent' ? 'badge-absent' : 'badge-excused';
+      return '<tr><td>' + htmlEscape(a.date) + '</td><td><span class="badge ' + bClass + '">' + htmlEscape(a.status) + '</span></td></tr>';
+    }).join('');
+    ate.style.display = 'none';
+  } else { if (at) at.innerHTML = ''; if (ate) ate.style.display = 'block'; }
 }
 
 // ===== FEE LOCK — block access when fees unpaid (within payment window only) =====
@@ -190,6 +218,11 @@ function closeFeeLock() {
       this.classList.add('active');
       var panel = document.getElementById('stu-' + tabName);
       if (panel) panel.classList.add('active');
+      if (tabName === 'results' && typeof renderStudentResults === 'function') renderStudentResults();
+      if (tabName === 'cat' && typeof renderStudentCAT === 'function') renderStudentCAT();
+      if (tabName === 'fees' && typeof renderStudentFees === 'function') renderStudentFees();
+      if (tabName === 'activities' && typeof renderStudentActivities === 'function') renderStudentActivities();
+      if (tabName === 'attendance' && typeof renderStudentAttendance === 'function') renderStudentAttendance();
       if (tabName === 'timetable' && typeof renderTimetableStudent === 'function') renderTimetableStudent();
       if (tabName === 'exams' && typeof renderExamsStudent === 'function') renderExamsStudent();
       if (tabName === 'messages' && typeof renderMessages === 'function') renderMessages('stuMessages', currentStudent ? currentStudent.id : '');

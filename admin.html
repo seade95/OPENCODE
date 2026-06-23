@@ -80,7 +80,7 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <!-- Offline Banner -->
-<div id="offlineBanner" class="offline-banner" style="display:none"><i class="fas fa-wifi-slash"></i> You are offline — data is saved locally and will sync when reconnected</div>
+<!-- offline indicator uses .conn-status dots (no blocky banner) -->
 
 <!-- ==================== ADMIN LOGIN ==================== -->
 <div class="admin-login-wrapper">
@@ -215,6 +215,7 @@ if ('serviceWorker' in navigator) {
       <div class="admin-sidebar-item" data-panel="schoolsetup"><i class="fas fa-school"></i><span data-i18n="schoolsetup">School Setup</span></div>
       <div class="admin-sidebar-item" data-panel="subjects"><i class="fas fa-book-open"></i><span data-i18n="subjects">Subjects</span></div>
       <div class="admin-sidebar-item" data-panel="streams"><i class="fas fa-code-branch"></i><span data-i18n="streams">Streams</span></div>
+      <div class="admin-sidebar-item" data-panel="class"><i class="fas fa-chalkboard"></i><span>Class Teachers</span></div>
       <div class="admin-sidebar-item" data-panel="exammodules"><i class="fas fa-globe-africa"></i><span data-i18n="exammodules">Exam Modules</span></div>
       <div class="admin-sidebar-item" data-panel="utmemock"><i class="fas fa-laptop-code"></i><span data-i18n="utmemock">UTME Mock</span></div>
       <div class="admin-sidebar-item" data-panel="gallery"><i class="fas fa-images"></i><span data-i18n="gallery">Gallery</span></div>
@@ -241,6 +242,10 @@ if ('serviceWorker' in navigator) {
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Communications</div>
       <div class="admin-sidebar-item" data-panel="broadcast"><i class="fas fa-bullhorn"></i><span>Broadcast</span></div>
+      <div class="admin-sidebar-item" data-panel="edunews"><i class="fas fa-newspaper"></i><span>Education News</span></div>
+      <div class="sidebar-divider"></div>
+      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Institution Data</div>
+      <div class="admin-sidebar-item" data-panel="higherinstitutions"><i class="fas fa-university"></i><span>Higher Institutions</span></div>
       <div class="sidebar-divider"></div>
       <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Student Welfare</div>
       <div class="admin-sidebar-item" data-panel="health"><i class="fas fa-heartbeat"></i><span>Health Records</span></div>
@@ -269,6 +274,14 @@ if ('serviceWorker' in navigator) {
         <div class="card">
           <h3 style="margin-bottom:12px;">Recent Activity</h3>
           <div id="recentActivity"><p class="empty-state">No recent activity</p></div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <h3 style="margin:0;"><i class="fas fa-newspaper" style="font-size:14px;color:var(--primary);"></i> Education News</h3>
+            <span style="font-size:11px;color:var(--text-light);"><i class="fas fa-sync-alt"></i> <span id="dashNewsDate">updating...</span></span>
+          </div>
+          <div id="dashNewsWidget"><div class="loading-overlay active" style="display:flex;position:relative;min-height:100px;"><div class="loading-spinner"></div></div></div>
+          <div style="margin-top:10px;text-align:right;"><button class="btn btn-sm btn-link" onclick="switchAdminPanel('edunews')"><i class="fas fa-arrow-right"></i> View all news</button></div>
         </div>
       </div>
       <!-- Students Panel -->
@@ -693,6 +706,13 @@ if ('serviceWorker' in navigator) {
       <!-- K-12 Streams -->
       <div class="admin-panel" id="admin-streams"></div>
 
+      <!-- Class Teachers -->
+      <div class="admin-panel" id="admin-class">
+        <div class="card-header"><h2><i class="fas fa-chalkboard"></i> Class Teachers</h2></div>
+        <p class="subtitle">Assign a full-time class teacher to each class. One teacher per class.</p>
+        <div class="card"><div id="classTeacherView"></div></div>
+      </div>
+
       <!-- K-12 Exam Modules -->
       <div class="admin-panel" id="admin-exammodules"></div>
 
@@ -817,9 +837,19 @@ if ('serviceWorker' in navigator) {
       <div class="admin-panel" id="admin-broadcast">
         <div id="adminBroadcast"></div>
       </div>
+      <!-- Education News -->
+      <div class="admin-panel" id="admin-edunews">
+        <div class="card-header"><h2><i class="fas fa-newspaper"></i> Global Education News Feed</h2></div>
+        <p class="subtitle">Curated education news — Scholarships, Competitions, and regional updates from Africa, Americas, and Asia</p>
+        <div class="card"><div id="eduNewsView"><div class="loading-overlay active" style="display:flex;position:relative;min-height:200px;"><div class="loading-spinner"></div></div></div></div>
+      </div>
       <!-- School Store -->
       <div class="admin-panel" id="admin-schoolstore">
         <div id="adminSchoolStore"></div>
+      </div>
+      <!-- Higher Institutions -->
+      <div class="admin-panel" id="admin-higherinstitutions">
+        <div id="hiView"></div>
       </div>
       <!-- Support Tickets -->
       <div class="admin-panel" id="admin-support">
@@ -851,7 +881,8 @@ if ('serviceWorker' in navigator) {
 <script src="js/alumni.js"></script>
 <script src="js/eduverse.js"></script>
 <script src="js/schoolprofile.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="js/higherinstitutions.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="js/handwriting-ocr.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <script src="js/teacher-upload.js"></script>
@@ -1000,6 +1031,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <!-- Floating Chat Buttons -->
 <div class="chat-float" id="chatFloat">
   <a class="chat-btn chat-whatsapp" id="chatWhatsappBtn" href="javascript:;" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>

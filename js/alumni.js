@@ -3,6 +3,7 @@
 
 // ===== STATE =====
 var _almEditId = null;
+var _almReunionEditId = null;
 
 // ===== ADMIN: RENDER ALUMNI DIRECTORY =====
 function renderAlumni() {
@@ -192,9 +193,10 @@ function saveReunion() {
   }
   saveData();
   closeModal();
-  _almReunionEditId = null;
   renderAlumni();
-  toast('Reunion ' + (_almReunionEditId?'updated':'created'));
+  var wasEdit = _almReunionEditId;
+  toast('Reunion ' + (wasEdit ? 'updated' : 'created'));
+  _almReunionEditId = null;
 }
 
 function deleteReunion(id) {

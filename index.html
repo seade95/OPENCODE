@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<base href="/">
 <meta name="viewport" content="width=1200">
 <script>!function(){var v=document.querySelector('meta[name=viewport]');if(v){var s=screen.width;v.content='width=1200, initial-scale='+(s/1200)+', minimum-scale=0.25, maximum-scale=3'}}()</script>
 <title>EDUVERSE - SCHOOL MANAGEMENT PLATFORM</title>
@@ -65,7 +66,7 @@ if ('serviceWorker' in navigator) {
 <div class="toast-container" id="toastContainer"></div>
 
 <!-- Offline Banner -->
-<div id="offlineBanner" class="offline-banner" style="display:none"><i class="fas fa-wifi-slash"></i> You are offline — data is saved locally and will sync when reconnected</div>
+<!-- offline indicator uses .conn-status dots (no blocky banner) -->
 
 <!-- Loading Overlay -->
 <div class="loading-overlay" id="loadingOverlay">
@@ -598,7 +599,7 @@ if ('serviceWorker' in navigator) {
 <footer class="footer-enhanced">
   <div class="footer-top-bar">
     <div class="logo">
-      <img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;border-radius:4px;">
+      <img id="footerLogo" class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;border-radius:4px;">
       EDUVERSE
     </div>
     <div class="footer-social">
@@ -757,6 +758,7 @@ if ('serviceWorker' in navigator) {
       <div class="student-info">
         <h2 id="studentProfileName">Student Name</h2>
         <p><i class="fas fa-id-card"></i> <span id="studentProfileId">--</span> &nbsp;|&nbsp; <i class="fas fa-graduation-cap"></i> <span id="studentProfileClass">--</span> &nbsp;|&nbsp; <i class="fas fa-calendar-alt"></i> <span id="stuCurrentTerm">--</span></p>
+        <p id="stuClassTeacher" style="font-size:13px;margin-top:4px;color:var(--accent);"></p>
       </div>
     </div>
 
@@ -1051,6 +1053,7 @@ if ('serviceWorker' in navigator) {
       <div class="admin-panel active" id="teacher-dashboard">
         <h2 data-i18n="dashboard">My Dashboard</h2>
         <p class="subtitle" id="teacherClassInfo">Overview of your class</p>
+        <p id="tchClassTeacherInfo" style="font-size:13px;color:var(--accent);margin:-8px 0 12px;"></p>
         <div class="stats-grid" style="margin-bottom:24px;">
           <div class="stat-card"><div class="icon"><i class="fas fa-users" style="color:var(--primary)"></i></div><h3 id="tDashStudents">0</h3><p>Students in Class</p></div>
           <div class="stat-card"><div class="icon"><i class="fas fa-check-circle" style="color:var(--success)"></i></div><h3 id="tDashPresent">0</h3><p>Today Present</p></div>
@@ -1399,5 +1402,6 @@ if ('serviceWorker' in navigator) {
   else window.addEventListener('load', initLandingGallery);
 })();
 </script>
+<div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 </body>
 </html>

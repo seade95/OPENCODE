@@ -363,11 +363,13 @@ var _PREMIUM_STUDENT = ['activitygames','alumni','library','payments','simulatio
 
 function _isPremium() {
   var sub = data.subscription || {};
+  if (sub.premiumOverride === true) return true;
   return sub.plan !== 'free' && (sub.status === 'active' || sub.status === 'cancelled') && sub.endDate && new Date(sub.endDate) > new Date();
 }
 
 function _isFree() {
   var sub = data.subscription || {};
+  if (sub.premiumOverride === true) return false;
   return sub.plan === 'free' || (sub.status !== 'active' && sub.status !== 'cancelled') || (sub.endDate && new Date(sub.endDate) <= new Date());
 }
 
