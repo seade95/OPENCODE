@@ -117,7 +117,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var ueContainer = document.createElement('div');
     ueContainer.id = 'unknownSchoolBanner';
     ueContainer.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:16px 24px;text-align:center;font-family:Inter,system-ui,sans-serif;box-shadow:0 4px 15px rgba(0,0,0,0.2);animation:slideDown 0.3s ease;';
-    ueContainer.innerHTML = '<div style="max-width:600px;margin:0 auto;">'
+    ueContainer.innerHTML = '<button onclick="dismissUnknownSchoolBanner()" style="position:absolute;top:8px;right:12px;background:none;border:none;color:#fff;font-size:22px;cursor:pointer;opacity:0.8;line-height:1;" title="Dismiss">&times;</button>'
+      + '<div style="max-width:600px;margin:0 auto;">'
       + '<h3 style="margin:0 0 4px;font-size:18px;"><i class="fas fa-map-signs"></i> School Not Found</h3>'
       + '<p style="margin:0;font-size:14px;opacity:0.9;">The subdomain <strong style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;font-family:monospace;">' + esc(_detectedUnknownSchool) + '</strong> does not match any registered school on EDUVERSE.</p>'
       + '<p style="margin:8px 0 0;font-size:13px;opacity:0.8;">If you own this school, please contact your super administrator or visit the <a href="' + window.location.origin + window.location.pathname + '" style="color:#fbbf24;font-weight:600;text-decoration:underline;">main portal</a>.</p>'
@@ -213,3 +214,15 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleScrollBtns();
   }
 });
+
+function dismissUnknownSchoolBanner() {
+  var banner = document.getElementById('unknownSchoolBanner');
+  if (banner) {
+    banner.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    banner.style.transform = 'translateY(-100%)';
+    banner.style.opacity = '0';
+    setTimeout(function() { banner.remove(); }, 300);
+  }
+  var mainEl = document.querySelector('main, .main-content, #app, .landing-page');
+  if (mainEl) mainEl.style.marginTop = '';
+}
