@@ -2,17 +2,20 @@
 
 var PLATFORM_CONFIG_KEY = 'eduverse_platform_config';
 var _saCurrentTab = 'overview';
+var _platformConfigCache = null;
 
 // ===== Platform Config Store (separate from school data) =====
 function getPlatformConfig() {
+  if (_platformConfigCache) return _platformConfigCache;
   try {
     var raw = localStorage.getItem(PLATFORM_CONFIG_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) { _platformConfigCache = JSON.parse(raw); return _platformConfigCache; }
   } catch(e) {}
   return getDefaultPlatformConfig();
 }
 
 function savePlatformConfig(cfg) {
+  _platformConfigCache = cfg;
   localStorage.setItem(PLATFORM_CONFIG_KEY, JSON.stringify(cfg));
 }
 

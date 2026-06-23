@@ -55,7 +55,12 @@ function resolveSchoolFromSubdomain() {
   return null;
 }
 
+var _tenantCache = null;
+
+function invalidateTenantCache() { _tenantCache = null; }
+
 function getTenants() {
+  if (_tenantCache) return _tenantCache;
   try {
     var t = JSON.parse(localStorage.getItem(TENANT_KEY)) || [];
     var changed = false;
@@ -88,19 +93,25 @@ function getTenants() {
       }
       saveTenants(t);
     }
+    _tenantCache = t;
     return t;
   } catch(e) { return []; }
 }
 
 function saveTenants(tenants) {
+  _tenantCache = tenants;
   localStorage.setItem(TENANT_KEY, JSON.stringify(tenants));
 }
 
+var _superAdminCache = null;
+
 function getSuperAdmin() {
-  try { return JSON.parse(localStorage.getItem(SUPER_ADMIN_KEY)) || null; } catch(e) { return null; }
+  if (_superAdminCache) return _superAdminCache;
+  try { _superAdminCache = JSON.parse(localStorage.getItem(SUPER_ADMIN_KEY)) || null; return _superAdminCache; } catch(e) { return null; }
 }
 
 function saveSuperAdmin(admin) {
+  _superAdminCache = admin;
   localStorage.setItem(SUPER_ADMIN_KEY, JSON.stringify(admin));
 }
 

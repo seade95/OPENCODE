@@ -1,3 +1,9 @@
+/* content-visibility for below-fold sections — instant paint */
+#services, #courses, #news, #testimonialsGrid, .footer-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 400px;
+}
+
 :root {
   --primary: #1a3a5c;
   --primary-light: #2a5a8c;

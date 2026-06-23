@@ -520,7 +520,8 @@ function __saveCurrentData() {
   saveData();
 }
 
-let data = loadData();
+// data is loaded via loadData() in app.js on DOMContentLoaded (faster startup)
+var data = null;
 
 // ===== UTILITIES =====
 function genId(prefix) {

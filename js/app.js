@@ -196,21 +196,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Scroll buttons (top/bottom)
+  // Scroll buttons (top/bottom) — throttled with requestAnimationFrame
   var topBtn = document.getElementById('scrollTopBtn');
   var bottomBtn = document.getElementById('scrollBottomBtn');
   if (topBtn && bottomBtn) {
-    var scrollTimer;
+    var _scrollRafId = null;
     function toggleScrollBtns() {
+      _scrollRafId = null;
       var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       var docHeight = document.documentElement.scrollHeight - window.innerHeight;
       topBtn.classList.toggle('visible', scrollTop > 300);
       bottomBtn.classList.toggle('visible', docHeight - scrollTop > 300);
     }
     window.addEventListener('scroll', function() {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(toggleScrollBtns, 100);
-    });
+      if (!_scrollRafId) _scrollRafId = requestAnimationFrame(toggleScrollBtns);
+    }, { passive: true });
     toggleScrollBtns();
   }
 });

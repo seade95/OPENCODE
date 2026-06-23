@@ -8,7 +8,8 @@
 <title>EDUVERSE - SCHOOL MANAGEMENT PLATFORM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 <link rel="alternate icon" href="images/favicon.svg">
@@ -42,19 +43,23 @@ if ('serviceWorker' in navigator) {
 (function() {
   var ver = window.APP_VERSION;
   if (!ver) { try { ver = '2026.06.19.1'; } catch(e) { ver = '1'; } }
-  var observer = new MutationObserver(function(muts) {
-    muts.forEach(function(m) {
-      m.addedNodes.forEach(function(n) {
-        try {
-          if (n.tagName === 'SCRIPT' && n.src && !n.src.includes('?v='))
-            n.src = n.src + (n.src.includes('?') ? '&v=' : '?v=') + ver;
-          if (n.tagName === 'LINK' && n.rel === 'stylesheet' && n.href && !n.href.includes('?v='))
-            n.href = n.href + (n.href.includes('?') ? '&v=' : '?v=') + ver;
-        } catch(e) {}
-      });
-    });
+  // Lightweight cache busting — patches newly added stylesheets/scripts once
+  var _cacheBuster = new MutationObserver(function(muts) {
+    for (var i = 0; i < muts.length; i++) {
+      var m = muts[i];
+      // Only check direct additions (faster than iterating all addedNodes)
+      if (m.type === 'childList' && m.addedNodes.length) {
+        for (var j = 0; j < m.addedNodes.length; j++) {
+          var n = m.addedNodes[j];
+          if (n.tagName === 'SCRIPT' && n.src && n.src.indexOf('?v=') === -1)
+            n.src = n.src + (n.src.indexOf('?') !== -1 ? '&v=' : '?v=') + ver;
+          else if (n.tagName === 'LINK' && n.rel === 'stylesheet' && n.href && n.href.indexOf('?v=') === -1)
+            n.href = n.href + (n.href.indexOf('?') !== -1 ? '&v=' : '?v=') + ver;
+        }
+      }
+    }
   });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
+  _cacheBuster.observe(document.documentElement, { childList: true, subtree: true });
   // Patch existing <link> tags in head (CSS)
   document.querySelectorAll('link[rel="stylesheet"]').forEach(function(l) {
     if (l.href && !l.href.includes('?v=')) l.href = l.href + (l.href.includes('?') ? '&v=' : '?v=') + ver;
@@ -180,7 +185,7 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="services-grid" id="servicesGrid">
     <div class="service-card">
-      <div class="img-box"><img src="images/services/academics.jpg" alt="Expert Teachers" loading="lazy"></div>
+      <div class="img-box"><img src="images/services/academics.jpg" alt="Expert Teachers" loading="lazy" width="400" height="300"></div>
       <div class="info-box">
         <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
         <h4>Expert Teachers</h4>
@@ -1359,9 +1364,9 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <script src="js/screen-protection.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script async src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script async src="https://js.paystack.co/v1/inline.js"></script>
+<script async src="https://checkout.flutterwave.com/v3.js"></script>
 <script src="js/data.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/admin.js"></script>
@@ -1382,9 +1387,9 @@ if ('serviceWorker' in navigator) {
 <script src="js/schoolprofile.js"></script>
 <script src="js/superadmin.js"></script>
 <script src="js/higherinstitutions.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="js/handwriting-ocr.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script async src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <script src="js/teacher-upload.js"></script>
 <script src="js/subscription.js"></script>
 <script src="js/offline-sync.js"></script>

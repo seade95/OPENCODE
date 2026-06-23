@@ -66,42 +66,40 @@ self.addEventListener('fetch', e => {
   const { request } = e;
   const url = new URL(request.url);
 
+  // Skip non-GET
+  if (request.method !== 'GET') return;
+
   // Media / streaming — network-first
   if (url.pathname.match(/\.(mp3|mp4|ogg|wav)$/) || url.hostname.includes('youtube')) {
     e.respondWith(networkFirst(request));
     return;
   }
 
-  // Skip non-GET
-  if (request.method !== 'GET') return;
-
-  // HTML navigation — network-first with offline fallback
-  if (request.mode === 'navigate') {
-    e.respondWith(networkFirstWithFallback(request));
-    return;
-  }
-
-  // Everything else — cache-first, falling back to network
-  e.respondWith(cacheFirst(request));
+  // All navigation and static assets — cache-first with background refresh
+  // This gives instant loads after the first visit
+  e.respondWith(cacheFirstWithRefresh(request));
 });
 
-async function cacheFirst(request) {
+async function cacheFirstWithRefresh(request) {
   const cached = await caches.match(request);
-  if (cached) return cached;
-  try {
-    const res = await fetch(request);
-    if (res.ok) {
-      const cache = await caches.open(CACHE);
-      cache.put(request, res.clone());
+  // Return cached response immediately (instant load)
+  // Then fetch from network in background to keep cache fresh
+  var fetchPromise = fetch(request).then(function(res) {
+    if (res && res.ok) {
+      var clone = res.clone();
+      caches.open(CACHE).then(function(cache) { cache.put(request, clone); });
     }
     return res;
-  } catch {
-    if (request.destination === 'document') {
-      const fallback = await caches.match(OFFLINE_URL);
-      if (fallback) return fallback;
-    }
-    return new Response('Offline', { status: 503 });
+  }).catch(function() { return cached || new Response('Offline', { status: 503 }); });
+
+  if (cached) {
+    // Fire background fetch without awaiting
+    fetchPromise.catch(function() {});
+    return cached;
   }
+
+  // Nothing cached — wait for network (or offline fallback)
+  return fetchPromise;
 }
 
 async function networkFirst(request) {
@@ -118,23 +116,7 @@ async function networkFirst(request) {
   }
 }
 
-async function networkFirstWithFallback(request) {
-  try {
-    const res = await fetch(request);
-    if (res.ok) {
-      const cache = await caches.open(CACHE);
-      cache.put(request, res.clone());
-    }
-    return res;
-  } catch {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    const fallback = await caches.match(OFFLINE_URL);
-    return fallback || new Response('Offline', { status: 503 });
-  }
-}
-
-// Listen for sync events from the client
+// Listen for messages from the client
 self.addEventListener('message', e => {
   if (e.data && e.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
