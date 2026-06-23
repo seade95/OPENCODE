@@ -486,14 +486,14 @@ function switchAdminPanel(panel) {
 
 // ===== RENDER ALL =====
 function renderAll() {
-  renderDashboard();
-  renderStudents();
-  renderTeachers();
-  renderFees();
-  renderResults();
-  renderCAT();
-  renderActivities();
-  renderAttendance();
+  if (typeof renderDashboard === 'function') renderDashboard();
+  if (typeof renderStudents === 'function') renderStudents();
+  if (typeof renderTeachers === 'function') renderTeachers();
+  if (typeof renderFees === 'function') renderFees();
+  if (typeof renderResults === 'function') renderResults();
+  if (typeof renderCAT === 'function') renderCAT();
+  if (typeof renderActivities === 'function') renderActivities();
+  if (typeof renderAttendance === 'function') renderAttendance();
   if (typeof switchTimetableTab === 'function') switchTimetableTab('grid');
   if (typeof renderHostel === 'function') renderHostel();
   if (typeof renderGradebookAdmin === 'function') renderGradebookAdmin();

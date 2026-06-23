@@ -2242,39 +2242,6 @@ function renderTerms() {
   initTermSelector('adminTermSelector');
 }
 
-// ===== STUDENT LIBRARY VIEW =====
-function renderStudentLibrary() {
-  if (!currentStudent) return;
-  const container = document.getElementById('stuLibraryView');
-  if (!container) return;
-  const books = data.library || [];
-  const myBorrows = data.borrowings.filter(b => b.studentId === currentStudent.id);
-  container.innerHTML = `
-    <h4 style="font-weight:600;margin-bottom:12px;">My Borrowed Books</h4>
-    ${myBorrows.length ? `<div style="overflow-x:auto;margin-bottom:16px;"><table><thead><tr><th>Book</th><th>Borrowed</th><th>Due</th><th>Status</th></tr></thead><tbody>
-      ${myBorrows.map(br => {
-        const book = data.library.find(b => b.id === br.bookId);
-        const bClass = br.status === 'active' ? 'badge-paid' : br.status === 'overdue' ? 'badge-absent' : 'badge-excused';
-        return `<tr><td>${book ? htmlEscape(book.title) : htmlEscape(br.bookId)}</td><td>${htmlEscape(br.borrowDate)}</td><td>${htmlEscape(br.dueDate)}</td><td><span class="badge ${bClass}">${br.status}</span></td></tr>`;
-      }).join('')}</tbody></table></div>` : '<p class="empty-state" style="margin-bottom:16px;">No books borrowed</p>'}
-    <h4 style="font-weight:600;margin-bottom:12px;">Available Books</h4>
-    <div class="library-grid">
-      ${books.filter(b => b.available > 0).map(b => {
-        const status = b.available <= 2 ? 'low' : 'available';
-        const hasEbook = !!(b.ebookUrl);
-        return `<div class="lib-card${hasEbook?' lib-card-has-ebook':''}">
-          ${hasEbook ? '<div class="lib-ebook-badge"><i class="fas fa-file-upload"></i> Ebook</div>' : ''}
-          <div class="book-title">${htmlEscape(b.title)}</div>
-          <div class="book-author">${htmlEscape(b.author)}</div>
-          <div class="book-meta"><span>ISBN: ${htmlEscape(b.isbn)}</span><span class="lib-availability ${status}">${b.available} left</span></div>
-          ${hasEbook ? '<div style="margin-top:8px;"><button class="btn btn-sm btn-success" onclick="viewEbookWithBookmarks(\'' + b.id + '\')" style="font-size:11px;"><i class="fas fa-book-open"></i> Read Ebook</button></div>' : ''}
-        </div>`;
-      }).join('')}
-    </div>
-    ${books.filter(b => b.available > 0).length ? '' : '<p class="empty-state">No books currently available</p>'}
-  `;
-}
-
 // ===== STUDENT PAYMENT VIEW =====
 function renderStudentPayment() {
   if (!currentStudent) return;
