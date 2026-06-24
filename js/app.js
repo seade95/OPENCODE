@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   } catch(e) {}
 
-  // Silently restore session data from localStorage (no auto-navigation — user clicks a portal card to enter)
+  // Restore session — auto-navigates to the correct portal if logged in
   if (typeof syncSession === 'function') syncSession();
 
   // Cross-tab session sync

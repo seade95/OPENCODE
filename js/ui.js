@@ -39,16 +39,15 @@ function getSession() {
     if (raw) {
       var s = JSON.parse(raw);
       if (s && s.version === SESSION_VERSION) {
-        // Reject expired sessions (absolute TTL from initial login)
         if (s.initialLogin && Date.now() - s.initialLogin > SESSION_TTL) {
           localStorage.removeItem(SESSION_KEY);
-          return { version: SESSION_VERSION, type: null, user: null, timestamp: 0, tenantId: null };
+          return null;
         }
         return s;
       }
     }
   } catch(e) {}
-  return { version: SESSION_VERSION, type: null, user: null, timestamp: 0, tenantId: null };
+  return null;
 }
 function saveSession(s) {
   s.timestamp = Date.now();
@@ -56,30 +55,49 @@ function saveSession(s) {
   if (!s.initialLogin) s.initialLogin = Date.now();
   localStorage.setItem(SESSION_KEY, JSON.stringify(s));
 }
-function clearSession() {
-  localStorage.removeItem(SESSION_KEY);
-  try { sessionStorage.removeItem('lastActivity'); } catch(e) {}
-  currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
+function clearSession(type) {
+  if (type) {
+    // Clear only the specified session type
+    var s = getSession();
+    if (s && s.type === type) {
+      localStorage.removeItem(SESSION_KEY);
+      try { sessionStorage.removeItem('lastActivity'); } catch(e) {}
+    }
+    if (type === 'admin') currentAdmin = null;
+    else if (type === 'student') currentStudent = null;
+    else if (type === 'teacher') currentTeacher = null;
+    else if (type === 'parent') currentParent = null;
+  } else {
+    localStorage.removeItem(SESSION_KEY);
+    try { sessionStorage.removeItem('lastActivity'); } catch(e) {}
+    currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
+  }
 }
 function setSession(type, user, tenantId) {
-  var s = getSession();
-  s.type = type;
-  s.user = { id: user.id, name: user.name, email: user.email || '' };
-  s.tenantId = tenantId || null;
+  var s = { version: SESSION_VERSION, type: type, user: null, timestamp: Date.now(), tenantId: tenantId || null };
+  s.user = { id: user.id, name: user.name, email: user.email || '', username: user.username || '', password: user.password || '' };
   saveSession(s);
 }
 function syncSession() {
   var s = getSession();
-  if (!s.type) { clearSession(); return; }
+  if (!s || !s.type) { clearSession(); return; }
   // Restore the correct current* variable from the persisted session
   if (s.type === 'admin') {
-    if (!currentAdmin && data.admins) currentAdmin = data.admins.find(function(a) { return a.id === s.user.id; }) || currentAdmin;
+    if (!currentAdmin && data && data.admins) currentAdmin = data.admins.find(function(a) { return a.id === s.user.id; }) || null;
+    if (!currentAdmin && s.user) currentAdmin = s.user; // fallback to session snapshot
+    if (currentAdmin && typeof showAdminPortal === 'function') showAdminPortal();
   } else if (s.type === 'student') {
-    if (!currentStudent && data.students) currentStudent = data.students.find(function(st) { return st.id === s.user.id; }) || currentStudent;
+    if (!currentStudent && data && data.students) currentStudent = data.students.find(function(st) { return st.id === s.user.id; }) || null;
+    if (!currentStudent && s.user) currentStudent = s.user;
+    if (currentStudent && typeof renderStudentPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var sp = document.getElementById('studentPage'); if (sp) sp.classList.add('active'); renderStudentPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
   } else if (s.type === 'teacher') {
-    if (!currentTeacher && data.teachers) currentTeacher = data.teachers.find(function(t) { return t.id === s.user.id; }) || currentTeacher;
+    if (!currentTeacher && data && data.teachers) currentTeacher = data.teachers.find(function(t) { return t.id === s.user.id; }) || null;
+    if (!currentTeacher && s.user) currentTeacher = s.user;
+    if (currentTeacher && typeof renderTeacherPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var tp = document.getElementById('teacherPage'); if (tp) tp.classList.add('active'); renderTeacherPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
   } else if (s.type === 'parent') {
-    if (!currentParent && data.parents) currentParent = data.parents.find(function(p) { return p.id === s.user.id; }) || currentParent;
+    if (!currentParent && data && data.parents) currentParent = data.parents.find(function(p) { return p.id === s.user.id; }) || null;
+    if (!currentParent && s.user) currentParent = s.user;
+    if (currentParent && typeof renderParentPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var pp = document.getElementById('parentPage'); if (pp) pp.classList.add('active'); renderParentPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
   }
 }
 
@@ -228,7 +246,7 @@ function adminSignup() {
 }
 
 function adminLogout() {
-  clearSession();
+  clearSession('admin');
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const page = document.getElementById('adminLoginPage');
   if (page) page.classList.add('active');
@@ -303,7 +321,7 @@ function studentLogin() {
 }
 
 function studentLogout() {
-  clearSession();
+  clearSession('student');
   var idEl = document.getElementById('loginId');
   var nameEl = document.getElementById('loginName');
   if (idEl) idEl.value = '';
@@ -356,7 +374,7 @@ function teacherLogin() {
 }
 
 function teacherLogout() {
-  clearSession();
+  clearSession('teacher');
   var idEl = document.getElementById('teacherLoginId');
   var passEl = document.getElementById('teacherLoginPass');
   if (idEl) idEl.value = '';

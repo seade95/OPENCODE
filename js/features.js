@@ -1223,7 +1223,7 @@ function parentLogin() {
 
 function parentLogout() {
   currentParent = null;
-  if (typeof clearSession === 'function') clearSession();
+  if (typeof clearSession === 'function') clearSession('parent');
   var ple = document.getElementById('parentLoginEmail'); if (ple) ple.value = '';
   var plp = document.getElementById('parentLoginPass'); if (plp) plp.value = '';
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));

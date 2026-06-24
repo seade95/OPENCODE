@@ -266,6 +266,14 @@ function _doSessionExpiry(msg) {
       parentLogout();
       toast(msg, 'warning');
     }
+    // Also clear session if current* vars are stale but session exists
+    try {
+      var s = typeof getSession === 'function' ? getSession() : null;
+      if (s && s.type && !currentAdmin && !currentStudent && !currentTeacher && !currentParent) {
+        localStorage.removeItem('eduverse_session');
+        sessionStorage.removeItem('lastActivity');
+      }
+    } catch(e) {}
   } catch(e) {}
 }
 
