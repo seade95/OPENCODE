@@ -7,6 +7,9 @@ RewriteEngine On
 # Serve index.html as the root directory index
 DirectoryIndex index.html
 
+# Route /superadmin to superadmin.html
+RewriteRule ^superadmin/?$ /superadmin.html [L]
+
 # Redirect all requests to index.html unless the file or directory exists
 # This ensures clean SPA routing (e.g., /login, /admin, /student serve index.html)
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   data = loadData();
 
+  // Route /superadmin path to the standalone super admin page
+  var path = window.location.pathname.replace(/\/+$/, '');
+  if (path === '/superadmin') {
+    window.location.replace('superadmin.html');
+    return;
+  }
+
   // Try subdomain-based tenant resolution first (e.g., myschool.yourdomain.com)
   var _detectedUnknownSchool = false;
   if (typeof resolveSchoolFromSubdomain === 'function') {
