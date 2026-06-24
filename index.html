@@ -6,10 +6,31 @@
 <meta name="viewport" content="width=1200">
 <script>!function(){var v=document.querySelector('meta[name=viewport]');if(v){var s=screen.width;v.content='width=1200, initial-scale='+(s/1200)+', minimum-scale=0.25, maximum-scale=3'}}()</script>
 <title>EDUVERSE - SCHOOL MANAGEMENT PLATFORM</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Preconnect to critical origins -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://js.paystack.co" crossorigin>
+<link rel="preconnect" href="https://checkout.flutterwave.com" crossorigin>
+<!-- dns-prefetch fallback for older browsers -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://cdn.sheetjs.com">
+<!-- Preload critical assets -->
+<link rel="preload" href="css/style.css" as="style">
+<link rel="preload" href="icons/icon.svg" as="image">
+<link rel="preload" href="images/favicon.svg" as="image">
+<link rel="preload" href="images/hero/slide1.jpg" as="image" fetchpriority="high">
+<!-- Google Fonts — async, non-blocking -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+<!-- Font Awesome — async, non-blocking -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+<!-- Main stylesheet -->
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 <link rel="alternate icon" href="images/favicon.svg">
@@ -17,55 +38,8 @@
 <meta name="theme-color" content="#2563eb">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(function(reg) {
-    reg.addEventListener('updatefound', function() {
-      var newSW = reg.installing;
-      newSW.addEventListener('statechange', function() {
-        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-          if (confirm('A new version is available. Reload to update?')) {
-            newSW.postMessage({ type: 'SKIP_WAITING' });
-            window.location.reload();
-          }
-        }
-      });
-    });
-  }).catch(function(){});
-  navigator.serviceWorker.addEventListener('controllerchange', function() {
-    window.location.reload();
-  });
-}
-</script>
 </head>
 <body>
-<script>
-(function() {
-  var ver = window.APP_VERSION;
-  if (!ver) { try { ver = '2026.06.19.1'; } catch(e) { ver = '1'; } }
-  // Lightweight cache busting — patches newly added stylesheets/scripts once
-  var _cacheBuster = new MutationObserver(function(muts) {
-    for (var i = 0; i < muts.length; i++) {
-      var m = muts[i];
-      // Only check direct additions (faster than iterating all addedNodes)
-      if (m.type === 'childList' && m.addedNodes.length) {
-        for (var j = 0; j < m.addedNodes.length; j++) {
-          var n = m.addedNodes[j];
-          if (n.tagName === 'SCRIPT' && n.src && n.src.indexOf('?v=') === -1)
-            n.src = n.src + (n.src.indexOf('?') !== -1 ? '&v=' : '?v=') + ver;
-          else if (n.tagName === 'LINK' && n.rel === 'stylesheet' && n.href && n.href.indexOf('?v=') === -1)
-            n.href = n.href + (n.href.indexOf('?') !== -1 ? '&v=' : '?v=') + ver;
-        }
-      }
-    }
-  });
-  _cacheBuster.observe(document.documentElement, { childList: true, subtree: true });
-  // Patch existing <link> tags in head (CSS)
-  document.querySelectorAll('link[rel="stylesheet"]').forEach(function(l) {
-    if (l.href && !l.href.includes('?v=')) l.href = l.href + (l.href.includes('?') ? '&v=' : '?v=') + ver;
-  });
-})();
-</script>
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
@@ -1409,5 +1383,25 @@ if ('serviceWorker' in navigator) {
 })();
 </script>
 <div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
+<script>
+window.addEventListener('load', function() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        var sw = reg.installing;
+        sw.addEventListener('statechange', function() {
+          if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+            if (confirm('A new version is available. Reload to update?')) {
+              sw.postMessage({ type: 'SKIP_WAITING' });
+              window.location.reload();
+            }
+          }
+        });
+      });
+    }).catch(function(){});
+    navigator.serviceWorker.addEventListener('controllerchange', function() { window.location.reload(); });
+  }
+});
+</script>
 </body>
 </html>
