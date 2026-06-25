@@ -789,6 +789,8 @@
       <button class="student-tab" data-tab="health"><i class="fas fa-heartbeat"></i> <span>Health</span></button>
       <button class="student-tab" data-tab="transport"><i class="fas fa-bus"></i> <span>Transport</span></button>
       <button class="student-tab" data-tab="store"><i class="fas fa-shopping-bag"></i> <span>Store</span></button>
+      <button class="student-tab" data-tab="ai-learning"><i class="fas fa-robot"></i> <span>AI Learning</span></button>
+      <button class="student-tab" data-tab="chat"><i class="fas fa-comments"></i> <span>Chat</span></button>
     </div>
 
     <!-- Student Results -->
@@ -955,6 +957,12 @@
     </div>
     <div class="student-panel" id="stu-store">
       <div id="studentStoreView"></div>
+    </div>
+    <div class="student-panel" id="stu-ai-learning">
+      <div class="card"><div id="personalizedLearningView"></div></div>
+    </div>
+    <div class="student-panel" id="stu-chat">
+      <div class="card"><div id="portalChatView"></div></div>
     </div>
   </div>
 </div>
@@ -1389,6 +1397,7 @@
 <script src="js/appwrite-migration.js"></script>
 <script src="js/subdomain-middleware.js"></script>
 <script src="js/path-router.js"></script>
+<script src="js/feature-upgrades.js"></script>
 <script src="js/app.js"></script>
 <script>
 // Initialize landing page gallery on load

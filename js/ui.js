@@ -464,6 +464,7 @@ function switchAdminPanel(panel) {
     case 'academiccalendar': if (typeof renderAcademicCalendar === 'function') renderAcademicCalendar(); break;
     case 'idcards': if (typeof renderIDCards === 'function') renderIDCards('adminIDCards'); break;
     case 'terms': if (typeof renderTerms === 'function') renderTerms(); break;
+    case 'chat': if (typeof renderPortalChat === 'function') renderPortalChat(); break;
     case 'programs': if (typeof renderPrograms === 'function') renderPrograms(); break;
     case 'applications': if (typeof renderApplications === 'function') renderApplications(); break;
     case 'exambank': if (typeof renderExamBank === 'function') renderExamBank(); break;

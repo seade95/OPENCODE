@@ -243,6 +243,8 @@ function closeFeeLock() {
       if (tabName === 'health' && typeof renderStudentHealthView === 'function') renderStudentHealthView();
       if (tabName === 'transport' && typeof renderStudentTransportView === 'function') renderStudentTransportView();
       if (tabName === 'store' && typeof renderStudentStore === 'function') renderStudentStore();
+      if (tabName === 'ai-learning' && typeof renderPersonalizedLearning === 'function' && currentStudent) renderPersonalizedLearning(currentStudent.id);
+      if (tabName === 'chat' && typeof renderPortalChat === 'function') renderPortalChat();
       if (typeof applyTranslations === 'function') applyTranslations();
     });
   }

@@ -40,6 +40,7 @@ const SHELL = [
   '/js/appwrite-migration.js',
   '/js/subdomain-middleware.js',
   '/js/path-router.js',
+  '/js/feature-upgrades.js',
   '/js/app.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2',
