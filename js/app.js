@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
       + '<div style="max-width:600px;margin:0 auto;">'
       + '<h3 style="margin:0 0 4px;font-size:18px;"><i class="fas fa-map-signs"></i> School Not Found</h3>'
       + '<p style="margin:0;font-size:14px;opacity:0.9;">The subdomain <strong style="background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:4px;font-family:monospace;">' + esc(_detectedUnknownSchool) + '</strong> does not match any registered school on EDUVERSE.</p>'
-      + '<p style="margin:8px 0 0;font-size:13px;opacity:0.8;">If you own this school, please contact your super administrator or visit the <a href="' + window.location.origin + window.location.pathname + '" style="color:#fbbf24;font-weight:600;text-decoration:underline;">main portal</a>.</p>'
+      + '<p style="margin:8px 0 0;font-size:13px;opacity:0.8;">If you own this school, please contact your super administrator or visit the <a href="' + window.location.origin + '/" style="color:#fbbf24;font-weight:600;text-decoration:underline;">main portal</a>.</p>'
       + '</div>';
     document.body.prepend(ueContainer);
     // Push main content down so banner is visible

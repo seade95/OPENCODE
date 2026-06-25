@@ -137,21 +137,20 @@ function patchSubdomainLinks() {
     'showEduverseSignup()': '/signup',
   };
 
-  // Intercept clicks on portal links
+  // Only intercept clicks when on a tenant subdomain
   document.addEventListener('click', function(e) {
+    if (!localStorage.getItem('activeTenant')) return;
     var target = e.target.closest('a');
     if (!target) return;
     var href = (target.getAttribute('href') || '').trim();
     var onclick = (target.getAttribute('onclick') || '').trim();
 
-    // Map href-based links (admin.html → /admin)
     if (LINK_MAP[href]) {
       e.preventDefault();
       navigateTo(LINK_MAP[href]);
       return;
     }
 
-    // Map onclick-based links
     if (CLICK_MAP[onclick]) {
       e.preventDefault();
       navigateTo(CLICK_MAP[onclick]);

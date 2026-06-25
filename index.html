@@ -6,6 +6,22 @@
 <meta name="viewport" content="width=1200">
 <script>!function(){var v=document.querySelector('meta[name=viewport]');if(v){var s=screen.width;v.content='width=1200, initial-scale='+(s/1200)+', minimum-scale=0.25, maximum-scale=3'}}()</script>
 <title>EDUVERSE - SCHOOL MANAGEMENT PLATFORM</title>
+<meta name="description" content="EduVerse is an all-in-one school management platform for K-12 schools. Manage students, teachers, fees, results, admissions, and more. Try it free.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "EDUVERSE",
+  "description": "All-in-one school management platform for K-12 schools. Manage students, teachers, fees, results, admissions, ID cards, and more.",
+  "url": "https://eduverse.appwrite.network",
+  "areaServed": "NG",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://eduverse.appwrite.network/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 <!-- Preconnect to critical origins -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,7 +128,7 @@
     <div class="slide" id="heroSlide1" style="background-image:linear-gradient(135deg, rgba(15,36,64,0.35), rgba(42,90,140,0.25)), url('images/hero/slide2.jpg');">
       <div class="slide-content">
         <div class="badge" id="heroBadge1"><i class="fas fa-graduation-cap"></i> FOR SCHOOLS, BY EDUCATORS</div>
-        <h1 id="heroTitle1">Your School, <span>Your Way</span></h1>
+        <h2 id="heroTitle1">Your School, <span>Your Way</span></h2>
         <p id="heroSubtitle1">Create your school profile, manage students and teachers, track fees and results — all from one unified platform.</p>
         <div class="slide-actions">
           <a href="javascript:;" class="btn btn-primary" onclick="showEduverseSignup()"><i class="fas fa-plus-circle"></i> Create Your School</a>
@@ -123,7 +139,7 @@
     <div class="slide" id="heroSlide2" style="background-image:linear-gradient(135deg, rgba(15,36,64,0.35), rgba(26,92,58,0.25)), url('images/hero/slide3.jpg');">
       <div class="slide-content">
         <div class="badge" id="heroBadge2"><i class="fas fa-trophy"></i> ALL-IN-ONE PLATFORM</div>
-        <h1 id="heroTitle2">K-12, Admissions, <span>&amp; More</span></h1>
+        <h2 id="heroTitle2">K-12, Admissions, <span>&amp; More</span></h2>
         <p id="heroSubtitle2">Full academic management from ECCDE to SSS, entrance exams, ID cards, analytics, and system tools — everything your school needs.</p>
         <div class="slide-actions">
           <a href="javascript:;" class="btn btn-primary" onclick="showEduverseSignup()" id="heroJoinBtn"><i class="fas fa-graduation-cap"></i> Join EduVerse</a>
@@ -733,7 +749,7 @@
   </div>
   <div class="student-layout">
     <div class="student-profile-card">
-      <div class="student-avatar" id="studentAvatar"><img src="images/avatars/student1.jpg" alt="" id="studentAvatarImg" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">S</div>
+      <div class="student-avatar" id="studentAvatar"><img src="images/avatars/student1.jpg" alt="Student avatar" id="studentAvatarImg" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:none;">S</div>
       <div class="student-info">
         <h2 id="studentProfileName">Student Name</h2>
         <p><i class="fas fa-id-card"></i> <span id="studentProfileId">--</span> &nbsp;|&nbsp; <i class="fas fa-graduation-cap"></i> <span id="studentProfileClass">--</span> &nbsp;|&nbsp; <i class="fas fa-calendar-alt"></i> <span id="stuCurrentTerm">--</span></p>
@@ -1290,7 +1306,7 @@
   </div>
   <div class="ev-topbar-right">
     <div class="ev-user-menu" onclick="document.getElementById('evUserDropdown').classList.toggle('show')">
-      <img id="evUserAvatar" src="images/avatars/student1.jpg" alt="" class="ev-avatar">
+      <img id="evUserAvatar" src="images/avatars/student1.jpg" alt="User avatar" class="ev-avatar">
       <span id="evUserName" class="ev-username">User</span>
       <i class="fas fa-caret-down"></i>
       <div id="evUserDropdown" class="ev-dropdown">
