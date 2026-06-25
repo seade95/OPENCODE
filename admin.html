@@ -1005,6 +1005,14 @@ document.addEventListener('DOMContentLoaded', function() {
       if (demoEmail) demoEmail.value = 'admin@demo.com';
       if (demoPass) demoPass.value = 'demo123';
       if (demoHint) demoHint.style.display = 'block';
+      // Ensure demo admin exists in data
+      if (typeof data !== 'undefined' && data) {
+        if (!data.admins) data.admins = [];
+        if (!data.admins.find(function(a) { return a.email === 'admin@demo.com'; })) {
+          data.admins.push({ id: 'ADM_DEMO', name: 'Admin Demo', email: 'admin@demo.com', password: 'demo123', role: 'super_admin' });
+          saveData();
+        }
+      }
     }
   } catch(e) {}
 
