@@ -1,4 +1,4 @@
-const CACHE = 'eduverse-v2';
+const CACHE = 'eduverse-v3';
 const OFFLINE_URL = '/offline.html';
 
 const SHELL = [
@@ -35,6 +35,11 @@ const SHELL = [
   '/js/offline-sync.js',
   '/js/screen-protection.js',
   '/js/superadmin.js',
+  '/js/appwrite-config.js',
+  '/js/appwrite-service.js',
+  '/js/appwrite-migration.js',
+  '/js/subdomain-middleware.js',
+  '/js/path-router.js',
   '/js/app.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2',
