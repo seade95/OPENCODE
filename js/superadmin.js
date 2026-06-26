@@ -143,22 +143,96 @@ function renderSaTab(tab) {
   }
 }
 
+// ===== Cross-School Data Aggregator =====
+function _aggregateAllSchoolData() {
+  var tenants = getTenants();
+  var agg = {
+    students: { total: 0, active: 0, inactive: 0 },
+    teachers: { total: 0 },
+    classes: { total: 0 },
+    subjects: { total: 0 },
+    feesCollected: { total: 0, totalAmount: 0 },
+    totalStorageKB: 0,
+    schools: []
+  };
+  tenants.forEach(function(t) {
+    try {
+      var raw = localStorage.getItem(getTenantDataKey(t.id));
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      var students = d.students || [];
+      var teachers = d.teachers || [];
+      var classesList = d.classes || [];
+      var subjects = d.subjects || [];
+      var fees = d.fees || [];
+      var activeS = students.filter(function(s) { return s.status !== 'graduated' && s.status !== 'inactive' && s.status !== 'alumni'; });
+      agg.students.total += students.length;
+      agg.students.active += activeS.length;
+      agg.students.inactive += (students.length - activeS.length);
+      agg.teachers.total += teachers.length;
+      agg.classes.total += classesList.length;
+      agg.subjects.total += subjects.length;
+      fees.forEach(function(f) {
+        if (f.status === 'paid' || f.paid) {
+          agg.feesCollected.total++;
+          agg.feesCollected.totalAmount += (parseFloat(f.amount) || 0);
+        }
+      });
+      var feeCollectedF = fees.filter(function(f) { return f.status === 'paid' || f.paid; });
+      agg.schools.push({
+        id: t.id, name: t.name,
+        studentCount: students.length, teacherCount: teachers.length,
+        classCount: classesList.length, subjectCount: subjects.length,
+        feeCount: fees.length,
+        feeCollectedCount: feeCollectedF.length,
+        feeCollectedAmount: feeCollectedF.reduce(function(s, f) { return s + (parseFloat(f.amount) || 0); }, 0),
+        storageKB: (raw.length / 1024).toFixed(1),
+        plan: t.plan, status: t.status
+      });
+      agg.totalStorageKB += raw.length / 1024;
+    } catch(e) {}
+  });
+  return agg;
+}
+
 // ===== 1. Overview Tab =====
 function renderSaOverview(container) {
   var admin = getSuperAdmin();
   var cfg = getPlatformConfig();
   var tenants = getTenants();
-  var totalSchools = tenants.length;
-  var activeSchools = tenants.filter(function(t) { return t.status === 'active'; }).length;
-  var suspendedSchools = tenants.filter(function(t) { return t.status === 'suspended'; }).length;
-  var bankCount = (cfg.bankAccounts || []).length;
+  var agg = _aggregateAllSchoolData();
+  var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
 
   var html = '<div class="sa-stats-grid">'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + totalSchools + '</div><div class="sa-stat-label">Total Schools</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-check-circle"></i></div><div><div class="sa-stat-value">' + activeSchools + '</div><div class="sa-stat-label">Active</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-pause-circle"></i></div><div><div class="sa-stat-value">' + suspendedSchools + '</div><div class="sa-stat-label">Suspended</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-university"></i></div><div><div class="sa-stat-value">' + bankCount + '</div><div class="sa-stat-label">Bank Accounts</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + tenants.length + '</div><div class="sa-stat-label">Total Schools</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-user-graduate"></i></div><div><div class="sa-stat-value">' + agg.students.total + '</div><div class="sa-stat-label">' + agg.students.active + ' Active · ' + agg.students.inactive + ' Inactive</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-chalkboard-teacher"></i></div><div><div class="sa-stat-value">' + agg.teachers.total + '</div><div class="sa-stat-label">Teachers (All Schools)</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + agg.classes.total + '</div><div class="sa-stat-label">Classes (All Schools)</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-money-bill-wave"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(agg.feesCollected.totalAmount) + '</div><div class="sa-stat-label">' + agg.feesCollected.total + ' Fee Collections</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-database"></i></div><div><div class="sa-stat-value">' + agg.totalStorageKB.toFixed(1) + ' KB</div><div class="sa-stat-label">Total Storage</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-check-circle"></i></div><div><div class="sa-stat-value">' + tenants.filter(function(t) { return t.status === 'active'; }).length + '</div><div class="sa-stat-label">Active Schools</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-pause-circle"></i></div><div><div class="sa-stat-value">' + tenants.filter(function(t) { return t.status === 'suspended'; }).length + '</div><div class="sa-stat-label">Suspended</div></div></div>'
     + '</div>';
+
+  // Per-school overview table
+  html += '<div class="sa-section"><h3><i class="fas fa-list"></i> Per-School Overview</h3>';
+  if (!agg.schools.length) {
+    html += '<p class="empty-state" style="padding:12px;">No school data loaded.</p>';
+  } else {
+    html += '<div style="overflow-x:auto;font-size:12px;"><table class="table" style="width:100%;">'
+      + '<thead><tr><th>School</th><th>Students</th><th>Teachers</th><th>Classes</th><th>Fees Collected</th><th>Storage</th><th>Plan</th><th>Status</th></tr></thead><tbody>'
+      + agg.schools.map(function(s) {
+        return '<tr><td><strong>' + esc(s.name) + '</strong></td>'
+          + '<td>' + s.studentCount + '</td>'
+          + '<td>' + s.teacherCount + '</td>'
+          + '<td>' + s.classCount + '</td>'
+          + '<td>' + sym + formatAmount(s.feeCollectedAmount) + ' (' + s.feeCollectedCount + ')</td>'
+          + '<td>' + s.storageKB + ' KB</td>'
+          + '<td><span class="badge" style="background:#dbeafe;color:#1e40af;">' + esc(s.plan || 'free') + '</span></td>'
+          + '<td><span class="badge ' + (s.status === 'active' ? 'badge-paid' : (s.status === 'pending' ? 'badge-grade' : 'badge-absent')) + '">' + esc(s.status) + '</span></td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  html += '</div>';
 
   // Recent activity log
   var log = getActivityLog().slice(0, 10);
@@ -174,6 +248,8 @@ function renderSaOverview(container) {
     + '<button class="btn btn-primary" onclick="closeSaDashboard();showOnboardSchool()"><i class="fas fa-plus-circle"></i> Add New School</button>'
     + '<button class="btn btn-outline" onclick="switchSaTab(\'platform\')"><i class="fas fa-cogs"></i> Configure Platform</button>'
     + '<button class="btn btn-outline" onclick="switchSaTab(\'subscriptions\')"><i class="fas fa-credit-card"></i> Manage Plans</button>'
+    + '<button class="btn btn-outline" onclick="switchSaTab(\'analytics\')"><i class="fas fa-chart-line"></i> View Analytics</button>'
+    + '<button class="btn btn-outline" onclick="switchSaTab(\'revenue\')"><i class="fas fa-money-bill-wave"></i> Revenue</button>'
     + '</div></div>';
 
   container.innerHTML = html;
@@ -696,6 +772,8 @@ function applyPlatformContact() {
 function renderSaAnalytics(container) {
   var tenants = getTenants();
   var cfg = getPlatformConfig();
+  var agg = _aggregateAllSchoolData();
+  var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
 
   // Plan distribution
   var planCounts = {};
@@ -703,21 +781,6 @@ function renderSaAnalytics(container) {
   tenants.forEach(function(t) {
     planCounts[t.plan] = (planCounts[t.plan] || 0) + 1;
     tierCounts[t.tier] = (tierCounts[t.tier] || 0) + 1;
-  });
-
-  // Estimate total students (sample from first few schools)
-  var totalEstStudents = 0;
-  var sampled = 0;
-  tenants.forEach(function(t) {
-    try {
-      var raw = localStorage.getItem(getTenantDataKey(t.id));
-      if (raw) {
-        var d = JSON.parse(raw);
-        var stuCount = (d.students || []).length;
-        totalEstStudents += stuCount;
-        sampled++;
-      }
-    } catch(e) {}
   });
 
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -728,10 +791,12 @@ function renderSaAnalytics(container) {
   });
 
   var html = '<div class="sa-stats-grid">'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-user-graduate"></i></div><div><div class="sa-stat-value">' + totalEstStudents + '</div><div class="sa-stat-label">Est. Total Students</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-user-graduate"></i></div><div><div class="sa-stat-value">' + agg.students.total + '</div><div class="sa-stat-label">Total Students</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-chalkboard-teacher"></i></div><div><div class="sa-stat-value">' + agg.teachers.total + '</div><div class="sa-stat-label">Total Teachers</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + agg.classes.total + '</div><div class="sa-stat-label">Total Classes</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-money-bill-wave"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(agg.feesCollected.totalAmount) + '</div><div class="sa-stat-label">Fees Collected (' + agg.feesCollected.total + ' txns)</div></div></div>'
     + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-layer-group"></i></div><div><div class="sa-stat-value">' + Object.keys(planCounts).length + '</div><div class="sa-stat-label">Plan Types</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-tag"></i></div><div><div class="sa-stat-value">' + Object.keys(tierCounts).length + '</div><div class="sa-stat-label">Tier Types</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-calendar"></i></div><div><div class="sa-stat-value">' + tenants.length + '</div><div class="sa-stat-label">Schools This Year</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-tag"></i></div><div><div class="sa-stat-value">' + Object.keys(tierCounts).length + '</div><div class="sa-stat-label">Tier Types</div></div></div>'
     + '</div>';
 
   // Plan Distribution
@@ -766,6 +831,25 @@ function renderSaAnalytics(container) {
         + '<div class="sa-bar-track"><div class="sa-bar-fill" style="width:' + pct + '%;background:linear-gradient(90deg,#667eea,#764ba2);"></div></div>'
         + '<span class="sa-bar-count">' + cnt + '</span></div>';
     }).join('') + '</div></div>';
+
+  // Cross-school benchmarks table
+  html += '<div class="sa-section"><h3><i class="fas fa-table"></i> Cross-School Benchmarks</h3>';
+  if (!agg.schools.length) {
+    html += '<p class="empty-state" style="padding:12px;">No school data loaded.</p>';
+  } else {
+    html += '<div style="overflow-x:auto;font-size:12px;"><table class="table" style="width:100%;">'
+      + '<thead><tr><th>School</th><th>Students</th><th>Teachers</th><th>Classes</th><th>Subjects</th><th>Fees Collected</th><th>Storage</th></tr></thead><tbody>'
+      + agg.schools.slice().sort(function(a, b) { return b.studentCount - a.studentCount; }).map(function(s) {
+        return '<tr><td><strong>' + esc(s.name) + '</strong></td>'
+          + '<td>' + s.studentCount + '</td>'
+          + '<td>' + s.teacherCount + '</td>'
+          + '<td>' + s.classCount + '</td>'
+          + '<td>' + s.subjectCount + '</td>'
+          + '<td>' + sym + formatAmount(s.feeCollectedAmount) + '</td>'
+          + '<td>' + s.storageKB + ' KB</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  html += '</div>';
 
   // Recent schools list
   var recent = tenants.slice().sort(function(a, b) { return new Date(b.createdAt) - new Date(a.createdAt); }).slice(0, 5);
@@ -1035,13 +1119,15 @@ function renderSaRevenue(container) {
   var cfg = getPlatformConfig();
   var records = cfg.revenueRecords || [];
   var tenants = getTenants();
+  var agg = _aggregateAllSchoolData();
+  var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
 
-  // Aggregate by plan
+  // Aggregate subscription payments by plan
   var planRevenue = {};
-  var totalRevenue = 0;
+  var totalSubscriptionRevenue = 0;
   records.forEach(function(r) {
     var amt = parseFloat(r.amount) || 0;
-    totalRevenue += amt;
+    totalSubscriptionRevenue += amt;
     planRevenue[r.plan] = (planRevenue[r.plan] || 0) + amt;
   });
 
@@ -1049,17 +1135,37 @@ function renderSaRevenue(container) {
   var paidSchools = {};
   records.forEach(function(r) { paidSchools[r.schoolId] = true; });
 
-  var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
+  var combinedRevenue = totalSubscriptionRevenue + agg.feesCollected.totalAmount;
 
   var html = '<div class="sa-stats-grid">'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-money-bill-wave"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(totalRevenue) + '</div><div class="sa-stat-label">Total Revenue</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + Object.keys(paidSchools).length + '</div><div class="sa-stat-label">Paying Schools</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-receipt"></i></div><div><div class="sa-stat-value">' + records.length + '</div><div class="sa-stat-label">Transactions</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-chart-line"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(records.length ? (totalRevenue / records.length) : 0) + '</div><div class="sa-stat-label">Avg per Transaction</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#d1fae5;color:#059669;"><i class="fas fa-money-bill-wave"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(combinedRevenue) + '</div><div class="sa-stat-label">Combined Revenue</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-users"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(agg.feesCollected.totalAmount) + '</div><div class="sa-stat-label">School Fee Collections</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-credit-card"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(totalSubscriptionRevenue) + '</div><div class="sa-stat-label">Subscription Payments</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#fce7f3;color:#db2777;"><i class="fas fa-receipt"></i></div><div><div class="sa-stat-value">' + agg.feesCollected.total + ' txns</div><div class="sa-stat-label">Fee Transactions</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#dbeafe;color:#2563eb;"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + Object.keys(paidSchools).length + '</div><div class="sa-stat-label">Paying Schools (Sub)</div></div></div>'
+    + '<div class="sa-stat-card"><div class="sa-stat-icon" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-receipt"></i></div><div><div class="sa-stat-value">' + records.length + '</div><div class="sa-stat-label">Subscription Transactions</div></div></div>'
     + '</div>';
 
-  // Record a payment
-  html += '<div class="sa-section"><h3><i class="fas fa-plus-circle"></i> Record a Payment</h3>'
+  // Fee collections by school (from actual student fees)
+  html += '<div class="sa-section"><h3><i class="fas fa-file-invoice-dollar"></i> Fee Collections by School</h3>';
+  if (!agg.schools.length) {
+    html += '<p class="empty-state" style="padding:12px;">No school data loaded.</p>';
+  } else {
+    html += '<div style="overflow-x:auto;font-size:12px;"><table class="table" style="width:100%;">'
+      + '<thead><tr><th>School</th><th>Fee Records</th><th>Paid Transactions</th><th>Total Collected</th><th>Avg per Fee</th></tr></thead><tbody>'
+      + agg.schools.slice().sort(function(a, b) { return b.feeCollectedAmount - a.feeCollectedAmount; }).map(function(s) {
+        var avg = s.feeCollectedCount ? (s.feeCollectedAmount / s.feeCollectedCount) : 0;
+        return '<tr><td><strong>' + esc(s.name) + '</strong></td>'
+          + '<td>' + s.feeCount + '</td>'
+          + '<td>' + s.feeCollectedCount + '</td>'
+          + '<td><strong>' + sym + formatAmount(s.feeCollectedAmount) + '</strong></td>'
+          + '<td>' + sym + formatAmount(avg) + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  html += '</div>';
+
+  // Record a subscription payment
+  html += '<div class="sa-section"><h3><i class="fas fa-plus-circle"></i> Record a Subscription Payment</h3>'
     + '<div id="saRevError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>'
     + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">'
     + '<div class="form-group"><label>School</label><select id="saRevSchool"><option value="">-- Select --</option>'
@@ -1072,10 +1178,10 @@ function renderSaRevenue(container) {
     + '<button class="btn btn-primary" onclick="saRecordPayment()" style="margin-top:8px;"><i class="fas fa-check"></i> Record Payment</button>'
     + '</div>';
 
-  // Transaction history
-  html += '<div class="sa-section"><h3><i class="fas fa-list"></i> Payment History (' + records.length + ')</h3>';
+  // Subscription payment history
+  html += '<div class="sa-section"><h3><i class="fas fa-list"></i> Subscription Payment History (' + records.length + ')</h3>';
   if (!records.length) {
-    html += '<p class="empty-state" style="margin:0;padding:12px;">No payments recorded yet.</p>';
+    html += '<p class="empty-state" style="margin:0;padding:12px;">No subscription payments recorded yet.</p>';
   } else {
     html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
       + '<thead><tr><th>Date</th><th>School</th><th>Plan</th><th>Amount</th><th>Method</th><th>Ref</th></tr></thead><tbody>'
@@ -1314,8 +1420,4 @@ function saSetApproval(val) {
 // The schools tab is already rendered by renderSaSchools. 
 // Add password reset and approval toggles per school.
 
-// Keep the existing formatAmount
-function formatAmount(n) {
-  if (typeof n !== 'number') n = parseFloat(n) || 0;
-  return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+

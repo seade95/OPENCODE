@@ -5,7 +5,7 @@ const TENANT_KEY = 'eduverse_tenants';
 const SUPER_ADMIN_KEY = 'eduverse_super_admin';
 
 // ===== Subdomain / Slug System =====
-var RESERVED_SLUGS = ['www', 'app', 'api', 'admin', 'mail', 'smtp', 'pop3', 'webmail', 'cpanel', 'whm', 'ftp', 'ssh', 'mysql', 'test', 'dev', 'staging', 'demo', 'beta', 'help', 'support', 'docs', 'wiki', 'blog', 'forum', 'community', 'status', 'cdn', 'static', 'assets', 'media', 'files', 'img', 'css', 'js', 'download', 'uploads', 'store', 'shop', 'billing', 'pay', 'secure', 'login', 'signup', 'register', 'auth', 'oauth', 'saml', 'ldap', 'portal', 'dashboard', 'manage', 'system', 'server', 'host', 'hosting', 'cloud', 'edu', 'education', 'school', 'schools', 'my', 'your', 'the'];
+var RESERVED_SLUGS = ['www', 'app', 'api', 'admin', 'mail', 'smtp', 'pop3', 'webmail', 'cpanel', 'whm', 'ftp', 'ssh', 'mysql', 'test', 'dev', 'staging', 'demo', 'beta', 'help', 'support', 'docs', 'wiki', 'blog', 'forum', 'community', 'status', 'cdn', 'static', 'assets', 'media', 'files', 'img', 'css', 'js', 'download', 'uploads', 'store', 'shop', 'billing', 'pay', 'secure', 'login', 'signup', 'register', 'auth', 'oauth', 'saml', 'ldap', 'portal', 'dashboard', 'manage', 'system', 'server', 'host', 'hosting', 'cloud', 'edu', 'education', 'school', 'schools', 'my', 'your', 'the', 'eduverse'];
 
 function normalizeSlug(str) {
   return str.toLowerCase()
@@ -47,6 +47,12 @@ function resolveSchoolFromSubdomain() {
 
     var sub = parts[0];
     if (!sub || RESERVED_SLUGS.indexOf(sub) !== -1) return null;
+
+    // Also skip if subdomain matches the platform's own name (e.g. eduverse.yourdomain.com)
+    try {
+      var cfg = JSON.parse(localStorage.getItem('eduverse_platform_config') || '{}');
+      if (cfg.platformName && sub === cfg.platformName.toLowerCase()) return null;
+    } catch(e) {}
 
     var tenants = getTenants();
     var tenant = tenants.find(function(t) { return t.slug === sub; });

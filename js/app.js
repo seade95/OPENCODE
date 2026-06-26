@@ -35,7 +35,16 @@ document.addEventListener('DOMContentLoaded', function() {
       var hostParts = window.location.hostname.toLowerCase().split('.');
       if (hostParts.length >= 3 && ['localhost','127.0.0.1'].indexOf(window.location.hostname) === -1 && !/^\d+\.\d+\.\d+\.\d+$/.test(window.location.hostname)) {
         var sub = hostParts[0];
-        if (sub && ['www'].indexOf(sub) === -1) {
+        // Skip reserved slugs (e.g. www, api, admin) and platform name (e.g. eduverse)
+        var skip = sub && (['www'].indexOf(sub) !== -1
+          || (typeof RESERVED_SLUGS !== 'undefined' && RESERVED_SLUGS.indexOf(sub) !== -1));
+        if (!skip) {
+          try {
+            var _cfg = JSON.parse(localStorage.getItem('eduverse_platform_config') || '{}');
+            if (_cfg.platformName && sub === _cfg.platformName.toLowerCase()) skip = true;
+          } catch(e) {}
+        }
+        if (sub && !skip) {
           _detectedUnknownSchool = sub;
         }
       }
