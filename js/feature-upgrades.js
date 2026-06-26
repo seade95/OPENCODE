@@ -161,20 +161,20 @@ function ensureBadgesData() {
   if (!data.badges) data.badges = [];
   if (!data.badgeDefinitions) {
     data.badgeDefinitions = [
-      { id: 'perfect_attendance', name: 'Perfect Attendance', icon: 'fa-calendar-check', dhtmlEscape: 'Attend all school days in a term', color: '#059669' },
-      { id: 'top_performer', name: 'Top Performer', icon: 'fa-trophy', dhtmlEscape: 'Score 90%+ average in a term', color: '#d97706' },
-      { id: 'consistent', name: 'Consistent Achiever', icon: 'fa-chart-line', dhtmlEscape: 'Score 80%+ average across all terms', color: '#2563eb' },
-      { id: 'homework_hero', name: 'Homework Hero', icon: 'fa-book', dhtmlEscape: 'Submit all assignments on time for a term', color: '#7c3aed' },
-      { id: 'improvement', name: 'Most Improved', icon: 'fa-arrow-up', dhtmlEscape: 'Improve by 15%+ compared to previous term', color: '#0891b2' },
-      { id: 'perfect_score', name: 'Perfect Score', icon: 'fa-star', dhtmlEscape: 'Score 100% in any subject assessment', color: '#dc2626' },
-      { id: 'attendance_streak', name: 'Attendance Streak', icon: 'fa-fire', dhtmlEscape: 'Attend 30 consecutive school days', color: '#ea580c' },
-      { id: 'helpful_peer', name: 'Helpful Peer', icon: 'fa-handshake', dhtmlEscape: 'Receive 10+ peer appreciation votes', color: '#16a34a' },
+      { id: 'perfect_attendance', name: 'Perfect Attendance', icon: 'fa-calendar-check', desc: 'Attend all school days in a term', color: '#059669' },
+      { id: 'top_performer', name: 'Top Performer', icon: 'fa-trophy', desc: 'Score 90%+ average in a term', color: '#d97706' },
+      { id: 'consistent', name: 'Consistent Achiever', icon: 'fa-chart-line', desc: 'Score 80%+ average across all terms', color: '#2563eb' },
+      { id: 'homework_hero', name: 'Homework Hero', icon: 'fa-book', desc: 'Submit all assignments on time for a term', color: '#7c3aed' },
+      { id: 'improvement', name: 'Most Improved', icon: 'fa-arrow-up', desc: 'Improve by 15%+ compared to previous term', color: '#0891b2' },
+      { id: 'perfect_score', name: 'Perfect Score', icon: 'fa-star', desc: 'Score 100% in any subject assessment', color: '#dc2626' },
+      { id: 'attendance_streak', name: 'Attendance Streak', icon: 'fa-fire', desc: 'Attend 30 consecutive school days', color: '#ea580c' },
+      { id: 'helpful_peer', name: 'Helpful Peer', icon: 'fa-handshake', desc: 'Receive 10+ peer appreciation votes', color: '#16a34a' },
     ];
   }
 }
 
 // Award a badge to a student
-function awardBadge(studentId, badgeDefId) {
+function awardBadge(studentId, badgeDefId, silent) {
   ensureBadgesData();
   var existing = data.badges.find(function(b) { return b.studentId === studentId && b.badgeId === badgeDefId; });
   if (existing) return; // Already awarded
@@ -188,34 +188,48 @@ function awardBadge(studentId, badgeDefId) {
     awardedBy: (currentAdmin && currentAdmin.id) || (currentTeacher && currentTeacher.id) || 'system',
   });
   saveData();
-  var student = (data.students || []).find(function(s) { return s.id === studentId; });
-  if (student) toast('🏆 ' + def.name + ' awarded to ' + student.name, 'success');
+  if (!silent) {
+    var student = (data.students || []).find(function(s) { return s.id === studentId; });
+    if (student) toast('🏆 ' + def.name + ' awarded to ' + student.name, 'success');
+  }
 }
 
-// Auto-award badges based on data
+// Auto-award badges based on data (runs once per session, silences individual toasts)
 function autoAwardBadges() {
+  try {
+    if (sessionStorage.getItem('badgeAutoAwarded')) return;
+    sessionStorage.setItem('badgeAutoAwarded', '1');
+  } catch(e) {}
+
   ensureBadgesData();
+  var awarded = [];
+
   (data.students || []).forEach(function(student) {
-    // Perfect attendance check
     var attendance = (data.attendance || []).filter(function(a) { return a.studentId === student.id && a.status === 'present'; });
     var totalDays = (data.attendance || []).filter(function(a) { return a.studentId === student.id; }).length;
     if (totalDays > 0 && attendance.length === totalDays && totalDays >= 5) {
-      awardBadge(student.id, 'perfect_attendance');
+      awardBadge(student.id, 'perfect_attendance', true);
+      awarded.push('Perfect Attendance');
     }
 
-    // Top performer check
     var results = (data.results || []).filter(function(r) { return r.studentId === student.id; });
     if (results.length >= 3) {
       var avg = results.reduce(function(a, r) { return a + r.score; }, 0) / results.length;
-      if (avg >= 90) awardBadge(student.id, 'top_performer');
-      if (avg >= 80) awardBadge(student.id, 'consistent');
+      if (avg >= 90) { awardBadge(student.id, 'top_performer', true); awarded.push('Top Performer'); }
+      if (avg >= 80) { awardBadge(student.id, 'consistent', true); awarded.push('Consistent Achiever'); }
     }
 
-    // Perfect score check
     results.forEach(function(r) {
-      if (r.score >= 100) awardBadge(student.id, 'perfect_score');
+      if (r.score >= 100) { awardBadge(student.id, 'perfect_score', true); awarded.push('Perfect Score'); }
     });
   });
+
+  if (awarded.length > 0) {
+    var unique = awarded.filter(function(v, i, a) { return a.indexOf(v) === i; });
+    setTimeout(function() {
+      toast('🏆 ' + unique.length + ' badge(s) awarded this session', 'success');
+    }, 1500);
+  }
 }
 
 // Render badge wall for a student
@@ -233,7 +247,7 @@ function renderBadgeWall(studentId, containerId) {
     studentBadges.forEach(function(b) {
       var def = data.badgeDefinitions.find(function(d) { return d.id === b.badgeId; });
       if (!def) return;
-      html += '<div style="text-align:center;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;min-width:100px;" title="' + htmlEscape(def.dhtmlEscape) + '">';
+      html += '<div style="text-align:center;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;min-width:100px;" title="' + htmlEscape(def.desc) + '">';
       html += '<div style="width:48px;height:48px;border-radius:50%;background:' + def.color + '20;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border:2px solid ' + def.color + ';">';
       html += '<i class="fas ' + def.icon + '" style="font-size:20px;color:' + def.color + ';"></i></div>';
       html += '<div style="font-size:12px;font-weight:600;">' + htmlEscape(def.name) + '</div>';
