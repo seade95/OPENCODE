@@ -1207,7 +1207,7 @@ function parentLogin() {
   if (!email || !pass) { toast('Please enter both email and password', 'error'); return; }
   if (!isValidEmail(email)) { toast('Invalid email format', 'error'); return; }
   if (!isValidPassword(pass)) { toast('Password must be at least 6 characters', 'error'); return; }
-  const parent = data.parents.find(p => p.email === email && p.password === pass);
+  const parent = (data.parents || []).find(p => p.email === email && p.password === pass);
   if (!parent) {
     toast('Invalid email or password', 'error');
     return;

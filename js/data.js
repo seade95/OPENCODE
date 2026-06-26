@@ -390,6 +390,17 @@ function getDefaultData() {
     ],
     chatRooms: [],
     chatMessages: [],
+    badges: [],
+    badgeDefinitions: [
+      { id: 'perfect_attendance', name: 'Perfect Attendance', icon: 'fa-calendar-check', desc: 'Attend all school days in a term', color: '#059669' },
+      { id: 'top_performer', name: 'Top Performer', icon: 'fa-trophy', desc: 'Score 90%+ average in a term', color: '#d97706' },
+      { id: 'consistent', name: 'Consistent Achiever', icon: 'fa-chart-line', desc: 'Score 80%+ average across all terms', color: '#2563eb' },
+      { id: 'homework_hero', name: 'Homework Hero', icon: 'fa-book', desc: 'Submit all assignments on time for a term', color: '#7c3aed' },
+      { id: 'improvement', name: 'Most Improved', icon: 'fa-arrow-up', desc: 'Improve by 15%+ compared to previous term', color: '#0891b2' },
+      { id: 'perfect_score', name: 'Perfect Score', icon: 'fa-star', desc: 'Score 100% in any subject assessment', color: '#dc2626' },
+      { id: 'attendance_streak', name: 'Attendance Streak', icon: 'fa-fire', desc: 'Attend 30 consecutive school days', color: '#ea580c' },
+      { id: 'helpful_peer', name: 'Helpful Peer', icon: 'fa-handshake', desc: 'Receive 10+ peer appreciation votes', color: '#16a34a' },
+    ],
     virtualClasses: [
       { id: 'VCL001', title: 'Maths Revision — Algebra', topic: 'Algebra', date: '2026-10-15', time: '10:00', platform: 'zoom', link: 'https://zoom.us/j/example1', teacherName: 'Mr. Johnson', description: 'Algebra fundamentals review for upcoming exams.' },
       { id: 'VCL002', title: 'English Literature — Shakespeare', topic: 'Romeo & Juliet', date: '2026-10-17', time: '14:00', platform: 'meet', link: 'https://meet.google.com/example2', teacherName: 'Ms. Williams', description: 'Analysis of key scenes from Romeo and Juliet.' },
@@ -471,7 +482,7 @@ function loadData() {
         }
       }
       // Add new keys that might be missing from old localStorage
-      const newKeys = ['timetables', 'gradebook', 'messages', 'exams', 'parents', 'leaveRequests', 'library', 'borrowings', 'lessonNotes', 'behaviorLog', 'staffHR', 'payrollRecords', 'forumPosts', 'fileRepo', 'notifications', 'academicTerms', 'admissionPrograms', 'applications', 'examQuestions', 'examAttempts', 'idCards', 'paymentTransactions', 'admins', 'examRegistrations', 'academicCalendar', 'virtualClasses', 'submissions', 'gallery', 'notifLog', 'rooms', 'teacherSubjects', 'hostels', 'hostelRooms', 'hostelAllocations', 'maintenanceReqs', 'hostelPayments', 'waitlists', 'simQuestions', 'simAttempts', 'customReports', 'activityScores', 'alumni', 'reunions', 'donations', 'teacherExams', 'healthRecords', 'transportRoutes', 'conferences', 'customInstitutions'];
+      const newKeys = ['timetables', 'gradebook', 'messages', 'exams', 'parents', 'leaveRequests', 'library', 'borrowings', 'lessonNotes', 'behaviorLog', 'staffHR', 'payrollRecords', 'forumPosts', 'fileRepo', 'notifications', 'academicTerms', 'admissionPrograms', 'applications', 'examQuestions', 'examAttempts', 'idCards', 'paymentTransactions', 'admins', 'examRegistrations', 'academicCalendar', 'virtualClasses', 'submissions', 'gallery', 'notifLog', 'rooms', 'teacherSubjects', 'hostels', 'hostelRooms', 'hostelAllocations', 'maintenanceReqs', 'hostelPayments', 'waitlists', 'simQuestions', 'simAttempts', 'customReports', 'activityScores', 'alumni', 'reunions', 'donations', 'teacherExams', 'healthRecords', 'transportRoutes', 'conferences', 'customInstitutions', 'badges', 'badgeDefinitions'];
       for (const nk of newKeys) {
         if (!parsed[nk] || !Array.isArray(parsed[nk])) {
           parsed[nk] = defaults[nk];

@@ -209,7 +209,7 @@ function adminLogin() {
   const admin = (data.admins || []).find(function(a) { return a.email === email && a.password === pass; });
   if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
-  setSession('admin', admin);
+  if (typeof setSession === 'function') setSession('admin', admin);
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
   emailEl.value = '';
   passEl.value = '';
@@ -241,7 +241,7 @@ function adminSignup() {
   emailEl.value = '';
   passEl.value = '';
   currentAdmin = admin;
-  setSession('admin', admin);
+  if (typeof setSession === 'function') setSession('admin', admin);
   showAdminPortal();
 }
 
@@ -311,7 +311,7 @@ function studentLogin() {
     return;
   }
   currentStudent = student;
-  setSession('student', student);
+  if (typeof setSession === 'function') setSession('student', student);
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var sp = document.getElementById('studentPage');
@@ -364,7 +364,7 @@ function teacherLogin() {
     return;
   }
   currentTeacher = teacher;
-  setSession('teacher', teacher);
+  if (typeof setSession === 'function') setSession('teacher', teacher);
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   var tp = document.getElementById('teacherPage');
@@ -425,6 +425,7 @@ function switchTeacherPanel(panel) {
     case 'handwritingocr': if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('tchHandwritingOCR'); break;
     case 'teacherexams': if (typeof renderTeacherUpload === 'function') renderTeacherUpload('tchTeacherExams'); break;
     case 'tchconferences': if (typeof renderTeacherConferencesView === 'function') renderTeacherConferencesView(); break;
+    case 'ai-learning': renderTeacherAILearning(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }

@@ -936,6 +936,7 @@ adminSignup = function() {
   document.getElementById('adminSignupEmail').value = '';
   document.getElementById('adminSignupPass').value = '';
   currentAdmin = admin;
+  if (typeof setSession === 'function') setSession('admin', admin);
   document.querySelectorAll('.admin-login-wrapper').forEach(el => el.style.display = 'none');
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
   document.getElementById('adminPage').classList.add('active');
@@ -964,7 +965,7 @@ adminLogin = function() {
   const admin = (data.admins || []).find(a => a.email === email && a.password === pass);
   if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
-  setSession('admin', admin);
+  if (typeof setSession === 'function') setSession('admin', admin);
   document.getElementById('adminLoginEmail').value = '';
   document.getElementById('adminLoginPass').value = '';
   hideError(errEl);

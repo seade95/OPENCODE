@@ -68,7 +68,7 @@ function renderPersonalizedLearning(studentId) {
   });
 
   var html = '<div class="sa-section"><h3><i class="fas fa-robot"></i> AI Personalized Learning Path</h3>';
-  html += '<p style="font-size:14px;color:var(--text-light);margin-bottom:16px;">AI-generated recommendations for <strong>' + esc(student.name) + '</strong> based on ' + results.length + ' assessment results across ' + Object.keys(subjectScores).length + ' subjects.</p>';
+  html += '<p style="font-size:14px;color:var(--text-light);margin-bottom:16px;">AI-generated recommendations for <strong>' + htmlEscape(student.name) + '</strong> based on ' + results.length + ' assessment results across ' + Object.keys(subjectScores).length + ' subjects.</p>';
 
   if (recommendations.length === 0) {
     html += '<div class="empty-state"><i class="fas fa-check-circle" style="color:#059669;"></i><p>No data available yet. Add assessment results to generate learning paths.</p></div>';
@@ -80,13 +80,13 @@ function renderPersonalizedLearning(studentId) {
       var icon = r.priority === 'critical' ? 'fa-exclamation-triangle' : r.priority === 'important' ? 'fa-exclamation-circle' : r.priority === 'moderate' ? 'fa-book' : 'fa-star';
       html += '<div style="background:' + color + ';border-left:4px solid ' + borderColor + ';border-radius:8px;padding:14px 16px;">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">';
-      html += '<strong style="font-size:14px;"><i class="fas ' + icon + '"></i> ' + esc(r.subject) + '</strong>';
+      html += '<strong style="font-size:14px;"><i class="fas ' + icon + '"></i> ' + htmlEscape(r.subject) + '</strong>';
       html += '<span style="font-size:13px;font-weight:600;">Avg: ' + r.avg.toFixed(0) + '%</span>';
       html += '</div>';
       html += '<div style="font-size:13px;color:#374151;margin-top:4px;">';
       html += '<strong>Recommended:</strong> ';
       r.suggestions.forEach(function(s, i) {
-        html += '<span style="display:inline-block;background:rgba(255,255,255,0.6);padding:2px 8px;border-radius:4px;margin:2px 3px;font-size:12px;">' + esc(s) + '</span>';
+        html += '<span style="display:inline-block;background:rgba(255,255,255,0.6);padding:2px 8px;border-radius:4px;margin:2px 3px;font-size:12px;">' + htmlEscape(s) + '</span>';
       });
       html += '</div></div>';
     });
@@ -109,18 +109,46 @@ function renderPersonalizedLearning(studentId) {
   container.style.display = 'block';
 }
 
-// Add AI learning button to student/teacher dashboards
+// Add AI learning button to teacher sidebar only (student uses hardcoded tab)
 function addAILearningButton() {
-  var nav = document.querySelector('#studentPage .admin-sidebar, #teacherPage .admin-sidebar');
+  var nav = document.querySelector('#teacherPage .admin-sidebar');
   if (nav && !document.getElementById('aiLearningNavItem')) {
     var item = document.createElement('a');
     item.id = 'aiLearningNavItem';
     item.className = 'admin-sidebar-item';
-    item.setAttribute('data-panel', 'ai-learning');
-    item.setAttribute('onclick', 'switchStudentPanel(\'ai-learning\')');
+    item.setAttribute('data-teacher-panel', 'ai-learning');
     item.innerHTML = '<i class="fas fa-robot"></i> AI Learning Path';
     nav.appendChild(item);
   }
+}
+
+// Teacher AI Learning view — shows student selector then learning path
+function renderTeacherAILearning() {
+  var container = document.getElementById('teacherAILearningView');
+  if (!container) return;
+
+  var students = data.students || [];
+  if (students.length === 0) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-robot"></i><p>No students available. Add students first.</p></div>';
+    return;
+  }
+
+  var html = '<div class="sa-section"><h3><i class="fas fa-robot"></i> AI Learning Paths</h3>';
+  html += '<p style="font-size:14px;color:var(--text-light);margin-bottom:16px;">Select a student to view their personalized AI learning recommendations.</p>';
+  html += '<div class="form-group"><label>Select Student</label><select id="teacherAIStudentSelect" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;" onchange="renderTeacherAILearningForStudent()">';
+  html += '<option value="">-- Choose a student --</option>';
+  students.forEach(function(s) {
+    html += '<option value="' + s.id + '">' + htmlEscape(s.name) + ' (' + htmlEscape(s.class) + ')</option>';
+  });
+  html += '</select></div>';
+  html += '<div id="teacherAILearningResult"></div></div>';
+  container.innerHTML = html;
+}
+
+function renderTeacherAILearningForStudent() {
+  var sel = document.getElementById('teacherAIStudentSelect');
+  if (!sel || !sel.value) return;
+  renderPersonalizedLearning(sel.value);
 }
 
 // ============================================================================
@@ -133,14 +161,14 @@ function ensureBadgesData() {
   if (!data.badges) data.badges = [];
   if (!data.badgeDefinitions) {
     data.badgeDefinitions = [
-      { id: 'perfect_attendance', name: 'Perfect Attendance', icon: 'fa-calendar-check', desc: 'Attend all school days in a term', color: '#059669' },
-      { id: 'top_performer', name: 'Top Performer', icon: 'fa-trophy', desc: 'Score 90%+ average in a term', color: '#d97706' },
-      { id: 'consistent', name: 'Consistent Achiever', icon: 'fa-chart-line', desc: 'Score 80%+ average across all terms', color: '#2563eb' },
-      { id: 'homework_hero', name: 'Homework Hero', icon: 'fa-book', desc: 'Submit all assignments on time for a term', color: '#7c3aed' },
-      { id: 'improvement', name: 'Most Improved', icon: 'fa-arrow-up', desc: 'Improve by 15%+ compared to previous term', color: '#0891b2' },
-      { id: 'perfect_score', name: 'Perfect Score', icon: 'fa-star', desc: 'Score 100% in any subject assessment', color: '#dc2626' },
-      { id: 'attendance_streak', name: 'Attendance Streak', icon: 'fa-fire', desc: 'Attend 30 consecutive school days', color: '#ea580c' },
-      { id: 'helpful_peer', name: 'Helpful Peer', icon: 'fa-handshake', desc: 'Receive 10+ peer appreciation votes', color: '#16a34a' },
+      { id: 'perfect_attendance', name: 'Perfect Attendance', icon: 'fa-calendar-check', dhtmlEscape: 'Attend all school days in a term', color: '#059669' },
+      { id: 'top_performer', name: 'Top Performer', icon: 'fa-trophy', dhtmlEscape: 'Score 90%+ average in a term', color: '#d97706' },
+      { id: 'consistent', name: 'Consistent Achiever', icon: 'fa-chart-line', dhtmlEscape: 'Score 80%+ average across all terms', color: '#2563eb' },
+      { id: 'homework_hero', name: 'Homework Hero', icon: 'fa-book', dhtmlEscape: 'Submit all assignments on time for a term', color: '#7c3aed' },
+      { id: 'improvement', name: 'Most Improved', icon: 'fa-arrow-up', dhtmlEscape: 'Improve by 15%+ compared to previous term', color: '#0891b2' },
+      { id: 'perfect_score', name: 'Perfect Score', icon: 'fa-star', dhtmlEscape: 'Score 100% in any subject assessment', color: '#dc2626' },
+      { id: 'attendance_streak', name: 'Attendance Streak', icon: 'fa-fire', dhtmlEscape: 'Attend 30 consecutive school days', color: '#ea580c' },
+      { id: 'helpful_peer', name: 'Helpful Peer', icon: 'fa-handshake', dhtmlEscape: 'Receive 10+ peer appreciation votes', color: '#16a34a' },
     ];
   }
 }
@@ -205,10 +233,10 @@ function renderBadgeWall(studentId, containerId) {
     studentBadges.forEach(function(b) {
       var def = data.badgeDefinitions.find(function(d) { return d.id === b.badgeId; });
       if (!def) return;
-      html += '<div style="text-align:center;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;min-width:100px;" title="' + esc(def.desc) + '">';
+      html += '<div style="text-align:center;padding:10px;background:#f8fafc;border-radius:10px;border:1px solid #e2e8f0;min-width:100px;" title="' + htmlEscape(def.dhtmlEscape) + '">';
       html += '<div style="width:48px;height:48px;border-radius:50%;background:' + def.color + '20;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border:2px solid ' + def.color + ';">';
       html += '<i class="fas ' + def.icon + '" style="font-size:20px;color:' + def.color + ';"></i></div>';
-      html += '<div style="font-size:12px;font-weight:600;">' + esc(def.name) + '</div>';
+      html += '<div style="font-size:12px;font-weight:600;">' + htmlEscape(def.name) + '</div>';
       html += '<div style="font-size:10px;color:var(--text-light);">' + new Date(b.awardedAt).toLocaleDateString() + '</div>';
       html += '</div>';
     });
@@ -223,7 +251,7 @@ function renderBadgeWall(studentId, containerId) {
       var earned = studentBadges.some(function(b) { return b.badgeId === def.id; });
       html += '<div style="text-align:center;padding:8px;opacity:' + (earned ? '1' : '0.4') + ';min-width:80px;">';
       html += '<i class="fas ' + def.icon + '" style="font-size:16px;color:' + def.color + ';"></i>';
-      html += '<div style="font-size:10px;margin-top:2px;">' + esc(def.name) + '</div>';
+      html += '<div style="font-size:10px;margin-top:2px;">' + htmlEscape(def.name) + '</div>';
       html += '</div>';
     });
     html += '</div></details>';
@@ -245,6 +273,14 @@ function renderPredictiveAnalytics() {
   var results = data.results || [];
   var attendance = data.attendance || [];
 
+  if (students.length === 0) {
+    container.innerHTML = '<div class="empty-state"><i class="fas fa-robot"></i><p>No student data available for analysis</p></div>';
+    return;
+  }
+
+  // Class filter
+  var filterClass = document.getElementById('paClassFilter') ? document.getElementById('paClassFilter').value : 'all';
+
   var analysis = students.map(function(s) {
     var sResults = results.filter(function(r) { return r.studentId === s.id; });
     var sAttendance = attendance.filter(function(a) { return a.studentId === s.id; });
@@ -253,7 +289,7 @@ function renderPredictiveAnalytics() {
     var avg = sResults.length > 0 ? sResults.reduce(function(a, r) { return a + r.score; }, 0) / sResults.length : 0;
 
     // Grade trajectory (compare first half vs second half of assessments)
-    var sorted = sResults.sort(function(a, b) { return new Date(a.date || 0) - new Date(b.date || 0); });
+    var sorted = sResults.slice().sort(function(a, b) { return new Date(a.date || 0) - new Date(b.date || 0); });
     var mid = Math.floor(sorted.length / 2);
     var firstHalf = sorted.slice(0, mid);
     var secondHalf = sorted.slice(mid);
@@ -291,12 +327,27 @@ function renderPredictiveAnalytics() {
     };
   });
 
-  analysis.sort(function(a, b) { return b.riskLevel - a.riskLevel; });
-  var atRisk = analysis.filter(function(a) { return a.riskLevel >= 2; });
-  var warning = analysis.filter(function(a) { return a.riskLevel === 1; });
-  var onTrack = analysis.filter(function(a) { return a.riskLevel === 0; });
+  // Apply class filter
+  var filtered = filterClass === 'all' ? analysis : analysis.filter(function(a) { return a.class === filterClass; });
+
+  // Build class dropdown
+  var classMap = {};
+  students.forEach(function(s) { classMap[s.class] = true; });
+  var classList = Object.keys(classMap).sort();
+
+  filtered.sort(function(a, b) { return b.riskLevel - a.riskLevel; });
+  var atRisk = filtered.filter(function(a) { return a.riskLevel >= 2; });
+  var warning = filtered.filter(function(a) { return a.riskLevel === 1; });
+  var onTrack = filtered.filter(function(a) { return a.riskLevel === 0; });
 
   var html = '<div class="sa-section"><h3><i class="fas fa-chart-bar"></i> Predictive Performance Dashboard</h3>';
+
+  // Class filter dropdown
+  html += '<div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:16px;"><div class="form-group" style="margin:0;"><label style="font-size:13px;">Class</label><select id="paClassFilter" onchange="renderPredictiveAnalytics()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;"><option value="all">All Classes</option>';
+  classList.forEach(function(c) {
+    html += '<option value="' + c + '"' + (c === filterClass ? ' selected' : '') + '>' + c + '</option>';
+  });
+  html += '</select></div></div>';
 
   // Summary stats
   html += '<div class="sa-stats-grid" style="margin-bottom:16px;">';
@@ -311,7 +362,7 @@ function renderPredictiveAnalytics() {
     html += '<h4 style="font-size:15px;margin-bottom:8px;color:#dc2626;"><i class="fas fa-flag"></i> At-Risk Students — Requires Intervention</h4>';
     html += '<table class="table"><thead><tr><th>Student</th><th>Class</th><th>Average</th><th>Trend</th><th>Attendance</th><th>Risk Factors</th><th>Action</th></tr></thead><tbody>';
     atRisk.forEach(function(a) {
-      html += '<tr><td><strong>' + esc(a.name) + '</strong></td><td>' + esc(a.class) + '</td><td>' + a.avg.toFixed(0) + '%</td><td>' + a.trend + '</td><td>' + a.attPct.toFixed(0) + '%</td><td style="max-width:220px;font-size:12px;">' + a.factors.join('; ') + '</td><td><button class="btn btn-sm btn-primary" onclick="showRiskDetail(\'' + a.studentId + '\')"><i class="fas fa-search"></i> Analyze</button></td></tr>';
+      html += '<tr><td><strong>' + htmlEscape(a.name) + '</strong></td><td>' + htmlEscape(a.class) + '</td><td>' + a.avg.toFixed(0) + '%</td><td>' + a.trend + '</td><td>' + a.attPct.toFixed(0) + '%</td><td style="max-width:220px;font-size:12px;">' + a.factors.join('; ') + '</td><td><button class="btn btn-sm btn-primary" onclick="showRiskDetail(\'' + a.studentId + '\')"><i class="fas fa-search"></i> Analyze</button></td></tr>';
     });
     html += '</tbody></table>';
   }
@@ -321,7 +372,7 @@ function renderPredictiveAnalytics() {
     html += '<h4 style="font-size:15px;margin:16px 0 8px;color:#d97706;"><i class="fas fa-exclamation"></i> Needs Attention</h4>';
     html += '<table class="table"><thead><tr><th>Student</th><th>Class</th><th>Average</th><th>Trend</th><th>Attendance</th></tr></thead><tbody>';
     warning.forEach(function(a) {
-      html += '<tr><td><strong>' + esc(a.name) + '</strong></td><td>' + esc(a.class) + '</td><td>' + a.avg.toFixed(0) + '%</td><td>' + a.trend + '</td><td>' + a.attPct.toFixed(0) + '%</td></tr>';
+      html += '<tr><td><strong>' + htmlEscape(a.name) + '</strong></td><td>' + htmlEscape(a.class) + '</td><td>' + a.avg.toFixed(0) + '%</td><td>' + a.trend + '</td><td>' + a.attPct.toFixed(0) + '%</td></tr>';
     });
     html += '</tbody></table>';
   }
@@ -333,15 +384,11 @@ function renderPredictiveAnalytics() {
 // Show risk detail modal
 function showRiskDetail(studentId) {
   var student = (data.students || []).find(function(s) { return s.id === studentId; });
-  if (!student) return;
+  if (!student) { toast('Student not found', 'error'); return; }
   var results = (data.results || []).filter(function(r) { return r.studentId === studentId; });
   var attendance = (data.attendance || []).filter(function(a) { return a.studentId === studentId; });
-  var assignments = (data.assignments || []).filter(function(a) {
-    var sub = (data.submissions || []).find(function(s) { return s.assignmentId === a.id && s.studentId === studentId; });
-    return sub || true;
-  });
 
-  var html = '<div class="sa-section"><h3><i class="fas fa-chart-bar"></i> Detailed Analysis: ' + esc(student.name) + '</h3>';
+  var html = '<div class="sa-section"><h3><i class="fas fa-chart-bar"></i> Detailed Analysis: ' + htmlEscape(student.name) + '</h3>';
 
   // Grade chart
   html += '<h4>Grade Trend</h4><div style="display:flex;gap:4px;align-items:flex-end;min-height:120px;padding:12px 0;">';
@@ -372,45 +419,43 @@ function showRiskDetail(studentId) {
 // ============================================================================
 
 function upgradeTimetableGenerator() {
-  // The existing generateTimetable() in features.js works well.
-  // This upgrade adds conflict detection and resolution.
-  if (typeof generateTimetable !== 'function') return;
+  // Patches renderTimetableAdmin to run conflict detection after each render.
+  if (typeof renderTimetableAdmin !== 'function') return;
 
-  var _origGenerate = generateTimetable;
-  generateTimetable = function() {
-    // Run original generator first
-    _origGenerate();
-
-    // Then run conflict resolution
-    var timetable = data.timetables || [];
-    var conflicts = [];
-
-    // Check teacher conflicts (same teacher, same day, overlapping time)
-    var teacherSlots = {};
-    timetable.forEach(function(t) {
-      var key = t.teacher + '|' + t.day + '|' + t.time;
-      if (teacherSlots[key]) conflicts.push({ type: 'Teacher Conflict', teacher: t.teacher, day: t.day, time: t.time, class1: teacherSlots[key].class, class2: t.class });
-      else teacherSlots[key] = t;
-    });
-
-    // Check room conflicts
-    var roomSlots = {};
-    timetable.forEach(function(t) {
-      var key = t.room + '|' + t.day + '|' + t.time;
-      if (roomSlots[key]) conflicts.push({ type: 'Room Conflict', room: t.room, day: t.day, time: t.time, class1: roomSlots[key].class, class2: t.class });
-      else roomSlots[key] = t;
-    });
-
-    if (conflicts.length > 0) {
-      var msg = '⚠ ' + conflicts.length + ' conflict(s) detected:';
-      conflicts.forEach(function(c) {
-        msg += '\n• ' + c.type + ': ' + (c.teacher || c.room) + ' on ' + c.day + ' at ' + c.time;
-      });
-      toast(msg, 'warning');
-    } else {
-      toast('Timetable generated with no conflicts ✓', 'success');
-    }
+  var _origRender = renderTimetableAdmin;
+  renderTimetableAdmin = function() {
+    _origRender();
+    checkTimetableConflicts();
   };
+}
+
+function checkTimetableConflicts() {
+  var timetable = data.timetables || [];
+  var conflicts = [];
+
+  var teacherSlots = {};
+  timetable.forEach(function(t) {
+    var key = t.teacher + '|' + t.day + '|' + t.time;
+    if (teacherSlots[key]) conflicts.push({ type: 'Teacher Conflict', teacher: t.teacher, day: t.day, time: t.time, class1: teacherSlots[key].class, class2: t.class });
+    else teacherSlots[key] = t;
+  });
+
+  var roomSlots = {};
+  timetable.forEach(function(t) {
+    var key = t.room + '|' + t.day + '|' + t.time;
+    if (roomSlots[key]) conflicts.push({ type: 'Room Conflict', room: t.room, day: t.day, time: t.time, class1: roomSlots[key].class, class2: t.class });
+    else roomSlots[key] = t;
+  });
+
+  if (conflicts.length > 0) {
+    var msg = '⚠ ' + conflicts.length + ' conflict(s) detected:';
+    conflicts.forEach(function(c) {
+      msg += '\n• ' + c.type + ': ' + (c.teacher || c.room) + ' on ' + c.day + ' at ' + c.time;
+    });
+    toast(msg, 'warning');
+  } else if (timetable.length > 0) {
+    toast('Timetable has no conflicts ✓', 'success');
+  }
 }
 
 // ============================================================================
@@ -436,7 +481,7 @@ function renderPortalChat() {
   rooms.forEach(function(r) {
     var isActive = currentChatRoom && currentChatRoom.id === r.id;
     html += '<div style="padding:8px 12px;background:' + (isActive ? '#dbeafe' : '#f8fafc') + ';border-radius:6px;margin-bottom:4px;cursor:pointer;font-size:13px;" onclick="switchChatRoom(\'' + r.id + '\')">';
-    html += '<i class="fas fa-hashtag" style="color:var(--text-light);margin-right:6px;"></i>' + esc(r.name);
+    html += '<i class="fas fa-hashtag" style="color:var(--text-light);margin-right:6px;"></i>' + htmlEscape(r.name);
     html += '</div>';
   });
   html += '<button class="btn btn-sm btn-outline" style="width:100%;margin-top:8px;" onclick="showCreateChatRoom()"><i class="fas fa-plus"></i> New Room</button>';
@@ -445,7 +490,7 @@ function renderPortalChat() {
   // Chat area
   html += '<div style="flex:1;min-width:0;">';
   if (currentChatRoom) {
-    html += '<div style="font-weight:600;font-size:14px;margin-bottom:8px;"># ' + esc(currentChatRoom.name) + '</div>';
+    html += '<div style="font-weight:600;font-size:14px;margin-bottom:8px;"># ' + htmlEscape(currentChatRoom.name) + '</div>';
     html += '<div id="portalChatMessages" style="background:#f8fafc;border-radius:8px;padding:12px;min-height:300px;max-height:400px;overflow-y:auto;border:1px solid #e2e8f0;">';
     var msgs = (data.chatMessages || []).filter(function(m) { return m.roomId === currentChatRoom.id; }).slice(-50);
     if (msgs.length === 0) {
@@ -455,8 +500,8 @@ function renderPortalChat() {
         var isMe = m.userId === user.id || m.sender === user.name;
         html += '<div style="display:flex;gap:8px;margin-bottom:8px;' + (isMe ? 'flex-direction:row-reverse;' : '') + '">';
         html += '<div style="max-width:70%;background:' + (isMe ? '#2563eb' : '#fff') + ';color:' + (isMe ? '#fff' : '#1a202c') + ';padding:8px 12px;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,0.05);">';
-        html += '<div style="font-size:11px;font-weight:600;margin-bottom:2px;">' + esc(m.sender || m.userId) + '</div>';
-        html += '<div style="font-size:13px;">' + esc(m.content || m.text || '') + '</div>';
+        html += '<div style="font-size:11px;font-weight:600;margin-bottom:2px;">' + htmlEscape(m.sender || m.userId) + '</div>';
+        html += '<div style="font-size:13px;">' + htmlEscape(m.content || m.text || '') + '</div>';
         html += '<div style="font-size:10px;opacity:0.6;margin-top:2px;">' + new Date(m.timestamp || m.createdAt || Date.now()).toLocaleTimeString() + '</div>';
         html += '</div></div>';
       });
