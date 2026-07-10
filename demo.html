@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Book a Demo — EduVerse</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
+.demo-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
+.demo-hero h1{font-size:36px;margin:0 0 8px;}
+.demo-hero p{font-size:16px;opacity:0.85;max-width:550px;margin:0 auto;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
+.back-link:hover{color:#fff;}
+.demo-wrap{max-width:560px;margin:-32px auto 60px;padding:0 20px;}
+.demo-card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,0.06);}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:4px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;transition:border-color .15s;box-sizing:border-box;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.demo-btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;background:#2563eb;color:#fff;transition:background .15s;}
+.demo-btn:hover{background:#1d4ed8;}
+.demo-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.demo-note{text-align:center;font-size:13px;color:#94a3b8;margin-top:12px;}
+.success-msg{display:none;text-align:center;padding:40px 20px;}
+.success-msg i{font-size:56px;color:#22c55e;margin-bottom:12px;}
+.success-msg h2{font-size:24px;margin:0 0 8px;}
+.success-msg p{color:#64748b;font-size:15px;}
+[data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
+[data-theme="dark"] .demo-card{background:#1e293b;}
+[data-theme="dark"] .form-group label{color:#94a3b8;}
+[data-theme="dark"] .form-group input,.form-group select,.form-group textarea{background:#334155;border-color:#475569;color:#e2e8f0;}
+[data-theme="dark"] .form-group input:focus,.form-group select:focus{box-shadow:0 0 0 3px rgba(37,99,235,0.2);}
+[data-theme="dark"] .success-msg p{color:#94a3b8;}
+@media(max-width:500px){.form-row{grid-template-columns:1fr;}.demo-card{padding:24px 16px;}.demo-hero h1{font-size:26px;}}
+</style>
+</head>
+<body>
+
+<section class="demo-hero">
+  <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+  <h1>Book a Demo</h1>
+  <p>See EduVerse in action. Our team will walk you through everything in a personalized demo.</p>
+</section>
+
+<div class="demo-wrap">
+  <div class="demo-card" id="demoFormCard">
+    <div id="demoSuccess" class="success-msg">
+      <i class="fas fa-check-circle"></i>
+      <h2>Demo Request Sent!</h2>
+      <p>Thank you! Our team will reach out within 24 hours to schedule your personalized demo of EduVerse.</p>
+      <br><a href="/" class="btn btn-outline" style="display:inline-block;padding:10px 24px;border:2px solid #2563eb;color:#2563eb;border-radius:8px;text-decoration:none;font-weight:600;">Back to Home</a>
+    </div>
+    <form id="demoForm" onsubmit="submitDemo(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="demoName" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="demoEmail" required placeholder="john@school.edu">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="demoPhone" required placeholder="+234 800 000 0000">
+        </div>
+        <div class="form-group">
+          <label>School Name</label>
+          <input type="text" id="demoSchool" required placeholder="Sunrise International Academy">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>School Type</label>
+          <select id="demoType">
+            <option value="primary">Primary School</option>
+            <option value="secondary">Secondary School</option>
+            <option value="both">Primary &amp; Secondary</option>
+            <option value="district">School District / Group</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Approx. Student Count</label>
+          <select id="demoSize">
+            <option value="1-50">1–50 students</option>
+            <option value="51-200">51–200 students</option>
+            <option value="201-500">201–500 students</option>
+            <option value="501-1000">501–1,000 students</option>
+            <option value="1000+">1,000+ students</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Message (optional)</label>
+        <textarea id="demoMessage" placeholder="Tell us about your school's needs or any specific features you'd like to see..."></textarea>
+      </div>
+      <button type="submit" class="demo-btn" id="demoSubmitBtn">Send Demo Request</button>
+      <p class="demo-note"><i class="fas fa-lock" style="margin-right:4px;"></i> Your information is stored securely and never shared.</p>
+    </form>
+  </div>
+</div>
+
+<script>
+function submitDemo(e) {
+  e.preventDefault();
+  var btn = document.getElementById('demoSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  var data = {
+    name: document.getElementById('demoName').value.trim(),
+    email: document.getElementById('demoEmail').value.trim(),
+    phone: document.getElementById('demoPhone').value.trim(),
+    school: document.getElementById('demoSchool').value.trim(),
+    type: document.getElementById('demoType').value,
+    size: document.getElementById('demoSize').value,
+    message: document.getElementById('demoMessage').value.trim(),
+    submittedAt: new Date().toISOString()
+  };
+  try {
+    var existing = JSON.parse(localStorage.getItem('eduverse_demo_requests') || '[]');
+    existing.push(data);
+    localStorage.setItem('eduverse_demo_requests', JSON.stringify(existing));
+  } catch(e) {}
+  setTimeout(function() {
+    document.getElementById('demoForm').style.display = 'none';
+    document.getElementById('demoSuccess').style.display = 'block';
+    if (typeof toast === 'function') toast('Demo request submitted!', 'success');
+  }, 800);
+}
+</script>
+</body>
+</html>

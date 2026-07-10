@@ -20,24 +20,33 @@
 // ============================================================================
 
 (function() {
-  // Read config from meta tags or global
   function readMeta(name) {
     var el = document.querySelector('meta[name="eduverse:' + name + '"]');
     return el ? el.getAttribute('content') : '';
   }
 
-  var cfg = window.EDUVERSE_APPWRITE_CONFIG || {};
+  var jsCfg = window.EDUVERSE_APPWRITE_CONFIG || {};
 
-  window.APPWRITE_ENDPOINT = cfg.endpoint || readMeta('appwrite-endpoint') || '';
-  window.APPWRITE_PROJECT_ID = cfg.projectId || readMeta('appwrite-project') || '';
-  window.APPWRITE_DATABASE_ID = cfg.databaseId || readMeta('appwrite-database') || '';
+  // Read from meta tags first, then from platform config in localStorage (set via SA UI)
+  var _saved = null;
+  try {
+    var raw = localStorage.getItem('eduverse_platform_config');
+    if (raw) {
+      var p = JSON.parse(raw);
+      if (p.appwriteConfig && p.appwriteConfig.enabled) _saved = p.appwriteConfig;
+    }
+  } catch(e) {}
+
+  window.APPWRITE_ENDPOINT = jsCfg.endpoint || readMeta('appwrite-endpoint') || (_saved ? _saved.endpoint : '') || '';
+  window.APPWRITE_PROJECT_ID = jsCfg.projectId || readMeta('appwrite-project') || (_saved ? _saved.projectId : '') || '';
+  window.APPWRITE_DATABASE_ID = jsCfg.databaseId || readMeta('appwrite-database') || (_saved ? _saved.databaseId : '') || '';
 
   window.APPWRITE_COLLECTIONS = {
-    schools:     cfg.collectionSchools || readMeta('appwrite-collection-schools') || '',
-    schoolData:  cfg.collectionData || readMeta('appwrite-collection-data') || '',
-    platformCfg: cfg.collectionConfig || readMeta('appwrite-collection-config') || '',
-    activityLog: cfg.collectionLog || readMeta('appwrite-collection-log') || '',
-    saSession:   cfg.collectionSession || readMeta('appwrite-collection-session') || '',
+    schools:     jsCfg.collectionSchools || readMeta('appwrite-collection-schools') || (_saved ? _saved.schoolsColl : '') || '',
+    schoolData:  jsCfg.collectionData || readMeta('appwrite-collection-data') || (_saved ? _saved.dataColl : '') || '',
+    platformCfg: jsCfg.collectionConfig || readMeta('appwrite-collection-config') || (_saved ? _saved.configColl : '') || '',
+    activityLog: jsCfg.collectionLog || readMeta('appwrite-collection-log') || (_saved ? _saved.logColl : '') || '',
+    saSession:   jsCfg.collectionSession || readMeta('appwrite-collection-session') || (_saved ? _saved.sessionColl : '') || '',
   };
 })();
 
@@ -135,3 +144,15 @@ function getAppwriteClient() { return _appwriteClient; }
 function getAppwriteDatabases() { return _appwriteDatabases; }
 function getAppwriteAccount() { return _appwriteAccount; }
 function getAppwriteFunctions() { return _appwriteFunctions; }
+
+function reinitAppwrite(cfg) {
+  APPWRITE_ENDPOINT = cfg.endpoint || '';
+  APPWRITE_PROJECT_ID = cfg.projectId || '';
+  APPWRITE_DATABASE_ID = cfg.databaseId || '';
+  APPWRITE_COLLECTIONS.schools = cfg.schoolsColl || '';
+  APPWRITE_COLLECTIONS.schoolData = cfg.dataColl || '';
+  APPWRITE_COLLECTIONS.platformCfg = cfg.configColl || '';
+  APPWRITE_COLLECTIONS.activityLog = cfg.logColl || '';
+  APPWRITE_COLLECTIONS.saSession = cfg.sessionColl || '';
+  return initAppwrite();
+}

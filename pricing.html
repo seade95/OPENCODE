@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pricing — EduVerse</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
+.pricing-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
+.pricing-hero h1{font-size:36px;margin:0 0 8px;}
+.pricing-hero p{font-size:16px;opacity:0.85;margin:0 0 4px;max-width:600px;margin-left:auto;margin-right:auto;}
+.pricing-wrap{max-width:1100px;margin:-40px auto 60px;padding:0 20px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.pricing-card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.06);text-align:center;position:relative;transition:transform .2s,box-shadow .2s;}
+.pricing-card:hover{transform:translateY(-4px);box-shadow:0 8px 40px rgba(0,0,0,0.1);}
+.pricing-card.featured{border:2px solid #2563eb;transform:scale(1.03);}
+.pricing-card.featured:hover{transform:scale(1.03) translateY(-4px);}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#2563eb;color:#fff;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:600;}
+.pricing-card h3{font-size:20px;margin:0 0 4px;}
+.pricing-card .sub{font-size:14px;color:#64748b;margin-bottom:20px;}
+.pricing-card .price{font-size:42px;font-weight:800;color:#1e293b;}
+.pricing-card .price span{font-size:16px;font-weight:400;color:#94a3b8;}
+.pricing-card .desc{font-size:14px;color:#64748b;margin:8px 0 20px;line-height:1.6;}
+.pricing-features{list-style:none;padding:0;margin:0 0 24px;text-align:left;}
+.pricing-features li{padding:8px 0;font-size:14px;color:#475569;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f1f5f9;}
+.pricing-features li:last-child{border-bottom:none;}
+.pricing-features li i.fa-check{color:#22c55e;font-size:14px;width:18px;}
+.pricing-features li i.fa-times{color:#cbd5e1;font-size:14px;width:18px;}
+.pricing-features li.na{color:#94a3b8;}
+.pricing-card .btn{display:inline-block;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:all .15s;}
+.pricing-card .btn-primary{background:#2563eb;color:#fff;}
+.pricing-card .btn-primary:hover{background:#1d4ed8;}
+.pricing-card .btn-outline{border:2px solid #2563eb;color:#2563eb;}
+.pricing-card .btn-outline:hover{background:#2563eb;color:#fff;}
+.faq-section{max-width:800px;margin:0 auto 60px;padding:0 20px;}
+.faq-section h2{text-align:center;font-size:28px;margin-bottom:32px;}
+.faq-item{margin-bottom:16px;}
+.faq-q{padding:16px 20px;background:#fff;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.faq-q i{transition:transform .2s;color:#2563eb;}
+.faq-q.open i{transform:rotate(180deg);}
+.faq-a{padding:0 20px 16px;font-size:14px;color:#475569;line-height:1.7;display:none;}
+.faq-a.open{display:block;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
+.back-link:hover{color:#fff;}
+[data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
+[data-theme="dark"] .pricing-card{background:#1e293b;}
+[data-theme="dark"] .pricing-card h3{color:#e2e8f0;}
+[data-theme="dark"] .pricing-card .price{color:#f1f5f9;}
+[data-theme="dark"] .pricing-card .sub, [data-theme="dark"] .pricing-card .desc{color:#94a3b8;}
+[data-theme="dark"] .pricing-features li{color:#cbd5e1;border-bottom-color:#334155;}
+[data-theme="dark"] .faq-q{background:#1e293b;color:#e2e8f0;}
+[data-theme="dark"] .faq-a{color:#94a3b8;}
+@media(max-width:800px){.pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto;}.pricing-card.featured{transform:none;}.pricing-card.featured:hover{transform:translateY(-4px);}}
+@media(max-width:400px){.pricing-hero h1{font-size:26px;}.pricing-card{padding:24px 16px;}}
+</style>
+</head>
+<body>
+
+<section class="pricing-hero">
+  <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+  <h1>Choose Your Plan</h1>
+  <p>Start free, upgrade when you need more. No hidden fees. No credit card required for the Free plan.</p>
+</section>
+
+<div class="pricing-wrap">
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <h3>Free</h3>
+      <p class="sub">For small schools evaluating the platform</p>
+      <div class="price">$0<span>/month</span></div>
+      <p class="desc">Full-featured trial with limited storage. No time limit.</p>
+      <ul class="pricing-features">
+        <li><i class="fas fa-check"></i> Up to 50 students</li>
+        <li><i class="fas fa-check"></i> Up to 10 teachers</li>
+        <li><i class="fas fa-check"></i> Basic reporting &amp; analytics</li>
+        <li><i class="fas fa-check"></i> ID card generation</li>
+        <li><i class="fas fa-check"></i> Email support</li>
+        <li class="na"><i class="fas fa-times"></i> Custom domain</li>
+        <li class="na"><i class="fas fa-times"></i> Bulk SMS / email</li>
+        <li class="na"><i class="fas fa-times"></i> Priority support</li>
+      </ul>
+      <a href="javascript:;" onclick="localStorage.setItem('signup_plan','free');window.location.href='/'" class="btn btn-outline">Get Started Free</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Most Popular</div>
+      <h3>Pro</h3>
+      <p class="sub">For growing schools ready to scale</p>
+      <div class="price">$29<span>/month</span></div>
+      <p class="desc">Everything in Free plus advanced features for larger schools.</p>
+      <ul class="pricing-features">
+        <li><i class="fas fa-check"></i> Up to 500 students</li>
+        <li><i class="fas fa-check"></i> Up to 50 teachers</li>
+        <li><i class="fas fa-check"></i> Advanced analytics &amp; reports</li>
+        <li><i class="fas fa-check"></i> ID card generation</li>
+        <li><i class="fas fa-check"></i> Bulk SMS &amp; email</li>
+        <li><i class="fas fa-check"></i> Custom domain</li>
+        <li><i class="fas fa-check"></i> Priority email support</li>
+        <li class="na"><i class="fas fa-times"></i> Dedicated account manager</li>
+      </ul>
+      <a href="javascript:;" onclick="localStorage.setItem('signup_plan','pro');window.location.href='/'" class="btn btn-primary">Start 14-Day Trial</a>
+    </div>
+
+    <div class="pricing-card">
+      <h3>Enterprise</h3>
+      <p class="sub">For districts and large institutions</p>
+      <div class="price">$99<span>/month</span></div>
+      <p class="desc">Everything in Pro plus dedicated support, SLA, and multi-school management.</p>
+      <ul class="pricing-features">
+        <li><i class="fas fa-check"></i> Unlimited students</li>
+        <li><i class="fas fa-check"></i> Unlimited teachers</li>
+        <li><i class="fas fa-check"></i> Full analytics suite</li>
+        <li><i class="fas fa-check"></i> ID card generation</li>
+        <li><i class="fas fa-check"></i> Bulk SMS &amp; email</li>
+        <li><i class="fas fa-check"></i> Custom domain &amp; branding</li>
+        <li><i class="fas fa-check"></i> Dedicated account manager</li>
+        <li><i class="fas fa-check"></i> 99.9% SLA &amp; priority support</li>
+      </ul>
+      <a href="demo.html" class="btn btn-outline">Book a Demo</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later? <i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a">Yes, you can upgrade or downgrade at any time. Changes take effect immediately on upgrade and at the next billing cycle on downgrade.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is there a free trial for paid plans? <i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a">The Pro plan includes a 14-day free trial. No credit card required. Cancel anytime before the trial ends and you won't be charged.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a">We accept card payments via Paystack (NGN) and Stripe (USD). Bank transfers and mobile money are available for annual plans.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I export my data if I leave? <i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a">Absolutely. You can export all your data (CSV/PDF) at any time. We believe in data portability — your data belongs to you.</div>
+  </div>
+</div>
+
+<script>
+function toggleFaq(el) {
+  el.classList.toggle('open');
+  var answer = el.nextElementSibling;
+  if (answer) answer.classList.toggle('open');
+}
+</script>
+</body>
+</html>

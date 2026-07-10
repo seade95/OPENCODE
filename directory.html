@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Directory — EduVerse</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
+.dir-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
+.dir-hero h1{font-size:36px;margin:0 0 8px;}
+.dir-hero p{font-size:16px;opacity:0.85;max-width:600px;margin:0 auto;}
+.dir-controls{max-width:1100px;margin:-24px auto 32px;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.dir-controls input,.dir-controls select{padding:12px 16px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;flex:1;min-width:200px;max-width:320px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+.dir-controls input:focus,.dir-controls select:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
+.dir-grid{max-width:1100px;margin:0 auto 60px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.dir-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.05);transition:transform .2s,box-shadow .2s;cursor:pointer;border:1px solid #e2e8f0;}
+.dir-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
+.dir-card .school-icon{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;margin-bottom:12px;}
+.dir-card h3{font-size:16px;margin:0 0 4px;color:#1e293b;}
+.dir-card .loc{font-size:13px;color:#64748b;display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+.dir-card .loc i{color:#2563eb;width:16px;}
+.dir-card .type{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#dbeafe;color:#2563eb;margin-right:4px;}
+.dir-card .type.primary{background:#dcfce7;color:#16a34a;}
+.dir-card .type.secondary{background:#fef9c3;color:#ca8a04;}
+.dir-empty{text-align:center;padding:60px 20px;color:#94a3b8;grid-column:1/-1;}
+.dir-empty i{font-size:48px;margin-bottom:12px;display:block;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
+.back-link:hover{color:#fff;}
+.dir-stats{text-align:center;font-size:14px;color:#64748b;margin-bottom:8px;}
+[data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
+[data-theme="dark"] .dir-card{background:#1e293b;border-color:#334155;}
+[data-theme="dark"] .dir-card h3{color:#e2e8f0;}
+[data-theme="dark"] .dir-card .loc{color:#94a3b8;}
+[data-theme="dark"] .dir-controls input,.dir-controls select{background:#1e293b;border-color:#334155;color:#e2e8f0;}
+@media(max-width:600px){.dir-hero h1{font-size:26px;}.dir-controls{flex-direction:column;align-items:stretch;}.dir-controls input,.dir-controls select{max-width:none;}}
+</style>
+</head>
+<body>
+
+<section class="dir-hero">
+  <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+  <h1><i class="fas fa-school"></i> School Directory</h1>
+  <p>Discover schools using EduVerse to manage their academic operations.</p>
+</section>
+
+<div class="dir-stats" id="dirStats">Loading directory...</div>
+
+<div class="dir-controls">
+  <input type="text" id="dirSearch" placeholder="Search by school name or location..." oninput="renderDirectory()">
+  <select id="dirFilter" onchange="renderDirectory()">
+    <option value="all">All Types</option>
+    <option value="primary">Primary</option>
+    <option value="secondary">Secondary</option>
+    <option value="both">Primary &amp; Secondary</option>
+  </select>
+</div>
+
+<div class="dir-grid" id="dirGrid">
+  <div class="dir-empty"><i class="fas fa-spinner fa-spin"></i> Loading schools...</div>
+</div>
+
+<script>
+var DIRECTORY_SCHOOLS = [
+  { name:'Sunrise International Academy', loc:'Lagos, Nigeria', type:'both', icon:'fa-sun' },
+  { name:'Gracefield Schools', loc:'Abuja, Nigeria', type:'secondary', icon:'fa-star' },
+  { name:'Royal Oaks Academy', loc:'Port Harcourt, Nigeria', type:'primary', icon:'fa-crown' },
+  { name:'Summit College', loc:'Ibadan, Nigeria', type:'secondary', icon:'fa-mountain' },
+  { name:'Heritage Preparatory', loc:'Enugu, Nigeria', type:'primary', icon:'fa-tree' },
+  { name:'Excel Comprehensive', loc:'Kano, Nigeria', type:'both', icon:'fa-trophy' }
+];
+
+function getDemoSchools() {
+  try {
+    var tenants = typeof getTenants === 'function' ? getTenants() : [];
+    var schools = [];
+    if (tenants && tenants.length) {
+      for (var i = 0; i < tenants.length; i++) {
+        var t = tenants[i];
+        if (t && t.name) {
+          schools.push({ name: t.name, loc: t.location || t.address || 'Unknown', type: 'both', icon: 'fa-school', source: 'tenant' });
+        }
+      }
+    }
+    return schools;
+  } catch(e) { return []; }
+}
+
+function renderDirectory() {
+  var grid = document.getElementById('dirGrid');
+  var search = (document.getElementById('dirSearch').value || '').toLowerCase();
+  var filter = document.getElementById('dirFilter').value;
+  var live = getDemoSchools();
+  var all = DIRECTORY_SCHOOLS.concat(live);
+  var filtered = all.filter(function(s) {
+    var name = (s.name || '').toLowerCase();
+    var loc = (s.loc || '').toLowerCase();
+    var matchSearch = !search || name.indexOf(search) !== -1 || loc.indexOf(search) !== -1;
+    var matchType = filter === 'all' || s.type === filter;
+    return matchSearch && matchType;
+  });
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="dir-empty"><i class="fas fa-search"></i> No schools found matching your search.</div>';
+    document.getElementById('dirStats').textContent = '0 schools found';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < filtered.length; i++) {
+    var s = filtered[i];
+    var typeLabel = s.type === 'primary' ? 'Primary' : s.type === 'secondary' ? 'Secondary' : 'Primary & Secondary';
+    var typeClass = s.type === 'primary' ? 'primary' : s.type === 'secondary' ? 'secondary' : '';
+    html += '<div class="dir-card">';
+    html += '<div class="school-icon"><i class="fas ' + (s.icon || 'fa-school') + '"></i></div>';
+    html += '<h3>' + htmlEscape(s.name) + '</h3>';
+    html += '<div class="loc"><i class="fas fa-map-marker-alt"></i> ' + htmlEscape(s.loc) + '</div>';
+    html += '<div><span class="type ' + typeClass + '">' + typeLabel + '</span></div>';
+    html += '</div>';
+  }
+  grid.innerHTML = html;
+  document.getElementById('dirStats').textContent = filtered.length + ' school' + (filtered.length !== 1 ? 's' : '') + ' found';
+}
+
+function htmlEscape(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderDirectory();
+</script>
+</body>
+</html>

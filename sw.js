@@ -38,6 +38,7 @@ const SHELL = [
   '/js/appwrite-config.js',
   '/js/appwrite-service.js',
   '/js/appwrite-migration.js',
+  '/js/data-sync.js',
   '/js/subdomain-middleware.js',
   '/js/path-router.js',
   '/js/feature-upgrades.js',

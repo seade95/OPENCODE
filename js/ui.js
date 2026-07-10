@@ -142,6 +142,11 @@ function toggleNav() {
   const links = document.getElementById('navLinks');
   if (links) links.classList.toggle('open');
 }
+function toggleNavDropdown(el) {
+  el.classList.toggle('open');
+  var menu = el.querySelector('.nav-dropdown-menu');
+  if (menu) { menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; }
+}
 
 function goHome() {
   clearSession();
@@ -583,10 +588,11 @@ function logActivity(msg) {
 
 // ===== LANDING STATS ANIMATION =====
 function updateLandingStats() {
-  animateCounter('statStudents', (data.students || []).length);
-  animateCounter('statTeachers', Math.max(12, Math.round((data.students || []).length * 0.15)));
-  animateCounter('statSubjects', 12);
-  animateCounter('statPassRate', 95);
+  var stuCount = (data.students || []).length;
+  animateCounter('statStudents', stuCount > 3 ? stuCount : 12450);
+  animateCounter('statTeachers', stuCount > 3 ? Math.max(12, Math.round(stuCount * 0.15)) : 890);
+  animateCounter('statSubjects', 50);
+  animateCounter('statPassRate', 96);
 }
 function animateCounter(id, target) {
   var el = document.getElementById(id);
@@ -725,21 +731,50 @@ function toggleDarkMode() {
   if (isDark) {
     if (html) html.removeAttribute('data-theme');
     try { localStorage.setItem('darkMode', 'false'); } catch(e) {}
-    var icon = document.getElementById('darkModeIcon');
-    if (icon) icon.className = 'fas fa-moon';
+    updateThemeColorMeta(false);
   } else {
     if (html) html.setAttribute('data-theme', 'dark');
     try { localStorage.setItem('darkMode', 'true'); } catch(e) {}
-    var icon = document.getElementById('darkModeIcon');
-    if (icon) icon.className = 'fas fa-sun';
+    updateThemeColorMeta(true);
   }
 }
+function updateThemeColorMeta(dark) {
+  var meta = document.querySelector('meta[name=theme-color]');
+  if (meta) meta.content = dark ? '#1a202c' : '#2563eb';
+}
 function initDarkMode() {
-  if (localStorage.getItem('darkMode') === 'true') {
+  var pref = localStorage.getItem('darkMode');
+  if (pref === 'true') {
     document.documentElement.setAttribute('data-theme', 'dark');
-    const icon = document.getElementById('darkModeIcon');
-    if (icon) icon.className = 'fas fa-sun';
+    updateThemeColorMeta(true);
+  } else if (pref === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    try { localStorage.setItem('darkMode', 'true'); } catch(e) {}
+    updateThemeColorMeta(true);
   }
+  var icon = document.getElementById('darkModeIcon');
+  if (icon) icon.className = document.documentElement.getAttribute('data-theme') === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+// ===== SKELETON HELPERS =====
+function renderSkeleton(container, count, type) {
+  if (!container) return;
+  var html = '';
+  for (var i = 0; i < count; i++) {
+    if (type === 'card') {
+      html += '<div class="skeleton skeleton-card"></div>';
+    } else if (type === 'row') {
+      html += '<div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div style="flex:1"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line w60"></div></div></div>';
+    } else if (type === 'table') {
+      html += '<div class="skeleton skeleton-line" style="height:40px;margin-bottom:4px;"></div>';
+    } else {
+      html += '<div class="skeleton skeleton-line"></div>';
+    }
+  }
+  container.innerHTML = html;
+}
+function clearSkeleton(container) {
+  if (container) container.innerHTML = '';
 }
 
 // ===== LOADING STATE =====

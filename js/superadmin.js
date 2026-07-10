@@ -47,7 +47,18 @@ function getDefaultPlatformConfig() {
       paymentGateway: true, eschool: true, gradebook: true
     },
     revenueRecords: [],
-    lastBackupDate: null
+    lastBackupDate: null,
+    appwriteConfig: {
+      enabled: false,
+      endpoint: '',
+      projectId: '',
+      databaseId: '',
+      schoolsColl: '',
+      dataColl: '',
+      configColl: '',
+      logColl: '',
+      sessionColl: ''
+    }
   };
 }
 
@@ -671,6 +682,34 @@ function renderSaSystem(container) {
     + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + tenants.length + '</div><div class="sa-stat-label">Schools</div></div>'
     + '</div>'
 
+    // Cloud Sync
+    + '<div class="sa-section"><h3><i class="fas fa-cloud-upload-alt"></i> Cloud Sync <span id="saSyncStatus" style="font-size:12px;font-weight:400;margin-left:8px;"></span></h3>'
+    + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">Sync all school data to an Appwrite backend for cross-device persistence. '
+    + 'Changes made on any device will be visible everywhere when Cloud Sync is enabled.</p>'
+    + '<div id="saSyncStatusMessage" style="margin-bottom:12px;"></div>'
+    + '<div class="form-row"><label>Enable Cloud Sync</label><label class="toggle-switch"><input type="checkbox" id="saAwEnabled" ' + ((cfg.appwriteConfig||{}).enabled ? 'checked' : '') + '><span class="toggle-slider"></span></label></div>'
+    + '<div id="saAwConfigFields" style="display:' + ((cfg.appwriteConfig||{}).enabled ? 'block' : 'none') + ';">'
+    + '<div class="form-row"><label>Appwrite Endpoint</label><input type="text" id="saAwEndpoint" value="' + esc((cfg.appwriteConfig||{}).endpoint || '') + '" placeholder="https://your-appwrite-server.com/v1"></div>'
+    + '<div class="form-row"><label>Project ID</label><input type="text" id="saAwProjectId" value="' + esc((cfg.appwriteConfig||{}).projectId || '') + '" placeholder="your-project-id"></div>'
+    + '<div class="form-row"><label>Database ID</label><input type="text" id="saAwDatabaseId" value="' + esc((cfg.appwriteConfig||{}).databaseId || '') + '" placeholder="your-database-id"></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+    + '<div class="form-row"><label>Schools Collection ID</label><input type="text" id="saAwSchoolsColl" value="' + esc((cfg.appwriteConfig||{}).schoolsColl || '') + '"></div>'
+    + '<div class="form-row"><label>School Data Collection ID</label><input type="text" id="saAwDataColl" value="' + esc((cfg.appwriteConfig||{}).dataColl || '') + '"></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+    + '<div class="form-row"><label>Platform Config Collection ID</label><input type="text" id="saAwConfigColl" value="' + esc((cfg.appwriteConfig||{}).configColl || '') + '"></div>'
+    + '<div class="form-row"><label>Activity Log Collection ID</label><input type="text" id="saAwLogColl" value="' + esc((cfg.appwriteConfig||{}).logColl || '') + '"></div>'
+    + '</div>'
+    + '<div class="form-row"><label>Session Collection ID</label><input type="text" id="saAwSessionColl" value="' + esc((cfg.appwriteConfig||{}).sessionColl || '') + '"></div>'
+    + '<div style="display:flex;gap:10px;margin-top:12px;">'
+    + '<button class="btn btn-primary" onclick="saSaveCloudConfig()"><i class="fas fa-save"></i> Save &amp; Enable</button>'
+    + '<button class="btn btn-outline" onclick="saTestCloudConnection()"><i class="fas fa-plug"></i> Test Connection</button>'
+    + '<button class="btn btn-outline" onclick="saDisableCloudSync()"><i class="fas fa-ban"></i> Disable</button>'
+    + '</div>'
+    + '<p id="saCloudResult" style="font-size:13px;margin-top:8px;"></p>'
+    + '</div>'
+    + '</div>'
+
     // Danger Zone
     + '<div class="sa-section" style="margin-top:20px;border:1px solid #fecaca;background:#fff5f5;"><h3 style="color:#dc2626;"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>'
     + '<p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">These actions cannot be undone.</p>'
@@ -682,6 +721,116 @@ function renderSaSystem(container) {
     + '</div>';
 
   container.innerHTML = html;
+
+  // Wire up the toggle to show/hide config fields
+  var toggle = document.getElementById('saAwEnabled');
+  var fields = document.getElementById('saAwConfigFields');
+  if (toggle && fields) {
+    toggle.addEventListener('change', function() {
+      fields.style.display = this.checked ? 'block' : 'none';
+    });
+  }
+
+  // Show sync status
+  var statusEl = document.getElementById('saSyncStatus');
+  var msgEl = document.getElementById('saSyncStatusMessage');
+  if (statusEl) {
+    var aw = cfg.appwriteConfig || {};
+    if (aw.enabled && aw.endpoint && aw.projectId && aw.databaseId) {
+      statusEl.innerHTML = '<span style="color:#059669;"><i class="fas fa-check-circle"></i> Active</span>';
+      if (msgEl) {
+        msgEl.innerHTML = '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;">'
+          + '<strong>Endpoint:</strong> ' + esc(aw.endpoint) + '<br>'
+          + '<strong>Project:</strong> ' + esc(aw.projectId) + ' &middot; <strong>Database:</strong> ' + esc(aw.databaseId)
+          + '</div>';
+      }
+    } else if (aw.enabled && (!aw.endpoint || !aw.projectId || !aw.databaseId)) {
+      statusEl.innerHTML = '<span style="color:#d97706;"><i class="fas fa-exclamation-triangle"></i> Incomplete Config</span>';
+    } else {
+      statusEl.innerHTML = '<span style="color:#94a3b8;"><i class="fas fa-cloud"></i> Disabled</span>';
+      if (msgEl) msgEl.innerHTML = '<p style="font-size:13px;color:var(--text-light);">All data is stored locally. Enable Cloud Sync above to share data across devices.</p>';
+    }
+  }
+}
+
+function saSaveCloudConfig() {
+  var cfg = getPlatformConfig();
+  var aw = {
+    enabled: true,
+    endpoint: (document.getElementById('saAwEndpoint')?.value || '').trim(),
+    projectId: (document.getElementById('saAwProjectId')?.value || '').trim(),
+    databaseId: (document.getElementById('saAwDatabaseId')?.value || '').trim(),
+    schoolsColl: (document.getElementById('saAwSchoolsColl')?.value || '').trim(),
+    dataColl: (document.getElementById('saAwDataColl')?.value || '').trim(),
+    configColl: (document.getElementById('saAwConfigColl')?.value || '').trim(),
+    logColl: (document.getElementById('saAwLogColl')?.value || '').trim(),
+    sessionColl: (document.getElementById('saAwSessionColl')?.value || '').trim()
+  };
+  var result = document.getElementById('saCloudResult');
+  if (!aw.endpoint || !aw.projectId || !aw.databaseId) {
+    if (result) { result.innerHTML = '<span style="color:#dc2626;">Endpoint, Project ID, and Database ID are required.</span>'; }
+    return;
+  }
+  if (typeof reinitAppwrite === 'function') {
+    var ok = reinitAppwrite(aw);
+    if (!ok) {
+      if (result) result.innerHTML = '<span style="color:#d97706;">Appwrite SDK not loaded. Save anyway and try again after page reload.</span>';
+    }
+  }
+  // Apply dual-write patches if Appwrite is now configured (late enable)
+  if (typeof awApplyPatches === 'function') awApplyPatches();
+  cfg.appwriteConfig = aw;
+  savePlatformConfig(cfg);
+  logActivity('Cloud Sync enabled — ' + aw.endpoint);
+  if (result) result.innerHTML = '<span style="color:#059669;"><i class="fas fa-check-circle"></i> Cloud Sync saved and activated!</span>';
+  toast('Cloud Sync enabled!');
+  renderSaSystem(document.getElementById('saContent'));
+}
+
+function saTestCloudConnection() {
+  var result = document.getElementById('saCloudResult');
+  if (!result) return;
+  var endpoint = (document.getElementById('saAwEndpoint')?.value || '').trim();
+  var projectId = (document.getElementById('saAwProjectId')?.value || '').trim();
+  var databaseId = (document.getElementById('saAwDatabaseId')?.value || '').trim();
+  if (!endpoint || !projectId || !databaseId) {
+    result.innerHTML = '<span style="color:#dc2626;">Fill in Endpoint, Project ID, and Database ID first.</span>';
+    return;
+  }
+  result.innerHTML = '<span style="color:#6366f1;"><i class="fas fa-spinner fa-spin"></i> Testing connection...</span>';
+  if (typeof initAppwrite === 'function') {
+    APPWRITE_ENDPOINT = endpoint;
+    APPWRITE_PROJECT_ID = projectId;
+    APPWRITE_DATABASE_ID = databaseId;
+    var inited = initAppwrite();
+    if (!inited) {
+      result.innerHTML = '<span style="color:#dc2626;">Failed to initialize Appwrite client. Check SDK loading.</span>';
+      return;
+    }
+    if (typeof awHealth === 'function') {
+      awHealth().then(function(ok) {
+        result.innerHTML = ok
+          ? '<span style="color:#059669;"><i class="fas fa-check-circle"></i> Connection successful! Database is reachable.</span>'
+          : '<span style="color:#d97706;">Connected to Appwrite but database ping failed. Check your Database ID and collections.</span>';
+      }).catch(function() {
+        result.innerHTML = '<span style="color:#dc2626;">Connection failed. Verify endpoint and project ID.</span>';
+      });
+    } else {
+      result.innerHTML = '<span style="color:#d97706;">Appwrite client initialized but health check unavailable (awHealth not found).</span>';
+    }
+  } else {
+    result.innerHTML = '<span style="color:#dc2626;">initAppwrite() not available. Ensure appwrite-config.js is loaded.</span>';
+  }
+}
+
+function saDisableCloudSync() {
+  if (!confirm('Disable Cloud Sync? Data will remain in localStorage but will stop syncing to Appwrite.')) return;
+  var cfg = getPlatformConfig();
+  if (cfg.appwriteConfig) cfg.appwriteConfig.enabled = false;
+  savePlatformConfig(cfg);
+  logActivity('Cloud Sync disabled');
+  toast('Cloud Sync disabled');
+  renderSaSystem(document.getElementById('saContent'));
 }
 
 function saSetMaintenance(val) {

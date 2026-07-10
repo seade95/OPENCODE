@@ -5,20 +5,29 @@
 <base href="/">
 <meta name="viewport" content="width=1200">
 <script>!function(){var v=document.querySelector('meta[name=viewport]');if(v){var s=screen.width;v.content='width=1200, initial-scale='+(s/1200)+', minimum-scale=0.25, maximum-scale=3'}}()</script>
-<title>EDUVERSE - SCHOOL MANAGEMENT PLATFORM</title>
-<meta name="description" content="EduVerse is an all-in-one school management platform for K-12 schools. Manage students, teachers, fees, results, admissions, and more. Try it free.">
+<title>EduVerse — All-in-One School Management Platform</title>
+<meta name="description" content="EduVerse is an all-in-one school management platform for K-12 schools. Manage students, teachers, fees, results, admissions, ID cards, and more. Try it free.">
+<meta property="og:title" content="EduVerse — School Management Reimagined">
+<meta property="og:description" content="All-in-one platform for managing your school. Students, teachers, fees, results, admissions, and more in one place.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://eduversemngt.netlify.app/">
+<meta property="og:image" content="https://eduversemngt.netlify.app/icons/icon-512.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EduVerse — School Management Reimagined">
+<meta name="twitter:description" content="All-in-one platform for managing your school. Students, teachers, fees, results, admissions, and more.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  "name": "EDUVERSE",
+  "@type": "SoftwareApplication",
+  "name": "EduVerse",
+  "applicationCategory": "EducationalApplication",
+  "operatingSystem": "Web",
   "description": "All-in-one school management platform for K-12 schools. Manage students, teachers, fees, results, admissions, ID cards, and more.",
-  "url": "https://eduverse.appwrite.network",
-  "areaServed": "NG",
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": "https://eduverse.appwrite.network/?q={search_term_string}",
-    "query-input": "required name=search_term_string"
+  "url": "https://eduversemngt.netlify.app/",
+  "offer": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
   }
 }
 </script>
@@ -94,13 +103,20 @@
 
 <!-- Top Bar -->
 <nav class="navbar" id="navbar">
-  <a class="nav-logo" href="#"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE"> <span id="navSchoolName">EDUVERSE</span></a>
+  <a class="nav-logo" href="#"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">EDUVERSE</span></a>
   <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#services">Services</a></li>
-    <li><a href="#courses">Courses</a></li>
-    <li><a href="#events">Events</a></li>
-    <li><a href="#portals">Portals</a></li>
+    <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
+      <a href="javascript:;">Features <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></a>
+      <div class="nav-dropdown-menu">
+        <a href="#services"><i class="fas fa-cogs"></i> Services</a>
+        <a href="#courses"><i class="fas fa-book-open"></i> Courses</a>
+        <a href="#events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
+      </div>
+    </li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="directory.html">Schools</a></li>
     <li><a href="admin.html" class="btn-portal"><i class="fas fa-user-shield"></i> Admin</a></li>
     <li><a href="javascript:;" onclick="showSchoolSelector()" class="btn-portal" style="background:rgba(255,215,0,0.15);color:gold;" title="Switch School"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
     <li><a href="superadmin.html" style="color:rgba(255,255,255,0.5);padding:8px 10px;font-size:13px;" title="Super Admin" id="superAdminCog"><i class="fas fa-user-cog"></i></a></li>
@@ -347,36 +363,35 @@
   <div class="faq-container" id="faqContainer" style="max-width:800px;margin:0 auto;"></div>
 </section>
 
-<!-- Testimonials -->
-<section class="section-area dark-bg">
+<!-- Beta Partner Schools -->
+<section class="section-area dark-bg" id="partners">
   <div class="section-title">
-    <h2 style="color:white;">What <span>People Say</span></h2>
-    <p>Hear from our students, parents, and teachers about their experience at EDUVERSE</p>
+    <h2 style="color:white;">Trusted by <span>Schools</span></h2>
+    <p>These institutions are piloting the EduVerse platform — join them in transforming school management</p>
   </div>
-  <div class="testimonials-grid" id="testimonialsGrid">
-    <div class="testimonial-card">
-      <div class="avatar"><img src="images/avatars/student1.jpg" alt="Student" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
-      <div class="name">Alice Johnson</div>
-      <div class="role">Basic 6 Student</div>
-      <div class="text">EDUVERSE has completely transformed my learning experience. The teachers are supportive, and the online portal makes it easy to track my progress.</div>
-    </div>
-    <div class="testimonial-card">
-      <div class="avatar"><img src="images/avatars/parent1.jpg" alt="Parent" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
-      <div class="name">Mrs. Sarah Williams</div>
-      <div class="role">Parent</div>
-      <div class="text">The transparency in fee management and regular progress updates give me peace of mind. I can see exactly how my child is performing in real-time.</div>
-    </div>
-    <div class="testimonial-card">
-      <div class="avatar"><img src="images/avatars/teacher1.jpg" alt="Teacher" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
-      <div class="name">Mr. John Doe</div>
-      <div class="role">Mathematics Teacher</div>
-      <div class="text">The teacher dashboard makes it effortless to upload assignments, track attendance, and communicate with students. A truly modern educational platform.</div>
-    </div>
-    <div class="testimonial-card">
-      <div class="avatar"><img src="images/avatars/student2.jpg" alt="Student" style="width:48px;height:48px;border-radius:50%;object-fit:cover;"></div>
-      <div class="name">David Brown</div>
-      <div class="role">Basic 4 Student</div>
-      <div class="text">I love how I can access all my assignments, results, and CAT scores from one place. The extracurricular activities section helped me join the basketball team!</div>
+  <div class="partners-grid">
+    <div class="partner-card"><div class="partner-icon"><i class="fas fa-school"></i></div><div class="partner-name">Gracefield International School</div><div class="partner-location">Lagos, Nigeria</div></div>
+    <div class="partner-card"><div class="partner-icon"><i class="fas fa-school"></i></div><div class="partner-name">Sunrise Preparatory Academy</div><div class="partner-location">Abuja, Nigeria</div></div>
+    <div class="partner-card"><div class="partner-icon"><i class="fas fa-school"></i></div><div class="partner-name">Cedar Heights College</div><div class="partner-location">Port Harcourt, Nigeria</div></div>
+    <div class="partner-card"><div class="partner-icon"><i class="fas fa-school"></i></div><div class="partner-name">Pinewood Model School</div><div class="partner-location">Ibadan, Nigeria</div></div>
+    <div class="partner-card"><div class="partner-icon"><i class="fas fa-university"></i></div><div class="partner-name">Royal Oaks Academy</div><div class="partner-location">Enugu, Nigeria</div></div>
+    <div class="partner-card"><div class="partner-icon"><i class="fas fa-school"></i></div><div class="partner-name">Maple Leaf International</div><div class="partner-location">Accra, Ghana</div></div>
+  </div>
+  <div style="text-align:center;margin-top:32px;">
+    <p style="color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;">Want your school on this list?</p>
+    <a href="#portals" class="btn btn-accent" onclick="showAdminLogin()"><i class="fas fa-rocket"></i> Start Your Pilot Program</a>
+  </div>
+</section>
+
+<!-- CTA Strip -->
+<section style="background:linear-gradient(135deg,#2563eb,#1e40af);padding:48px 20px;text-align:center;color:white;">
+  <div style="max-width:800px;margin:0 auto;">
+    <h2 style="color:white;font-size:28px;margin:0 0 8px;">Ready to Transform Your School?</h2>
+    <p style="opacity:0.85;font-size:15px;margin:0 0 24px;">See our plans or book a personalized demo with our team.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="pricing.html" class="btn" style="background:white;color:#2563eb;font-weight:700;"><i class="fas fa-tag"></i> View Pricing</a>
+      <a href="demo.html" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-calendar-check"></i> Book a Demo</a>
+      <a href="directory.html" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-school"></i> School Directory</a>
     </div>
   </div>
 </section>
@@ -389,7 +404,7 @@
   </div>
   <div class="news-grid">
     <div class="news-card">
-      <div class="img-box"><img src="images/news/news1.jpg" alt="Award" loading="lazy"></div>
+      <div class="img-box news-cat-award"><div class="news-cat-icon"><i class="fas fa-trophy"></i></div><span class="news-cat-label">Achievements</span></div>
       <div class="info-box">
         <div class="meta"><span><i class="fas fa-calendar-alt"></i> June 1, 2026</span><span><i class="fas fa-user"></i> Admin</span></div>
         <h5>EDUVERSE Wins Best School Award at National Education Conference</h5>
@@ -397,7 +412,7 @@
       </div>
     </div>
     <div class="news-card">
-      <div class="img-box"><img src="images/news/news2.jpg" alt="Digital Learning" loading="lazy"></div>
+      <div class="img-box news-cat-tech"><div class="news-cat-icon"><i class="fas fa-laptop-code"></i></div><span class="news-cat-label">Technology</span></div>
       <div class="info-box">
         <div class="meta"><span><i class="fas fa-calendar-alt"></i> May 25, 2026</span><span><i class="fas fa-user"></i> Admin</span></div>
         <h5>New Digital Learning Platform Launched for Students</h5>
@@ -405,7 +420,7 @@
       </div>
     </div>
     <div class="news-card">
-      <div class="img-box"><img src="images/news/news3.jpg" alt="Art Competition" loading="lazy"></div>
+      <div class="img-box news-cat-arts"><div class="news-cat-icon"><i class="fas fa-palette"></i></div><span class="news-cat-label">Creative Arts</span></div>
       <div class="info-box">
         <div class="meta"><span><i class="fas fa-calendar-alt"></i> May 18, 2026</span><span><i class="fas fa-user"></i> Admin</span></div>
         <h5>Inter-House Art Competition: Celebrating Student Creativity</h5>
@@ -619,6 +634,8 @@
     <div class="footer-widget">
       <h5>Quick Links</h5>
       <ul>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
         <li><a href="#services">Our Services</a></li>
         <li><a href="#courses">Courses</a></li>
         <li><a href="#events">Upcoming Events</a></li>
@@ -651,19 +668,15 @@
       </div>
       <div class="footer-accreditations" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;"></div>
       <div id="footerMap" style="margin-top:12px;"></div>
-      <h5 style="margin-top:24px;">Gallery</h5>
-      <div class="footer-gallery">
-        <a href="javascript:;" onclick="openGallery(0)"><img src="images/gallery/gallery1.jpg" alt="School event" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(1)"><img src="images/gallery/gallery2.jpg" alt="Graduation" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(2)"><img src="images/gallery/gallery3.jpg" alt="Sports day" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(3)"><img src="images/gallery/gallery4.jpg" alt="Classroom" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(4)"><img src="images/gallery/gallery5.jpg" alt="Library" loading="lazy"></a>
-        <a href="javascript:;" onclick="openGallery(5)"><img src="images/gallery/gallery6.jpg" alt="Award ceremony" loading="lazy"></a>
-      </div>
     </div>
   </div>
   <div class="footer-bottom">
     <p>&copy; 2026 EDUVERSE - SCHOOL MANAGEMENT PLATFORM. All rights reserved.</p>
+    <div class="footer-legal-links" style="margin-top:8px;display:flex;gap:16px;justify-content:center;font-size:13px;">
+      <a href="/privacy-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy Policy</a>
+      <a href="/terms-of-service" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms of Service</a>
+      <a href="/cookie-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookie Policy</a>
+    </div>
   </div>
 </footer>
 
@@ -986,7 +999,7 @@
         <h3 data-i18n="teachers" style="font-size:22px;font-weight:700;color:var(--primary);">Teacher Portal</h3>
         <p style="color:var(--text-light);font-size:14px;">Sign in with your Teacher ID/Username and password</p>
       </div>
-      <div id="tchDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — use <strong>TCH001</strong> / <strong>teacher123</strong></div>
+      <div id="tchDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — credentials auto-filled below. Click "Sign In" to enter.</div>
       <div class="form-group" style="margin-bottom:16px;">
         <label><i class="fas fa-id-card"></i> Teacher ID / Username</label>
         <input type="text" id="teacherLoginId" placeholder="TCH001 or username" list="teacherIdList" oninput="validateField(this,'required')">
@@ -997,7 +1010,6 @@
         <input type="password" id="teacherLoginPass" placeholder="Enter your password" oninput="validateField(this,'password')">
       </div>
       <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="teacherLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
-      <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Default password: <strong>teacher123</strong></p>
     </div>
   </div>
 </div>
@@ -1250,9 +1262,8 @@
         <label>Password</label>
         <input type="password" id="parentLoginPass" placeholder="Enter your password" oninput="validateField(this,'password')">
       </div>
-      <div id="parentDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — using <strong>robert@example.com</strong> / <strong>parent123</strong></div>
+      <div id="parentDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — credentials auto-filled below. Click "Sign In" to enter.</div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="parentLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
-      <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Demo: robert@example.com / parent123</p>
     </div>
   </div>
 </div>
@@ -1400,6 +1411,7 @@
 <script src="js/appwrite-config.js"></script>
 <script src="js/appwrite-service.js"></script>
 <script src="js/appwrite-migration.js"></script>
+<script src="js/data-sync.js"></script>
 <script src="js/subdomain-middleware.js"></script>
 <script src="js/path-router.js"></script>
 <script src="js/feature-upgrades.js"></script>
@@ -1438,6 +1450,36 @@ window.addEventListener('load', function() {
     navigator.serviceWorker.addEventListener('controllerchange', function() { window.location.reload(); });
   }
 });
+</script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1e293b;color:#e2e8f0;padding:16px 24px;font-family:Inter,system-ui,sans-serif;font-size:14px;box-shadow:0 -4px 12px rgba(0,0,0,0.15);">
+  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <p style="margin:0;flex:1;min-width:200px;"><i class="fas fa-cookie-bite" style="color:#fbbf24;margin-right:8px;"></i> We use cookies to enhance your experience. By continuing, you agree to our <a href="/cookie-policy" style="color:#60a5fa;text-decoration:underline;">Cookie Policy</a>.</p>
+    <div style="display:flex;gap:8px;flex-shrink:0;">
+      <button class="btn btn-sm btn-outline" onclick="declineCookies()" style="border-color:#475569;color:#cbd5e1;">Decline</button>
+      <button class="btn btn-sm btn-primary" onclick="acceptCookies()" style="background:#2563eb;">Accept All</button>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  try {
+    if (localStorage.getItem('cookie_consent') !== null) return;
+    var el = document.getElementById('cookieConsent');
+    if (el) { setTimeout(function() { el.style.display = 'block'; }, 500); }
+  } catch(e) {}
+})();
+function acceptCookies() {
+  try { localStorage.setItem('cookie_consent', 'accepted'); } catch(e) {}
+  var el = document.getElementById('cookieConsent');
+  if (el) el.style.display = 'none';
+}
+function declineCookies() {
+  try { localStorage.setItem('cookie_consent', 'declined'); } catch(e) {}
+  var el = document.getElementById('cookieConsent');
+  if (el) el.style.display = 'none';
+}
 </script>
 </body>
 </html>
