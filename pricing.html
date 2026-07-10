@@ -4,14 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pricing — EduVerse</title>
+<meta name="description" content="Choose the right plan for your school. Free tier available. No credit card required for the Free plan.">
+<meta property="og:title" content="EduVerse Pricing — Simple, Transparent Plans">
+<meta property="og:description" content="Start free, upgrade when you need more. Professional plan starts at $49/month.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="css/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "EduVerse",
+  "applicationCategory": "EducationApplication",
+  "operatingSystem": "Web",
+  "description": "All-in-one school management platform for K-12 schools.",
+  "url": "https://eduversemngt.netlify.app/",
+  "offers": [
+    {"@type":"Offer","name":"Free","price":"0","priceCurrency":"USD"},
+    {"@type":"Offer","name":"Professional","price":"49","priceCurrency":"USD"},
+    {"@type":"Offer","name":"Enterprise","price":"99","priceCurrency":"USD"}
+  ]
+}
+</script>
 <style>
 body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
 .pricing-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
 .pricing-hero h1{font-size:36px;margin:0 0 8px;}
-.pricing-hero p{font-size:16px;opacity:0.85;margin:0 0 4px;max-width:600px;margin-left:auto;margin-right:auto;}
+.pricing-hero p{font-size:16px;opacity:0.85;margin:0 auto;max-width:600px;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
+.back-link:hover{color:#fff;}
 .pricing-wrap{max-width:1100px;margin:-40px auto 60px;padding:0 20px;}
+.billing-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;font-size:14px;color:#64748b;}
+.billing-toggle .toggle-track{width:48px;height:26px;background:#cbd5e1;border-radius:13px;cursor:pointer;position:relative;transition:background .2s;}
+.billing-toggle .toggle-track.active{background:#2563eb;}
+.billing-toggle .toggle-knob{width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+.billing-toggle .toggle-track.active .toggle-knob{transform:translateX(22px);}
+.billing-toggle .badge{background:#dcfce7;color:#16a34a;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .pricing-card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.06);text-align:center;position:relative;transition:transform .2s,box-shadow .2s;}
 .pricing-card:hover{transform:translateY(-4px);box-shadow:0 8px 40px rgba(0,0,0,0.1);}
@@ -22,6 +51,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
 .pricing-card .sub{font-size:14px;color:#64748b;margin-bottom:20px;}
 .pricing-card .price{font-size:42px;font-weight:800;color:#1e293b;}
 .pricing-card .price span{font-size:16px;font-weight:400;color:#94a3b8;}
+.pricing-card .price .annual-only{display:none;font-size:14px;color:#16a34a;font-weight:600;}
 .pricing-card .desc{font-size:14px;color:#64748b;margin:8px 0 20px;line-height:1.6;}
 .pricing-features{list-style:none;padding:0;margin:0 0 24px;text-align:left;}
 .pricing-features li{padding:8px 0;font-size:14px;color:#475569;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f1f5f9;}
@@ -34,25 +64,47 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
 .pricing-card .btn-primary:hover{background:#1d4ed8;}
 .pricing-card .btn-outline{border:2px solid #2563eb;color:#2563eb;}
 .pricing-card .btn-outline:hover{background:#2563eb;color:#fff;}
-.faq-section{max-width:800px;margin:0 auto 60px;padding:0 20px;}
+.trust-bar{display:flex;justify-content:center;gap:32px;margin:32px 0 0;flex-wrap:wrap;}
+.trust-bar span{font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:6px;}
+.trust-bar span i{color:#fbbf24;}
+.compare-section{max-width:1000px;margin:0 auto 60px;padding:0 20px;}
+.compare-section h2{text-align:center;font-size:28px;margin-bottom:32px;}
+.compare-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);font-size:14px;}
+.compare-table th,.compare-table td{padding:14px 16px;text-align:center;border-bottom:1px solid #f1f5f9;}
+.compare-table th{background:#f8fafc;font-weight:600;color:#1e293b;}
+.compare-table th:first-child,.compare-table td:first-child{text-align:left;font-weight:500;}
+.compare-table td i.fa-check{color:#22c55e;}
+.compare-table td i.fa-times{color:#cbd5e1;}
+.compare-table tr:hover td{background:#f8fafc;}
+.compare-table .popular-col{background:#eff6ff;}
+.faq-section{max-width:700px;margin:0 auto 60px;padding:0 20px;}
 .faq-section h2{text-align:center;font-size:28px;margin-bottom:32px;}
-.faq-item{margin-bottom:16px;}
-.faq-q{padding:16px 20px;background:#fff;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
-.faq-q i{transition:transform .2s;color:#2563eb;}
+.faq-item{margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;}
+.faq-q{padding:14px 20px;background:#fff;font-weight:600;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.faq-q i{transition:transform .2s;color:#2563eb;font-size:12px;}
 .faq-q.open i{transform:rotate(180deg);}
-.faq-a{padding:0 20px 16px;font-size:14px;color:#475569;line-height:1.7;display:none;}
+.faq-a{padding:0 20px 14px;font-size:14px;color:#475569;line-height:1.7;display:none;}
 .faq-a.open{display:block;}
-.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
-.back-link:hover{color:#fff;}
+.contact-cta{text-align:center;padding:40px 20px;background:#f8fafc;border-radius:12px;max-width:600px;margin:0 auto 40px;}
+.contact-cta h3{font-size:20px;margin:0 0 8px;}
+.contact-cta p{font-size:14px;color:#64748b;margin:0 0 16px;}
+.contact-cta .btn{display:inline-block;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;background:#2563eb;color:#fff;font-size:14px;}
 [data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
 [data-theme="dark"] .pricing-card{background:#1e293b;}
 [data-theme="dark"] .pricing-card h3{color:#e2e8f0;}
 [data-theme="dark"] .pricing-card .price{color:#f1f5f9;}
 [data-theme="dark"] .pricing-card .sub, [data-theme="dark"] .pricing-card .desc{color:#94a3b8;}
 [data-theme="dark"] .pricing-features li{color:#cbd5e1;border-bottom-color:#334155;}
+[data-theme="dark"] .faq-item{border-color:#334155;}
 [data-theme="dark"] .faq-q{background:#1e293b;color:#e2e8f0;}
 [data-theme="dark"] .faq-a{color:#94a3b8;}
-@media(max-width:800px){.pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto;}.pricing-card.featured{transform:none;}.pricing-card.featured:hover{transform:translateY(-4px);}}
+[data-theme="dark"] .compare-table{background:#1e293b;}
+[data-theme="dark"] .compare-table th{background:#0f172a;color:#e2e8f0;}
+[data-theme="dark"] .compare-table th,.compare-table td{border-color:#334155;}
+[data-theme="dark"] .compare-table .popular-col{background:rgba(37,99,235,0.08);}
+[data-theme="dark"] .compare-table tr:hover td{background:rgba(255,255,255,0.03);}
+[data-theme="dark"] .contact-cta{background:#1e293b;}
+@media(max-width:800px){.pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto;}.pricing-card.featured{transform:none;}.pricing-card.featured:hover{transform:translateY(-4px);}.compare-table{font-size:12px;}.compare-table th,.compare-table td{padding:10px 8px;}}
 @media(max-width:400px){.pricing-hero h1{font-size:26px;}.pricing-card{padding:24px 16px;}}
 </style>
 </head>
@@ -60,46 +112,58 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
 
 <section class="pricing-hero">
   <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
-  <h1>Choose Your Plan</h1>
+  <h1>Simple, Transparent Pricing</h1>
   <p>Start free, upgrade when you need more. No hidden fees. No credit card required for the Free plan.</p>
+  <div class="trust-bar">
+    <span><i class="fas fa-credit-card"></i> No credit card required</span>
+    <span><i class="fas fa-ban"></i> Cancel anytime</span>
+    <span><i class="fas fa-lock"></i> SSL Secure</span>
+  </div>
 </section>
 
 <div class="pricing-wrap">
-  <div class="pricing-grid">
+  <div class="billing-toggle">
+    <span id="billingMonthlyLabel">Monthly</span>
+    <div class="toggle-track" id="billingToggle" onclick="toggleBilling()">
+      <div class="toggle-knob"></div>
+    </div>
+    <span id="billingYearlyLabel">Annual <span class="badge">Save 20%</span></span>
+  </div>
 
+  <div class="pricing-grid">
     <div class="pricing-card">
-      <h3>Free</h3>
+      <h3>Starter</h3>
       <p class="sub">For small schools evaluating the platform</p>
-      <div class="price">$0<span>/month</span></div>
-      <p class="desc">Full-featured trial with limited storage. No time limit.</p>
+      <div class="price" data-monthly="$0" data-yearly="$0">$0<span>/month</span></div>
+      <div class="price annual-only" data-annual-text="Always free"></div>
+      <p class="desc">Full-featured trial with essential tools. No time limit.</p>
       <ul class="pricing-features">
         <li><i class="fas fa-check"></i> Up to 50 students</li>
         <li><i class="fas fa-check"></i> Up to 10 teachers</li>
-        <li><i class="fas fa-check"></i> Basic reporting &amp; analytics</li>
+        <li><i class="fas fa-check"></i> Basic reporting</li>
         <li><i class="fas fa-check"></i> ID card generation</li>
         <li><i class="fas fa-check"></i> Email support</li>
         <li class="na"><i class="fas fa-times"></i> Custom domain</li>
         <li class="na"><i class="fas fa-times"></i> Bulk SMS / email</li>
-        <li class="na"><i class="fas fa-times"></i> Priority support</li>
       </ul>
       <a href="javascript:;" onclick="localStorage.setItem('signup_plan','free');window.location.href='/'" class="btn btn-outline">Get Started Free</a>
     </div>
 
     <div class="pricing-card featured">
       <div class="pricing-badge">Most Popular</div>
-      <h3>Pro</h3>
+      <h3>Professional</h3>
       <p class="sub">For growing schools ready to scale</p>
-      <div class="price">$29<span>/month</span></div>
-      <p class="desc">Everything in Free plus advanced features for larger schools.</p>
+      <div class="price" data-monthly="$49" data-yearly="$39">$49<span>/month</span></div>
+      <div class="price annual-only" data-annual-text="$39/mo billed annually"></div>
+      <p class="desc">Everything in Starter plus advanced features for larger schools.</p>
       <ul class="pricing-features">
         <li><i class="fas fa-check"></i> Up to 500 students</li>
         <li><i class="fas fa-check"></i> Up to 50 teachers</li>
-        <li><i class="fas fa-check"></i> Advanced analytics &amp; reports</li>
-        <li><i class="fas fa-check"></i> ID card generation</li>
+        <li><i class="fas fa-check"></i> Analytics dashboard</li>
+        <li><i class="fas fa-check"></i> All portals (Student, Teacher, Parent, Admin)</li>
         <li><i class="fas fa-check"></i> Bulk SMS &amp; email</li>
         <li><i class="fas fa-check"></i> Custom domain</li>
-        <li><i class="fas fa-check"></i> Priority email support</li>
-        <li class="na"><i class="fas fa-times"></i> Dedicated account manager</li>
+        <li><i class="fas fa-check"></i> Priority support</li>
       </ul>
       <a href="javascript:;" onclick="localStorage.setItem('signup_plan','pro');window.location.href='/'" class="btn btn-primary">Start 14-Day Trial</a>
     </div>
@@ -107,21 +171,50 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
     <div class="pricing-card">
       <h3>Enterprise</h3>
       <p class="sub">For districts and large institutions</p>
-      <div class="price">$99<span>/month</span></div>
-      <p class="desc">Everything in Pro plus dedicated support, SLA, and multi-school management.</p>
+      <div class="price" data-monthly="$99" data-yearly="$79">$99<span>/month</span></div>
+      <div class="price annual-only" data-annual-text="$79/mo billed annually"></div>
+      <p class="desc">Everything in Professional plus dedicated support and SLA.</p>
       <ul class="pricing-features">
         <li><i class="fas fa-check"></i> Unlimited students</li>
         <li><i class="fas fa-check"></i> Unlimited teachers</li>
         <li><i class="fas fa-check"></i> Full analytics suite</li>
-        <li><i class="fas fa-check"></i> ID card generation</li>
-        <li><i class="fas fa-check"></i> Bulk SMS &amp; email</li>
         <li><i class="fas fa-check"></i> Custom domain &amp; branding</li>
         <li><i class="fas fa-check"></i> Dedicated account manager</li>
-        <li><i class="fas fa-check"></i> 99.9% SLA &amp; priority support</li>
+        <li><i class="fas fa-check"></i> 99.9% SLA guarantee</li>
+        <li><i class="fas fa-check"></i> Custom integrations</li>
       </ul>
-      <a href="demo.html" class="btn btn-outline">Book a Demo</a>
+      <a href="demo.html" class="btn btn-outline">Contact Sales</a>
     </div>
+  </div>
+</div>
 
+<div class="compare-section">
+  <h2>Compare Plans Side by Side</h2>
+  <div class="table-responsive">
+  <table class="compare-table">
+    <thead>
+      <tr><th>Feature</th><th>Starter</th><th class="popular-col">Professional</th><th>Enterprise</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Students</td><td>Up to 50</td><td class="popular-col">Up to 500</td><td>Unlimited</td></tr>
+      <tr><td>Teachers</td><td>Up to 10</td><td class="popular-col">Up to 50</td><td>Unlimited</td></tr>
+      <tr><td>Student Portal</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Teacher Portal</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Parent Portal</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Admin Portal</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Fee Tracking</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Results Management</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>ID Card Generation</td><td><i class="fas fa-check"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Analytics Dashboard</td><td>Basic</td><td class="popular-col">Advanced</td><td>Full Suite</td></tr>
+      <tr><td>Bulk SMS &amp; Email</td><td><i class="fas fa-times"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Custom Domain</td><td><i class="fas fa-times"></i></td><td class="popular-col"><i class="fas fa-check"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>White-Label Branding</td><td><i class="fas fa-times"></i></td><td class="popular-col"><i class="fas fa-times"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>Dedicated Account Manager</td><td><i class="fas fa-times"></i></td><td class="popular-col"><i class="fas fa-times"></i></td><td><i class="fas fa-check"></i></td></tr>
+      <tr><td>SLA Guarantee</td><td>None</td><td class="popular-col">Standard</td><td>99.9%</td></tr>
+      <tr><td>Support</td><td>Email</td><td class="popular-col">Priority Email</td><td>24/7 Phone &amp; Email</td></tr>
+      <tr><td>Custom Integrations</td><td><i class="fas fa-times"></i></td><td class="popular-col"><i class="fas fa-times"></i></td><td><i class="fas fa-check"></i></td></tr>
+    </tbody>
+  </table>
   </div>
 </div>
 
@@ -129,28 +222,62 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
   <h2>Frequently Asked Questions</h2>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later? <i class="fas fa-chevron-down"></i></div>
-    <div class="faq-a">Yes, you can upgrade or downgrade at any time. Changes take effect immediately on upgrade and at the next billing cycle on downgrade.</div>
+    <div class="faq-a">Yes. Upgrade anytime for immediate access to new features. Downgrade at next billing cycle.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Is there a free trial for paid plans? <i class="fas fa-chevron-down"></i></div>
-    <div class="faq-a">The Pro plan includes a 14-day free trial. No credit card required. Cancel anytime before the trial ends and you won't be charged.</div>
+    <div class="faq-a">The Professional plan includes a 14-day free trial. No credit card required. Cancel before the trial ends and you won't be charged.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <i class="fas fa-chevron-down"></i></div>
-    <div class="faq-a">We accept card payments via Paystack (NGN) and Stripe (USD). Bank transfers and mobile money are available for annual plans.</div>
+    <div class="faq-a">We accept card payments via Paystack (NGN) and Stripe (USD). Bank transfers available for annual plans.</div>
   </div>
   <div class="faq-item">
     <div class="faq-q" onclick="toggleFaq(this)">Can I export my data if I leave? <i class="fas fa-chevron-down"></i></div>
-    <div class="faq-a">Absolutely. You can export all your data (CSV/PDF) at any time. We believe in data portability — your data belongs to you.</div>
+    <div class="faq-a">Absolutely. Export all your data (CSV/PDF) at any time. Your data belongs to you.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do you offer discounts for non-profits? <i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a">Yes. We offer a 30% discount for registered non-profit educational institutions. Contact us for details.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How does the annual billing work? <i class="fas fa-chevron-down"></i></div>
+    <div class="faq-a">Annual billing gives you a 20% discount compared to monthly. You pay once for the full year at the reduced rate.</div>
   </div>
 </div>
 
+<div class="contact-cta">
+  <h3>Still have questions?</h3>
+  <p>Our team is here to help you find the right plan for your school.</p>
+  <a href="demo.html" class="btn">Contact Sales</a>
+</div>
+
 <script>
+function toggleBilling() {
+  var track = document.getElementById('billingToggle');
+  var isYearly = track.classList.toggle('active');
+  var monthlyLabels = document.querySelectorAll('.price[data-monthly]');
+  var annualLabels = document.querySelectorAll('.price.annual-only');
+  monthlyLabels.forEach(function(el) { el.style.display = isYearly ? 'none' : ''; });
+  annualLabels.forEach(function(el) { el.style.display = isYearly ? '' : 'none'; });
+  document.getElementById('billingMonthlyLabel').style.color = isYearly ? '#64748b' : '#1e293b';
+  document.getElementById('billingYearlyLabel').style.color = isYearly ? '#1e293b' : '#64748b';
+}
 function toggleFaq(el) {
   el.classList.toggle('open');
-  var answer = el.nextElementSibling;
-  if (answer) answer.classList.toggle('open');
+  var a = el.nextElementSibling;
+  if (a) a.classList.toggle('open');
 }
 </script>
+<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>
+    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms</a>
+    <a href="cookie-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookies</a>
+    <a href="gdpr-compliance.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR</a>
+    <a href="demo.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Book a Demo</a>
+  </div>
+  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
+</footer>
 </body>
 </html>

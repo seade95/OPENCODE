@@ -37,6 +37,8 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://js.paystack.co" crossorigin>
+<!-- Privacy-respecting analytics (no cookies) -->
+<script defer data-domain="eduversemngt.netlify.app" src="https://plausible.io/js/script.js"></script>
 <link rel="preconnect" href="https://checkout.flutterwave.com" crossorigin>
 <!-- dns-prefetch fallback for older browsers -->
 <link rel="dns-prefetch" href="https://fonts.googleapis.com">
@@ -676,6 +678,7 @@
       <a href="/privacy-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy Policy</a>
       <a href="/terms-of-service" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms of Service</a>
       <a href="/cookie-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookie Policy</a>
+      <a href="/gdpr-compliance" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR Compliance</a>
     </div>
   </div>
 </footer>
@@ -1457,28 +1460,82 @@ window.addEventListener('load', function() {
   <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
     <p style="margin:0;flex:1;min-width:200px;"><i class="fas fa-cookie-bite" style="color:#fbbf24;margin-right:8px;"></i> We use cookies to enhance your experience. By continuing, you agree to our <a href="/cookie-policy" style="color:#60a5fa;text-decoration:underline;">Cookie Policy</a>.</p>
     <div style="display:flex;gap:8px;flex-shrink:0;">
+      <button class="btn btn-sm btn-outline" onclick="showCookiePreferences()" style="border-color:#475569;color:#cbd5e1;">Customize</button>
       <button class="btn btn-sm btn-outline" onclick="declineCookies()" style="border-color:#475569;color:#cbd5e1;">Decline</button>
       <button class="btn btn-sm btn-primary" onclick="acceptCookies()" style="background:#2563eb;">Accept All</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Preferences Modal -->
+<div id="cookieModalOverlay" style="display:none;position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;max-width:480px;width:90%;padding:28px;box-shadow:0 16px 48px rgba(0,0,0,0.2);font-family:Inter,system-ui,sans-serif;">
+    <h3 style="margin:0 0 16px;font-size:18px;color:#1e293b;">Cookie Preferences</h3>
+    <div style="margin-bottom:12px;padding:12px;background:#f8fafc;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+      <div><strong style="font-size:14px;">Essential</strong><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Required for the platform to function (session, auth)</p></div>
+      <span style="background:#e2e8f0;padding:2px 10px;border-radius:20px;font-size:11px;color:#64748b;">Always on</span>
+    </div>
+    <div style="margin-bottom:12px;padding:12px;background:#f8fafc;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+      <div><strong style="font-size:14px;">Analytics</strong><p style="margin:2px 0 0;font-size:12px;color:#64748b;">Help us improve with anonymous usage data</p></div>
+      <label style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
+        <input type="checkbox" id="cookieAnalytics" checked style="opacity:0;width:0;height:0;">
+        <span style="position:absolute;inset:0;background:#2563eb;border-radius:12px;transition:.2s;" id="cookieAnalyticsTrack"></span>
+        <span style="position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);" id="cookieAnalyticsKnob"></span>
+      </label>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0;">
+      <button class="btn btn-sm btn-outline" onclick="closeCookieModal()" style="border-color:#e2e8f0;color:#64748b;">Cancel</button>
+      <button class="btn btn-sm btn-primary" onclick="saveCookiePreferences()" style="background:#2563eb;">Save Preferences</button>
     </div>
   </div>
 </div>
 <script>
 (function() {
   try {
-    if (localStorage.getItem('cookie_consent') !== null) return;
+    var stored = localStorage.getItem('eduverse_cookie_consent');
+    if (stored !== null) {
+      var parsed = JSON.parse(stored);
+      if (parsed && parsed.timestamp) {
+        var daysSince = (Date.now() - parsed.timestamp) / 86400000;
+        if (daysSince < 30) return;
+      }
+      return;
+    }
     var el = document.getElementById('cookieConsent');
     if (el) { setTimeout(function() { el.style.display = 'block'; }, 500); }
   } catch(e) {}
 })();
+function saveCookiePref(prefs) {
+  prefs.timestamp = Date.now();
+  try { localStorage.setItem('eduverse_cookie_consent', JSON.stringify(prefs)); } catch(e) {}
+}
+function getCookiePref() {
+  try { return JSON.parse(localStorage.getItem('eduverse_cookie_consent')); } catch(e) { return null; }
+}
 function acceptCookies() {
-  try { localStorage.setItem('cookie_consent', 'accepted'); } catch(e) {}
+  saveCookiePref({ essential: true, analytics: true, marketing: false });
   var el = document.getElementById('cookieConsent');
   if (el) el.style.display = 'none';
+  closeCookieModal();
 }
 function declineCookies() {
-  try { localStorage.setItem('cookie_consent', 'declined'); } catch(e) {}
+  saveCookiePref({ essential: true, analytics: false, marketing: false });
   var el = document.getElementById('cookieConsent');
   if (el) el.style.display = 'none';
+  closeCookieModal();
+}
+function showCookiePreferences() {
+  document.getElementById('cookieModalOverlay').style.display = 'flex';
+}
+function closeCookieModal() {
+  document.getElementById('cookieModalOverlay').style.display = 'none';
+}
+function saveCookiePreferences() {
+  var analytics = document.getElementById('cookieAnalytics').checked;
+  saveCookiePref({ essential: true, analytics: analytics, marketing: false });
+  var el = document.getElementById('cookieConsent');
+  if (el) el.style.display = 'none';
+  closeCookieModal();
 }
 </script>
 </body>

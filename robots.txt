@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /superadmin.html
+Disallow: /admin.html
+
+Sitemap: https://eduversemngt.netlify.app/sitemap.xml

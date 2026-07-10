@@ -794,6 +794,17 @@ function hideLoading() {
   if (overlay) overlay.classList.remove('active');
 }
 
+// ===== DATE FORMATTING =====
+function formatDate(d, style) {
+  if (!d) return '';
+  var dt = typeof d === 'string' ? new Date(d) : d;
+  if (isNaN(dt.getTime())) return '';
+  if (style === 'short') return dt.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()] + ' ' + dt.getFullYear();
+  if (style === 'iso') return dt.toISOString().split('T')[0];
+  if (style === 'time') return dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return dt.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()] + ' ' + dt.getFullYear();
+}
+
 // ===== CSV EXPORT =====
 function exportTableToCSV(tableId, filename) {
   const table = document.getElementById(tableId);

@@ -100,6 +100,10 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
         <label>Message (optional)</label>
         <textarea id="demoMessage" placeholder="Tell us about your school's needs or any specific features you'd like to see..."></textarea>
       </div>
+      <div class="form-group" style="display:flex;align-items:flex-start;gap:8px;">
+        <input type="checkbox" id="demoAgree" required style="margin-top:3px;width:auto;">
+        <label for="demoAgree" style="font-size:13px;margin:0;color:#64748b;">I agree to the <a href="privacy-policy.html" target="_blank" style="color:#2563eb;text-decoration:underline;">Privacy Policy</a> and <a href="terms-of-service.html" target="_blank" style="color:#2563eb;text-decoration:underline;">Terms of Service</a></label>
+      </div>
       <button type="submit" class="demo-btn" id="demoSubmitBtn">Send Demo Request</button>
       <p class="demo-note"><i class="fas fa-lock" style="margin-right:4px;"></i> Your information is stored securely and never shared.</p>
     </form>
@@ -134,5 +138,15 @@ function submitDemo(e) {
   }, 800);
 }
 </script>
+<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
+  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>
+    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms</a>
+    <a href="cookie-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookies</a>
+    <a href="gdpr-compliance.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR</a>
+    <a href="pricing.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Pricing</a>
+  </div>
+  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
+</footer>
 </body>
 </html>

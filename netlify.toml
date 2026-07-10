@@ -1,0 +1,68 @@
+[build]
+  command = "echo 'Static site — no build step required'"
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[redirects]]
+  from = "/login"
+  to = "/"
+  status = 200
+
+[[redirects]]
+  from = "/pricing"
+  to = "/pricing.html"
+  status = 200
+
+[[redirects]]
+  from = "/schools"
+  to = "/directory.html"
+  status = 200
+
+[[redirects]]
+  from = "/book-demo"
+  to = "/demo.html"
+  status = 200
+
+[[redirects]]
+  from = "/privacy-policy"
+  to = "/privacy-policy.html"
+  status = 200
+
+[[redirects]]
+  from = "/terms-of-service"
+  to = "/terms-of-service.html"
+  status = 200
+
+[[redirects]]
+  from = "/cookie-policy"
+  to = "/cookie-policy.html"
+  status = 200
+
+[[redirects]]
+  from = "/gdpr-compliance"
+  to = "/gdpr-compliance.html"
+  status = 200
+
+[[redirects]]
+  from = "/demo-confirmed"
+  to = "/demo.html?confirmed=1"
+  status = 200
