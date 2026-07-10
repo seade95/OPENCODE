@@ -2,4 +2,12 @@
 # Serves index.html for all SPA routes
 
 /superadmin    /superadmin.html   200
+/login         /index.html        200
+/pricing       /pricing.html     200
+/schools       /directory.html   200
+/book-demo     /demo.html        200
+/privacy-policy   /privacy-policy.html   200
+/terms-of-service /terms-of-service.html 200
+/cookie-policy    /cookie-policy.html    200
+/gdpr-compliance  /gdpr-compliance.html  200
 /*    /index.html   200
