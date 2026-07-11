@@ -187,8 +187,23 @@ function getSlug() {
   var path = window.location.pathname.replace(/\/+$/, '') || '';
   var parts = path.split('/');
   // /school/my-school → ['', 'school', 'my-school']
+  // /school/my-school/admin → ['', 'school', 'my-school', 'admin']
   if (parts.length >= 3 && parts[1] === 'school') return parts[2];
   return null;
+}
+
+function getPortalType() {
+  var path = window.location.pathname.replace(/\/+$/, '') || '';
+  var parts = path.split('/');
+  if (parts.length >= 4 && parts[1] === 'school') return parts[3];
+  return null;
+}
+
+function setActiveTenant(tenantId) {
+  try {
+    localStorage.setItem('activeTenant', tenantId);
+    localStorage.setItem('activeTenantKey', 'schoolData_' + tenantId);
+  } catch(e) {}
 }
 
 var SUBJECT_CATEGORIES = {
@@ -237,9 +252,17 @@ function renderPortal(slug, tenant, data) {
     + '<p class="tagline">' + esc(motto) + '</p>'
     + '<p class="location"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>'
     + '<div class="login-btns">'
-    + '<a class="primary" href="/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a class="secondary" href="/login?role=teacher"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
-    + '<a class="secondary" href="/login?role=parent"><i class="fas fa-users"></i> Parent Login</a>'
+    + '<a class="primary" href="/school/' + encodeURIComponent(slug) + '/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=teacher"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+    + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=parent"><i class="fas fa-users"></i> Parent Login</a>'
+    + '</div></section>';
+
+  // Portal Nav
+  html += '<section style="padding:24px 0 0;"><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">'
+    + '<a href="/school/' + encodeURIComponent(slug) + '/admin" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-user-shield"></i> Admin Portal</a>'
+    + '<a href="/school/' + encodeURIComponent(slug) + '/teacher" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-chalkboard-teacher"></i> Teacher Portal</a>'
+    + '<a href="/school/' + encodeURIComponent(slug) + '/student" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-user-graduate"></i> Student Portal</a>'
+    + '<a href="/school/' + encodeURIComponent(slug) + '/parent" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-users"></i> Parent Portal</a>'
     + '</div></section>';
 
   // Stats
@@ -251,11 +274,12 @@ function renderPortal(slug, tenant, data) {
     + '</div></section>';
 
   // Quick Access Cards
+  var qSlug = encodeURIComponent(slug);
   html += '<section><h2><i class="fas fa-bolt"></i> Quick Access</h2><div class="cards-grid">'
-    + '<div class="quick-card"><div class="icon">📋</div><h3>Exam Results</h3><p>View termly examination results and performance analytics.</p><a class="cta" href="/login?role=student">Student Login →</a></div>'
-    + '<div class="quick-card"><div class="icon">📝</div><h3>Assignments</h3><p>Access and submit assignments online.</p><a class="cta" href="/login?role=student">Student Login →</a></div>'
-    + '<div class="quick-card"><div class="icon">💰</div><h3>Fee Management</h3><p>Check fee status and make payments.</p><a class="cta" href="/login?role=parent">Parent Login →</a></div>'
-    + '<div class="quick-card"><div class="icon">👨‍🏫</div><h3>Teacher Resources</h3><p>Lesson plans, grading tools, and class management.</p><a class="cta" href="/login?role=teacher">Staff Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">📋</div><h3>Exam Results</h3><p>View termly examination results and performance analytics.</p><a class="cta" href="/school/' + qSlug + '/login?role=student">Student Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">📝</div><h3>Assignments</h3><p>Access and submit assignments online.</p><a class="cta" href="/school/' + qSlug + '/login?role=student">Student Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">💰</div><h3>Fee Management</h3><p>Check fee status and make payments.</p><a class="cta" href="/school/' + qSlug + '/login?role=parent">Parent Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">👨‍🏫</div><h3>Teacher Resources</h3><p>Lesson plans, grading tools, and class management.</p><a class="cta" href="/school/' + qSlug + '/login?role=teacher">Staff Login →</a></div>'
     + '</div></section>';
 
   // Announcements
@@ -318,8 +342,8 @@ function renderPortal(slug, tenant, data) {
   // CTA
   html += '<section class="cta-section"><h3>Ready to Get Started?</h3>'
     + '<p>Access your portal or learn more about ' + esc(name) + '</p>'
-    + '<div class="btns"><a class="primary" href="/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a class="secondary" href="/login?role=parent"><i class="fas fa-users"></i> Parent Login</a></div></section>';
+    + '<div class="btns"><a class="primary" href="/school/' + encodeURIComponent(slug) + '/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=parent"><i class="fas fa-users"></i> Parent Login</a></div></section>';
 
   document.getElementById('app').innerHTML = html;
   document.title = name + ' — EduVerse School Portal';
@@ -344,9 +368,18 @@ function init() {
     return;
   }
 
+  // Set active tenant so portal pages know which school to load
+  setActiveTenant(tenant.id);
+
+  var portal = getPortalType();
+  if (portal) {
+    routePortal(portal, slug, tenant);
+    return;
+  }
+
+  // No sub-path → render school portal homepage
   var data = getTenantSchoolData(tenant.id);
   if (!data) {
-    // Initialize with defaults if no data yet
     data = {
       schoolProfile: {
         schoolName: tenant.name,
@@ -370,8 +403,28 @@ function init() {
       notifications: [],
     };
   }
-
   renderPortal(slug, tenant, data);
+}
+
+function routePortal(portal, slug, tenant) {
+  var validPortals = ['admin', 'teacher', 'student', 'parent', 'login'];
+  if (validPortals.indexOf(portal) === -1) {
+    // Unknown portal → show homepage
+    window.location.href = '/school/' + encodeURIComponent(slug);
+    return;
+  }
+
+  // Set activeTenant so downstream pages load the correct school data
+  setActiveTenant(tenant.id);
+
+  if (portal === 'login') {
+    window.location.href = '/login?school=' + encodeURIComponent(slug);
+  } else if (portal === 'admin') {
+    window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
+  } else {
+    // teacher, student, parent → redirect to index.html with school + portal params
+    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

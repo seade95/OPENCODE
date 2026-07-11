@@ -1422,11 +1422,25 @@
 </script>
 <div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <script>
-// Auto-route /login?role=X and /?login=role on page load
+// Auto-route /login?role=X, /?login=role, and /?school=slug&portal=type on page load
 (function() {
   try {
     var params = new URLSearchParams(window.location.search);
+    var school = params.get('school');
+    var portal = params.get('portal');
     var role = params.get('role') || params.get('login');
+
+    // School-specific portal: set active tenant first
+    if (school && portal && typeof getTenants === 'function') {
+      var tenants = getTenants();
+      var tenant = tenants.find(function(t) { return t.slug === school; });
+      if (tenant) {
+        localStorage.setItem('activeTenant', tenant.id);
+        localStorage.setItem('activeTenantKey', 'schoolData_' + tenant.id);
+        role = portal; // treat portal param as the role
+      }
+    }
+
     if (role) {
       if (role === 'teacher' && typeof syncSession === 'function') { if (!getSession()) showTeacherLogin(); else syncSession(); }
       else if (role === 'parent' && typeof syncSession === 'function') { if (!getSession()) showParentLogin(); else syncSession(); }

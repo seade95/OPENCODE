@@ -104,7 +104,13 @@ function doLogin(e) {
         btn.innerHTML = 'Sign In';
         return;
       }
-      window.location.href = '/?login=' + roleId;
+      // Redirect to school-specific URL if school param is present
+      var schoolParam = new URLSearchParams(window.location.search).get('school');
+      if (schoolParam) {
+        window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
+      } else {
+        window.location.href = '/?login=' + roleId;
+      }
     } else {
       showError('Invalid credentials. Please check your ID/email and password.');
       btn.disabled = false;
@@ -139,7 +145,12 @@ function doForcePasswordChange(adminId, idVal, oldPass) {
   admin.forcePasswordChange = false;
   localStorage.setItem('eduverse_data', JSON.stringify(data));
   setLSession('admin', admin);
-  window.location.href = '/?login=admin';
+  var schoolParam = new URLSearchParams(window.location.search).get('school');
+  if (schoolParam) {
+    window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=admin';
+  } else {
+    window.location.href = '/?login=admin';
+  }
 }
 
 function showError(msg) {
@@ -166,6 +177,28 @@ function switchRole(el, role) {
 (function() {
   var params = new URLSearchParams(window.location.search);
   var roleParam = params.get('role');
+  var schoolParam = params.get('school');
+
+  // School-branded login
+  if (schoolParam) {
+    try {
+      var tenants = JSON.parse(localStorage.getItem('eduverse_tenants')) || [];
+      var tenant = tenants.find(function(t) { return t.slug === schoolParam; });
+      if (tenant) {
+        var logoEl = document.querySelector('.login-card .logo span');
+        var titleEl = document.querySelector('.login-card h1');
+        if (logoEl) logoEl.textContent = tenant.name;
+        if (titleEl) titleEl.textContent = 'Sign in to ' + tenant.name;
+        var logoImg = document.querySelector('.login-card .logo img');
+        if (logoImg && tenant.logo) logoImg.src = tenant.logo;
+        // Update back link to point to school portal
+        var backLink = document.querySelector('.back-link a');
+        if (backLink) backLink.href = '/school/' + encodeURIComponent(schoolParam);
+        document.title = tenant.name + ' — Sign In';
+      }
+    } catch(e) {}
+  }
+
   if (roleParam) {
     var tabs = document.querySelectorAll('.role-tab');
     for (var i = 0; i < tabs.length; i++) {

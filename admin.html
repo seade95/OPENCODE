@@ -978,6 +978,21 @@ adminLogin = function() {
 };
 // Re-bind sidebar clicks for adminPage in this document
 document.addEventListener('DOMContentLoaded', function() {
+  // Support ?school=slug query param for school-specific admin portal access
+  try {
+    var schoolParam = new URLSearchParams(window.location.search).get('school');
+    if (schoolParam && typeof getTenants === 'function') {
+      var tenants = getTenants();
+      var schoolTenant = tenants.find(function(t) { return t.slug === schoolParam; });
+      if (schoolTenant) {
+        localStorage.setItem('activeTenant', schoolTenant.id);
+        localStorage.setItem('activeTenantKey', 'schoolData_' + schoolTenant.id);
+        // Update page title
+        document.title = schoolTenant.name + ' — Admin Portal';
+      }
+    }
+  } catch(e) {}
+
   // Set school name on login/signup pages
   try {
     var activeTenant = localStorage.getItem('activeTenant');
