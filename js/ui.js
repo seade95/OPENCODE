@@ -587,23 +587,48 @@ function logActivity(msg) {
 }
 
 // ===== LANDING STATS ANIMATION =====
+var _statsObserved = false;
 function updateLandingStats() {
-  var stuCount = (data.students || []).length;
-  animateCounter('statStudents', stuCount > 3 ? stuCount : 12450);
-  animateCounter('statTeachers', stuCount > 3 ? Math.max(12, Math.round(stuCount * 0.15)) : 890);
-  animateCounter('statSubjects', 50);
-  animateCounter('statPassRate', 96);
+  if (_statsObserved) return;
+  _statsObserved = true;
+  var stats = [
+    { id: 'statStudents', suffix: '' },
+    { id: 'statTeachers', suffix: '' },
+    { id: 'statSubjects', suffix: '' },
+    { id: 'statPassRate', suffix: '%' }
+  ];
+  var section = document.querySelector('.stats-section');
+  if (!section || !('IntersectionObserver' in window)) {
+    animateAllNow(stats);
+    return;
+  }
+  var observer = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      animateAllNow(stats);
+      observer.disconnect();
+    }
+  }, { threshold: 0.3 });
+  observer.observe(section);
 }
-function animateCounter(id, target) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var current = 0;
-  var step = Math.ceil(target / 40);
-  var interval = setInterval(function() {
-    current += step;
-    if (current >= target) { current = target; clearInterval(interval); }
-    el.textContent = current + (id === 'statPassRate' ? '%' : '');
-  }, 30);
+function animateAllNow(stats) {
+  stats.forEach(function(s) {
+    var el = document.getElementById(s.id);
+    if (!el) return;
+    var raw = el.textContent.replace(/[+,%]/g, '');
+    var target = parseInt(raw, 10) || 0;
+    if (target === 0) return;
+    var startTime = null;
+    var duration = 1500;
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var progress = Math.min((timestamp - startTime) / duration, 1);
+      var current = Math.floor(progress * target);
+      el.textContent = current + s.suffix;
+      if (progress < 1) { requestAnimationFrame(step); }
+      else { el.textContent = target + s.suffix; }
+    }
+    requestAnimationFrame(step);
+  });
 }
 
 // ===== HERO SLIDER =====
