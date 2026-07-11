@@ -97,6 +97,13 @@ function doLogin(e) {
     var user = findUser(roleId, idVal, pwVal);
     if (user) {
       setLSession(roleId, user);
+      // Force password change for newly approved admin accounts
+      if (roleId === 'admin' && user.forcePasswordChange) {
+        showForcePasswordChange(user, idVal, pwVal);
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In';
+        return;
+      }
       window.location.href = '/?login=' + roleId;
     } else {
       showError('Invalid credentials. Please check your ID/email and password.');
@@ -104,6 +111,35 @@ function doLogin(e) {
       btn.innerHTML = 'Sign In';
     }
   }, 400);
+}
+
+function showForcePasswordChange(user, idVal, oldPass) {
+  var card = document.querySelector('.login-card');
+  card.innerHTML = '<div class="logo"><img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display=\'none\'"><span>EduVerse</span></div>'
+    + '<h1>Change Password</h1>'
+    + '<p class="subtitle">This is your first login. Please set a new password.</p>'
+    + '<div class="error" id="pwChangeError"></div>'
+    + '<form onsubmit="event.preventDefault();doForcePasswordChange(\'' + user.id + '\',\'' + idVal.replace(/'/g,"\\'") + '\',\'' + oldPass.replace(/'/g,"\\'") + '\')">'
+    + '<div class="form-group"><label>New Password</label><input type="password" id="newPw1" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password"></div>'
+    + '<div class="form-group"><label>Confirm New Password</label><input type="password" id="newPw2" placeholder="Repeat password" required minlength="6" autocomplete="new-password"></div>'
+    + '<button type="submit" class="login-btn" id="pwChangeBtn">Update Password</button></form>'
+    + '<div class="back-link"><a href="javascript:;" onclick="window.location.reload()"><i class="fas fa-arrow-left"></i> Back to Login</a></div>';
+}
+
+function doForcePasswordChange(adminId, idVal, oldPass) {
+  var p1 = document.getElementById('newPw1').value;
+  var p2 = document.getElementById('newPw2').value;
+  var err = document.getElementById('pwChangeError');
+  if (!p1 || p1.length < 6) { err.textContent = 'Password must be at least 6 characters'; err.style.display = 'block'; return; }
+  if (p1 !== p2) { err.textContent = 'Passwords do not match'; err.style.display = 'block'; return; }
+  var data = getData();
+  var admin = (data.admins || []).find(function(a) { return a.id === adminId; });
+  if (!admin) { err.textContent = 'Session expired. Please log in again.'; err.style.display = 'block'; return; }
+  admin.password = p1;
+  admin.forcePasswordChange = false;
+  localStorage.setItem('eduverse_data', JSON.stringify(data));
+  setLSession('admin', admin);
+  window.location.href = '/?login=admin';
 }
 
 function showError(msg) {

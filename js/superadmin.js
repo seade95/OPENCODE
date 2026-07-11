@@ -80,6 +80,7 @@ function showSuperAdminDashboard() {
     + '<nav class="sa-nav">'
     + saNavItem('overview', 'chart-pie', 'Overview')
     + saNavItem('schools', 'school', 'Schools')
+    + saNavItem('applications', 'clipboard-list', 'Applications')
     + saNavItem('platform', 'cogs', 'Platform Settings')
     + saNavItem('subscriptions', 'credit-card', 'Subscription Plans')
     + saNavItem('analytics', 'chart-line', 'Analytics')
@@ -126,6 +127,7 @@ function renderSaTab(tab) {
   var titles = {
     overview: 'Overview',
     schools: 'Schools Management',
+    applications: 'Pending Applications',
     platform: 'Platform Settings',
     subscriptions: 'Subscription Plans',
     analytics: 'Platform Analytics',
@@ -144,6 +146,7 @@ function renderSaTab(tab) {
   switch (tab) {
     case 'overview': renderSaOverview(content); break;
     case 'schools': renderSaSchools(content); break;
+    case 'applications': renderSaApplications(content); break;
     case 'platform': renderSaPlatform(content); break;
     case 'subscriptions': renderSaSubscriptions(content); break;
     case 'analytics': renderSaAnalytics(content); break;
@@ -414,6 +417,189 @@ function saTogglePremium(tenantId) {
     }
   } catch(e) { toast('Error: ' + e.message, 'error'); }
   renderSaTab('schools');
+}
+
+// ===== Applications Tab =====
+var _pendingApprovePass = '';
+
+function renderSaApplications(container) {
+  var apps = [];
+  try { apps = JSON.parse(localStorage.getItem('eduverse_school_applications')) || []; } catch(e) {}
+  var pending = apps.filter(function(a) { return a.status === 'pending'; });
+  var approved = apps.filter(function(a) { return a.status === 'approved'; });
+  var rejected = apps.filter(function(a) { return a.status === 'rejected'; });
+
+  var html = '<div class="sa-section"><h3 style="margin-bottom:8px;"><i class="fas fa-clipboard-list"></i> School Applications</h3>'
+    + '<p style="color:var(--text-light);font-size:14px;margin-bottom:16px;">' + apps.length + ' total | '
+    + '<strong style="color:#d97706;">' + pending.length + ' pending</strong> | '
+    + '<strong style="color:#22c55e;">' + approved.length + ' approved</strong> | '
+    + '<strong style="color:#ef4444;">' + rejected.length + ' rejected</strong></p>';
+
+  if (!pending.length) {
+    html += '<div class="card" style="padding:32px;text-align:center;color:var(--text-light);">'
+      + '<i class="fas fa-inbox" style="font-size:48px;display:block;margin-bottom:12px;opacity:0.4;"></i>'
+      + 'No pending applications</div>';
+  } else {
+    html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
+      + '<thead><tr><th>School</th><th>Contact</th><th>Email</th><th>Phone</th><th>Location</th><th>Size</th><th>Curriculum</th><th>Applied</th><th>Actions</th></tr></thead><tbody>';
+    pending.forEach(function(a) {
+      html += '<tr><td><strong>' + esc(a.schoolName) + '</strong></td>'
+        + '<td>' + esc(a.contactName) + '</td>'
+        + '<td>' + esc(a.email) + '</td>'
+        + '<td>' + esc(a.phone) + '</td>'
+        + '<td>' + esc(a.city) + ', ' + esc(a.country) + '</td>'
+        + '<td><span class="badge badge-grade">' + esc(a.schoolSize) + '</span></td>'
+        + '<td><span class="badge" style="background:#dbeafe;color:#1e40af;">' + esc(a.curriculumType) + '</span></td>'
+        + '<td style="font-size:12px;">' + new Date(a.appliedAt).toLocaleDateString() + '</td>'
+        + '<td><div style="display:flex;gap:4px;flex-wrap:wrap;">'
+        + '<button class="btn btn-sm btn-success" onclick="saApproveApplication(\'' + a.id + '\')"><i class="fas fa-check"></i> Approve</button>'
+        + '<button class="btn btn-sm btn-outline" style="color:#dc2626;" onclick="saRejectApplication(\'' + a.id + '\')"><i class="fas fa-times"></i> Reject</button>'
+        + '</div></td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  // Recently handled
+  if (approved.length || rejected.length) {
+    html += '<h4 style="margin-top:24px;margin-bottom:12px;font-size:15px;border-top:1px solid var(--border);padding-top:16px;">Recently Handled</h4>'
+      + '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
+      + '<thead><tr><th>School</th><th>Email</th><th>Status</th><th>Date</th><th>Notes</th></tr></thead><tbody>';
+    var handled = approved.concat(rejected).sort(function(a, b) { return new Date(b.approvedAt || b.appliedAt) - new Date(a.approvedAt || a.appliedAt); });
+    handled.slice(0, 20).forEach(function(a) {
+      var badge = a.status === 'approved' ? 'badge-paid' : 'badge-absent';
+      var date = a.approvedAt || a.appliedAt;
+      var notes = a.status === 'rejected' ? esc(a.rejectionReason || '') : '<i class="fas fa-check" style="color:#22c55e;"></i> Approved';
+      html += '<tr><td><strong>' + esc(a.schoolName) + '</strong></td><td>' + esc(a.email) + '</td>'
+        + '<td><span class="badge ' + badge + '">' + a.status + '</span></td>'
+        + '<td style="font-size:12px;">' + new Date(date).toLocaleDateString() + '</td>'
+        + '<td style="font-size:12px;">' + notes + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function saApproveApplication(appId) {
+  var apps = [];
+  try { apps = JSON.parse(localStorage.getItem('eduverse_school_applications')) || []; } catch(e) {}
+  var app = apps.find(function(a) { return a.id === appId; });
+  if (!app || app.status !== 'pending') { toast('Application not found or already processed', 'error'); return; }
+
+  var pass = genPassword();
+  _pendingApprovePass = pass;
+
+  // Build mailto body with credentials
+  var body = 'Dear ' + app.contactName + ',\n\n'
+    + 'Congratulations! Your application for ' + app.schoolName + ' has been approved.\n\n'
+    + 'Your school admin account is now active:\n'
+    + 'Login URL: https://eduversemngt.netlify.app/login\n'
+    + 'Email: ' + app.email + '\n'
+    + 'Temporary Password: ' + pass + '\n\n'
+    + 'IMPORTANT: Please change your password after first login.\n\n'
+    + 'Welcome to EduVerse!\n— The EduVerse Team';
+
+  // Update app status
+  app.status = 'approved';
+  app.approvedAt = new Date().toISOString();
+  saveApplications(apps);
+
+  // Generate a unique slug from school name
+  var slug = app.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  if (!slug) slug = 'school-' + appId.substring(0, 6).toLowerCase();
+  // Ensure uniqueness
+  var existing = getTenants();
+  var baseSlug = slug;
+  var counter = 1;
+  while (existing.some(function(t) { return t.slug === slug; })) { slug = baseSlug + '-' + counter; counter++; }
+
+  // Create the tenant with active status and forcePasswordChange
+  var tenant = createTenant({
+    name: app.schoolName,
+    slug: slug,
+    email: app.email,
+    phone: app.phone,
+    address: app.address || '',
+    logo: '',
+    motto: 'Education for Enlightenment',
+    tier: 'full_k12',
+    plan: 'basic',
+    adminName: app.contactName,
+    adminEmail: app.email,
+    adminPass: pass,
+    forcePasswordChange: true,
+    status: 'active',
+  });
+
+  toast('Application approved! School created successfully.', 'success');
+
+  // Show credentials modal
+  var overlay = document.getElementById('modalOverlay');
+  var bodyEl = document.getElementById('modalBody');
+  if (bodyEl) {
+    bodyEl.innerHTML = '<div class="card" style="padding:24px;max-width:500px;margin:0 auto;">'
+      + '<h3 style="margin-bottom:12px;"><i class="fas fa-check-circle" style="color:#22c55e;"></i> School Approved!</h3>'
+      + '<p style="margin-bottom:16px;color:var(--text-light);">' + esc(app.schoolName) + ' has been approved and is now active on the platform.</p>'
+      + '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin-bottom:16px;">'
+      + '<p style="font-size:13px;font-weight:600;margin-bottom:8px;">Admin Credentials</p>'
+      + '<p style="font-size:13px;margin:4px 0;"><strong>Email:</strong> ' + esc(app.email) + '</p>'
+      + '<p style="font-size:13px;margin:4px 0;"><strong>Password:</strong> <code style="background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:14px;">' + pass + '</code></p>'
+      + '<p style="font-size:12px;color:#666;margin-top:8px;">Credentials have been sent via email.</p>'
+      + '</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      + '<button class="btn btn-primary" onclick="window.open(\'mailto:' + encodeURIComponent(app.email) + '?subject=' + encodeURIComponent('Your EduVerse Admin Account is Ready!') + '&body=' + encodeURIComponent(body) + '\',\'_blank\');closeModal()"><i class="fas fa-envelope"></i> Send Email</button>'
+      + '<button class="btn btn-outline" onclick="closeModal()">Close</button>'
+      + '</div></div>';
+    if (overlay) {
+      overlay.classList.add('active');
+      overlay.style.overflowY = 'auto';
+    }
+  }
+
+  renderSaTab('applications');
+}
+
+function saRejectApplication(appId) {
+  // Show a reason input modal
+  var overlay = document.getElementById('modalOverlay');
+  var bodyEl = document.getElementById('modalBody');
+  if (!bodyEl) return;
+  bodyEl.innerHTML = '<h3><i class="fas fa-times-circle" style="color:#dc2626;"></i> Reject Application</h3>'
+    + '<div id="rejectError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin:8px 0;font-size:14px;"></div>'
+    + '<div class="form-group"><label>Reason for Rejection *</label><textarea id="rejectReason" style="width:100%;min-height:100px;padding:10px;border:1px solid var(--border);border-radius:6px;font-size:14px;" placeholder="Provide a reason the applicant can understand..."></textarea></div>'
+    + '<div class="modal-actions" style="margin-top:16px;"><button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+    + '<button class="btn btn-danger" onclick="saConfirmReject(\'' + appId + '\')"><i class="fas fa-times"></i> Confirm Rejection</button></div>';
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.style.overflowY = 'auto';
+  }
+}
+
+function saConfirmReject(appId) {
+  var reason = document.getElementById('rejectReason')?.value?.trim();
+  if (!reason) { showError(document.getElementById('rejectError'), 'Please provide a reason'); return; }
+
+  var apps = [];
+  try { apps = JSON.parse(localStorage.getItem('eduverse_school_applications')) || []; } catch(e) {}
+  var app = apps.find(function(a) { return a.id === appId; });
+  if (!app || app.status !== 'pending') { toast('Application not found', 'error'); return; }
+
+  app.status = 'rejected';
+  app.rejectionReason = reason;
+  saveApplications(apps);
+
+  var body = 'Dear ' + app.contactName + ',\n\n'
+    + 'Thank you for your interest in EduVerse.\n\n'
+    + 'Unfortunately, your application for ' + app.schoolName + ' has been reviewed and we are unable to approve it at this time.\n\n'
+    + 'Reason: ' + reason + '\n\n'
+    + 'You may reapply after addressing the above concerns.\n\n'
+    + 'Best regards,\n— The EduVerse Team';
+
+  toast('Application rejected.', 'info');
+  closeModal();
+  window.open('mailto:' + encodeURIComponent(app.email) + '?subject=' + encodeURIComponent('EduVerse Application Update') + '&body=' + encodeURIComponent(body), '_blank');
+  renderSaTab('applications');
 }
 
 // ===== 3. Platform Settings Tab =====

@@ -219,8 +219,47 @@ function adminLogin() {
   emailEl.value = '';
   passEl.value = '';
   hideError(errEl);
+  // Force password change for newly approved accounts
+  if (admin.forcePasswordChange) {
+    showForceAdminPasswordChange(admin);
+    return;
+  }
   showAdminPortal();
   updateNotifBadge();
+}
+
+function showForceAdminPasswordChange(admin) {
+  var overlay = document.getElementById('modalOverlay');
+  var body = document.getElementById('modalBody');
+  if (!body) return;
+  body.innerHTML = '<h3><i class="fas fa-key"></i> Change Required</h3>'
+    + '<p style="color:var(--text-light);font-size:14px;margin-bottom:16px;">This is your first login. Please set a new password.</p>'
+    + '<div id="forcePwError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>'
+    + '<div class="form-group"><label>New Password</label><input type="password" id="forceNewPw" placeholder="Min 6 characters" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;"></div>'
+    + '<div class="form-group"><label>Confirm Password</label><input type="password" id="forceNewPw2" placeholder="Repeat password" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:6px;"></div>'
+    + '<div class="modal-actions"><button class="btn btn-primary" onclick="confirmForcePasswordChange()"><i class="fas fa-save"></i> Update Password</button></div>';
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.style.overflowY = 'auto';
+  }
+}
+
+function confirmForcePasswordChange() {
+  var p1 = document.getElementById('forceNewPw')?.value;
+  var p2 = document.getElementById('forceNewPw2')?.value;
+  var err = document.getElementById('forcePwError');
+  if (!p1 || p1.length < 6) { showError(err, 'Password must be at least 6 characters'); return; }
+  if (p1 !== p2) { showError(err, 'Passwords do not match'); return; }
+  var admin = currentAdmin;
+  if (!admin) { showError(err, 'Session expired. Please log in again.'); return; }
+  admin.password = p1;
+  admin.forcePasswordChange = false;
+  saveData();
+  hideError(err);
+  closeModal();
+  showAdminPortal();
+  updateNotifBadge();
+  toast('Password updated successfully!', 'success');
 }
 
 function adminSignup() {

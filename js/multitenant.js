@@ -165,7 +165,7 @@ function createTenant(schoolData) {
     adminEmail: schoolData.adminEmail,
     adminPass: schoolData.adminPass,
     createdAt: new Date().toISOString(),
-    status: 'active',
+    status: schoolData.status || 'active',
     plan: schoolData.plan || 'basic',
   };
 
@@ -184,6 +184,7 @@ function createTenant(schoolData) {
     email: tenant.adminEmail,
     password: tenant.adminPass,
     role: 'super_admin',
+    forcePasswordChange: schoolData.forcePasswordChange || false,
   }];
   // Set school branding
   defaults.schoolName = tenant.name;
@@ -213,6 +214,100 @@ function getTenantSchoolData(tenantId) {
     const raw = localStorage.getItem(getTenantDataKey(tenantId));
     return raw ? JSON.parse(raw) : null;
   } catch(e) { return null; }
+}
+
+// ===== School Applications System =====
+var APP_KEY = 'eduverse_school_applications';
+
+function getApplications() {
+  try { return JSON.parse(localStorage.getItem(APP_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveApplications(apps) {
+  localStorage.setItem(APP_KEY, JSON.stringify(apps));
+}
+
+function genAppId() {
+  return 'APP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
+}
+
+function genPassword() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$';
+  var pass = '';
+  for (var i = 0; i < 12; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+  return pass;
+}
+
+function showApplySchool() {
+  var overlay = document.getElementById('modalOverlay');
+  var body = document.getElementById('modalBody');
+  if (!body) return;
+  body.innerHTML = '<h3><i class="fas fa-school"></i> Apply to Join EduVerse</h3>'
+    + '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">Fill in your school details below. Your application will be reviewed by our team.</p>'
+    + '<div id="applyError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:14px;"></div>'
+    + '<div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">'
+    + '<div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="appSchoolName" placeholder="e.g. Gracefield International School"></div>'
+    + '<div class="form-group"><label>Contact Person Name *</label><input type="text" id="appContactName" placeholder="Full name"></div>'
+    + '<div class="form-group"><label>Contact Email *</label><input type="email" id="appEmail" placeholder="admin@school.edu"></div>'
+    + '<div class="form-group"><label>Phone Number *</label><input type="tel" id="appPhone" placeholder="+234 801 234 5678"></div>'
+    + '<div class="form-group" style="grid-column:1/-1;"><label>Address</label><input type="text" id="appAddress" placeholder="School address"></div>'
+    + '<div class="form-group"><label>City *</label><input type="text" id="appCity" placeholder="e.g. Lagos"></div>'
+    + '<div class="form-group"><label>Country *</label><input type="text" id="appCountry" value="Nigeria"></div>'
+    + '<div class="form-group"><label>School Size</label><select id="appSize" style="width:100%;"><option value="small">Small (1-200 students)</option><option value="medium">Medium (201-500 students)</option><option value="large">Large (501+ students)</option></select></div>'
+    + '<div class="form-group"><label>Curriculum Type</label><select id="appCurriculum" style="width:100%;"><option value="nigerian">Nigerian (WAEC/NECO)</option><option value="british">British (IGCSE/A-Levels)</option><option value="american">American</option><option value="montessori">Montessori</option><option value="islamic">Islamic</option><option value="other">Other</option></select></div>'
+    + '</div>'
+    + '<div class="modal-actions" style="margin-top:20px;"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-success" onclick="applyForSchool()"><i class="fas fa-paper-plane"></i> Submit Application</button></div>';
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.style.overflowY = 'auto';
+  }
+}
+
+function applyForSchool() {
+  var name = document.getElementById('appSchoolName')?.value?.trim();
+  var contact = document.getElementById('appContactName')?.value?.trim();
+  var email = document.getElementById('appEmail')?.value?.trim();
+  var phone = document.getElementById('appPhone')?.value?.trim();
+  var address = document.getElementById('appAddress')?.value?.trim();
+  var city = document.getElementById('appCity')?.value?.trim();
+  var country = document.getElementById('appCountry')?.value?.trim();
+  var size = document.getElementById('appSize')?.value || 'small';
+  var curriculum = document.getElementById('appCurriculum')?.value || 'nigerian';
+  var err = document.getElementById('applyError');
+
+  if (!name || !contact || !email || !phone || !city || !country) {
+    showError(err, 'Please fill all required fields'); return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showError(err, 'Invalid email address'); return;
+  }
+  hideError(err);
+
+  var apps = getApplications();
+  if (apps.some(function(a) { return a.email.toLowerCase() === email.toLowerCase() && a.status === 'pending'; })) {
+    showError(err, 'An application with this email is already pending review.'); return;
+  }
+
+  var app = {
+    id: genAppId(),
+    schoolName: name,
+    contactName: contact,
+    email: email,
+    phone: phone,
+    address: address,
+    city: city,
+    country: country,
+    schoolSize: size,
+    curriculumType: curriculum,
+    status: 'pending',
+    appliedAt: new Date().toISOString(),
+    approvedAt: null,
+    rejectionReason: null,
+  };
+  apps.push(app);
+  saveApplications(apps);
+  toast('Application submitted successfully! We\'ll review and get back to you.', 'success');
+  closeModal();
 }
 
 // ===== DEMO TENANT =====

@@ -119,6 +119,7 @@
     </li>
     <li><a href="/pricing">Pricing</a></li>
     <li><a href="/schools">Schools</a></li>
+    <li><a href="javascript:;" onclick="showApplySchool()" style="color:#fbbf24;"><i class="fas fa-pen"></i> Apply as School</a></li>
     <li><a href="admin.html" class="btn-portal"><i class="fas fa-user-shield"></i> Admin</a></li>
     <li><a href="javascript:;" onclick="showSchoolSelector()" class="btn-portal" style="background:rgba(255,215,0,0.15);color:gold;" title="Switch School"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
     <li><a href="superadmin.html" style="color:rgba(255,255,255,0.5);padding:8px 10px;font-size:13px;" title="Super Admin" id="superAdminCog"><i class="fas fa-user-cog"></i></a></li>
@@ -381,7 +382,7 @@
   </div>
   <div style="text-align:center;margin-top:32px;">
     <p style="color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;">Want your school on this list?</p>
-    <a href="#portals" class="btn btn-accent" onclick="showAdminLogin()"><i class="fas fa-rocket"></i> Start Your Pilot Program</a>
+    <a href="javascript:;" class="btn btn-accent" onclick="showApplySchool()"><i class="fas fa-pen"></i> Apply Now</a>
   </div>
 </section>
 
@@ -391,7 +392,8 @@
     <h2 style="color:white;font-size:28px;margin:0 0 8px;">Ready to Transform Your School?</h2>
     <p style="opacity:0.85;font-size:15px;margin:0 0 24px;">See our plans or book a personalized demo with our team.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/pricing" class="btn" style="background:white;color:#2563eb;font-weight:700;"><i class="fas fa-tag"></i> View Pricing</a>
+      <a href="javascript:;" class="btn" style="background:white;color:#2563eb;font-weight:700;" onclick="showApplySchool()"><i class="fas fa-pen"></i> Apply as School</a>
+      <a href="/pricing" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-tag"></i> View Pricing</a>
       <a href="/book-demo" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-calendar-check"></i> Book a Demo</a>
       <a href="/schools" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-school"></i> School Directory</a>
     </div>
