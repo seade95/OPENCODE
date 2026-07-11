@@ -1102,6 +1102,34 @@ function renderChatButtons() {
   }
 }
 
+// ===== Newsletter Subscription =====
+var NEWSLETTER_KEY = 'eduverse_newsletter_subscribers';
+var NOTIFY_EMAIL = 'eduversemgt@gmail.com';
+
+function subscribeNewsletter(input) {
+  var email = input.value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid email address.');
+    input.focus();
+    return;
+  }
+  var subs = [];
+  try { subs = JSON.parse(localStorage.getItem(NEWSLETTER_KEY) || '[]'); } catch(e) {}
+  if (subs.some(function(s) { return s.email === email; })) {
+    showToast('You\'re already subscribed!');
+    input.value = '';
+    return;
+  }
+  subs.push({ email: email, subscribedAt: new Date().toISOString() });
+  localStorage.setItem(NEWSLETTER_KEY, JSON.stringify(subs));
+  input.value = '';
+  showToast('Subscribed successfully! Check your inbox.');
+  // Notify admin via mailto
+  var subj = encodeURIComponent('New Newsletter Subscriber');
+  var body = encodeURIComponent('New subscriber: ' + email + '\nTotal subscribers: ' + subs.length + '\n\nSent from EDUVERSE platform.');
+  window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subj + '&body=' + body, '_blank');
+}
+
 // Show toast notification
 function showToast(msg) {
   var t = document.createElement('div');

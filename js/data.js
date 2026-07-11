@@ -315,9 +315,9 @@ function getDefaultData() {
       heroTitle: 'Shape Your Future With Us',
       heroSubtitle: 'Empowering students with world-class education, innovative learning, and a supportive community.',
       aboutText: 'We are committed to providing quality education that nurtures academic excellence, character development, and lifelong learning.',
-      contactEmail: 'info@school.edu',
-      contactPhone: '+234 800 000 0000',
-      whatsappNumber: '',
+      contactEmail: 'eduversemgt@gmail.com',
+      contactPhone: '+2347069332955',
+      whatsappNumber: '+2347069332955',
       contactAddress: 'Education Avenue, City',
       graduationClass: 'Basic 6',
       socialLinks: [

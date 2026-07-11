@@ -698,7 +698,7 @@ testGroup('Multi-Tenant System', () => {
   const tenant = EV.createTenant({
     name: 'Test School',
     email: 'test@school.com',
-    phone: '+234 800 000 0000',
+    phone: '+2347069332955',
     motto: 'Test Motto',
     tier: 'full_k12',
     plan: 'basic',

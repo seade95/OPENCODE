@@ -227,7 +227,7 @@ function initDemoTenant() {
     name: 'Demo International School',
     slug: 'demo-international',
     email: 'demo@demo.com',
-    phone: '+234 800 000 0000',
+    phone: '+2347069332955',
     motto: 'Excellence in Education — Try It Free!',
     address: '42 Education Avenue, Lagos, Nigeria',
     tier: 'full_k12',
@@ -444,7 +444,7 @@ function showOnboardSchool() {
         <p style="font-size:11px;color:var(--text-light);margin:4px 0 0;">Your school will be accessible at <strong id="onbSlugPreview">slug.yourdomain.com</strong></p>
       </div>
       <div class="form-group"><label>School Email *</label><input type="email" id="onbSchoolEmail" placeholder="admin@school.edu" oninput="validateField(this,'email')"></div>
-      <div class="form-group"><label>Phone</label><input type="text" id="onbSchoolPhone" placeholder="+234 800 000 0000"></div>
+      <div class="form-group"><label>Phone</label><input type="text" id="onbSchoolPhone" placeholder="+2347069332955"></div>
       <div class="form-group"><label>Motto</label><input type="text" id="onbSchoolMotto" value="Education for Enlightenment"></div>
       <div class="form-group" style="grid-column:1/-1;"><label>Address</label><input type="text" id="onbSchoolAddress" placeholder="School address"></div>
       <div class="form-group"><label>Logo URL</label><input type="text" id="onbSchoolLogo" placeholder="https://example.com/logo.png"></div>

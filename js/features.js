@@ -4841,7 +4841,7 @@ function renderWebsiteContact(container) {
     + '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">This info is shown on your public website contact section.</p>'
     + '<div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">'
     + '<div class="form-group"><label>School Email</label><input type="email" id="wbContactEmail" class="form-input" value="' + esc(sp.contactEmail || '') + '" placeholder="info@school.edu"></div>'
-    + '<div class="form-group"><label>Phone Number</label><input type="text" id="wbContactPhone" class="form-input" value="' + esc(sp.contactPhone || '') + '" placeholder="+234 800 000 0000"></div>'
+    + '<div class="form-group"><label>Phone Number</label><input type="text" id="wbContactPhone" class="form-input" value="' + esc(sp.contactPhone || '') + '" placeholder="+2347069332955"></div>'
     + '<div class="form-group" style="grid-column:1/3;"><label>Address</label><input type="text" id="wbContactAddress" class="form-input" value="' + esc(sp.contactAddress || '') + '" placeholder="School address"></div>'
     + '</div>';
   container.innerHTML = html;

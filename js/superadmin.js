@@ -86,6 +86,7 @@ function showSuperAdminDashboard() {
     + saNavItem('broadcast', 'bullhorn', 'Broadcast')
     + saNavItem('revenue', 'money-bill-wave', 'Revenue')
     + saNavItem('tickets', 'headset', 'Support Tickets')
+    + saNavItem('newsletter', 'envelope-open-text', 'Newsletter')
     + saNavItem('features', 'toggle-on', 'Feature Flags')
     + saNavItem('backup', 'database', 'Backup & Data')
     + saNavItem('system', 'server', 'System')
@@ -131,6 +132,7 @@ function renderSaTab(tab) {
     broadcast: 'Broadcast Message',
     revenue: 'Revenue & Payments',
     tickets: 'Support Tickets',
+    newsletter: 'Newsletter Subscribers',
     features: 'Global Feature Flags',
     backup: 'Backup & Data Management',
     system: 'System & Maintenance'
@@ -148,6 +150,7 @@ function renderSaTab(tab) {
     case 'broadcast': renderSaBroadcast(content); break;
     case 'revenue': renderSaRevenue(content); break;
     case 'tickets': renderSaTickets(content); break;
+    case 'newsletter': renderSaNewsletter(content); break;
     case 'features': renderSaFeatures(content); break;
     case 'backup': renderSaBackup(content); break;
     case 'system': renderSaSystem(content); break;
@@ -1563,6 +1566,48 @@ function saSetApproval(val) {
   savePlatformConfig(cfg);
   logActivity(val ? 'School approval required' : 'School approval disabled');
   toast(val ? 'New schools will require approval' : 'Schools can register freely');
+}
+
+// ===== Newsletter Subscribers =====
+function renderSaNewsletter(content) {
+  var subs = [];
+  try { subs = JSON.parse(localStorage.getItem('eduverse_newsletter_subscribers') || '[]'); } catch(e) {}
+  var html = '<div class="sa-section"><h3 style="margin-bottom:12px;"><i class="fas fa-envelope-open-text"></i> Newsletter Subscribers</h3>'
+    + '<p style="margin-bottom:16px;color:var(--text-light);">Total: <strong>' + subs.length + '</strong> subscriber(s)</p>';
+  if (subs.length === 0) {
+    html += '<div class="card" style="padding:32px;text-align:center;color:var(--text-light);"><i class="fas fa-inbox" style="font-size:48px;display:block;margin-bottom:12px;opacity:0.4;"></i>No subscribers yet</div>';
+  } else {
+    html += '<div style="overflow-x:auto;"><table class="table" style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);">#</th>'
+      + '<th style="text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);">Email</th>'
+      + '<th style="text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);">Subscribed At</th></tr></thead><tbody>';
+    subs.forEach(function(s, i) {
+      html += '<tr><td style="padding:8px 12px;border-bottom:1px solid var(--border);">' + (i + 1) + '</td>'
+        + '<td style="padding:8px 12px;border-bottom:1px solid var(--border);">' + esc(s.email) + '</td>'
+        + '<td style="padding:8px 12px;border-bottom:1px solid var(--border);">' + (s.subscribedAt ? new Date(s.subscribedAt).toLocaleString() : '--') + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+  html += '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">'
+    + '<button class="btn btn-sm btn-primary" onclick="exportNewsletterCsv()"><i class="fas fa-file-csv"></i> Export CSV</button>'
+    + '<button class="btn btn-sm btn-outline" onclick="if(confirm(\'Clear all subscribers?\')){localStorage.removeItem(\'eduverse_newsletter_subscribers\');renderSaTab(\'newsletter\');toast(\'Cleared\');}"><i class="fas fa-trash"></i> Clear All</button>'
+    + '</div></div>';
+  content.innerHTML = html;
+}
+
+function exportNewsletterCsv() {
+  var subs = [];
+  try { subs = JSON.parse(localStorage.getItem('eduverse_newsletter_subscribers') || '[]'); } catch(e) {}
+  if (!subs.length) { toast('No subscribers to export'); return; }
+  var csv = 'Email,Subscribed At\n';
+  subs.forEach(function(s) { csv += '"' + s.email + '","' + (s.subscribedAt || '') + '"\n'; });
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'newsletter-subscribers-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV exported');
 }
 
 // ===== Update Schools tab with approval controls + password reset =====

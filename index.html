@@ -615,8 +615,8 @@
       <p id="footerSchoolExtra" style="font-size:12px;color:var(--text-light);margin:4px 0;"></p>
       <p id="footerSchoolInfo" style="font-size:12px;color:var(--text-light);margin:4px 0;"></p>
       <p id="footerContact"><strong><i class="fas fa-map-marker-alt"></i></strong> 123 Education Avenue, Lagos, Nigeria<br>
-      <strong><i class="fas fa-phone"></i></strong> +234 800 000 0000<br>
-      <strong><i class="fas fa-envelope"></i></strong> info@eduverse.com</p>
+      <strong><i class="fas fa-phone"></i></strong> <a href="tel:+2347069332955" style="color:rgba(255,255,255,0.7);text-decoration:none;">+2347069332955</a><br>
+      <strong><i class="fas fa-envelope"></i></strong> <a href="mailto:eduversemgt@gmail.com" style="color:rgba(255,255,255,0.7);text-decoration:none;">eduversemgt@gmail.com</a></p>
     </div>
     <div class="footer-widget">
       <h5>Quick Links</h5>
@@ -646,7 +646,7 @@
       <h5>Newsletter</h5>
       <p>Subscribe to receive updates on school activities and academic news.</p>
       <div class="newsletter-form">
-        <form onsubmit="event.preventDefault();toast('Subscribed successfully!');">
+        <form onsubmit="event.preventDefault();subscribeNewsletter(this.querySelector('input'));">
           <div class="input-group">
             <input type="email" placeholder="Your email address" required>
             <button type="submit"><i class="fas fa-arrow-right"></i></button>
@@ -1370,6 +1370,7 @@
 <script async src="https://js.paystack.co/v1/inline.js"></script>
 <script async src="https://checkout.flutterwave.com/v3.js"></script>
 <script src="js/data.js"></script>
+<script src="js/schoolprofile.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/teacher.js"></script>
@@ -1386,7 +1387,6 @@
 <script src="js/activity-games.js"></script>
 <script src="js/alumni.js"></script>
 <script src="js/eduverse.js"></script>
-<script src="js/schoolprofile.js"></script>
 <script src="js/superadmin.js"></script>
 <script src="js/higherinstitutions.js"></script>
 <script async src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
