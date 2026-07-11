@@ -79,7 +79,7 @@ function getDemoSchools() {
       for (var i = 0; i < tenants.length; i++) {
         var t = tenants[i];
         if (t && t.name) {
-          schools.push({ name: t.name, loc: t.location || t.address || 'Unknown', type: 'both', icon: 'fa-school', source: 'tenant' });
+          schools.push({ name: t.name, loc: t.location || t.address || 'Unknown', type: 'both', icon: 'fa-school', source: 'tenant', slug: t.slug || '' });
         }
       }
     }
@@ -110,11 +110,15 @@ function renderDirectory() {
     var s = filtered[i];
     var typeLabel = s.type === 'primary' ? 'Primary' : s.type === 'secondary' ? 'Secondary' : 'Primary & Secondary';
     var typeClass = s.type === 'primary' ? 'primary' : s.type === 'secondary' ? 'secondary' : '';
-    html += '<div class="dir-card">';
+    var portalLink = s.slug ? '/school/' + encodeURIComponent(s.slug) : '';
+    var clickHandler = portalLink ? ' onclick="window.location.href=\'' + portalLink + '\'" style="cursor:pointer;"' : '';
+    html += '<div class="dir-card"' + clickHandler + '>';
     html += '<div class="school-icon"><i class="fas ' + (s.icon || 'fa-school') + '"></i></div>';
     html += '<h3>' + htmlEscape(s.name) + '</h3>';
     html += '<div class="loc"><i class="fas fa-map-marker-alt"></i> ' + htmlEscape(s.loc) + '</div>';
-    html += '<div><span class="type ' + typeClass + '">' + typeLabel + '</span></div>';
+    html += '<div><span class="type ' + typeClass + '">' + typeLabel + '</span>'
+      + (portalLink ? '<span class="type" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-external-link-alt"></i> View Portal</span>' : '')
+      + '</div>';
     html += '</div>';
   }
   grid.innerHTML = html;

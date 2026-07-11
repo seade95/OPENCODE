@@ -6,6 +6,8 @@ const SHELL = [
   '/index.html',
   '/admin.html',
   '/superadmin.html',
+  '/login.html',
+  '/school-portal.html',
   OFFLINE_URL,
   '/manifest.json',
   '/icons/icon.svg',

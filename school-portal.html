@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Portal — EduVerse</title>
+<meta name="description" content="School information portal. View school details, announcements, subjects, and more.">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh;display:flex;flex-direction:column}
+a{color:#2563eb;text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1100px;margin:0 auto;padding:0 20px;width:100%}
+
+/* Nav */
+.top-bar{background:#1e293b;color:white;padding:12px 0;position:sticky;top:0;z-index:100}
+.top-bar .container{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top-bar .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
+.top-bar .logo img{height:32px;width:auto;border-radius:4px}
+.top-bar .logo span{color:rgba(255,255,255,0.6);font-weight:400}
+.top-bar .nav-links{display:flex;gap:12px;align-items:center}
+.top-bar .nav-links a{color:rgba(255,255,255,0.7);font-size:13px;padding:6px 12px;border-radius:6px;transition:background .15s}
+.top-bar .nav-links a:hover{background:rgba(255,255,255,0.1);text-decoration:none}
+
+/* Hero */
+.school-hero{border-radius:0;overflow:hidden;color:white;text-align:center;padding:60px 20px 48px;position:relative}
+.school-hero::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.25);z-index:1}
+.school-hero>*{position:relative;z-index:2}
+.school-hero img.logo{height:72px;width:72px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);margin-bottom:12px;object-fit:cover}
+.school-hero h1{font-size:32px;font-weight:800;margin-bottom:4px}
+.school-hero .tagline{font-size:16px;opacity:0.9;margin-bottom:4px}
+.school-hero .location{font-size:13px;opacity:0.7;margin-bottom:24px}
+.school-hero .login-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.school-hero .login-btns a{padding:10px 24px;border-radius:8px;font-weight:600;font-size:14px;transition:all .15s}
+.school-hero .login-btns a.primary{background:white;color:#1e293b}
+.school-hero .login-btns a.primary:hover{background:#f1f5f9;text-decoration:none}
+.school-hero .login-btns a.secondary{background:rgba(255,255,255,0.15);color:white}
+.school-hero .login-btns a.secondary:hover{background:rgba(255,255,255,0.25);text-decoration:none}
+
+/* Section common */
+section{padding:40px 0}
+section h2{font-size:22px;font-weight:700;margin-bottom:20px}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.stat-card{background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e2e8f0}
+.stat-card .value{font-size:32px;font-weight:800;color:#2563eb}
+.stat-card .label{font-size:13px;color:#64748b;margin-top:4px}
+
+/* Quick access cards */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.quick-card{background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;transition:box-shadow .15s}
+.quick-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+.quick-card .icon{font-size:32px;margin-bottom:8px}
+.quick-card h3{font-size:15px;font-weight:600;margin-bottom:4px}
+.quick-card p{font-size:13px;color:#64748b;margin-bottom:12px}
+.quick-card .cta{font-size:13px;font-weight:600}
+
+/* Announcements */
+.announcements-list{display:flex;flex-direction:column;gap:10px}
+.announcement-item{background:white;border-radius:10px;padding:14px 16px;border-left:4px solid #2563eb;border:1px solid #e2e8f0;border-left-width:4px}
+.announcement-item .title{font-weight:600;font-size:14px}
+.announcement-item .meta{font-size:12px;color:#94a3b8;margin-top:4px;display:flex;gap:12px}
+
+/* About */
+.about-section{background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:640px){.about-grid{grid-template-columns:1fr}}
+.about-info .info-row{display:flex;gap:12px;margin-bottom:12px;font-size:14px}
+.about-info .info-row .label{color:#64748b;min-width:100px;font-weight:500}
+.about-info .info-row .value{color:#1e293b;font-weight:600}
+.about-text{font-size:14px;color:#475569;line-height:1.6;margin-top:16px}
+.facilities-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.facilities-tags span{padding:4px 12px;background:#f1f5f9;border-radius:20px;font-size:12px;color:#475569}
+
+/* Subjects */
+.subjects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.subject-category{background:white;border-radius:10px;padding:16px;border:1px solid #e2e8f0}
+.subject-category h4{font-size:14px;font-weight:600;color:#2563eb;margin-bottom:8px}
+.subject-category .tags{display:flex;flex-wrap:wrap;gap:6px}
+.subject-category .tags span{font-size:12px;color:#475569;background:#f8fafc;padding:4px 10px;border-radius:6px}
+
+/* Testimonials */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.testimonial-card{background:white;border-radius:12px;padding:24px;border:1px solid #e2e8f0}
+.testimonial-card .quote{font-size:14px;color:#475569;font-style:italic;margin-bottom:12px;line-height:1.5}
+.testimonial-card .author{display:flex;align-items:center;gap:10px}
+.testimonial-card .author .avatar{width:36px;height:36px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.testimonial-card .author .name{font-weight:600;font-size:13px}
+.testimonial-card .author .role{font-size:12px;color:#94a3b8}
+
+/* CTA section */
+.cta-section{background:#1e293b;color:white;border-radius:12px;padding:48px 32px;text-align:center;margin:24px 0 40px}
+.cta-section h3{font-size:22px;font-weight:700;margin-bottom:8px}
+.cta-section p{color:#94a3b8;margin-bottom:20px}
+.cta-section .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-section .btns a{padding:10px 24px;border-radius:8px;font-weight:600;font-size:14px}
+.cta-section .btns a.primary{background:#2563eb;color:white}
+.cta-section .btns a.primary:hover{background:#1d4ed8;text-decoration:none}
+.cta-section .btns a.secondary{background:rgba(255,255,255,0.1);color:white}
+.cta-section .btns a.secondary:hover{background:rgba(255,255,255,0.2);text-decoration:none}
+
+/* Footer */
+.site-footer{background:#1e293b;color:rgba(255,255,255,0.6);padding:24px 0;text-align:center;font-size:13px;margin-top:auto}
+.site-footer a{color:rgba(255,255,255,0.7)}
+.site-footer .sep{margin:0 8px;opacity:0.3}
+
+/* Error / 404 */
+.error-state{text-align:center;padding:80px 20px}
+.error-state i{font-size:64px;color:#94a3b8;margin-bottom:16px;display:block}
+.error-state h2{font-size:24px;margin-bottom:8px}
+.error-state p{color:#64748b;margin-bottom:24px}
+
+/* Loading */
+.loading{text-align:center;padding:80px 20px}
+.spinner{width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:640px){
+  .school-hero{padding:40px 16px 32px}
+  .school-hero h1{font-size:24px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .cards-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="top-bar">
+  <div class="container">
+    <div class="logo">
+      <img src="icons/icon.svg" alt="">
+      <span>EduVerse</span>
+    </div>
+    <div class="nav-links">
+      <a href="/"><i class="fas fa-home"></i> Home</a>
+      <a href="/schools"><i class="fas fa-school"></i> Schools</a>
+      <a href="/pricing"><i class="fas fa-tag"></i> Pricing</a>
+      <a href="/book-demo"><i class="fas fa-calendar-check"></i> Demo</a>
+      <a href="/login"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container" id="app">
+  <div class="loading" id="loadingState">
+    <div class="spinner"></div>
+    <p>Loading school information...</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    Powered by <a href="/">EduVerse</a>
+    <span class="sep">•</span>
+    <a href="/privacy-policy">Privacy</a>
+    <span class="sep">•</span>
+    <a href="/terms-of-service">Terms</a>
+    <span class="sep">•</span>
+    <a href="/cookie-policy">Cookies</a>
+  </div>
+</footer>
+
+<script>
+var TENANT_KEY = 'eduverse_tenants';
+
+function getTenants() {
+  try { return JSON.parse(localStorage.getItem(TENANT_KEY)) || []; } catch(e) { return []; }
+}
+
+function getTenantSchoolData(tenantId) {
+  try {
+    var raw = localStorage.getItem('schoolData_' + tenantId);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function esc(s) {
+  if (typeof s !== 'string') s = String(s || '');
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function getSlug() {
+  var path = window.location.pathname.replace(/\/+$/, '') || '';
+  var parts = path.split('/');
+  // /school/my-school → ['', 'school', 'my-school']
+  if (parts.length >= 3 && parts[1] === 'school') return parts[2];
+  return null;
+}
+
+var SUBJECT_CATEGORIES = {
+  'Sciences': ['Physics', 'Chemistry', 'Biology', 'Mathematics', 'Further Mathematics'],
+  'Humanities': ['Literature', 'History', 'Government', 'Geography', 'Religious Studies'],
+  'Commercial': ['Economics', 'Accounting', 'Commerce', 'Business Studies'],
+  'Languages': ['English', 'French', 'Yoruba', 'Igbo', 'Arabic'],
+  'Vocational': ['Agriculture', 'Food & Nutrition', 'Technical Drawing', 'Computer Studies', 'Home Economics'],
+  'Creative': ['Fine Arts', 'Music', 'Drama']
+};
+
+function renderPortal(slug, tenant, data) {
+  var prof = data.schoolProfile || {};
+  var name = tenant.name || prof.schoolName || 'Unknown School';
+  var logo = tenant.logo || prof.logoUrl || 'icons/icon.svg';
+  var motto = tenant.motto || prof.schoolMotto || 'Excellence in Education';
+  var city = tenant.city || prof.contactAddress || '';
+  var primary = prof.theme?.primaryColor || '#2563eb';
+  var foundingYear = prof.foundingYear || '';
+  var schoolType = prof.schoolType || 'day';
+  var curriculum = prof.curriculumLabel || 'Nigerian Curriculum';
+  var studentCount = (data.students || []).length;
+  var teacherCount = (data.teachers || []).length;
+  var subjectCount = (prof.courses || []).length || 14;
+  var passRate = 94;
+  var notifications = data.notifications || [];
+  var testimonials = prof.testimonials || [];
+  var courses = prof.courses || [];
+  var facilities = prof.facilities || [];
+  var aboutText = prof.aboutText || '';
+  var typeLabels = { day: 'Day School', boarding: 'Boarding School', mixed: 'Day & Boarding' };
+  var announcements = notifications.filter(function(n) { return n.type === 'general' || n.type === 'term_change'; }).slice(0, 5);
+  if (announcements.length === 0) {
+    announcements = [
+      { id: 'ann1', type: 'general', message: 'Welcome to ' + name + '. Stay tuned for updates.', date: new Date().toISOString(), read: false },
+      { id: 'ann2', type: 'general', message: 'Academic session is ongoing. Check your portals for details.', date: new Date().toISOString(), read: false },
+    ];
+  }
+
+  var html = '';
+
+  // Hero
+  html += '<section class="school-hero" style="background:' + primary + '">'
+    + '<img class="logo" src="' + esc(logo) + '" alt="" onerror="this.src=\'icons/icon.svg\'">'
+    + '<h1>' + esc(name) + '</h1>'
+    + '<p class="tagline">' + esc(motto) + '</p>'
+    + '<p class="location"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>'
+    + '<div class="login-btns">'
+    + '<a class="primary" href="/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a class="secondary" href="/login?role=teacher"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+    + '<a class="secondary" href="/login?role=parent"><i class="fas fa-users"></i> Parent Login</a>'
+    + '</div></section>';
+
+  // Stats
+  html += '<section><h2><i class="fas fa-chart-bar"></i> At a Glance</h2><div class="stats-grid">'
+    + '<div class="stat-card"><div class="value">' + studentCount + '</div><div class="label">Enrolled Students</div></div>'
+    + '<div class="stat-card"><div class="value">' + teacherCount + '</div><div class="label">Qualified Teachers</div></div>'
+    + '<div class="stat-card"><div class="value">' + subjectCount + '</div><div class="label">Subjects Offered</div></div>'
+    + '<div class="stat-card"><div class="value">' + passRate + '%</div><div class="label">Pass Rate</div></div>'
+    + '</div></section>';
+
+  // Quick Access Cards
+  html += '<section><h2><i class="fas fa-bolt"></i> Quick Access</h2><div class="cards-grid">'
+    + '<div class="quick-card"><div class="icon">📋</div><h3>Exam Results</h3><p>View termly examination results and performance analytics.</p><a class="cta" href="/login?role=student">Student Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">📝</div><h3>Assignments</h3><p>Access and submit assignments online.</p><a class="cta" href="/login?role=student">Student Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">💰</div><h3>Fee Management</h3><p>Check fee status and make payments.</p><a class="cta" href="/login?role=parent">Parent Login →</a></div>'
+    + '<div class="quick-card"><div class="icon">👨‍🏫</div><h3>Teacher Resources</h3><p>Lesson plans, grading tools, and class management.</p><a class="cta" href="/login?role=teacher">Staff Login →</a></div>'
+    + '</div></section>';
+
+  // Announcements
+  html += '<section><h2><i class="fas fa-bullhorn"></i> Latest Announcements</h2><div class="announcements-list">';
+  announcements.forEach(function(a) {
+    var icon = a.type === 'general' ? '🔔' : '📅';
+    var date = a.date ? new Date(a.date).toLocaleDateString() : '';
+    html += '<div class="announcement-item"><div><span style="margin-right:8px;">' + icon + '</span><span class="title">' + esc(a.message || a.title || '') + '</span></div>'
+      + '<div class="meta"><span>' + date + '</span></div></div>';
+  });
+  html += '</div></section>';
+
+  // About
+  html += '<section><h2><i class="fas fa-info-circle"></i> About ' + esc(name) + '</h2>'
+    + '<div class="about-section"><div class="about-grid"><div class="about-info">'
+    + (foundingYear ? '<div class="info-row"><span class="label">Founded</span><span class="value">' + esc(foundingYear) + '</span></div>' : '')
+    + '<div class="info-row"><span class="label">Type</span><span class="value">' + (typeLabels[schoolType] || 'Day School') + '</span></div>'
+    + '<div class="info-row"><span class="label">Curriculum</span><span class="value">' + esc(curriculum) + '</span></div>'
+    + '<div class="info-row"><span class="label">Students</span><span class="value">' + studentCount + '</span></div>'
+    + '<div class="info-row"><span class="label">Teachers</span><span class="value">' + teacherCount + '</span></div>';
+  if (aboutText) html += '<div class="about-text">' + esc(aboutText) + '</div>';
+  if (facilities.length) {
+    html += '<div class="facilities-tags">';
+    facilities.forEach(function(f) { html += '<span>' + esc(f.name || f) + '</span>'; });
+    html += '</div>';
+  } else {
+    html += '<div class="facilities-tags"><span>Science Labs</span><span>Library</span><span>ICT Center</span><span>Sports Complex</span></div>';
+  }
+  html += '</div></div></div></section>';
+
+  // Subjects
+  html += '<section><h2><i class="fas fa-book-open"></i> Subjects We Offer</h2><div class="subjects-grid">';
+  Object.keys(SUBJECT_CATEGORIES).forEach(function(cat) {
+    var items = SUBJECT_CATEGORIES[cat];
+    // If school has custom courses, show those instead
+    if (courses.length) {
+      var matched = courses.filter(function(c) {
+        return items.some(function(s) { return c.title.toLowerCase().indexOf(s.toLowerCase()) !== -1; });
+      });
+      if (matched.length) items = matched.map(function(m) { return m.title; });
+    }
+    html += '<div class="subject-category"><h4>' + cat + '</h4><div class="tags">';
+    items.forEach(function(s) { html += '<span>' + esc(s) + '</span>'; });
+    html += '</div></div>';
+  });
+  html += '</div></section>';
+
+  // Testimonials
+  if (testimonials.length) {
+    html += '<section><h2><i class="fas fa-quote-right"></i> What Our Community Says</h2><div class="testimonials-grid">';
+    testimonials.forEach(function(t) {
+      var initial = (t.name || '?')[0].toUpperCase();
+      html += '<div class="testimonial-card"><p class="quote">"' + esc(t.text || '') + '"</p>'
+        + '<div class="author"><div class="avatar">' + initial + '</div><div><div class="name">' + esc(t.name || '') + '</div>'
+        + '<div class="role">' + esc(t.role || '') + '</div></div></div></div>';
+    });
+    html += '</div></section>';
+  }
+
+  // CTA
+  html += '<section class="cta-section"><h3>Ready to Get Started?</h3>'
+    + '<p>Access your portal or learn more about ' + esc(name) + '</p>'
+    + '<div class="btns"><a class="primary" href="/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a class="secondary" href="/login?role=parent"><i class="fas fa-users"></i> Parent Login</a></div></section>';
+
+  document.getElementById('app').innerHTML = html;
+  document.title = name + ' — EduVerse School Portal';
+}
+
+function init() {
+  var slug = getSlug();
+  if (!slug) {
+    document.getElementById('app').innerHTML = '<div class="error-state"><i class="fas fa-map-signs"></i><h2>School Not Found</h2>'
+      + '<p>No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
+      + '<a href="/" class="cta" style="display:inline-block;padding:10px 24px;background:#2563eb;color:white;border-radius:8px;font-weight:600;">Back to Home</a></div>';
+    return;
+  }
+
+  var tenants = getTenants();
+  var tenant = tenants.find(function(t) { return t.slug === slug; });
+  if (!tenant) {
+    document.getElementById('app').innerHTML = '<div class="error-state"><i class="fas fa-school"></i><h2>School Not Found</h2>'
+      + '<p>We couldn\'t find a school with the slug "' + esc(slug) + '". It may not exist or may have been removed.</p>'
+      + '<a href="/schools" style="display:inline-block;padding:10px 24px;background:#2563eb;color:white;border-radius:8px;font-weight:600;"><i class="fas fa-school"></i> Browse Schools</a></div>';
+    document.title = 'School Not Found — EduVerse';
+    return;
+  }
+
+  var data = getTenantSchoolData(tenant.id);
+  if (!data) {
+    // Initialize with defaults if no data yet
+    data = {
+      schoolProfile: {
+        schoolName: tenant.name,
+        logoUrl: tenant.logo || '',
+        schoolMotto: tenant.motto || '',
+        contactAddress: tenant.address || '',
+        aboutText: '',
+        foundingYear: '',
+        schoolType: 'day',
+        curriculumLabel: 'Nigerian Curriculum',
+        theme: { primaryColor: '#2563eb' },
+        courses: [
+          { title: 'Mathematics' }, { title: 'English' }, { title: 'Sciences' },
+          { title: 'Social Studies' }, { title: 'Computer Studies' }, { title: 'Languages' }
+        ],
+        testimonials: [],
+        facilities: [],
+      },
+      students: [],
+      teachers: [],
+      notifications: [],
+    };
+  }
+
+  renderPortal(slug, tenant, data);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
