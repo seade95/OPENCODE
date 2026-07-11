@@ -1420,18 +1420,17 @@
 </script>
 <div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <script>
-// Auto-route /login?role=X on page load
+// Auto-route /login?role=X and /?login=role on page load
 (function() {
   try {
     var params = new URLSearchParams(window.location.search);
-    var role = params.get('role');
-    var path = window.location.pathname;
-    if (path === '/login' || path === '/login.html') {
-      if (role === 'teacher' && typeof showTeacherLogin === 'function') showTeacherLogin();
-      else if (role === 'parent' && typeof showParentLogin === 'function') showParentLogin();
-      else if (role === 'admin' && typeof showAdminLogin === 'function') showAdminLogin();
+    var role = params.get('role') || params.get('login');
+    if (role) {
+      if (role === 'teacher' && typeof syncSession === 'function') { if (!getSession()) showTeacherLogin(); else syncSession(); }
+      else if (role === 'parent' && typeof syncSession === 'function') { if (!getSession()) showParentLogin(); else syncSession(); }
+      else if (role === 'admin' && typeof syncSession === 'function') { if (!getSession() && typeof showAdminLogin === 'function') showAdminLogin(); else syncSession(); }
       else if (role === 'admission' && typeof showAdmissionPortal === 'function') showAdmissionPortal();
-      else if (typeof showStudentLogin === 'function') showStudentLogin();
+      else if (typeof syncSession === 'function') { if (!getSession()) showStudentLogin(); else syncSession(); }
     }
   } catch(e) {}
 })();

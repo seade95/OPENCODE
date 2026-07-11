@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign In — EduVerse</title>
+<meta name="description" content="Sign in to your EduVerse account. Choose your role: Student, Teacher, Parent, or Admin.">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#f0f4ff,#e0e7ff);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.08);width:100%;max-width:440px;padding:40px 32px;}
+.login-card .logo{text-align:center;margin-bottom:24px;}
+.login-card .logo img{height:40px;width:auto;}
+.login-card .logo span{font-size:22px;font-weight:800;color:#1e293b;margin-left:8px;vertical-align:middle;}
+.login-card h1{font-size:22px;text-align:center;color:#1e293b;margin-bottom:4px;}
+.login-card .subtitle{text-align:center;color:#64748b;font-size:14px;margin-bottom:24px;}
+.role-tabs{display:flex;gap:6px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px;}
+.role-tab{flex:1;padding:10px 8px;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:#f1f5f9;color:#64748b;text-align:center;white-space:nowrap;min-width:0;}
+.role-tab i{display:block;font-size:18px;margin-bottom:2px;}
+.role-tab:hover{background:#e2e8f0;}
+.role-tab.active{background:#2563eb;color:#fff;box-shadow:0 4px 12px rgba(37,99,235,0.25);}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:4px;}
+.form-group input{width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .15s;}
+.form-group input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
+.form-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:13px;}
+.form-row label{display:flex;align-items:center;gap:6px;color:#475569;cursor:pointer;}
+.form-row input[type=checkbox]{width:auto;}
+.form-row a{color:#2563eb;text-decoration:none;}
+.form-row a:hover{text-decoration:underline;}
+.login-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;background:#2563eb;color:#fff;transition:background .15s;}
+.login-btn:hover{background:#1d4ed8;}
+.login-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.error{background:#fef2f2;color:#dc2626;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:16px;display:none;}
+.back-link{text-align:center;margin-top:20px;font-size:13px;}
+.back-link a{color:#64748b;text-decoration:none;}
+.back-link a:hover{color:#2563eb;}
+@media(max-width:400px){.login-card{padding:28px 20px;}.role-tab{font-size:12px;}}
+</style>
+<script>
+var SESSION_KEY = 'eduverse_session';
+var SESSION_VERSION = 1;
+
+function getData() {
+  try { return JSON.parse(localStorage.getItem('eduverse_data')) || {}; } catch(e) { return {}; }
+}
+
+function findUser(role, idOrEmail, password) {
+  var data = getData();
+  var users = [];
+  if (role === 'student') users = data.students || [];
+  else if (role === 'teacher') users = data.teachers || [];
+  else if (role === 'parent') users = data.parents || [];
+  else if (role === 'admin') users = data.admins || [];
+  var idField = role === 'parent' ? 'email' : 'id';
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    if ((u[idField] === idOrEmail || u.username === idOrEmail || u.email === idOrEmail) && u.password === password) {
+      return u;
+    }
+  }
+  return null;
+}
+
+function setLSession(type, user) {
+  var s = {
+    version: SESSION_VERSION,
+    type: type,
+    user: { id: user.id, name: user.name, email: user.email || '', username: user.username || '' },
+    timestamp: Date.now(),
+    tenantId: null
+  };
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch(e) {}
+}
+
+function doLogin(e) {
+  e.preventDefault();
+  var btn = document.getElementById('loginBtn');
+  var err = document.getElementById('loginError');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+  err.style.display = 'none';
+
+  var role = document.querySelector('.role-tab.active');
+  if (!role) { showError('Please select a role'); return; }
+  var roleId = role.getAttribute('data-role');
+  var idEl = document.getElementById('loginId');
+  var pwEl = document.getElementById('loginPw');
+  var idVal = idEl.value.trim();
+  var pwVal = pwEl.value.trim();
+
+  if (!idVal || !pwVal) { showError('Please fill in all fields'); return; }
+
+  setTimeout(function() {
+    var user = findUser(roleId, idVal, pwVal);
+    if (user) {
+      setLSession(roleId, user);
+      window.location.href = '/?login=' + roleId;
+    } else {
+      showError('Invalid credentials. Please check your ID/email and password.');
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In';
+    }
+  }, 400);
+}
+
+function showError(msg) {
+  var err = document.getElementById('loginError');
+  var btn = document.getElementById('loginBtn');
+  err.textContent = msg;
+  err.style.display = 'block';
+  btn.disabled = false;
+  btn.innerHTML = 'Sign In';
+}
+
+function switchRole(el, role) {
+  document.querySelectorAll('.role-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  var label = document.getElementById('idLabel');
+  var placeholder = document.getElementById('idPlaceholder');
+  if (role === 'student') { label.textContent = 'Student ID / Username'; placeholder.textContent = 'Enter your Student ID'; }
+  else if (role === 'parent') { label.textContent = 'Email Address'; placeholder.textContent = 'Enter your email'; }
+  else if (role === 'admin') { label.textContent = 'Admin ID / Email'; placeholder.textContent = 'Enter your Admin ID'; }
+  else { label.textContent = 'Teacher ID / Username'; placeholder.textContent = 'Enter your Teacher ID'; }
+  document.getElementById('loginError').style.display = 'none';
+}
+
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var roleParam = params.get('role');
+  if (roleParam) {
+    var tabs = document.querySelectorAll('.role-tab');
+    for (var i = 0; i < tabs.length; i++) {
+      if (tabs[i].getAttribute('data-role') === roleParam) {
+        switchRole(tabs[i], roleParam);
+        break;
+      }
+    }
+  }
+})();
+</script>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="logo">
+    <img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display='none'">
+    <span>EduVerse</span>
+  </div>
+  <h1>Welcome Back</h1>
+  <p class="subtitle">Sign in to your account</p>
+
+  <div class="role-tabs">
+    <button class="role-tab active" data-role="student" onclick="switchRole(this,'student')"><i class="fas fa-user-graduate"></i> Student</button>
+    <button class="role-tab" data-role="teacher" onclick="switchRole(this,'teacher')"><i class="fas fa-chalkboard-teacher"></i> Teacher</button>
+    <button class="role-tab" data-role="parent" onclick="switchRole(this,'parent')"><i class="fas fa-users"></i> Parent</button>
+    <button class="role-tab" data-role="admin" onclick="switchRole(this,'admin')"><i class="fas fa-user-shield"></i> Admin</button>
+  </div>
+
+  <div class="error" id="loginError"></div>
+
+  <form onsubmit="doLogin(event)">
+    <div class="form-group">
+      <label id="idLabel">Student ID / Username</label>
+      <input type="text" id="loginId" placeholder="Enter your Student ID" required autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPw" placeholder="Enter your password" required autocomplete="current-password">
+    </div>
+    <div class="form-row">
+      <label><input type="checkbox" id="rememberMe"> Remember me</label>
+      <a href="javascript:;" onclick="alert('Contact your school admin to reset your password.')">Forgot password?</a>
+    </div>
+    <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+  </form>
+
+  <div class="back-link">
+    <a href="/"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+  </div>
+</div>
+
+</body>
+</html>
