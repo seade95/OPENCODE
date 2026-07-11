@@ -821,7 +821,7 @@
     <div class="student-panel" id="stu-cat">
       <div class="card"><h3 data-i18n="cat">Continuous Assessment Scores</h3>
         <div class="table-responsive"><table><thead><tr><th>Subject</th><th>Test 1</th><th>Test 2</th><th>Test 3</th><th>Average</th></tr></thead><tbody id="stuCatTable"></tbody></table></div>
-        <div id="stuCatEmpty" class="empty-state"><i class="fas fa-tasks"></i><p>No assessment records yet</p></div>
+        <div id="stuCatEmpty" class="empty-state"><i class="fas fa-tasks"></i><p>Assessment scores will appear here once your teacher uploads them</p></div>
       </div>
     </div>
 
@@ -829,7 +829,7 @@
     <div class="student-panel" id="stu-assignments">
       <div class="card"><h3 data-i18n="assignments">My Assignments</h3>
         <div id="stuAssignmentsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;"></div>
-        <div id="stuAssignmentsEmpty" class="empty-state"><i class="fas fa-book"></i><p>No assignments posted for your class</p></div>
+        <div id="stuAssignmentsEmpty" class="empty-state"><i class="fas fa-book"></i><p>Assignments will appear here once your teacher posts them</p></div>
       </div>
     </div>
 
@@ -837,7 +837,7 @@
     <div class="student-panel" id="stu-fees">
       <div class="card"><h3 data-i18n="fees">Fee Statement</h3>
         <div class="table-responsive"><table><thead><tr><th>Term</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody id="stuFeesTable"></tbody></table></div>
-        <div id="stuFeesEmpty" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><p>No fee records</p></div>
+        <div id="stuFeesEmpty" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><p>Fee records will appear once the school posts your fee statement</p></div>
       </div>
     </div>
 
@@ -845,7 +845,7 @@
     <div class="student-panel" id="stu-activities">
       <div class="card"><h3 data-i18n="activities">Available Activities</h3>
         <div id="stuActivitiesGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;"></div>
-        <div id="stuActivitiesEmpty" class="empty-state"><i class="fas fa-futbol"></i><p>No activities available</p></div>
+        <div id="stuActivitiesEmpty" class="empty-state"><i class="fas fa-futbol"></i><p>Activities will be listed here when the school opens registration</p></div>
       </div>
     </div>
 
@@ -878,7 +878,7 @@
     <div class="student-panel" id="stu-exams">
       <div class="card"><h3 data-i18n="exams">Exam Schedule</h3>
         <div class="table-responsive"><table><thead><tr><th>Subject</th><th>Date</th><th>Time</th><th>Status</th></tr></thead><tbody id="stuExamsTableBody"></tbody></table></div>
-        <div id="stuExamsEmpty" class="empty-state"><i class="fas fa-calendar-alt"></i><p>No exams scheduled for your class</p></div>
+        <div id="stuExamsEmpty" class="empty-state"><i class="fas fa-calendar-alt"></i><p>Exam schedules will appear once your teacher publishes them</p></div>
       </div>
     </div>
 
@@ -893,7 +893,7 @@
     <div class="student-panel" id="stu-attendance">
       <div class="card"><h3 data-i18n="attendance">Attendance Record</h3>
         <div class="table-responsive"><table><thead><tr><th>Date</th><th>Status</th></tr></thead><tbody id="stuAttendanceTable"></tbody></table></div>
-        <div id="stuAttendanceEmpty" class="empty-state"><i class="fas fa-calendar-check"></i><p>No attendance records</p></div>
+        <div id="stuAttendanceEmpty" class="empty-state"><i class="fas fa-calendar-check"></i><p>Attendance records will be visible once your teacher takes attendance</p></div>
       </div>
     </div>
 
@@ -1085,7 +1085,7 @@
           <div class="table-responsive">
             <table><thead><tr><th>ID</th><th>Name</th><th>Contact</th></tr></thead><tbody id="tDashStudentsTable"></tbody></table>
           </div>
-          <div id="tDashStudentsEmpty" class="empty-state"><i class="fas fa-users"></i><p>No students in your class</p></div>
+          <div id="tDashStudentsEmpty" class="empty-state"><i class="fas fa-users"></i><p>Your class roster will appear here once students are assigned by the admin</p></div>
         </div>
       </div>
 
@@ -1101,7 +1101,7 @@
             <div class="table-responsive">
               <table><thead><tr><th>Title</th><th>Description</th><th>Due Date</th><th>Class</th><th>Posted</th><th>Actions</th></tr></thead><tbody id="teacherAssignmentsTable"></tbody></table>
             </div>
-            <div id="teacherAssignmentsEmpty" class="empty-state"><i class="fas fa-book"></i><p>No assignments posted yet</p></div>
+            <div id="teacherAssignmentsEmpty" class="empty-state"><i class="fas fa-book"></i><p>Assignments you create will appear here — click "Upload Assignment" to get started</p></div>
           </div>
         </div>
         <div id="teacherSubmissionsView"></div>
@@ -1136,7 +1136,7 @@
           <div class="table-responsive">
             <table><thead><tr><th>Subject</th><th>Class</th><th>Date</th><th>Time</th></tr></thead><tbody id="tchExamsTableBody"></tbody></table>
           </div>
-          <div id="tchExamsEmpty" class="empty-state"><i class="fas fa-calendar-alt"></i><p>No exams scheduled</p></div>
+          <div id="tchExamsEmpty" class="empty-state"><i class="fas fa-calendar-alt"></i><p>Exam schedules will appear once created by the administration</p></div>
         </div>
       </div>
 
@@ -1435,6 +1435,22 @@
 </script>
 <div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <script>
+// Auto-route /login?role=X on page load
+(function() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var role = params.get('role');
+    var path = window.location.pathname;
+    if (path === '/login' || path === '/login.html') {
+      if (role === 'teacher' && typeof showTeacherLogin === 'function') showTeacherLogin();
+      else if (role === 'parent' && typeof showParentLogin === 'function') showParentLogin();
+      else if (role === 'admin' && typeof showAdminLogin === 'function') showAdminLogin();
+      else if (role === 'admission' && typeof showAdmissionPortal === 'function') showAdmissionPortal();
+      else if (typeof showStudentLogin === 'function') showStudentLogin();
+    }
+  } catch(e) {}
+})();
+
 window.addEventListener('load', function() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(function(reg) {
