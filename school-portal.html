@@ -257,12 +257,33 @@ function renderPortal(slug, tenant, data) {
     + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=parent"><i class="fas fa-users"></i> Parent Login</a>'
     + '</div></section>';
 
-  // Portal Nav
-  html += '<section style="padding:24px 0 0;"><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">'
-    + '<a href="/school/' + encodeURIComponent(slug) + '/admin" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-user-shield"></i> Admin Portal</a>'
-    + '<a href="/school/' + encodeURIComponent(slug) + '/teacher" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-chalkboard-teacher"></i> Teacher Portal</a>'
-    + '<a href="/school/' + encodeURIComponent(slug) + '/student" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-user-graduate"></i> Student Portal</a>'
-    + '<a href="/school/' + encodeURIComponent(slug) + '/parent" class="btn" style="padding:10px 20px;background:#1e293b;color:white;border-radius:8px;font-weight:600;font-size:14px;"><i class="fas fa-users"></i> Parent Portal</a>'
+  // Portal Cards
+  html += '<section><div style="text-align:center;margin-bottom:24px;"><h2 style="margin-bottom:4px;">Choose Your <span style="color:' + primary + '">Portal</span></h2><p style="color:#64748b;font-size:14px;">Select the portal that matches your role to get started</p></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">'
+    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/admin\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
+    + '<div style="font-size:36px;color:' + primary + ';margin-bottom:8px;"><i class="fas fa-user-shield"></i></div>'
+    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Admin Portal</h3>'
+    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Full access to manage students, teachers, fees, results, and attendance.</p>'
+    + '<span style="font-size:13px;font-weight:600;color:' + primary + ';">Enter Admin Portal →</span></div>'
+    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;border-top:4px solid #16a34a;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/teacher\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
+    + '<div style="font-size:36px;color:#16a34a;margin-bottom:8px;"><i class="fas fa-chalkboard-teacher"></i></div>'
+    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Teacher Portal</h3>'
+    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Manage your class, upload assignments, track student progress and attendance.</p>'
+    + '<span style="font-size:13px;font-weight:600;color:#16a34a;">Enter Teacher Portal →</span></div>'
+    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/student\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
+    + '<div style="font-size:36px;color:' + primary + ';margin-bottom:8px;"><i class="fas fa-user-graduate"></i></div>'
+    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Student Portal</h3>'
+    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">View your results, assignments, fee status, attendance, and activities.</p>'
+    + '<span style="font-size:13px;font-weight:600;color:' + primary + ';">Enter Student Portal →</span></div>'
+    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;border-top:4px solid #06b6d4;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/parent\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
+    + '<div style="font-size:36px;color:#06b6d4;margin-bottom:8px;"><i class="fas fa-users"></i></div>'
+    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Parent Portal</h3>'
+    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Monitor your child\'s academic progress, attendance, fees, and activities.</p>'
+    + '<span style="font-size:13px;font-weight:600;color:#06b6d4;">Enter Parent Portal →</span></div>'
+    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;border-top:4px solid #f59e0b;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/login/admission.html?school=' + encodeURIComponent(slug) + '\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
+    + '<div style="font-size:36px;color:#f59e0b;margin-bottom:8px;"><i class="fas fa-graduation-cap"></i></div>'
+    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Admission Portal</h3>'
+    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Apply for admission, explore programs, and track your application status.</p>'
+    + '<span style="font-size:13px;font-weight:600;color:#f59e0b;">Apply Now →</span></div>'
     + '</div></section>';
 
   // Stats
