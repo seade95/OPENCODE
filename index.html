@@ -437,22 +437,57 @@
 <!-- Portals -->
 <section class="section-area gray-bg" id="portals">
   <div class="section-title">
-    <h2>Welcome to Your <span>Portal</span></h2>
-    <p>One login page for all roles — select your role and sign in</p>
+    <h2>Choose Your <span>Portal</span></h2>
+    <p>Select the portal that matches your role to get started</p>
   </div>
-  <div style="max-width:500px;margin:0 auto;">
-    <div class="portal-card" onclick="location.href='login/student.html'" style="border-top:4px solid var(--primary);cursor:pointer;text-align:center;padding:40px 24px;">
-      <div style="font-size:64px;margin-bottom:16px;color:var(--primary);"><i class="fas fa-arrow-circle-right"></i></div>
-      <h3 style="font-size:22px;margin-bottom:8px;">Sign In</h3>
-      <p style="font-size:14px;color:var(--text-light);margin-bottom:16px;">Access your Admin, Teacher, Student, or Parent portal — all from one sign-in page.</p>
-      <span class="btn btn-primary" style="font-size:16px;padding:12px 36px;"><i class="fas fa-sign-in-alt"></i> Go to Login</span>
+  <div class="portal-grid">
+    <div class="portal-card admin" onclick="window.location.href='admin.html'">
+      <div class="icon"><i class="fas fa-user-shield"></i></div>
+      <h3 data-i18n="dashboard">Admin Portal</h3>
+      <p>Full access to manage students, teachers, fees, results, assessments, activities, and attendance.</p>
+      <span class="btn btn-primary"><i class="fas fa-arrow-right"></i> <span data-i18n="login">Enter Admin Portal</span></span>
+    </div>
+    <div class="portal-card" onclick="location.href='login/teacher.html'" style="border-top:4px solid var(--success);">
+      <div class="icon" style="color:var(--success);"><i class="fas fa-chalkboard-teacher"></i></div>
+      <h3 data-i18n="teachers">Teacher Portal</h3>
+      <p>Manage your class, upload assignments, track student progress and attendance records.</p>
+      <span class="btn btn-success"><i class="fas fa-arrow-right"></i> Enter Teacher Portal</span>
+    </div>
+    <div class="portal-card student" onclick="location.href='login/student.html'">
+      <div class="icon"><i class="fas fa-user-graduate"></i></div>
+      <h3 data-i18n="students">Student Portal</h3>
+      <p>View your results, assignments, fee status, attendance records, assessment scores, and activities.</p>
+      <span class="btn btn-primary"><i class="fas fa-arrow-right"></i> Enter Student Portal</span>
+    </div>
+    <div class="portal-card" onclick="location.href='login/parent.html'" style="border-top:4px solid var(--info);">
+      <div class="icon" style="color:var(--info);"><i class="fas fa-users"></i></div>
+      <h3>Parent Portal</h3>
+      <p>Monitor your child's academic progress, attendance, fees, and activities in real-time.</p>
+      <span class="btn" style="background:var(--info);color:white;"><i class="fas fa-arrow-right"></i> Enter Parent Portal</span>
+    </div>
+    <div class="portal-card" onclick="location.href='login/admission.html'" style="border-top:4px solid var(--accent);">
+      <div class="icon" style="color:var(--accent);"><i class="fas fa-graduation-cap"></i></div>
+      <h3>Admission Portal</h3>
+      <p>Apply for admission, explore programs, take entrance exams and track your application status.</p>
+      <span class="btn" style="background:var(--accent);color:var(--text);"><i class="fas fa-arrow-right"></i> Apply Now</span>
+    </div>
+    <div class="portal-card auth-gated" onclick="openCommunityTab()" style="border-top:4px solid #805ad5;display:none;">
+      <div class="icon" style="color:#805ad5;"><i class="fas fa-comments"></i></div>
+      <h3>Community</h3>
+      <p>Chat with fellow students, teachers, and parents in real-time discussion rooms.</p>
+      <span class="btn" style="background:#805ad5;color:white;"><i class="fas fa-arrow-right"></i> Open Community</span>
+    </div>
+    <div class="portal-card auth-public" onclick="location.href='login/student.html'" style="border-top:4px solid #805ad5;">
+      <div class="icon" style="color:#805ad5;"><i class="fas fa-comments"></i></div>
+      <h3>Community</h3>
+      <p>Sign in to access chat rooms, discussions, and connect with your school community.</p>
+      <span class="btn" style="background:#805ad5;color:white;"><i class="fas fa-arrow-right"></i> Sign In to Join</span>
     </div>
   </div>
-  <div style="text-align:center;margin-top:24px;">
+  <div style="text-align:center;margin-top:32px;">
     <a href="javascript:;" class="btn btn-accent" style="font-size:16px;padding:14px 36px;" onclick="launchDemo()"><i class="fas fa-play-circle"></i> Try Demo — No Signup Required</a>
     <p style="margin-top:8px;font-size:13px;color:var(--text-light);">Pre-filled credentials for Admin, Student, Teacher &amp; Parent portals</p>
   </div>
-  <p style="text-align:center;margin-top:20px;font-size:0.875rem;color:var(--text-light);">New school? <a href="apply.html" style="color:var(--primary);font-weight:600;">Apply here</a></p>
 </section>
 
 <!-- Why EduVerse Section -->
