@@ -437,30 +437,20 @@
 <!-- Portals -->
 <section class="section-area gray-bg" id="portals">
   <div class="section-title">
-    <h2>School <span>Portal</span></h2>
-    <p>Access your school's management system</p>
+    <h2>Welcome to Your <span>Portal</span></h2>
+    <p>One login page for all roles — select your role and sign in</p>
   </div>
-  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:20px;max-width:720px;margin:0 auto;">
-    <a href="login/student.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 32px;background:var(--card-bg);border-radius:12px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s;min-width:130px;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <span style="font-size:2rem;">🎓</span>
-      <span style="font-weight:600;font-size:0.9rem;">Student</span>
-    </a>
-    <a href="login/teacher.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 32px;background:var(--card-bg);border-radius:12px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s;min-width:130px;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <span style="font-size:2rem;">👨‍🏫</span>
-      <span style="font-weight:600;font-size:0.9rem;">Teacher</span>
-    </a>
-    <a href="login/parent.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 32px;background:var(--card-bg);border-radius:12px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s;min-width:130px;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <span style="font-size:2rem;">👨‍👩‍👧</span>
-      <span style="font-weight:600;font-size:0.9rem;">Parent</span>
-    </a>
-    <a href="login/admin.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 32px;background:var(--card-bg);border-radius:12px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s;min-width:130px;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <span style="font-size:2rem;">⚙️</span>
-      <span style="font-weight:600;font-size:0.9rem;">Admin</span>
-    </a>
-    <a href="login/admission.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 32px;background:var(--card-bg);border-radius:12px;text-decoration:none;color:var(--text);border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s;min-width:130px;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <span style="font-size:2rem;">📝</span>
-      <span style="font-weight:600;font-size:0.9rem;">Admission</span>
-    </a>
+  <div style="max-width:500px;margin:0 auto;">
+    <div class="portal-card" onclick="location.href='login/student.html'" style="border-top:4px solid var(--primary);cursor:pointer;text-align:center;padding:40px 24px;">
+      <div style="font-size:64px;margin-bottom:16px;color:var(--primary);"><i class="fas fa-arrow-circle-right"></i></div>
+      <h3 style="font-size:22px;margin-bottom:8px;">Sign In</h3>
+      <p style="font-size:14px;color:var(--text-light);margin-bottom:16px;">Access your Admin, Teacher, Student, or Parent portal — all from one sign-in page.</p>
+      <span class="btn btn-primary" style="font-size:16px;padding:12px 36px;"><i class="fas fa-sign-in-alt"></i> Go to Login</span>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:24px;">
+    <a href="javascript:;" class="btn btn-accent" style="font-size:16px;padding:14px 36px;" onclick="launchDemo()"><i class="fas fa-play-circle"></i> Try Demo — No Signup Required</a>
+    <p style="margin-top:8px;font-size:13px;color:var(--text-light);">Pre-filled credentials for Admin, Student, Teacher &amp; Parent portals</p>
   </div>
   <p style="text-align:center;margin-top:20px;font-size:0.875rem;color:var(--text-light);">New school? <a href="apply.html" style="color:var(--primary);font-weight:600;">Apply here</a></p>
 </section>
