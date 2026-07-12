@@ -64,6 +64,4 @@ function initSubdomainMiddleware() {
 }
 
 // Auto-init on DOMContentLoaded (after app.js finishes)
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(initSubdomainMiddleware, 300);
-});
+document.addEventListener('DOMContentLoaded', initSubdomainMiddleware);

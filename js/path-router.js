@@ -171,6 +171,4 @@ function initPathRouter() {
 }
 
 // Auto-init after app.js finishes (runs on DOMContentLoaded + setTimeout to yield)
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(initPathRouter, 400);
-});
+document.addEventListener('DOMContentLoaded', initPathRouter);
