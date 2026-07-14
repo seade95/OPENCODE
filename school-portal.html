@@ -172,9 +172,43 @@ section h2{font-size:22px;font-weight:700;margin-bottom:20px}
 
 <script>
 var TENANT_KEY = 'eduverse_tenants';
+var RESERVED_SLUGS = ['www', 'app', 'api', 'admin', 'mail', 'smtp', 'pop3', 'webmail', 'cpanel', 'whm', 'ftp', 'ssh', 'mysql', 'test', 'dev', 'staging', 'demo', 'beta', 'help', 'support', 'docs', 'wiki', 'blog', 'forum', 'community', 'status', 'cdn', 'static', 'assets', 'media', 'files', 'img', 'css', 'js', 'download', 'uploads', 'store', 'shop', 'billing', 'pay', 'secure', 'login', 'signup', 'register', 'auth', 'oauth', 'saml', 'ldap', 'portal', 'dashboard', 'manage', 'system', 'server', 'host', 'hosting', 'cloud', 'edu', 'education', 'school', 'schools', 'my', 'your', 'the', 'eduverse'];
+
+function normalizeSlug(str) {
+  return str.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/^[^a-z]/, '');
+}
 
 function getTenants() {
-  try { return JSON.parse(localStorage.getItem(TENANT_KEY)) || []; } catch(e) { return []; }
+  try {
+    var t = JSON.parse(localStorage.getItem(TENANT_KEY)) || [];
+    var changed = false;
+    for (var i = 0; i < t.length; i++) {
+      if (!t[i].slug) {
+        t[i].slug = normalizeSlug(t[i].name);
+        if (!t[i].slug) t[i].slug = 'school-' + (t[i].id || '').substring(0, 6).toLowerCase();
+        changed = true;
+      }
+    }
+    if (changed) {
+      var slugs = {};
+      for (var j = 0; j < t.length; j++) {
+        var base = t[j].slug;
+        var slug = base;
+        var c = 1;
+        while (slugs[slug] || RESERVED_SLUGS.indexOf(slug) !== -1) {
+          slug = base + '-' + c;
+          c++;
+        }
+        t[j].slug = slug;
+        slugs[slug] = true;
+      }
+      localStorage.setItem(TENANT_KEY, JSON.stringify(t));
+    }
+    return t;
+  } catch(e) { return []; }
 }
 
 function getTenantSchoolData(tenantId) {
