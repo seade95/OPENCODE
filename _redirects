@@ -2,6 +2,7 @@
 # Serves index.html for all SPA routes
 
 /superadmin    /superadmin.html   200
+/apply         /apply.html        200
 /login         /login/student.html   302
 /login/*       /login/:splat.html    200
 /pricing       /pricing.html     200

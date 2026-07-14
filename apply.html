@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apply for a School Account — EduVerse</title>
+<meta name="description" content="Apply to bring your school onto EduVerse. Fill in your details and our team will get back to you.">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#f0f4ff 0%,#e0e7ff 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:620px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);text-align:center}
+.logo{width:56px;height:56px;margin:0 auto 12px}
+.logo img{width:100%;height:100%;object-fit:contain}
+h1{font-size:1.5rem;color:#1e293b;margin-bottom:4px}
+.subtitle{color:#64748b;font-size:0.875rem;margin-bottom:24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
+label{font-size:0.8125rem;font-weight:600;color:#374151}
+input,select{padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:0.9375rem;font-family:inherit;transition:border-color .2s}
+input:focus,select:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border:none;border-radius:8px;font-size:1rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .2s}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-outline{background:transparent;border:2px solid #e2e8f0;color:#475569}
+.btn-outline:hover{border-color:#2563eb;color:#2563eb}
+.actions{display:flex;gap:12px;justify-content:center;margin-top:24px}
+.error-box{display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:16px;font-size:14px;text-align:left}
+.success-box{display:none;background:#d1fae5;color:#065f46;padding:24px;border-radius:12px;margin-bottom:16px;text-align:center}
+.success-box i{font-size:48px;margin-bottom:12px;display:block;color:#059669}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;color:#64748b;text-decoration:none;font-size:0.875rem}
+.back-link:hover{color:#2563eb}
+@media(max-width:560px){.card{padding:24px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="card" id="formCard">
+  <div class="logo"><img src="icons/icon.svg" alt="EduVerse"></div>
+  <h1>Apply for a School Account</h1>
+  <p class="subtitle">Fill in your school details. Our team will review and set up your portal.</p>
+
+  <div class="error-box" id="applyError"></div>
+  <div class="success-box" id="applySuccess">
+    <i class="fas fa-check-circle"></i>
+    <h2 style="font-size:1.25rem;margin-bottom:4px;color:#065f46;">Application Submitted!</h2>
+    <p style="font-size:0.875rem;color:#047857;">We've received your application. Our team will review it and get back to you at the email provided.</p>
+  </div>
+
+  <form id="applyForm" onsubmit="return handleApply(event)">
+    <div class="form-grid">
+      <div class="form-group full">
+        <label for="appSchoolName">School Name *</label>
+        <input type="text" id="appSchoolName" placeholder="e.g. Gracefield International School" required>
+      </div>
+      <div class="form-group">
+        <label for="appContactName">Contact Person Name *</label>
+        <input type="text" id="appContactName" placeholder="Full name" required>
+      </div>
+      <div class="form-group">
+        <label for="appEmail">Contact Email *</label>
+        <input type="email" id="appEmail" placeholder="admin@school.edu" required>
+      </div>
+      <div class="form-group">
+        <label for="appPhone">Phone Number *</label>
+        <input type="tel" id="appPhone" placeholder="+234 801 234 5678" required>
+      </div>
+      <div class="form-group full">
+        <label for="appAddress">Address</label>
+        <input type="text" id="appAddress" placeholder="School address">
+      </div>
+      <div class="form-group">
+        <label for="appCity">City *</label>
+        <input type="text" id="appCity" placeholder="e.g. Lagos" required>
+      </div>
+      <div class="form-group">
+        <label for="appCountry">Country *</label>
+        <input type="text" id="appCountry" value="Nigeria" required>
+      </div>
+      <div class="form-group">
+        <label for="appSize">School Size</label>
+        <select id="appSize">
+          <option value="small">Small (1-200 students)</option>
+          <option value="medium">Medium (201-500 students)</option>
+          <option value="large">Large (501+ students)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="appCurriculum">Curriculum Type</label>
+        <select id="appCurriculum">
+          <option value="nigerian">Nigerian (WAEC/NECO)</option>
+          <option value="british">British (IGCSE/A-Levels)</option>
+          <option value="american">American</option>
+          <option value="montessori">Montessori</option>
+          <option value="islamic">Islamic</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <a href="index.html" class="btn btn-outline">Cancel</a>
+      <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Application</button>
+    </div>
+  </form>
+
+  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+</div>
+
+<script>
+var APP_KEY = 'eduverse_applications';
+
+function getApps() {
+  try { return JSON.parse(localStorage.getItem(APP_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveApps(apps) {
+  try { localStorage.setItem(APP_KEY, JSON.stringify(apps)); } catch(e) {}
+}
+
+function genId() {
+  return 'APP-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
+}
+
+function handleApply(e) {
+  e.preventDefault();
+  var err = document.getElementById('applyError');
+  var success = document.getElementById('applySuccess');
+  var form = document.getElementById('applyForm');
+
+  var name = document.getElementById('appSchoolName').value.trim();
+  var contact = document.getElementById('appContactName').value.trim();
+  var email = document.getElementById('appEmail').value.trim();
+  var phone = document.getElementById('appPhone').value.trim();
+  var address = document.getElementById('appAddress').value.trim();
+  var city = document.getElementById('appCity').value.trim();
+  var country = document.getElementById('appCountry').value.trim();
+  var size = document.getElementById('appSize').value;
+  var curriculum = document.getElementById('appCurriculum').value;
+
+  if (!name || !contact || !email || !phone || !city || !country) {
+    err.style.display = 'block';
+    err.textContent = 'Please fill all required fields.';
+    err.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    err.style.display = 'block';
+    err.textContent = 'Please enter a valid email address.';
+    return;
+  }
+
+  var apps = getApps();
+  var existing = apps.find(function(a) { return a.email.toLowerCase() === email.toLowerCase() && a.status === 'pending'; });
+  if (existing) {
+    err.style.display = 'block';
+    err.textContent = 'An application with this email is already pending review.';
+    return;
+  }
+
+  var app = {
+    id: genId(),
+    schoolName: name,
+    contactName: contact,
+    email: email,
+    phone: phone,
+    address: address,
+    city: city,
+    country: country,
+    schoolSize: size,
+    curriculumType: curriculum,
+    status: 'pending',
+    appliedAt: new Date().toISOString()
+  };
+
+  apps.push(app);
+  saveApps(apps);
+
+  err.style.display = 'none';
+  form.style.display = 'none';
+  success.style.display = 'block';
+
+  var subject = encodeURIComponent('School Application: ' + name);
+  var bodyLines = [
+    'New School Application Received',
+    '',
+    'School: ' + name,
+    'Contact: ' + contact,
+    'Email: ' + email,
+    'Phone: ' + phone,
+    'Address: ' + address,
+    'City: ' + city,
+    'Country: ' + country,
+    'Size: ' + size,
+    'Curriculum: ' + curriculum,
+    'Application ID: ' + app.id,
+    'Applied: ' + new Date(app.appliedAt).toLocaleString(),
+    '',
+    'Please review and approve/reject in the Super Admin dashboard.'
+  ];
+  var body = encodeURIComponent(bodyLines.join('\n'));
+  window.open('mailto:eduversemgt@gmail.com?subject=' + subject + '&body=' + body, '_blank');
+
+  return false;
+}
+</script>
+</body>
+</html>

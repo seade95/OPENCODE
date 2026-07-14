@@ -23,6 +23,11 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[redirects]]
+  from = "/apply"
+  to = "/apply.html"
+  status = 200
+
+[[redirects]]
   from = "/login"
   to = "/login/student.html"
   status = 302
