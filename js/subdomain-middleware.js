@@ -23,6 +23,10 @@ function initSubdomainMiddleware() {
 
     var sub = parts[0];
     if (!sub || (typeof RESERVED_SLUGS !== 'undefined' && RESERVED_SLUGS.indexOf(sub) !== -1)) return;
+    if (hostname.indexOf('netlify.app') !== -1) return;
+    if (hostname.indexOf('vercel.app') !== -1) return;
+    if (hostname.indexOf('github.io') !== -1) return;
+    if (hostname.indexOf('pages.dev') !== -1) return;
 
     var currentTenant = localStorage.getItem('activeTenant');
 
