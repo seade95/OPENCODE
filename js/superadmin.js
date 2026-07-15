@@ -495,7 +495,7 @@ function saApproveApplication(appId) {
   saveApplications(apps);
 
   // Generate a unique slug from school name
-  var slug = app.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  var slug = typeof normalizeSlug === 'function' ? normalizeSlug(app.schoolName) : app.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
   if (!slug) slug = 'school-' + appId.substring(0, 6).toLowerCase();
   // Ensure uniqueness
   var existing = getTenants();

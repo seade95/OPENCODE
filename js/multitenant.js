@@ -11,7 +11,8 @@ function normalizeSlug(str) {
   return str.toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-    .replace(/^[^a-z]/, '');
+    .replace(/^[^a-z]+/, '')
+    .replace(/^-+/, '');
 }
 
 function generateSlug(name, excludeId) {
