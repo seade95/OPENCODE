@@ -78,7 +78,7 @@
       _reloadData();
     } else if (e.key === 'eduverse_platform_config') {
       _reloadPlatformConfig();
-
+    }
   });
 
   // Refresh stale data when tab regains focus (user switches back)
