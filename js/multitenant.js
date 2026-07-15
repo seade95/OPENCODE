@@ -536,7 +536,7 @@ function showOnboardSchool() {
           <input type="text" id="onbSchoolSlug" placeholder="my-school" oninput="validateField(this,'name')" style="font-family:monospace;font-size:13px;">
           <button type="button" class="btn btn-sm btn-outline" onclick="onbRegenerateSlug()" title="Regenerate from name"><i class="fas fa-sync-alt"></i></button>
         </div>
-        <p style="font-size:11px;color:var(--text-light);margin:4px 0 0;">Your school will be accessible at <strong id="onbSlugPreview">slug.yourdomain.com</strong></p>
+        <p style="font-size:11px;color:var(--text-light);margin:4px 0 0;">Your school will be accessible at <strong id="onbSlugPreview">/school/your-slug</strong></p>
       </div>
       <div class="form-group"><label>School Email *</label><input type="email" id="onbSchoolEmail" placeholder="admin@school.edu" oninput="validateField(this,'email')"></div>
       <div class="form-group"><label>Phone</label><input type="text" id="onbSchoolPhone" placeholder="+2347069332955"></div>
@@ -607,8 +607,7 @@ function onbPreviewSlug() {
   var preview = document.getElementById('onbSlugPreview');
   if (!preview) return;
   var slug = slugInput ? (slugInput.value.trim() || slugInput.placeholder) : 'slug';
-  var domain = window.location.hostname.split('.').length >= 2 ? window.location.hostname : 'yourdomain.com';
-  preview.textContent = slug + '.' + domain;
+  preview.textContent = (window.location.origin || 'https://yourdomain.com') + '/school/' + slug;
 }
 
 function createNewTenant() {
@@ -884,11 +883,8 @@ function getCurrentSchoolUrl() {
       var tenants = getTenants();
       var t = tenants.find(function(x) { return x.id === activeTenant; });
       if (t && t.slug) {
-        if (window.location.hostname.split('.').length >= 2) {
-          return window.location.protocol + '//' + encodeURIComponent(t.slug) + '.' + window.location.hostname + window.location.pathname;
-        }
+        return window.location.origin + '/school/' + encodeURIComponent(t.slug);
       }
-      return window.location.origin + window.location.pathname + '#/school/' + encodeURIComponent(activeTenant);
     }
   } catch(e) {}
   return window.location.href;
