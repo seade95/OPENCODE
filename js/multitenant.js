@@ -607,8 +607,7 @@ function onbPreviewSlug() {
   var preview = document.getElementById('onbSlugPreview');
   if (!preview) return;
   var slug = slugInput ? (slugInput.value.trim() || slugInput.placeholder) : 'slug';
-  var parts = window.location.hostname.split('.');
-  var domain = parts.length >= 2 ? parts.slice(parts.length - 2).join('.') : 'yourdomain.com';
+  var domain = window.location.hostname.split('.').length >= 2 ? window.location.hostname : 'yourdomain.com';
   preview.textContent = slug + '.' + domain;
 }
 
@@ -884,12 +883,9 @@ function getCurrentSchoolUrl() {
     if (activeTenant) {
       var tenants = getTenants();
       var t = tenants.find(function(x) { return x.id === activeTenant; });
-      // If tenant has a slug and we're not already on a subdomain, return subdomain URL
       if (t && t.slug) {
-        var parts = window.location.hostname.split('.');
-        if (parts.length >= 2) {
-          var domain = parts.slice(parts.length - 2).join('.');
-          return window.location.protocol + '//' + encodeURIComponent(t.slug) + '.' + domain + window.location.pathname;
+        if (window.location.hostname.split('.').length >= 2) {
+          return window.location.protocol + '//' + encodeURIComponent(t.slug) + '.' + window.location.hostname + window.location.pathname;
         }
       }
       return window.location.origin + window.location.pathname + '#/school/' + encodeURIComponent(activeTenant);
