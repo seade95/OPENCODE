@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (typeof initDarkMode === 'function') initDarkMode();
   if (typeof updateLandingStats === 'function') updateLandingStats();
-  if (typeof renderLandingPageSections === 'function') renderLandingPageSections();
+  if (typeof renderLandingPageSections === 'function') { try { renderLandingPageSections(); } catch(e) { console.warn('renderLandingPageSections error:', e); } }
 
   var overlay = document.getElementById('modalOverlay');
   if (overlay) {
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // ===== EduVerse platform init (silent session restore, no auto-navigation) =====
-  if (typeof initEduVerse === 'function') initEduVerse();
+  if (typeof initEduVerse === 'function') { try { initEduVerse(); } catch(e) { console.warn('initEduVerse error:', e); } }
 
   // Show "Unknown School" banner if accessed via unknown subdomain
   if (_detectedUnknownSchool) {
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
   } catch(e) {}
 
   // Restore session — auto-navigates to the correct portal if logged in
-  if (typeof syncSession === 'function') syncSession();
+  if (typeof syncSession === 'function') { try { syncSession(); } catch(e) { console.warn('syncSession error:', e); } }
 
   // Cross-tab session sync
   window.addEventListener('storage', function(e) {

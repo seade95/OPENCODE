@@ -138,7 +138,7 @@ section h2{font-size:22px;font-weight:700;margin-bottom:20px}
 <nav class="top-bar">
   <div class="container">
     <div class="logo">
-      <img src="icons/icon.svg" alt="">
+      <img src="/icons/icon.svg" alt="" onerror="this.style.display='none'">
       <span>EduVerse</span>
     </div>
     <div class="nav-links">
@@ -259,7 +259,7 @@ var SUBJECT_CATEGORIES = {
 function renderPortal(slug, tenant, data) {
   var prof = data.schoolProfile || {};
   var name = tenant.name || prof.schoolName || 'Unknown School';
-  var logo = tenant.logo || prof.logoUrl || 'icons/icon.svg';
+  var logo = tenant.logo || prof.logoUrl || '/icons/icon.svg';
   var motto = tenant.motto || prof.schoolMotto || 'Excellence in Education';
   var city = tenant.city || prof.contactAddress || '';
   var primary = prof.theme?.primaryColor || '#2563eb';
@@ -288,7 +288,7 @@ function renderPortal(slug, tenant, data) {
 
   // Hero
   html += '<section class="school-hero" style="background:' + primary + '">'
-    + '<img class="logo" src="' + esc(logo) + '" alt="" onerror="this.src=\'icons/icon.svg\'">'
+    + '<img class="logo" src="' + esc(logo) + '" alt="" onerror="this.src=\'/icons/icon.svg\'">'
     + '<h1>' + esc(name) + '</h1>'
     + '<p class="tagline">' + esc(motto) + '</p>'
     + '<p class="location"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>'
@@ -528,7 +528,7 @@ function routePortal(portal, slug, tenant) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', function() { try { init(); } catch(e) { document.getElementById('app').innerHTML = '<div class=\"error-state\"><i class=\"fas fa-exclamation-triangle\"></i><h2>Something went wrong</h2><p>' + esc(e.message) + '</p><a href=\"/\" class=\"cta\" style=\"display:inline-block;padding:10px 24px;background:#2563eb;color:white;border-radius:8px;font-weight:600;\">Go Home</a></div>'; } });
 </script>
 </body>
 </html>
