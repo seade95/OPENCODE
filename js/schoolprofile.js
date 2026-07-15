@@ -210,7 +210,22 @@ function renderSchoolProfile() {
     + '<div class="profile-section"><div class="profile-section-header" onclick="toggleProfileSection(this)">'
     + '<span><i class="fas fa-running"></i> Sport Houses <span class="sp-badge">' + (prof.sportHouses||[]).length + '</span></span>'
     + '<span><button class="btn btn-sm btn-primary" onclick="event.stopPropagation();spAddArrayItem(\'sportHouses\',{name:\'\',color:\'#e53e3e\',motto:\'\'})"><i class="fas fa-plus"></i> Add</button><i class="fas fa-chevron-down"></i></span></div>'
-    + '<div class="profile-section-body"><div id="spList-sportHouses"></div></div></div>';
+    + '<div class="profile-section-body"><div id="spList-sportHouses"></div></div></div>'
+
+    // CBT Config
+    + '<div class="profile-section"><div class="profile-section-header" onclick="toggleProfileSection(this)">'
+    + '<span><i class="fas fa-laptop-code"></i> Computer-Based Testing (CBT)</span><i class="fas fa-chevron-down"></i></div>'
+    + '<div class="profile-section-body">'
+    + '<div class="form-row"><label>Enable CBT Section</label><label class="toggle-switch"><input type="checkbox" ' + ((prof.cbtConfig||{}).enabled ? 'checked' : '') + ' onchange="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.enabled=this.checked"><span class="toggle-slider"></span></label></div>'
+    + '<div class="form-row"><label>Section Title</label><input type="text" value="' + esc((prof.cbtConfig||{}).title || 'Computer-Based Testing (CBT)') + '" oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.title=this.value"></div>'
+    + '<div class="form-row"><label>Headline</label><input type="text" value="' + esc((prof.cbtConfig||{}).headline || '') + '" placeholder="e.g. Modern Assessment for Every Student" oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.headline=this.value"></div>'
+    + '<div class="form-row"><label>Description</label><textarea rows="3" placeholder="Describe your CBT offering..." oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.description=this.value">' + esc((prof.cbtConfig||{}).description || '') + '</textarea></div>'
+    + '<div class="form-row"><label>Registration Open</label><label class="toggle-switch"><input type="checkbox" ' + ((prof.cbtConfig||{}).registrationOpen ? 'checked' : '') + ' onchange="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.registrationOpen=this.checked"><span class="toggle-slider"></span></label></div>'
+    + '<div class="form-row"><label>Registration Text</label><input type="text" value="' + esc((prof.cbtConfig||{}).registrationText || '') + '" placeholder="e.g. Register now for upcoming CBT exams" oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.registrationText=this.value"></div>'
+    + '<div class="form-row"><label>CTA Button Text</label><input type="text" value="' + esc((prof.cbtConfig||{}).ctaText || 'Take a CBT Exam') + '" oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.ctaText=this.value"></div>'
+    + '<div class="form-row"><label>CBT Features (icon,text &mdash; one per line)</label><textarea rows="4" placeholder="fa-laptop: Fully Online Exams&#10;fa-shield-alt: Secure Anti-Cheating&#10;fa-bolt: Instant Results" oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.features=this.value.split(\'\\n\').filter(function(l){return l.trim()}).map(function(l){var parts=l.split(\':\');return{icon:parts[0].trim()||\'fa-laptop\',text:(parts[1]||l).trim()}})">' + esc(((prof.cbtConfig||{}).features||[]).map(function(f){return f.icon+': '+f.text}).join('\n')) + '</textarea></div>'
+    + '<div class="form-row"><label>Upcoming Exams (title,date,class &mdash; one per line)</label><textarea rows="3" placeholder="Mid-Term Assessment|2026-08-15|Basic 1-6&#10;Mock BECE|2026-09-01|JSS 3" oninput="var p=getSchoolProfile();if(!p.cbtConfig)p.cbtConfig={};p.cbtConfig.upcomingExams=this.value.split(\'\\n\').filter(function(l){return l.trim()}).map(function(l){var parts=l.split(\'|\');return{title:(parts[0]||\'\').trim(),date:(parts[1]||\'\').trim(),className:(parts[2]||\'\').trim()}})">' + esc(((prof.cbtConfig||{}).upcomingExams||[]).map(function(e){return e.title+'|'+e.date+'|'+e.className}).join('\n')) + '</textarea></div>'
+    + '</div></div>';
 
   var sections = [
     { key: 'services', icon: 'fa-concierge-bell', label: 'Services', fields: ['icon','title','description'], phs: ['fa-icon','Service title','Description'] },
@@ -746,6 +761,7 @@ function renderLandingPageSections() {
   renderStats();
   renderFeatureToggles();
   renderChatButtons();
+  renderCBTSection();
 }
 
 // ===== Dynamic Hero Slides =====
@@ -1063,6 +1079,79 @@ function renderFeatureToggles() {
   });
   // Portal cards on landing page
   var portalMap = { transport: null, health: null }; // transport/health portals are in student portal, not landing
+}
+
+// ===== Render CBT Section on Landing Page =====
+function renderCBTSection() {
+  var prof = getSchoolProfile();
+  var cbt = prof.cbtConfig || {};
+  if (!cbt.enabled) {
+    var sec = document.getElementById('cbtSection');
+    if (sec) sec.style.display = 'none';
+    return;
+  }
+  var sec = document.getElementById('cbtSection');
+  if (!sec) return;
+  sec.style.display = '';
+  var features = cbt.features || [];
+  var exams = cbt.upcomingExams || [];
+  var schoolName = prof.schoolName || 'EDUVERSE';
+  var slug = '';
+  try {
+    var activeTenant = localStorage.getItem('activeTenant');
+    if (activeTenant && typeof getTenants === 'function') {
+      var tenants = getTenants();
+      var tenant = tenants.find(function(t) { return t.id === activeTenant; });
+      if (tenant) slug = tenant.slug || '';
+    }
+  } catch(e) {}
+
+  var html = '<div class="section-title"><h2>' + esc(cbt.title || 'Computer-Based Testing (CBT)') + '</h2>'
+    + (cbt.headline ? '<p>' + esc(cbt.headline) + '</p>' : '')
+    + '</div>'
+    + (cbt.description ? '<p style="max-width:700px;margin:0 auto 32px;text-align:center;color:var(--text-light);font-size:15px;line-height:1.7;">' + esc(cbt.description) + '</p>' : '');
+
+  // Features grid
+  if (features.length) {
+    html += '<div class="cbt-features-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:32px;">';
+    features.forEach(function(f) {
+      html += '<div class="cbt-feature-card" style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;transition:box-shadow .2s,transform .2s;" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,0.08)\';this.style.transform=\'translateY(-2px)\'" onmouseout="this.style.boxShadow=\'\';this.style.transform=\'\'">'
+        + '<div style="font-size:36px;color:var(--primary);margin-bottom:12px;"><i class="fas ' + htmlEscape(f.icon || 'fa-laptop') + '"></i></div>'
+        + '<h4 style="font-size:15px;font-weight:600;color:var(--text);">' + esc(f.text || '') + '</h4>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Upcoming exams
+  if (exams.length) {
+    html += '<div style="margin-bottom:24px;"><h4 style="font-size:16px;font-weight:600;margin-bottom:12px;text-align:center;"><i class="fas fa-calendar-alt" style="color:var(--primary);"></i> Upcoming CBT Exams</h4>'
+      + '<div style="max-width:600px;margin:0 auto;display:grid;gap:8px;">';
+    exams.forEach(function(ex) {
+      html += '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:8px;padding:12px 16px;border:1px solid #e2e8f0;">'
+        + '<div style="width:40px;height:40px;border-radius:8px;background:#eef2ff;display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;font-size:13px;">' + esc((ex.date || '').split('-').slice(1).join('/')) + '</div>'
+        + '<div style="flex:1;"><strong style="font-size:14px;">' + esc(ex.title || '') + '</strong>'
+        + (ex.className ? '<div style="font-size:12px;color:var(--text-light);">' + esc(ex.className) + '</div>' : '')
+        + '</div>'
+        + '<div style="font-size:12px;color:var(--text-light);">' + esc(ex.date || '') + '</div>'
+        + '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Registration CTA
+  if (cbt.registrationOpen) {
+    html += '<div style="text-align:center;margin-top:16px;padding:24px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:12px;">'
+      + '<h4 style="font-size:18px;font-weight:700;color:white;margin-bottom:8px;">' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
+      + '<a href="/school/' + encodeURIComponent(slug) + '/login?role=student" class="btn btn-primary" style="background:var(--accent);color:var(--primary-dark);font-weight:700;padding:12px 32px;border-radius:8px;display:inline-block;text-decoration:none;"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a>'
+      + '</div>';
+  } else if (cbt.ctaText) {
+    html += '<div style="text-align:center;margin-top:16px;">'
+      + '<a href="/school/' + encodeURIComponent(slug) + '/login?role=student" class="btn btn-primary" style="background:var(--primary);color:white;padding:12px 32px;border-radius:8px;display:inline-block;text-decoration:none;font-weight:600;"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a>'
+      + '</div>';
+  }
+
+  sec.innerHTML = html;
 }
 
 // ===== Render Floating Chat Buttons =====

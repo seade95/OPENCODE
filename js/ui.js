@@ -544,6 +544,7 @@ function switchAdminPanel(panel) {
     case 'schoolstore': if (typeof renderSchoolStore === 'function') renderSchoolStore(); break;
     case 'support': if (typeof renderSupportPanel === 'function') renderSupportPanel(); break;
     case 'higherinstitutions': if (typeof renderHigherInstitutions === 'function') renderHigherInstitutions(); break;
+    case 'cbt': if (typeof renderCBTAdmin === 'function') renderCBTAdmin(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }

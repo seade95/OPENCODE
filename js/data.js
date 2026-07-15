@@ -380,7 +380,27 @@ function getDefaultData() {
       // Social feed
       socialFeed: { instagram: '', twitter: '' },
       // Sports houses
-      sportHouses: []
+      sportHouses: [],
+      // CBT exams
+      cbtExams: [],
+      cbtResults: [],
+      // CBT (Computer-Based Testing)
+      cbtConfig: {
+        enabled: false,
+        title: 'Computer-Based Testing (CBT)',
+        headline: 'Modern Assessment for Every Student',
+        description: 'Experience the future of examinations with our advanced Computer-Based Testing platform. Secure, efficient, and instant results.',
+        features: [
+          { icon: 'fa-laptop', text: 'Fully Online Exams' },
+          { icon: 'fa-shield-alt', text: 'Secure Anti-Cheating' },
+          { icon: 'fa-bolt', text: 'Instant Results' },
+          { icon: 'fa-mobile-alt', text: 'Works on Any Device' }
+        ],
+        upcomingExams: [],
+        registrationOpen: false,
+        registrationText: '',
+        ctaText: 'Take a CBT Exam'
+      }
     },
     academicCalendar: [
       { id: 'CAL001', title: 'First Term Begins', date: '2026-09-15', type: 'academic', description: 'Opening day for the first academic term.' },
@@ -482,7 +502,7 @@ function loadData() {
         }
       }
       // Add new keys that might be missing from old localStorage
-      const newKeys = ['timetables', 'gradebook', 'messages', 'exams', 'parents', 'leaveRequests', 'library', 'borrowings', 'lessonNotes', 'behaviorLog', 'staffHR', 'payrollRecords', 'forumPosts', 'fileRepo', 'notifications', 'academicTerms', 'admissionPrograms', 'applications', 'examQuestions', 'examAttempts', 'idCards', 'paymentTransactions', 'admins', 'examRegistrations', 'academicCalendar', 'virtualClasses', 'submissions', 'gallery', 'notifLog', 'rooms', 'teacherSubjects', 'hostels', 'hostelRooms', 'hostelAllocations', 'maintenanceReqs', 'hostelPayments', 'waitlists', 'simQuestions', 'simAttempts', 'customReports', 'activityScores', 'alumni', 'reunions', 'donations', 'teacherExams', 'healthRecords', 'transportRoutes', 'conferences', 'customInstitutions', 'badges', 'badgeDefinitions'];
+      const newKeys = ['timetables', 'gradebook', 'messages', 'exams', 'parents', 'leaveRequests', 'library', 'borrowings', 'lessonNotes', 'behaviorLog', 'staffHR', 'payrollRecords', 'forumPosts', 'fileRepo', 'notifications', 'academicTerms', 'admissionPrograms', 'applications', 'examQuestions', 'examAttempts', 'idCards', 'paymentTransactions', 'admins', 'examRegistrations', 'academicCalendar', 'virtualClasses', 'submissions', 'gallery', 'notifLog', 'rooms', 'teacherSubjects', 'hostels', 'hostelRooms', 'hostelAllocations', 'maintenanceReqs', 'hostelPayments', 'waitlists', 'simQuestions', 'simAttempts', 'customReports', 'activityScores', 'alumni', 'reunions', 'donations', 'teacherExams', 'healthRecords', 'transportRoutes', 'conferences', 'customInstitutions', 'badges', 'badgeDefinitions', 'cbtExams', 'cbtResults'];
       for (const nk of newKeys) {
         if (!parsed[nk] || !Array.isArray(parsed[nk])) {
           parsed[nk] = defaults[nk];

@@ -238,6 +238,7 @@ function closeFeeLock() {
       if (tabName === 'calendar' && typeof renderAcademicCalendarView === 'function') renderAcademicCalendarView('stuCalendarView');
       if (tabName === 'hostel' && typeof renderStudentHostel === 'function') renderStudentHostel();
       if (tabName === 'simulation' && typeof renderSimCenter === 'function') { if (typeof cleanupSim === 'function') cleanupSim(); renderSimCenter(); }
+      if (tabName === 'cbt' && typeof renderCBTStudent === 'function') renderCBTStudent();
       if (tabName === 'activitygames' && typeof renderStudentActivityGames === 'function') renderStudentActivityGames();
       if (tabName === 'alumni' && typeof renderStudentAlumni === 'function') renderStudentAlumni();
       if (tabName === 'health' && typeof renderStudentHealthView === 'function') renderStudentHealthView();
