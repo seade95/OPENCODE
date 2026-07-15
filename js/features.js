@@ -4663,7 +4663,7 @@ function renderWebsiteSections(container) {
     html += '<div class="card" style="margin-bottom:8px;padding:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'
       + '<div style="flex:1;min-width:150px;"><strong>' + esc(sec.title) + '</strong> <span style="font-size:11px;color:var(--text-light);text-transform:uppercase;">' + esc(sec.type) + '</span></div>'
       + '<label style="font-size:13px;"><input type="checkbox" ' + (sec.visible !== false ? 'checked' : '') + ' onchange="websiteToggleSection(\'' + sec.id + '\')"> Visible</label>';
-    if (sec.type === 'about' || sec.type === 'hero' || sec.type === 'cbt') {
+    if (sec.type === 'about' || sec.type === 'hero') {
       html += '<button class="btn btn-sm btn-outline" onclick="websiteEditSectionContent(\'' + sec.id + '\')"><i class="fas fa-edit"></i> Edit Content</button>';
     }
     if (i > 0) html += '<button class="btn btn-sm btn-outline" onclick="websiteMoveSection(\'' + sec.id + '\',-1)"><i class="fas fa-chevron-up"></i></button>';
@@ -5733,36 +5733,26 @@ function renderCBTAdmin() {
 }
 
 function showAddCBTExamModal() {
-  var existing = '';
-  var title = 'Create CBT Exam';
-  var html = '<div class="modal-overlay" id="cbtExamModal" onclick="if(event.target===this)closeModal(\'cbtExamModal\')"><div class="modal" style="max-width:500px;">';
-  html += '<div class="modal-header"><h3>' + title + '</h3><button class="modal-close" onclick="closeModal(\'cbtExamModal\')">&times;</button></div>';
-  html += '<div class="modal-body"><div class="form-group"><label>Exam Title</label><input type="text" id="cbtExamTitle" class="form-input" placeholder="e.g. Mathematics Mid-Term" value="' + htmlEscape(existing) + '"></div>';
-  html += '<div class="form-group"><label>Description</label><textarea id="cbtExamDesc" class="form-input" rows="3" placeholder="Exam description..."></textarea></div>';
-  html += '<div class="form-group"><label>Duration (minutes)</label><input type="number" id="cbtExamDuration" class="form-input" value="60" min="1"></div>';
-  html += '<div class="form-group"><label>Pass Score (%)</label><input type="number" id="cbtExamPassScore" class="form-input" value="50" min="0" max="100"></div>';
-  html += '<div class="form-group"><label>Instructions (optional)</label><textarea id="cbtExamInstructions" class="form-input" rows="3" placeholder="Instructions for students..."></textarea></div>';
-  html += '</div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal(\'cbtExamModal\')">Cancel</button><button class="btn btn-primary" onclick="saveCBTExam()"><i class="fas fa-save"></i> Save</button></div></div></div>';
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  document.body.appendChild(el);
+  openModal('<div style="max-width:500px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="margin:0;">Create CBT Exam</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>'
+    + '<div class="form-group"><label>Exam Title</label><input type="text" id="cbtExamTitle" class="form-input" placeholder="e.g. Mathematics Mid-Term"></div>'
+    + '<div class="form-group"><label>Description</label><textarea id="cbtExamDesc" class="form-input" rows="3" placeholder="Exam description..."></textarea></div>'
+    + '<div class="form-group"><label>Duration (minutes)</label><input type="number" id="cbtExamDuration" class="form-input" value="60" min="1"></div>'
+    + '<div class="form-group"><label>Pass Score (%)</label><input type="number" id="cbtExamPassScore" class="form-input" value="50" min="0" max="100"></div>'
+    + '<div class="form-group"><label>Instructions (optional)</label><textarea id="cbtExamInstructions" class="form-input" rows="3" placeholder="Instructions for students..."></textarea></div>'
+    + '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCBTExam()"><i class="fas fa-save"></i> Save</button></div></div>');
 }
 
 function showEditCBTExamModal(id) {
   var exam = (data.cbtExams || []).find(function(e) { return e.id === id; });
   if (!exam) return;
-  var html = '<div class="modal-overlay" id="cbtExamModal" onclick="if(event.target===this)closeModal(\'cbtExamModal\')"><div class="modal" style="max-width:500px;">';
-  html += '<div class="modal-header"><h3>Edit CBT Exam</h3><button class="modal-close" onclick="closeModal(\'cbtExamModal\')">&times;</button></div>';
-  html += '<div class="modal-body"><input type="hidden" id="cbtExamEditId" value="' + htmlEscape(id) + '">';
-  html += '<div class="form-group"><label>Exam Title</label><input type="text" id="cbtExamTitle" class="form-input" value="' + htmlEscape(exam.title) + '"></div>';
-  html += '<div class="form-group"><label>Description</label><textarea id="cbtExamDesc" class="form-input" rows="3">' + htmlEscape(exam.description || '') + '</textarea></div>';
-  html += '<div class="form-group"><label>Duration (minutes)</label><input type="number" id="cbtExamDuration" class="form-input" value="' + (exam.duration || 60) + '" min="1"></div>';
-  html += '<div class="form-group"><label>Pass Score (%)</label><input type="number" id="cbtExamPassScore" class="form-input" value="' + (exam.passScore || 50) + '" min="0" max="100"></div>';
-  html += '<div class="form-group"><label>Instructions (optional)</label><textarea id="cbtExamInstructions" class="form-input" rows="3">' + htmlEscape(exam.instructions || '') + '</textarea></div>';
-  html += '</div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal(\'cbtExamModal\')">Cancel</button><button class="btn btn-primary" onclick="saveCBTExam()"><i class="fas fa-save"></i> Save</button></div></div></div>';
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  document.body.appendChild(el);
+  openModal('<div style="max-width:500px;"><input type="hidden" id="cbtExamEditId" value="' + htmlEscape(id) + '">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="margin:0;">Edit CBT Exam</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>'
+    + '<div class="form-group"><label>Exam Title</label><input type="text" id="cbtExamTitle" class="form-input" value="' + htmlEscape(exam.title) + '"></div>'
+    + '<div class="form-group"><label>Description</label><textarea id="cbtExamDesc" class="form-input" rows="3">' + htmlEscape(exam.description || '') + '</textarea></div>'
+    + '<div class="form-group"><label>Duration (minutes)</label><input type="number" id="cbtExamDuration" class="form-input" value="' + (exam.duration || 60) + '" min="1"></div>'
+    + '<div class="form-group"><label>Pass Score (%)</label><input type="number" id="cbtExamPassScore" class="form-input" value="' + (exam.passScore || 50) + '" min="0" max="100"></div>'
+    + '<div class="form-group"><label>Instructions (optional)</label><textarea id="cbtExamInstructions" class="form-input" rows="3">' + htmlEscape(exam.instructions || '') + '</textarea></div>'
+    + '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCBTExam()"><i class="fas fa-save"></i> Save</button></div></div>');
 }
 
 function saveCBTExam() {
@@ -5796,7 +5786,7 @@ function saveCBTExam() {
       status: 'active'
     });
   }
-  closeModal('cbtExamModal');
+  closeModal();
   saveData();
   renderCBTAdmin();
 }
@@ -5812,42 +5802,36 @@ function deleteCBTExam(id) {
 function showAddCBTQuestionModal(examId) {
   var exam = (data.cbtExams || []).find(function(e) { return e.id === examId; });
   if (!exam) return;
-  var html = '<div class="modal-overlay" id="cbtQuestionModal" onclick="if(event.target===this)closeModal(\'cbtQuestionModal\')"><div class="modal" style="max-width:600px;">';
-  html += '<div class="modal-header"><h3>Add Question to: ' + htmlEscape(exam.title) + '</h3><button class="modal-close" onclick="closeModal(\'cbtQuestionModal\')">&times;</button></div>';
-  html += '<div class="modal-body"><input type="hidden" id="cbtQExamId" value="' + htmlEscape(examId) + '">';
-  html += '<div class="form-group"><label>Question</label><textarea id="cbtQText" class="form-input" rows="2" placeholder="Enter question text..."></textarea></div>';
+  var body = '<div style="max-width:600px;"><input type="hidden" id="cbtQExamId" value="' + htmlEscape(examId) + '">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="margin:0;">Add Question to: ' + htmlEscape(exam.title) + '</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>'
+    + '<div class="form-group"><label>Question</label><textarea id="cbtQText" class="form-input" rows="2" placeholder="Enter question text..."></textarea></div>';
   for (var i = 0; i < 4; i++) {
-    html += '<div class="form-group"><label>Option ' + (i + 1) + '</label><input type="text" id="cbtQOpt' + i + '" class="form-input" placeholder="Option ' + (i + 1) + '"></div>';
+    body += '<div class="form-group"><label>Option ' + (i + 1) + '</label><input type="text" id="cbtQOpt' + i + '" class="form-input" placeholder="Option ' + (i + 1) + '"></div>';
   }
-  html += '<div class="form-group"><label>Correct Option</label><select id="cbtQAnswer" class="form-input"><option value="0">Option 1</option><option value="1">Option 2</option><option value="2">Option 3</option><option value="3">Option 4</option></select></div>';
-  html += '<div class="form-group"><label>Marks</label><input type="number" id="cbtQMarks" class="form-input" value="1" min="1"></div>';
-  html += '</div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal(\'cbtQuestionModal\')">Cancel</button><button class="btn btn-primary" onclick="saveCBTQuestion()"><i class="fas fa-save"></i> Save</button></div></div></div>';
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  document.body.appendChild(el);
+  body += '<div class="form-group"><label>Correct Option</label><select id="cbtQAnswer" class="form-input"><option value="0">Option 1</option><option value="1">Option 2</option><option value="2">Option 3</option><option value="3">Option 4</option></select></div>'
+    + '<div class="form-group"><label>Marks</label><input type="number" id="cbtQMarks" class="form-input" value="1" min="1"></div>'
+    + '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCBTQuestion()"><i class="fas fa-save"></i> Save</button></div></div>';
+  openModal(body);
 }
 
 function showEditCBTQuestionModal(examId, qIndex) {
   var exam = (data.cbtExams || []).find(function(e) { return e.id === examId; });
   if (!exam || !exam.questions[qIndex]) return;
   var q = exam.questions[qIndex];
-  var html = '<div class="modal-overlay" id="cbtQuestionModal" onclick="if(event.target===this)closeModal(\'cbtQuestionModal\')"><div class="modal" style="max-width:600px;">';
-  html += '<div class="modal-header"><h3>Edit Question</h3><button class="modal-close" onclick="closeModal(\'cbtQuestionModal\')">&times;</button></div>';
-  html += '<div class="modal-body"><input type="hidden" id="cbtQExamId" value="' + htmlEscape(examId) + '"><input type="hidden" id="cbtQIndex" value="' + qIndex + '">';
-  html += '<div class="form-group"><label>Question</label><textarea id="cbtQText" class="form-input" rows="2">' + htmlEscape(q.question) + '</textarea></div>';
+  var body = '<div style="max-width:600px;"><input type="hidden" id="cbtQExamId" value="' + htmlEscape(examId) + '"><input type="hidden" id="cbtQIndex" value="' + qIndex + '">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h3 style="margin:0;">Edit Question</h3><button class="modal-close" onclick="closeModal()">&times;</button></div>'
+    + '<div class="form-group"><label>Question</label><textarea id="cbtQText" class="form-input" rows="2">' + htmlEscape(q.question) + '</textarea></div>';
   for (var i = 0; i < 4; i++) {
-    html += '<div class="form-group"><label>Option ' + (i + 1) + '</label><input type="text" id="cbtQOpt' + i + '" class="form-input" value="' + htmlEscape(q.options[i] || '') + '"></div>';
+    body += '<div class="form-group"><label>Option ' + (i + 1) + '</label><input type="text" id="cbtQOpt' + i + '" class="form-input" value="' + htmlEscape(q.options[i] || '') + '"></div>';
   }
-  html += '<div class="form-group"><label>Correct Option</label><select id="cbtQAnswer" class="form-input">';
+  body += '<div class="form-group"><label>Correct Option</label><select id="cbtQAnswer" class="form-input">';
   for (var j = 0; j < 4; j++) {
-    html += '<option value="' + j + '"' + (j === q.answer ? ' selected' : '') + '>Option ' + (j + 1) + '</option>';
+    body += '<option value="' + j + '"' + (j === q.answer ? ' selected' : '') + '>Option ' + (j + 1) + '</option>';
   }
-  html += '</select></div>';
-  html += '<div class="form-group"><label>Marks</label><input type="number" id="cbtQMarks" class="form-input" value="' + (q.marks || 1) + '" min="1"></div>';
-  html += '</div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal(\'cbtQuestionModal\')">Cancel</button><button class="btn btn-primary" onclick="saveCBTQuestion()"><i class="fas fa-save"></i> Save</button></div></div></div>';
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  document.body.appendChild(el);
+  body += '</select></div>'
+    + '<div class="form-group"><label>Marks</label><input type="number" id="cbtQMarks" class="form-input" value="' + (q.marks || 1) + '" min="1"></div>'
+    + '<div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCBTQuestion()"><i class="fas fa-save"></i> Save</button></div></div>';
+  openModal(body);
 }
 
 function saveCBTQuestion() {
@@ -5883,7 +5867,7 @@ function saveCBTQuestion() {
       marks: parseInt(qMarks.value) || 1
     });
   }
-  closeModal('cbtQuestionModal');
+  closeModal();
   saveData();
   renderCBTAdmin();
 }
@@ -5979,7 +5963,8 @@ function _renderCBTTimerUI() {
   var answered = s.answers.filter(function(a) { return a !== null; }).length;
   var mins = Math.floor(s.timeLeft / 60);
   var secs = s.timeLeft % 60;
-  var timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  var pad = function(n) { return (n < 10 ? '0' : '') + n; };
+  var timeStr = pad(mins) + ':' + pad(secs);
   var warningClass = s.timeLeft <= 300 ? ' warning' : '';
   var html = '<div class="cbt-timer-overlay" id="cbtTimerOverlay">';
   html += '<div class="cbt-timer-header">';
@@ -5988,6 +5973,7 @@ function _renderCBTTimerUI() {
   if (s.tabSwitches > 0) html += '<span class="cbt-tab-switch"><i class="fas fa-exclamation-triangle"></i> Tab switches: ' + s.tabSwitches + '</span>';
   html += '<div class="cbt-timer-display' + warningClass + '" id="cbtTimerDisplay">' + timeStr + '</div>';
   html += '<button class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);" onclick="submitCBTExam()"><i class="fas fa-check"></i> Submit</button>';
+  html += '<button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);" onclick="if(confirm(\'Cancel this exam? All progress will be lost.\')){if(_cbtState){if(_cbtState.timer)clearInterval(_cbtState.timer);var e=document.getElementById(\'cbtTimerOverlay\');if(e)e.remove();_cbtState=null;}}"><i class="fas fa-times"></i></button>';
   html += '</div></div>';
   html += '<div class="cbt-timer-body">';
   html += '<div class="cbt-timer-main">';
@@ -6036,22 +6022,26 @@ function _cbtTick() {
   if (_cbtState.timeLeft <= 0) {
     clearInterval(_cbtState.timer);
     _cbtState.timer = null;
-    submitCBTExam();
+    submitCBTExam(true);
     return;
   }
   var disp = document.getElementById('cbtTimerDisplay');
   if (!disp) return;
   var mins = Math.floor(_cbtState.timeLeft / 60);
   var secs = _cbtState.timeLeft % 60;
-  disp.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+  var pad = function(n) { return (n < 10 ? '0' : '') + n; };
+  disp.textContent = pad(mins) + ':' + pad(secs);
   if (_cbtState.timeLeft <= 300) disp.classList.add('warning');
 }
 
-document.addEventListener('visibilitychange', function() {
-  if (_cbtState && document.hidden) {
-    _cbtState.tabSwitches = (_cbtState.tabSwitches || 0) + 1;
-  }
-});
+if (!window._cbtVisibilityListenerAdded) {
+  document.addEventListener('visibilitychange', function() {
+    if (_cbtState && document.hidden) {
+      _cbtState.tabSwitches = (_cbtState.tabSwitches || 0) + 1;
+    }
+  });
+  window._cbtVisibilityListenerAdded = true;
+}
 
 function selectCBTAnswer(optIndex) {
   if (!_cbtState) return;
@@ -6065,9 +6055,9 @@ function navigateCBTQuestion(index) {
   _renderCBTTimerUI();
 }
 
-function submitCBTExam() {
+function submitCBTExam(force) {
   if (!_cbtState) return;
-  if (!confirm('Are you sure you want to submit this exam? ' + _cbtState.answers.filter(function(a) { return a !== null; }).length + '/' + _cbtState.questions.length + ' answered.')) return;
+  if (!force && !confirm('Are you sure you want to submit this exam? ' + _cbtState.answers.filter(function(a) { return a !== null; }).length + '/' + _cbtState.questions.length + ' answered.')) return;
   if (_cbtState.timer) { clearInterval(_cbtState.timer); _cbtState.timer = null; }
   var total = _cbtState.questions.length;
   var score = 0;
