@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1200">
-<script>!function(){var v=document.querySelector('meta[name=viewport]');if(v){var s=screen.width;v.content='width=1200, initial-scale='+(s/1200)+', minimum-scale=0.25, maximum-scale=3'}}()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EDUVERSE - ADMIN PORTAL</title>
 <!-- Preconnect to critical origins -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -44,6 +43,8 @@
   .brand-header { text-align: center; margin-bottom: 24px; }
   .brand-header img { height: 48px; margin-bottom: 8px; }
   .brand-header h2 { font-size: 20px; color: var(--primary); font-weight: 700; }
+  @media(max-width:640px){.admin-login-wrapper{padding:12px!important}.admin-login-wrapper .card{padding:20px 16px!important}}
+  @media(max-width:480px){.brand-header img{height:36px}.brand-header h2{font-size:17px}}
 </style>
 </head>
 <body>
