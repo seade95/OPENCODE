@@ -52,7 +52,6 @@ function findUser(role, idOrEmail, password) {
   var users = [];
   if (role === 'student') users = data.students || [];
   else if (role === 'teacher') users = data.teachers || [];
-  else if (role === 'parent') users = data.parents || [];
   else if (role === 'admin') users = data.admins || [];
   var idField = role === 'parent' ? 'email' : 'id';
   for (var i = 0; i < users.length; i++) {
@@ -168,7 +167,6 @@ function switchRole(el, role) {
   var label = document.getElementById('idLabel');
   var placeholder = document.getElementById('idPlaceholder');
   if (role === 'student') { label.textContent = 'Student ID / Username'; placeholder.textContent = 'Enter your Student ID'; }
-  else if (role === 'parent') { label.textContent = 'Email Address'; placeholder.textContent = 'Enter your email'; }
   else if (role === 'admin') { label.textContent = 'Admin ID / Email'; placeholder.textContent = 'Enter your Admin ID'; }
   else { label.textContent = 'Teacher ID / Username'; placeholder.textContent = 'Enter your Teacher ID'; }
   document.getElementById('loginError').style.display = 'none';
@@ -224,7 +222,6 @@ function switchRole(el, role) {
   <div class="role-tabs">
     <button class="role-tab active" data-role="student" onclick="switchRole(this,'student')"><i class="fas fa-user-graduate"></i> Student</button>
     <button class="role-tab" data-role="teacher" onclick="switchRole(this,'teacher')"><i class="fas fa-chalkboard-teacher"></i> Teacher</button>
-    <button class="role-tab" data-role="parent" onclick="switchRole(this,'parent')"><i class="fas fa-users"></i> Parent</button>
     <button class="role-tab" data-role="admin" onclick="switchRole(this,'admin')"><i class="fas fa-user-shield"></i> Admin</button>
   </div>
 
