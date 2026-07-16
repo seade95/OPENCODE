@@ -1,176 +1,226 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="/">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>School Portal — EduVerse</title>
 <meta name="description" content="School information portal. View school details, announcements, subjects, and more.">
-<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<meta property="og:title" content="School Portal — EduVerse">
+<meta property="og:description" content="School information portal. View school details, announcements, subjects, and more.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://eduversemngt.netlify.app/">
+<meta property="og:image" content="https://eduversemngt.netlify.app/icons/icon-512.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="School Portal — EduVerse">
+<meta name="twitter:description" content="School information portal. View school details, announcements, subjects, and more.">
+<!-- Preconnect to critical origins -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://js.paystack.co" crossorigin>
+<link rel="preconnect" href="https://checkout.flutterwave.com" crossorigin>
+<!-- dns-prefetch fallback for older browsers -->
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://cdn.sheetjs.com">
+<!-- Preload critical assets -->
+<link rel="preload" href="css/style.css" as="style">
+<link rel="preload" href="icons/icon.svg" as="image">
+<!-- Google Fonts - async, non-blocking -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+<!-- Font Awesome - async, non-blocking -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
+<!-- Main stylesheet -->
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="alternate icon" href="images/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh;display:flex;flex-direction:column}
-a{color:#2563eb;text-decoration:none}
-a:hover{text-decoration:underline}
-.container{max-width:1100px;margin:0 auto;padding:0 20px;width:100%}
-
-/* Nav */
-.top-bar{background:#1e293b;color:white;padding:12px 0;position:sticky;top:0;z-index:100}
-.top-bar .container{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.top-bar .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px}
-.top-bar .logo img{height:32px;width:auto;border-radius:4px}
-.top-bar .logo span{color:rgba(255,255,255,0.6);font-weight:400}
-.top-bar .nav-links{display:flex;gap:12px;align-items:center}
-.top-bar .nav-links a{color:rgba(255,255,255,0.7);font-size:13px;padding:6px 12px;border-radius:6px;transition:background .15s}
-.top-bar .nav-links a:hover{background:rgba(255,255,255,0.1);text-decoration:none}
-
-/* Hero */
-.school-hero{border-radius:0;overflow:hidden;color:white;text-align:center;padding:60px 20px 48px;position:relative}
-.school-hero::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.25);z-index:1}
-.school-hero>*{position:relative;z-index:2}
-.school-hero img.logo{height:72px;width:72px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);margin-bottom:12px;object-fit:cover}
-.school-hero h1{font-size:32px;font-weight:800;margin-bottom:4px}
-.school-hero .tagline{font-size:16px;opacity:0.9;margin-bottom:4px}
-.school-hero .location{font-size:13px;opacity:0.7;margin-bottom:24px}
-.school-hero .login-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.school-hero .login-btns a{padding:10px 24px;border-radius:8px;font-weight:600;font-size:14px;transition:all .15s}
-.school-hero .login-btns a.primary{background:white;color:#1e293b}
-.school-hero .login-btns a.primary:hover{background:#f1f5f9;text-decoration:none}
-.school-hero .login-btns a.secondary{background:rgba(255,255,255,0.15);color:white}
-.school-hero .login-btns a.secondary:hover{background:rgba(255,255,255,0.25);text-decoration:none}
-
-/* Section common */
-section{padding:40px 0}
-section h2{font-size:22px;font-weight:700;margin-bottom:20px}
-
-/* Stats */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
-.stat-card{background:white;border-radius:12px;padding:20px;text-align:center;border:1px solid #e2e8f0}
-.stat-card .value{font-size:32px;font-weight:800;color:#2563eb}
-.stat-card .label{font-size:13px;color:#64748b;margin-top:4px}
-
-/* Quick access cards */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.quick-card{background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;transition:box-shadow .15s}
-.quick-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.06)}
-.quick-card .icon{font-size:32px;margin-bottom:8px}
-.quick-card h3{font-size:15px;font-weight:600;margin-bottom:4px}
-.quick-card p{font-size:13px;color:#64748b;margin-bottom:12px}
-.quick-card .cta{font-size:13px;font-weight:600}
-
-/* Announcements */
-.announcements-list{display:flex;flex-direction:column;gap:10px}
-.announcement-item{background:white;border-radius:10px;padding:14px 16px;border-left:4px solid #2563eb;border:1px solid #e2e8f0;border-left-width:4px}
-.announcement-item .title{font-weight:600;font-size:14px}
-.announcement-item .meta{font-size:12px;color:#94a3b8;margin-top:4px;display:flex;gap:12px}
-
-/* About */
-.about-section{background:white;border-radius:12px;padding:32px;border:1px solid #e2e8f0}
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-@media(max-width:640px){.about-grid{grid-template-columns:1fr}}
-.about-info .info-row{display:flex;gap:12px;margin-bottom:12px;font-size:14px}
-.about-info .info-row .label{color:#64748b;min-width:100px;font-weight:500}
-.about-info .info-row .value{color:#1e293b;font-weight:600}
-.about-text{font-size:14px;color:#475569;line-height:1.6;margin-top:16px}
-.facilities-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
-.facilities-tags span{padding:4px 12px;background:#f1f5f9;border-radius:20px;font-size:12px;color:#475569}
-
-/* Subjects */
-.subjects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
-.subject-category{background:white;border-radius:10px;padding:16px;border:1px solid #e2e8f0}
-.subject-category h4{font-size:14px;font-weight:600;color:#2563eb;margin-bottom:8px}
-.subject-category .tags{display:flex;flex-wrap:wrap;gap:6px}
-.subject-category .tags span{font-size:12px;color:#475569;background:#f8fafc;padding:4px 10px;border-radius:6px}
-
-/* Testimonials */
-.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.testimonial-card{background:white;border-radius:12px;padding:24px;border:1px solid #e2e8f0}
-.testimonial-card .quote{font-size:14px;color:#475569;font-style:italic;margin-bottom:12px;line-height:1.5}
-.testimonial-card .author{display:flex;align-items:center;gap:10px}
-.testimonial-card .author .avatar{width:36px;height:36px;border-radius:50%;background:#dbeafe;color:#2563eb;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
-.testimonial-card .author .name{font-weight:600;font-size:13px}
-.testimonial-card .author .role{font-size:12px;color:#94a3b8}
-
-/* CTA section */
-.cta-section{background:#1e293b;color:white;border-radius:12px;padding:48px 32px;text-align:center;margin:24px 0 40px}
-.cta-section h3{font-size:22px;font-weight:700;margin-bottom:8px}
-.cta-section p{color:#94a3b8;margin-bottom:20px}
-.cta-section .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta-section .btns a{padding:10px 24px;border-radius:8px;font-weight:600;font-size:14px}
-.cta-section .btns a.primary{background:#2563eb;color:white}
-.cta-section .btns a.primary:hover{background:#1d4ed8;text-decoration:none}
-.cta-section .btns a.secondary{background:rgba(255,255,255,0.1);color:white}
-.cta-section .btns a.secondary:hover{background:rgba(255,255,255,0.2);text-decoration:none}
-
-/* Footer */
-.site-footer{background:#1e293b;color:rgba(255,255,255,0.6);padding:24px 0;text-align:center;font-size:13px;margin-top:auto}
-.site-footer a{color:rgba(255,255,255,0.7)}
-.site-footer .sep{margin:0 8px;opacity:0.3}
-
-/* Error / 404 */
-.error-state{text-align:center;padding:80px 20px}
-.error-state i{font-size:64px;color:#94a3b8;margin-bottom:16px;display:block}
-.error-state h2{font-size:24px;margin-bottom:8px}
-.error-state p{color:#64748b;margin-bottom:24px}
-
-/* Loading */
-.loading{text-align:center;padding:80px 20px}
-.spinner{width:40px;height:40px;border:4px solid #e2e8f0;border-top-color:#2563eb;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-@media(max-width:640px){
-  .school-hero{padding:40px 16px 32px}
-  .school-hero h1{font-size:24px}
-  .stats-grid{grid-template-columns:repeat(2,1fr)}
-  .cards-grid{grid-template-columns:1fr}
-  .school-hero .login-btns a{padding:8px 16px;font-size:13px}
-}
-@media(max-width:480px){
-  .school-hero .login-btns{flex-direction:column;align-items:center}
-  .school-hero .login-btns a{width:100%;max-width:280px}
-  .top-bar .nav-links{display:none}
-}
+@media(max-width:640px){.ev-pros-cons-grid{grid-template-columns:1fr!important}header .container,.section-area,.section-enhanced{padding-left:16px!important;padding-right:16px!important}}
 </style>
 </head>
 <body>
-
-<nav class="top-bar">
-  <div class="container">
-    <div class="logo">
-      <img src="/icons/icon.svg" alt="" onerror="this.style.display='none'">
-      <span>EduVerse</span>
-    </div>
-    <div class="nav-links">
-      <a href="/"><i class="fas fa-home"></i> Home</a>
-      <a href="/schools"><i class="fas fa-school"></i> Schools</a>
-      <a href="/pricing"><i class="fas fa-tag"></i> Pricing</a>
-      <a href="/book-demo"><i class="fas fa-calendar-check"></i> Demo</a>
-      <a href="/login"><i class="fas fa-sign-in-alt"></i> Sign In</a>
-    </div>
-  </div>
-</nav>
-
-<div class="container" id="app">
-  <div class="loading" id="loadingState">
-    <div class="spinner"></div>
-    <p>Loading school information...</p>
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modalBody"></div>
   </div>
 </div>
-
-<footer class="site-footer">
-  <div class="container">
-    Powered by <a href="/">EduVerse</a>
-    <span class="sep">•</span>
-    <a href="/privacy-policy">Privacy</a>
-    <span class="sep">•</span>
-    <a href="/terms-of-service">Terms</a>
-    <span class="sep">•</span>
-    <a href="/cookie-policy">Cookies</a>
+<!-- ==================== LANDING PAGE ==================== -->
+<div id="landing-page">
+<!-- Scroll Buttons -->
+<button class="scroll-btn scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
+<button class="scroll-btn scroll-bottom" id="scrollBottomBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" aria-label="Scroll to bottom"><i class="fas fa-chevron-down"></i></button>
+<!-- Floating Chat Buttons -->
+<div class="chat-float" id="chatFloat">
+  <a class="chat-btn chat-whatsapp" id="chatWhatsappBtn" href="javascript:;" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  <a class="chat-btn chat-email" id="chatEmailBtn" href="javascript:;" target="_blank" rel="noopener" aria-label="Send email" title="Send email"><i class="fas fa-envelope"></i></a>
+</div>
+<!-- Announcement Bar -->
+<div id="announcementBar" style="display:none;background:var(--accent,#fbbf24);color:var(--text,#1a202c);padding:10px 20px;text-align:center;font-size:14px;font-weight:500;"></div>
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="/"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
+  <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
+  <ul class="nav-links" id="navLinks">
+    <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
+      <a href="javascript:;">Features <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></a>
+      <div class="nav-dropdown-menu">
+        <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
+        <a href="#about"><i class="fas fa-info-circle"></i> About</a>
+        <a href="#courses"><i class="fas fa-book-open"></i> Subjects</a>
+        <a href="#news"><i class="fas fa-calendar-alt"></i> Announcements</a>
+      </div>
+    </li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/schools">Schools</a></li>
+    <li><a href="#" class="btn-portal" id="adminLink"><i class="fas fa-user-shield"></i> Admin</a></li>
+    <li><a href="javascript:;" onclick="showSchoolSelector()" class="btn-portal" style="background:rgba(255,215,0,0.15);color:gold;" title="Switch School"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
+    <li><a href="superadmin.html" style="color:rgba(255,255,255,0.5);padding:8px 10px;font-size:13px;" title="Super Admin" id="superAdminCog"><i class="fas fa-user-cog"></i></a></li>
+    <li><a href="javascript:;" onclick="showEduverseLogin()" class="btn-portal" style="background:var(--accent);color:var(--primary-dark);font-weight:700;"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+    <li><a href="javascript:;" onclick="toggleDarkMode()" style="color:rgba(255,255,255,0.7);padding:8px 12px;" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+  </ul>
+</nav>
+<!-- Dynamic App Content -->
+<div id="app">
+  <div style="text-align:center;padding:120px 20px 80px;">
+    <div class="loading-spinner" style="margin:0 auto 16px;"></div>
+    <p style="color:var(--text-light);">Loading school information...</p>
+  </div>
+</div>
+<!-- Enhanced Footer -->
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo">
+      <img id="footerLogo" class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;border-radius:4px;">
+      EDUVERSE
+    </div>
+    <div class="footer-social">
+      <a href="javascript:;" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+      <a href="javascript:;" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      <a href="javascript:;" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+      <a href="javascript:;" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="javascript:;" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget">
+      <h5>About Us</h5>
+      <p class="school-motto" style="font-style:italic;font-size:13px;color:var(--accent);margin-bottom:8px;"></p>
+      <p id="footerAboutText">EDUVERSE, SCHOOL MANAGEMENT PLATFORM is committed to providing quality education that nurtures academic excellence, character development, and lifelong learning skills in every student.</p>
+      <p id="footerSchoolExtra" style="font-size:12px;color:var(--text-light);margin:4px 0;"></p>
+      <p id="footerSchoolInfo" style="font-size:12px;color:var(--text-light);margin:4px 0;"></p>
+      <p id="footerContact"><strong><i class="fas fa-map-marker-alt"></i></strong> 123 Education Avenue, Lagos, Nigeria<br>
+      <strong><i class="fas fa-phone"></i></strong> <a href="tel:+2347069332955" style="color:rgba(255,255,255,0.7);text-decoration:none;">+2347069332955</a><br>
+      <strong><i class="fas fa-envelope"></i></strong> <a href="mailto:eduversemgt@gmail.com" style="color:rgba(255,255,255,0.7);text-decoration:none;">eduversemgt@gmail.com</a></p>
+    </div>
+    <div class="footer-widget">
+      <h5>Quick Links</h5>
+      <ul>
+        <li><a href="/pricing">Pricing &amp; Plans</a></li>
+        <li><a href="/schools">School Directory</a></li>
+        <li><a href="#portals">Portals</a></li>
+        <li><a href="#courses">Subjects</a></li>
+        <li><a href="#news">Announcements</a></li>
+        <li><a href="admin.html">Admin Portal</a></li>
+        <li><a href="#" onclick="showTeacherLogin();return false">Teacher Portal</a></li>
+        <li><a href="#" onclick="showStudentLogin();return false">Student Portal</a></li>
+        <li><a href="#" onclick="showAdmissionPortal();return false">Admission Portal</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="#" onclick="showTeacherLogin();return false"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="#" onclick="showStudentLogin();return false"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="#" onclick="showParentLogin();return false"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="#" onclick="showAlumniPortal();return false"><i class="fas fa-angle-right"></i> Alumni</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Newsletter</h5>
+      <p>Subscribe to receive updates on school activities and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="event.preventDefault();subscribeNewsletter(this.querySelector('input'));">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" required>
+            <button type="submit"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+      <div class="footer-accreditations" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;"></div>
+      <div id="footerMap" style="margin-top:12px;"></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 EDUVERSE, SCHOOL MANAGEMENT PLATFORM. All rights reserved.</p>
+    <div class="footer-legal-links" style="margin-top:8px;display:flex;gap:16px;justify-content:center;font-size:13px;">
+      <a href="/privacy-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy Policy</a>
+      <a href="/terms-of-service" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms of Service</a>
+      <a href="/cookie-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookie Policy</a>
+      <a href="/gdpr-compliance" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR Compliance</a>
+    </div>
   </div>
 </footer>
-
+</div>
 <script>
+function toggleNav() {
+  var el = document.getElementById('navLinks');
+  if (el) el.classList.toggle('open');
+}
+function toggleNavDropdown(el) {
+  if (el) el.classList.toggle('open');
+}
+function toggleDarkMode() {
+  var html = document.documentElement;
+  var icon = document.getElementById('darkModeIcon');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.removeAttribute('data-theme');
+    if (icon) icon.className = 'fas fa-moon';
+    try { localStorage.setItem('eduverseTheme', 'light'); } catch(e) {}
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    if (icon) icon.className = 'fas fa-sun';
+    try { localStorage.setItem('eduverseTheme', 'dark'); } catch(e) {}
+  }
+}
+try {
+  var savedTheme = localStorage.getItem('eduverseTheme');
+  if (savedTheme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    var di = document.getElementById('darkModeIcon');
+    if (di) di.className = 'fas fa-sun';
+  }
+} catch(e) {}
+
+function showEduverseLogin() { window.location.href = '/login'; }
+function showSchoolSelector() { window.location.href = '/schools'; }
+function showApplySchool() { window.location.href = '/pricing'; }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+function showTeacherLogin() { window.location.href = '/?role=teacher'; }
+function showStudentLogin() { window.location.href = '/?role=student'; }
+function showAdmissionPortal() { window.location.href = '/login/admission.html'; }
+function showParentLogin() { window.location.href = '/?role=parent'; }
+function showAlumniPortal() { window.location.href = '/?role=alumni'; }
+function subscribeNewsletter(input) { if (input && input.value) { alert('Subscribed! Thank you.'); input.value = ''; } }
+
 var TENANT_KEY = 'eduverse_tenants';
 var RESERVED_SLUGS = ['www', 'app', 'api', 'admin', 'mail', 'smtp', 'pop3', 'webmail', 'cpanel', 'whm', 'ftp', 'ssh', 'mysql', 'test', 'dev', 'staging', 'demo', 'beta', 'help', 'support', 'docs', 'wiki', 'blog', 'forum', 'community', 'status', 'cdn', 'static', 'assets', 'media', 'files', 'img', 'css', 'js', 'download', 'uploads', 'store', 'shop', 'billing', 'pay', 'secure', 'login', 'signup', 'register', 'auth', 'oauth', 'saml', 'ldap', 'portal', 'dashboard', 'manage', 'system', 'server', 'host', 'hosting', 'cloud', 'edu', 'education', 'school', 'schools', 'my', 'your', 'the', 'eduverse'];
 
@@ -227,8 +277,6 @@ function esc(s) {
 function getSlug() {
   var path = window.location.pathname.replace(/\/+$/, '') || '';
   var parts = path.split('/');
-  // /school/my-school → ['', 'school', 'my-school']
-  // /school/my-school/admin → ['', 'school', 'my-school', 'admin']
   if (parts.length >= 3 && parts[1] === 'school') return parts[2];
   return null;
 }
@@ -255,14 +303,13 @@ var SUBJECT_CATEGORIES = {
   'Vocational': ['Agriculture', 'Food & Nutrition', 'Technical Drawing', 'Computer Studies', 'Home Economics'],
   'Creative': ['Fine Arts', 'Music', 'Drama']
 };
-
 function renderPortal(slug, tenant, data) {
   var prof = data.schoolProfile || {};
   var name = tenant.name || prof.schoolName || 'Unknown School';
   var logo = tenant.logo || prof.logoUrl || '/icons/icon.svg';
   var motto = tenant.motto || prof.schoolMotto || 'Excellence in Education';
   var city = tenant.city || prof.contactAddress || '';
-  var primary = prof.theme?.primaryColor || '#2563eb';
+  var primary = prof.theme && prof.theme.primaryColor ? prof.theme.primaryColor : '#2563eb';
   var foundingYear = prof.foundingYear || '';
   var schoolType = prof.schoolType || 'day';
   var curriculum = prof.curriculumLabel || 'Nigerian Curriculum';
@@ -284,192 +331,208 @@ function renderPortal(slug, tenant, data) {
     ];
   }
 
+  var navName = document.getElementById('navSchoolName');
+  if (navName) navName.textContent = name;
+  var adminLink = document.getElementById('adminLink');
+  if (adminLink) adminLink.href = '/school/' + encodeURIComponent(slug) + '/admin';
+
+  document.title = name + ' - EduVerse School Portal';
+
+  var qSlug = encodeURIComponent(slug);
   var html = '';
 
   // Hero
-  html += '<section class="school-hero" style="background:' + primary + '">'
-    + '<img class="logo" src="' + esc(logo) + '" alt="" onerror="this.src=\'/icons/icon.svg\'">'
+  html += '<section class="hero-slider" id="heroSlider"><div class="slides-container" id="slidesContainer">'
+    + '<div class="slide" style="background:linear-gradient(135deg,' + primary + ',' + primary + 'ee);">'
+    + '<div class="slide-content">'
+    + '<img src="' + esc(logo) + '" alt="" style="width:80px;height:80px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);margin-bottom:12px;object-fit:cover;" onerror="this.style.display=\'none\'">'
+    + '<div class="badge"><i class="fas fa-school"></i> ' + esc(name) + '</div>'
     + '<h1>' + esc(name) + '</h1>'
-    + '<p class="tagline">' + esc(motto) + '</p>'
-    + '<p class="location"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>'
-    + '<div class="login-btns">'
-    + '<a class="primary" href="/school/' + encodeURIComponent(slug) + '/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=teacher"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
-    + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=parent"><i class="fas fa-users"></i> Parent Login</a>'
+    + '<p>' + esc(motto) + '</p>'
+    + '<p style="font-size:14px;opacity:0.7;margin:-16px 0 32px;"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>'
+    + '<div class="slide-actions">'
+    + '<a class="btn btn-primary" href="/school/' + qSlug + '/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a class="btn btn-outline" href="/school/' + qSlug + '/login?role=teacher"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+    + '<a class="btn btn-outline" href="/school/' + qSlug + '/login?role=parent"><i class="fas fa-users"></i> Parent Login</a>'
+    + '</div></div></div></div>'
+    + '<div class="slider-dots" id="sliderDots"><div class="slider-dot active"></div></div></section>';
+
+  // Stats
+  html += '<section class="stats-section"><div class="stats-grid">'
+    + '<div class="stat-card"><div class="icon"><i class="fas fa-user-graduate"></i></div><h3>' + studentCount + '</h3><p>Enrolled Students</p></div>'
+    + '<div class="stat-card"><div class="icon"><i class="fas fa-chalkboard-teacher"></i></div><h3>' + teacherCount + '</h3><p>Qualified Teachers</p></div>'
+    + '<div class="stat-card"><div class="icon"><i class="fas fa-book-open"></i></div><h3>' + subjectCount + '</h3><p>Subjects Offered</p></div>'
+    + '<div class="stat-card"><div class="icon"><i class="fas fa-award"></i></div><h3>' + passRate + '%</h3><p>Pass Rate</p></div>'
     + '</div></section>';
 
   // Portal Cards
-  html += '<section><div style="text-align:center;margin-bottom:24px;"><h2 style="margin-bottom:4px;">Choose Your <span style="color:' + primary + '">Portal</span></h2><p style="color:#64748b;font-size:14px;">Select the portal that matches your role to get started</p></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;">'
-    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/admin\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
-    + '<div style="font-size:36px;color:' + primary + ';margin-bottom:8px;"><i class="fas fa-user-shield"></i></div>'
-    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Admin Portal</h3>'
-    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Full access to manage students, teachers, fees, results, and attendance.</p>'
-    + '<span style="font-size:13px;font-weight:600;color:' + primary + ';">Enter Admin Portal →</span></div>'
-    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;border-top:4px solid #16a34a;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/teacher\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
-    + '<div style="font-size:36px;color:#16a34a;margin-bottom:8px;"><i class="fas fa-chalkboard-teacher"></i></div>'
-    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Teacher Portal</h3>'
-    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Manage your class, upload assignments, track student progress and attendance.</p>'
-    + '<span style="font-size:13px;font-weight:600;color:#16a34a;">Enter Teacher Portal →</span></div>'
-    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/student\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
-    + '<div style="font-size:36px;color:' + primary + ';margin-bottom:8px;"><i class="fas fa-user-graduate"></i></div>'
-    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Student Portal</h3>'
-    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">View your results, assignments, fee status, attendance, and activities.</p>'
-    + '<span style="font-size:13px;font-weight:600;color:' + primary + ';">Enter Student Portal →</span></div>'
-    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;border-top:4px solid #06b6d4;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/school/' + encodeURIComponent(slug) + '/parent\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
-    + '<div style="font-size:36px;color:#06b6d4;margin-bottom:8px;"><i class="fas fa-users"></i></div>'
-    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Parent Portal</h3>'
-    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Monitor your child\'s academic progress, attendance, fees, and activities.</p>'
-    + '<span style="font-size:13px;font-weight:600;color:#06b6d4;">Enter Parent Portal →</span></div>'
-    + '<div style="background:white;border-radius:12px;padding:24px;text-align:center;border:1px solid #e2e8f0;border-top:4px solid #f59e0b;cursor:pointer;transition:box-shadow .2s;" onclick="window.location.href=\'/login/admission.html?school=' + encodeURIComponent(slug) + '\'" onmouseover="this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.1)\'" onmouseout="this.style.boxShadow=\'\'">'
-    + '<div style="font-size:36px;color:#f59e0b;margin-bottom:8px;"><i class="fas fa-graduation-cap"></i></div>'
-    + '<h3 style="font-size:15px;font-weight:600;margin-bottom:4px;">Admission Portal</h3>'
-    + '<p style="font-size:13px;color:#64748b;margin-bottom:12px;">Apply for admission, explore programs, and track your application status.</p>'
-    + '<span style="font-size:13px;font-weight:600;color:#f59e0b;">Apply Now →</span></div>'
+  html += '<section class="section-area" id="portals">'
+    + '<div class="section-title"><h2>Choose Your <span>Portal</span></h2><p>Select the portal that matches your role to get started</p></div>'
+    + '<div class="services-grid">'
+    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/admin\'">'
+    + '<div class="img-box" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-shield" style="font-size:56px;color:var(--accent);"></i></div>'
+    + '<div class="info-box"><h4>Admin Portal</h4><p>Full access to manage students, teachers, fees, results, and attendance.</p></div></div>'
+    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/teacher\'">'
+    + '<div class="img-box" style="background:linear-gradient(135deg,#16a34a,#15803d);display:flex;align-items:center;justify-content:center;"><i class="fas fa-chalkboard-teacher" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="info-box"><h4>Teacher Portal</h4><p>Manage your class, upload assignments, track student progress and attendance.</p></div></div>'
+    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/student\'">'
+    + '<div class="img-box" style="background:linear-gradient(135deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-graduate" style="font-size:56px;color:var(--primary-dark);"></i></div>'
+    + '<div class="info-box"><h4>Student Portal</h4><p>View your results, assignments, fee status, attendance, and activities.</p></div></div>'
+    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/parent\'">'
+    + '<div class="img-box" style="background:linear-gradient(135deg,#06b6d4,#0891b2);display:flex;align-items:center;justify-content:center;"><i class="fas fa-users" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="info-box"><h4>Parent Portal</h4><p>Monitor your child\'s academic progress, attendance, fees, and activities.</p></div></div>'
+    + '<div class="service-card" onclick="window.location.href=\'/login/admission.html?school=' + qSlug + '\'">'
+    + '<div class="img-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;"><i class="fas fa-graduation-cap" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="info-box"><h4>Admission Portal</h4><p>Apply for admission, explore programs, and track your application status.</p></div></div>'
     + '</div></section>';
-
-  // Stats
-  html += '<section><h2><i class="fas fa-chart-bar"></i> At a Glance</h2><div class="stats-grid">'
-    + '<div class="stat-card"><div class="value">' + studentCount + '</div><div class="label">Enrolled Students</div></div>'
-    + '<div class="stat-card"><div class="value">' + teacherCount + '</div><div class="label">Qualified Teachers</div></div>'
-    + '<div class="stat-card"><div class="value">' + subjectCount + '</div><div class="label">Subjects Offered</div></div>'
-    + '<div class="stat-card"><div class="value">' + passRate + '%</div><div class="label">Pass Rate</div></div>'
-    + '</div></section>';
-
-  // Quick Access Cards
-  var qSlug = encodeURIComponent(slug);
-  html += '<section><h2><i class="fas fa-bolt"></i> Quick Access</h2><div class="cards-grid">'
-    + '<div class="quick-card"><div class="icon">📋</div><h3>Exam Results</h3><p>View termly examination results and performance analytics.</p><a class="cta" href="/school/' + qSlug + '/login?role=student">Student Login →</a></div>'
-    + '<div class="quick-card"><div class="icon">📝</div><h3>Assignments</h3><p>Access and submit assignments online.</p><a class="cta" href="/school/' + qSlug + '/login?role=student">Student Login →</a></div>'
-    + '<div class="quick-card"><div class="icon">💰</div><h3>Fee Management</h3><p>Check fee status and make payments.</p><a class="cta" href="/school/' + qSlug + '/login?role=parent">Parent Login →</a></div>'
-    + '<div class="quick-card"><div class="icon">👨‍🏫</div><h3>Teacher Resources</h3><p>Lesson plans, grading tools, and class management.</p><a class="cta" href="/school/' + qSlug + '/login?role=teacher">Staff Login →</a></div>'
-    + '</div></section>';
-
-  // Announcements
-  html += '<section><h2><i class="fas fa-bullhorn"></i> Latest Announcements</h2><div class="announcements-list">';
-  announcements.forEach(function(a) {
-    var icon = a.type === 'general' ? '🔔' : '📅';
-    var date = a.date ? new Date(a.date).toLocaleDateString() : '';
-    html += '<div class="announcement-item"><div><span style="margin-right:8px;">' + icon + '</span><span class="title">' + esc(a.message || a.title || '') + '</span></div>'
-      + '<div class="meta"><span>' + date + '</span></div></div>';
-  });
-  html += '</div></section>';
 
   // About
-  html += '<section><h2><i class="fas fa-info-circle"></i> About ' + esc(name) + '</h2>'
-    + '<div class="about-section"><div class="about-grid"><div class="about-info">'
-    + (foundingYear ? '<div class="info-row"><span class="label">Founded</span><span class="value">' + esc(foundingYear) + '</span></div>' : '')
-    + '<div class="info-row"><span class="label">Type</span><span class="value">' + (typeLabels[schoolType] || 'Day School') + '</span></div>'
-    + '<div class="info-row"><span class="label">Curriculum</span><span class="value">' + esc(curriculum) + '</span></div>'
-    + '<div class="info-row"><span class="label">Students</span><span class="value">' + studentCount + '</span></div>'
-    + '<div class="info-row"><span class="label">Teachers</span><span class="value">' + teacherCount + '</span></div>';
-  if (aboutText) html += '<div class="about-text">' + esc(aboutText) + '</div>';
-  if (facilities.length) {
-    html += '<div class="facilities-tags">';
-    facilities.forEach(function(f) { html += '<span>' + esc(f.name || f) + '</span>'; });
-    html += '</div>';
-  } else {
-    html += '<div class="facilities-tags"><span>Science Labs</span><span>Library</span><span>ICT Center</span><span>Sports Complex</span></div>';
+  html += '<section class="section-area gray-bg" id="about">'
+    + '<div class="section-title"><h2>About <span>' + esc(name) + '</span></h2><p>Learn more about our school community</p></div>'
+    + '<div class="card" style="max-width:900px;margin:0 auto;">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">'
+    + '<div>'
+    + (foundingYear ? '<p style="margin-bottom:8px;"><strong>Founded:</strong> ' + esc(foundingYear) + '</p>' : '')
+    + '<p style="margin-bottom:8px;"><strong>Type:</strong> ' + (typeLabels[schoolType] || 'Day School') + '</p>'
+    + '<p style="margin-bottom:8px;"><strong>Curriculum:</strong> ' + esc(curriculum) + '</p>'
+    + '<p style="margin-bottom:8px;"><strong>Students:</strong> ' + studentCount + '</p>'
+    + '<p style="margin-bottom:8px;"><strong>Teachers:</strong> ' + teacherCount + '</p>'
+    + '</div><div>'
+    + (aboutText ? '<p style="font-size:14px;color:var(--text-light);line-height:1.6;">' + esc(aboutText) + '</p>' : '<p style="font-size:14px;color:var(--text-light);line-height:1.6;">' + esc(name) + ' is dedicated to providing quality education and nurturing academic excellence.</p>')
+    + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">';
+  var facItems = facilities.length ? facilities : [{name:'Science Labs'},{name:'Library'},{name:'ICT Center'},{name:'Sports Complex'}];
+  for (var fi = 0; fi < facItems.length; fi++) {
+    html += '<span style="padding:4px 12px;background:var(--bg-subtle,#f7fafc);border-radius:20px;font-size:12px;color:var(--text-light);">' + esc(facItems[fi].name || facItems[fi]) + '</span>';
   }
-  html += '</div></div></div></section>';
+  html += '</div></div></div></div></section>';
 
   // Subjects
-  html += '<section><h2><i class="fas fa-book-open"></i> Subjects We Offer</h2><div class="subjects-grid">';
-  Object.keys(SUBJECT_CATEGORIES).forEach(function(cat) {
+  html += '<section class="section-area" id="courses">'
+    + '<div class="section-title"><h2>Subjects We <span>Offer</span></h2><p>Explore our comprehensive range of academic subjects across all grade levels</p></div>'
+    + '<div class="courses-grid">';
+  var catKeys = Object.keys(SUBJECT_CATEGORIES);
+  for (var ci = 0; ci < catKeys.length; ci++) {
+    var cat = catKeys[ci];
     var items = SUBJECT_CATEGORIES[cat];
-    // If school has custom courses, show those instead
     if (courses.length) {
-      var matched = courses.filter(function(c) {
-        return items.some(function(s) { return c.title.toLowerCase().indexOf(s.toLowerCase()) !== -1; });
-      });
-      if (matched.length) items = matched.map(function(m) { return m.title; });
+      var matched = [];
+      for (var mi = 0; mi < courses.length; mi++) {
+        for (var si = 0; si < items.length; si++) {
+          if (courses[mi].title.toLowerCase().indexOf(items[si].toLowerCase()) !== -1) {
+            matched.push(courses[mi].title);
+            break;
+          }
+        }
+      }
+      if (matched.length) items = matched;
     }
-    html += '<div class="subject-category"><h4>' + cat + '</h4><div class="tags">';
-    items.forEach(function(s) { html += '<span>' + esc(s) + '</span>'; });
-    html += '</div></div>';
-  });
+    html += '<div class="course-card"><div class="info-box"><h5>' + esc(cat) + '</h5><span>' + items.join(', ') + '</span></div></div>';
+  }
   html += '</div></section>';
 
-  // CBT Section
-  var cbt = prof.cbtConfig || {};
-  if (cbt.enabled) {
-    html += '<section><h2><i class="fas fa-laptop-code"></i> ' + esc(cbt.title || 'Computer-Based Testing') + '</h2>'
-      + (cbt.headline ? '<p style="text-align:center;color:#64748b;margin-bottom:20px;">' + esc(cbt.headline) + '</p>' : '')
-      + (cbt.description ? '<p style="max-width:700px;margin:0 auto 24px;text-align:center;color:#64748b;font-size:14px;">' + esc(cbt.description) + '</p>' : '');
-    var cbtFeatures = cbt.features || [];
-    if (cbtFeatures.length) {
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">';
-      cbtFeatures.forEach(function(f) {
-        html += '<div style="background:white;border-radius:10px;padding:20px;text-align:center;border:1px solid #e2e8f0;">'
-          + '<div style="font-size:32px;color:' + primary + ';margin-bottom:8px;"><i class="fas ' + esc(f.icon || 'fa-laptop') + '"></i></div>'
-          + '<h4 style="font-size:14px;font-weight:600;color:#1e293b;">' + esc(f.text || '') + '</h4></div>';
-      });
-      html += '</div>';
-    }
-    var cbtExams = cbt.upcomingExams || [];
-    if (cbtExams.length) {
-      html += '<h4 style="font-size:15px;font-weight:600;margin-bottom:12px;"><i class="fas fa-calendar-alt" style="color:' + primary + ';"></i> Upcoming CBT Exams</h4>'
-        + '<div style="max-width:500px;margin:0 auto 24px;display:grid;gap:8px;">';
-      cbtExams.forEach(function(ex) {
-        html += '<div style="display:flex;align-items:center;gap:12px;background:white;border-radius:8px;padding:10px 14px;border:1px solid #e2e8f0;">'
-          + '<div style="width:36px;height:36px;border-radius:6px;background:#eef2ff;display:flex;align-items:center;justify-content:center;color:' + primary + ';font-weight:700;font-size:12px;">' + esc((ex.date || '').split('-').slice(1).join('/')) + '</div>'
-          + '<div style="flex:1;"><strong style="font-size:13px;">' + esc(ex.title || '') + '</strong>'
-          + (ex.className ? '<div style="font-size:11px;color:#64748b;">' + esc(ex.className) + '</div>' : '') + '</div>'
-          + '<div style="font-size:11px;color:#64748b;">' + esc(ex.date || '') + '</div></div>';
-      });
-      html += '</div>';
-    }
-    if (cbt.registrationOpen) {
-      html += '<div style="text-align:center;padding:20px;background:linear-gradient(135deg,' + primary + ',rgba(' + primary.replace('#','').match(/../g).map(function(c){return parseInt(c,16)}).join(',') + ',0.8));border-radius:10px;">'
-        + '<h4 style="font-size:16px;font-weight:700;color:white;margin-bottom:8px;">' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
-        + '<a href="/school/' + encodeURIComponent(slug) + '/login?role=student" style="display:inline-block;background:white;color:' + primary + ';padding:10px 24px;border-radius:6px;font-weight:600;text-decoration:none;"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
-    } else if (cbt.ctaText) {
-      html += '<div style="text-align:center;"><a href="/school/' + encodeURIComponent(slug) + '/login?role=student" style="display:inline-block;background:' + primary + ';color:white;padding:10px 24px;border-radius:6px;font-weight:600;text-decoration:none;"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
-    }
-    html += '</section>';
+  // Announcements
+  html += '<section class="section-area gray-bg" id="news">'
+    + '<div class="section-title"><h2>Latest <span>Announcements</span></h2><p>Stay updated with school news and announcements</p></div>'
+    + '<div class="news-grid">';
+  for (var ai = 0; ai < announcements.length; ai++) {
+    var a = announcements[ai];
+    var date = a.date ? new Date(a.date).toLocaleDateString() : '';
+    html += '<div class="news-card"><div class="img-box news-cat-award"><div class="news-cat-icon"><i class="fas fa-bullhorn"></i></div><span class="news-cat-label">Announcement</span></div>'
+      + '<div class="info-box"><div class="meta"><span><i class="fas fa-calendar-alt"></i> ' + date + '</span></div>'
+      + '<h5>' + esc(a.message || a.title || '') + '</h5></div></div>';
   }
+  html += '</div></section>';
 
   // Testimonials
   if (testimonials.length) {
-    html += '<section><h2><i class="fas fa-quote-right"></i> What Our Community Says</h2><div class="testimonials-grid">';
-    testimonials.forEach(function(t) {
+    html += '<section class="section-area" id="testimonials">'
+      + '<div class="section-title"><h2>What Our <span>Community Says</span></h2><p>Hear from students, parents, and staff</p></div>'
+      + '<div class="testimonials-grid" id="testimonialsGrid">';
+    for (var ti = 0; ti < testimonials.length; ti++) {
+      var t = testimonials[ti];
       var initial = (t.name || '?')[0].toUpperCase();
       html += '<div class="testimonial-card"><p class="quote">"' + esc(t.text || '') + '"</p>'
         + '<div class="author"><div class="avatar">' + initial + '</div><div><div class="name">' + esc(t.name || '') + '</div>'
         + '<div class="role">' + esc(t.role || '') + '</div></div></div></div>';
-    });
+    }
     html += '</div></section>';
+  }
+  // CBT
+  var cbt = prof.cbtConfig || {};
+  if (cbt.enabled) {
+    html += '<section class="section-area" id="cbtSection"><div class="section-title"><h2><span>' + esc(cbt.title || 'Computer-Based Testing') + '</span></h2>'
+      + (cbt.headline ? '<p>' + esc(cbt.headline) + '</p>' : '')
+      + (cbt.description ? '<p>' + esc(cbt.description) + '</p>' : '')
+      + '</div>';
+    var cbtFeatures = cbt.features || [];
+    if (cbtFeatures.length) {
+      html += '<div class="features-enhanced" style="margin-bottom:24px;">';
+      for (var fi2 = 0; fi2 < cbtFeatures.length; fi2++) {
+        var f = cbtFeatures[fi2];
+        html += '<div class="feat-item"><div class="icon"><i class="fas ' + esc(f.icon || 'fa-laptop') + '"></i></div>'
+          + '<h3>' + esc(f.text || '') + '</h3></div>';
+      }
+      html += '</div>';
+    }
+    var cbtExams = cbt.upcomingExams || [];
+    if (cbtExams.length) {
+      html += '<h4 style="font-size:15px;font-weight:600;margin-bottom:12px;text-align:center;color:var(--primary);"><i class="fas fa-calendar-alt"></i> Upcoming CBT Exams</h4>'
+        + '<div class="events-grid" style="max-width:600px;">';
+      for (var ei = 0; ei < cbtExams.length; ei++) {
+        var ex = cbtExams[ei];
+        html += '<div class="event-card"><div class="date-box"><span class="day">' + ((ex.date || '').split('-')[2] || '') + '</span><span class="month">' + ((ex.date || '').split('-')[1] || '') + '</span></div>'
+          + '<div class="event-info"><h4>' + esc(ex.title || '') + '</h4>'
+          + (ex.className ? '<div class="meta"><span><i class="fas fa-users"></i> ' + esc(ex.className) + '</span></div>' : '')
+          + '<p>Date: ' + esc(ex.date || '') + '</p></div></div>';
+      }
+      html += '</div>';
+    }
+    if (cbt.registrationOpen) {
+      html += '<div style="text-align:center;padding:32px;background:linear-gradient(135deg,' + primary + ',' + primary + 'dd);border-radius:var(--radius);max-width:500px;margin:0 auto;">'
+        + '<h4 style="color:white;font-size:16px;font-weight:700;margin-bottom:12px;">' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
+        + '<a href="/school/' + qSlug + '/login?role=student" class="btn btn-primary"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+    } else if (cbt.ctaText) {
+      html += '<div style="text-align:center;"><a href="/school/' + qSlug + '/login?role=student" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+    }
+    html += '</section>';
   }
 
   // CTA
-  html += '<section class="cta-section"><h3>Ready to Get Started?</h3>'
-    + '<p>Access your portal or learn more about ' + esc(name) + '</p>'
-    + '<div class="btns"><a class="primary" href="/school/' + encodeURIComponent(slug) + '/login?role=student"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a class="secondary" href="/school/' + encodeURIComponent(slug) + '/login?role=parent"><i class="fas fa-users"></i> Parent Login</a></div></section>';
+  html += '<section style="background:linear-gradient(135deg,' + primary + ',' + primary + 'cc);padding:48px 20px;text-align:center;color:white;">'
+    + '<div style="max-width:700px;margin:0 auto;">'
+    + '<h2 style="color:white;font-size:28px;margin:0 0 8px;">Ready to Get Started?</h2>'
+    + '<p style="opacity:0.85;font-size:15px;margin:0 0 24px;">Access your portal or learn more about ' + esc(name) + '</p>'
+    + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'
+    + '<a href="/school/' + qSlug + '/login?role=student" class="btn" style="background:white;color:' + primary + ';font-weight:700;"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a href="/school/' + qSlug + '/login?role=parent" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-users"></i> Parent Login</a>'
+    + '<a href="/school/' + qSlug + '/login?role=teacher" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+    + '</div></div></section>';
 
   document.getElementById('app').innerHTML = html;
-  document.title = name + ' — EduVerse School Portal';
 }
 
 function init() {
   var slug = getSlug();
   if (!slug) {
-    document.getElementById('app').innerHTML = '<div class="error-state"><i class="fas fa-map-signs"></i><h2>School Not Found</h2>'
-      + '<p>No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
-      + '<a href="/" class="cta" style="display:inline-block;padding:10px 24px;background:#2563eb;color:white;border-radius:8px;font-weight:600;">Back to Home</a></div>';
+    document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-map-signs" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>School Not Found</h2>'
+      + '<p style="color:var(--text-light);margin-bottom:24px;">No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
+      + '<a href="/" style="display:inline-block;padding:10px 24px;background:var(--primary);color:white;border-radius:8px;font-weight:600;text-decoration:none;">Back to Home</a></div>';
     return;
   }
 
   var tenants = getTenants();
-  var tenant = tenants.find(function(t) { return t.slug === slug; });
+  var tenant = null;
+  for (var ti2 = 0; ti2 < tenants.length; ti2++) {
+    if (tenants[ti2].slug === slug) { tenant = tenants[ti2]; break; }
+  }
   if (!tenant) {
-    document.getElementById('app').innerHTML = '<div class="error-state"><i class="fas fa-school"></i><h2>School Not Found</h2>'
-      + '<p>We couldn\'t find a school with the slug "' + esc(slug) + '". It may not exist or may have been removed.</p>'
-      + '<a href="/schools" style="display:inline-block;padding:10px 24px;background:#2563eb;color:white;border-radius:8px;font-weight:600;"><i class="fas fa-school"></i> Browse Schools</a></div>';
-    document.title = 'School Not Found — EduVerse';
+    document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-school" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>School Not Found</h2>'
+      + '<p style="color:var(--text-light);margin-bottom:24px;">We couldn\'t find a school with the slug "' + esc(slug) + '". It may not exist or may have been removed.</p>'
+      + '<a href="/schools" style="display:inline-block;padding:10px 24px;background:var(--primary);color:white;border-radius:8px;font-weight:600;text-decoration:none;"><i class="fas fa-school"></i> Browse Schools</a></div>';
+    document.title = 'School Not Found - EduVerse';
     return;
   }
 
-  // Set active tenant so portal pages know which school to load
   setActiveTenant(tenant.id);
 
   var portal = getPortalType();
@@ -478,7 +541,6 @@ function init() {
     return;
   }
 
-  // No sub-path → render school portal homepage
   var data = getTenantSchoolData(tenant.id);
   if (!data) {
     data = {
@@ -510,25 +572,24 @@ function init() {
 function routePortal(portal, slug, tenant) {
   var validPortals = ['admin', 'teacher', 'student', 'parent', 'login'];
   if (validPortals.indexOf(portal) === -1) {
-    // Unknown portal → show homepage
     window.location.href = '/school/' + encodeURIComponent(slug);
     return;
   }
-
-  // Set activeTenant so downstream pages load the correct school data
   setActiveTenant(tenant.id);
-
   if (portal === 'login') {
     window.location.href = '/login?school=' + encodeURIComponent(slug);
   } else if (portal === 'admin') {
     window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
   } else {
-    // teacher, student, parent → redirect to index.html with school + portal params
     window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() { try { init(); } catch(e) { document.getElementById('app').innerHTML = '<div class=\"error-state\"><i class=\"fas fa-exclamation-triangle\"></i><h2>Something went wrong</h2><p>' + esc(e.message) + '</p><a href=\"/\" class=\"cta\" style=\"display:inline-block;padding:10px 24px;background:#2563eb;color:white;border-radius:8px;font-weight:600;\">Go Home</a></div>'; } });
+window.addEventListener('load', function() {
+  try { init(); } catch(e) {
+    document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-exclamation-triangle" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>Something went wrong</h2><p style="color:var(--text-light);margin-bottom:24px;">' + esc(e.message) + '</p><a href="/" class="btn btn-primary">Go Home</a></div>';
+  }
+});
 </script>
 </body>
 </html>
