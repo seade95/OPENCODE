@@ -1712,7 +1712,7 @@ function saPwShowRole(tenantId, role) {
     });
 
     var html = '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
-      + '<thead><tr><th>ID</th><th>Name</th><th>Email / Contact</th><th>Username</th><th>Current Password</th><th>Action</th></tr></thead><tbody>';
+      + '<thead><tr><th>ID</th><th>Name</th><th>Email / Contact</th><th>Username</th><th>Current Password</th><th>Actions</th></tr></thead><tbody>';
     if (users.length) {
       users.forEach(function(u, idx) {
         html += '<tr><td><strong>' + esc(u.id) + '</strong></td>'
@@ -1720,10 +1720,20 @@ function saPwShowRole(tenantId, role) {
           + '<td>' + esc(u.email || u.contact || '—') + '</td>'
           + '<td>' + esc(u.username || '—') + '</td>'
           + '<td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;">' + esc(u.password || '—') + '</code></td>'
-          + '<td><button class="btn btn-sm btn-primary" onclick="saPwResetUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(u.id) + '\')"><i class="fas fa-key"></i> Reset</button></td></tr>';
+          + '<td><div style="display:flex;gap:4px;">'
+          + '<button class="btn btn-sm btn-primary" onclick="saPwResetUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(u.id) + '\')"><i class="fas fa-key"></i> Reset</button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saPwEditUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(u.id) + '\')"><i class="fas fa-edit"></i> Edit</button>'
+          + '</div></td></tr>';
       });
     } else {
-      html += '<tr><td colspan="6" class="empty-state" style="padding:30px;text-align:center;color:#718096;">No ' + role + ' found.</td></tr>';
+      var emptyMsg = 'No ' + role + ' found.';
+      if (role === 'admins') {
+        html += '<tr><td colspan="6" class="empty-state" style="padding:30px;text-align:center;color:#718096;">'
+          + emptyMsg + '<br><br><button class="btn btn-primary" onclick="saPwCreateAdmin(\'' + tenantId + '\')"><i class="fas fa-user-shield"></i> Create Admin</button>'
+          + '</td></tr>';
+      } else {
+        html += '<tr><td colspan="6" class="empty-state" style="padding:30px;text-align:center;color:#718096;">' + emptyMsg + '</td></tr>';
+      }
     }
     html += '</tbody></table></div>';
     document.getElementById('saPwRoleData').innerHTML = html;
@@ -1779,4 +1789,103 @@ function saPwConfirmReset(tenantId, role, userId) {
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
 
+function saPwCreateAdmin(tenantId) {
+  var html = '<div style="padding:8px 0;">'
+    + '<h3 style="font-size:18px;margin-bottom:4px;"><i class="fas fa-user-shield"></i> Create Admin</h3>'
+    + '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">Create a new administrator for this school.</p>'
+    + '<div class="form-group"><label>Full Name *</label><input type="text" id="saPwNewName" placeholder="Admin name" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;"></div>'
+    + '<div class="form-group"><label>Email *</label><input type="email" id="saPwNewEmail" placeholder="admin@school.com" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;"></div>'
+    + '<div class="form-group"><label>Password *</label><input type="text" id="saPwNewPassCreate" value="admin123" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:monospace;"></div>'
+    + '<p style="font-size:12px;color:#718096;margin-bottom:16px;">Minimum 4 characters. The admin can change this later.</p>'
+    + '<div class="modal-actions">'
+    + '<button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+    + '<button class="btn btn-success" onclick="saPwConfirmCreateAdmin(\'' + tenantId + '\')"><i class="fas fa-save"></i> Create Admin</button>'
+    + '</div></div>';
+  openModal(html);
+}
 
+function saPwConfirmCreateAdmin(tenantId) {
+  var nameEl = document.getElementById('saPwNewName');
+  var emailEl = document.getElementById('saPwNewEmail');
+  var passEl = document.getElementById('saPwNewPassCreate');
+  if (!nameEl || !emailEl || !passEl) return;
+  var name = nameEl.value.trim();
+  var email = emailEl.value.trim();
+  var pass = passEl.value.trim();
+  if (!name || !email || !pass) { toast('Please fill all fields', 'error'); return; }
+  if (pass.length < 4) { toast('Password must be at least 4 characters', 'error'); return; }
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) { toast('School data not found', 'error'); return; }
+    var d = JSON.parse(raw);
+    if (!d.admins) d.admins = [];
+    // Generate a unique admin ID
+    var ids = d.admins.map(function(a) { var n = parseInt(a.id.replace('ADM', ''), 10); return isNaN(n) ? 0 : n; });
+    var nextId = 'ADM' + String(Math.max(0, ...ids) + 1).padStart(3, '0');
+    d.admins.push({ id: nextId, name: name, email: email, password: pass, role: 'super_admin' });
+    localStorage.setItem(key, JSON.stringify(d));
+    closeModal();
+    logActivity('Created admin: ' + name + ' (' + email + ') in tenant ' + tenantId);
+    toast('Admin <strong>' + esc(name) + '</strong> created successfully!');
+    saPwShowRole(tenantId, 'admins');
+    // Refresh role badge count
+    saPwLoadSchool(tenantId);
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+function saPwEditUser(tenantId, role, userId) {
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) { toast('School data not found', 'error'); return; }
+    var d = JSON.parse(raw);
+    var users = d[role] || [];
+    var user = users.find(function(u) { return u.id === userId; });
+    if (!user) { toast('User not found', 'error'); return; }
+
+    var html = '<div style="padding:8px 0;">'
+      + '<h3 style="font-size:18px;margin-bottom:4px;"><i class="fas fa-edit"></i> Edit ' + esc(role.charAt(0).toUpperCase() + role.slice(1)) + '</h3>'
+      + '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">Editing <strong>' + esc(user.name) + '</strong></p>'
+      + '<div class="form-group"><label>Name *</label><input type="text" id="saPwEditName" value="' + esc(user.name || '') + '" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;"></div>'
+      + '<div class="form-group"><label>' + (role === 'students' ? 'Contact' : 'Email') + ' *</label><input type="text" id="saPwEditEmail" value="' + esc(user.email || user.contact || '') + '" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;"></div>'
+      + '<div class="form-group"><label>Password</label><input type="text" id="saPwEditPass" value="' + esc(user.password || '') + '" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:monospace;"></div>'
+      + '<p style="font-size:12px;color:#718096;margin-bottom:16px;">Minimum 4 characters for password.</p>'
+      + '<div class="modal-actions">'
+      + '<button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+      + '<button class="btn btn-primary" onclick="saPwConfirmEditUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(userId) + '\')"><i class="fas fa-save"></i> Save Changes</button>'
+      + '</div></div>';
+    openModal(html);
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+function saPwConfirmEditUser(tenantId, role, userId) {
+  var nameEl = document.getElementById('saPwEditName');
+  var emailEl = document.getElementById('saPwEditEmail');
+  var passEl = document.getElementById('saPwEditPass');
+  if (!nameEl || !emailEl || !passEl) return;
+  var name = nameEl.value.trim();
+  var email = emailEl.value.trim();
+  var pass = passEl.value.trim();
+  if (!name || !email) { toast('Name and email/contact are required', 'error'); return; }
+  if (pass && pass.length < 4) { toast('Password must be at least 4 characters', 'error'); return; }
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) { toast('Data not found', 'error'); return; }
+    var d = JSON.parse(raw);
+    var users = d[role] || [];
+    var user = users.find(function(u) { return u.id === userId; });
+    if (!user) { toast('User not found', 'error'); return; }
+
+    user.name = name;
+    if (role === 'students') { user.contact = email; } else { user.email = email; }
+    if (pass) user.password = pass;
+    localStorage.setItem(key, JSON.stringify(d));
+
+    closeModal();
+    logActivity('Edited ' + role.slice(0, -1) + ': ' + name + ' in tenant ' + tenantId);
+    toast('User <strong>' + esc(name) + '</strong> updated successfully!');
+    saPwShowRole(tenantId, role);
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
