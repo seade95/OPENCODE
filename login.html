@@ -120,7 +120,7 @@ function doLogin(e) {
 
 function showForcePasswordChange(user, idVal, oldPass) {
   var card = document.querySelector('.login-card');
-  card.innerHTML = '<div class="logo"><img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display=\'none\'"><span>EduVerse</span></div>'
+  card.innerHTML = '<div class="logo"><a href="/" style="text-decoration:none;color:inherit;"><img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display=\'none\'"><span>EduVerse</span></a></div>'
     + '<h1>Change Password</h1>'
     + '<p class="subtitle">This is your first login. Please set a new password.</p>'
     + '<div class="error" id="pwChangeError"></div>'
@@ -189,12 +189,12 @@ function switchRole(el, role) {
         if (titleEl) titleEl.textContent = 'Sign in to ' + tenant.name;
         var logoImg = document.querySelector('.login-card .logo img');
         if (logoImg && tenant.logo) logoImg.src = tenant.logo;
-        // Update back link to point to school portal
-        var backLink = document.querySelector('.back-link a');
-        if (backLink) backLink.href = '/school/' + encodeURIComponent(schoolParam);
         document.title = tenant.name + ' — Sign In';
       }
     } catch(e) {}
+    // Always redirect back arrow to school profile when school param is present
+    var backLink = document.querySelector('.back-link a');
+    if (backLink) backLink.href = '/school/' + encodeURIComponent(schoolParam);
   }
 
   if (roleParam) {
@@ -213,8 +213,10 @@ function switchRole(el, role) {
 
 <div class="login-card">
   <div class="logo">
+    <a href="/" style="text-decoration:none;color:inherit;">
     <img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display='none'">
     <span>EduVerse</span>
+    </a>
   </div>
   <h1>Welcome Back</h1>
   <p class="subtitle">Sign in to your account</p>

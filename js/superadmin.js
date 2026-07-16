@@ -69,6 +69,7 @@ function showSuperAdminDashboard() {
     + '<nav class="sa-nav">'
     + saNavItem('overview', 'chart-pie', 'Overview')
     + saNavItem('schools', 'school', 'Schools')
+    + saNavItem('password-reset', 'key', 'Password Reset')
     + saNavItem('applications', 'clipboard-list', 'Applications')
     + saNavItem('platform', 'cogs', 'Platform Settings')
     + saNavItem('subscriptions', 'credit-card', 'Subscription Plans')
@@ -116,6 +117,7 @@ function renderSaTab(tab) {
   var titles = {
     overview: 'Overview',
     schools: 'Schools Management',
+    'password-reset': 'Password Reset',
     applications: 'Pending Applications',
     platform: 'Platform Settings',
     subscriptions: 'Subscription Plans',
@@ -135,6 +137,7 @@ function renderSaTab(tab) {
   switch (tab) {
     case 'overview': renderSaOverview(content); break;
     case 'schools': renderSaSchools(content); break;
+    case 'password-reset': renderSaPasswordReset(content); break;
     case 'applications': renderSaApplications(content); break;
     case 'platform': renderSaPlatform(content); break;
     case 'subscriptions': renderSaSubscriptions(content); break;
@@ -1653,5 +1656,127 @@ function exportNewsletterCsv() {
 // ===== Update Schools tab with approval controls + password reset =====
 // The schools tab is already rendered by renderSaSchools. 
 // Add password reset and approval toggles per school.
+
+// ===== Password Reset Tab =====
+function renderSaPasswordReset(container) {
+  var tenants = getTenants();
+  var html = '<div class="sa-section"><h3><i class="fas fa-key"></i> Password Reset</h3>'
+    + '<p style="color:var(--text-light);margin-bottom:16px;">Select a school and user role to view and reset passwords.</p>'
+    + '<div class="form-row"><label>Select School</label><select id="saPwSchool" onchange="saPwLoadSchool(this.value)" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;min-width:250px;">'
+    + '<option value="">— Choose a school —</option>';
+  tenants.forEach(function(t) {
+    html += '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>';
+  });
+  html += '</select></div>'
+    + '<div id="saPwSchoolData"></div>'
+    + '</div>';
+  container.innerHTML = html;
+}
+
+function saPwLoadSchool(tenantId) {
+  var target = document.getElementById('saPwSchoolData');
+  if (!target) return;
+  if (!tenantId) { target.innerHTML = ''; return; }
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) { target.innerHTML = '<p class="empty-state"><i class="fas fa-exclamation-circle"></i><p>No data found for this school.</p></p>'; return; }
+    var d = JSON.parse(raw);
+    var roles = [
+      { id: 'admins', label: 'Admin', icon: 'user-shield' },
+      { id: 'teachers', label: 'Teacher', icon: 'chalkboard-teacher' },
+      { id: 'students', label: 'Student', icon: 'user-graduate' },
+      { id: 'parents', label: 'Parent', icon: 'users' }
+    ];
+    var html = '<div class="sa-pw-role-tabs" style="display:flex;gap:6px;margin:16px 0;flex-wrap:wrap;">';
+    roles.forEach(function(r) {
+      var count = (d[r.id] || []).length;
+      html += '<button class="btn btn-sm btn-outline" data-pw-role="' + r.id + '" onclick="saPwShowRole(\'' + tenantId + '\',\'' + r.id + '\')"><i class="fas fa-' + r.icon + '"></i> ' + r.label + ' <span class="badge" style="background:#e2e8f0;color:#475569;">' + count + '</span></button>';
+    });
+    html += '</div><div id="saPwRoleData"></div>';
+    target.innerHTML = html;
+    saPwShowRole(tenantId, 'admins');
+  } catch(e) { toast('Error loading school data: ' + e.message, 'error'); }
+}
+
+function saPwShowRole(tenantId, role) {
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) return;
+    var d = JSON.parse(raw);
+    var users = d[role] || [];
+
+    document.querySelectorAll('.sa-pw-role-tabs .btn').forEach(function(b) {
+      b.className = 'btn btn-sm ' + (b.dataset.pwRole === role ? 'btn-primary' : 'btn-outline');
+    });
+
+    var html = '<div style="overflow-x:auto;"><table class="table" style="width:100%;font-size:13px;">'
+      + '<thead><tr><th>ID</th><th>Name</th><th>Email / Contact</th><th>Username</th><th>Current Password</th><th>Action</th></tr></thead><tbody>';
+    if (users.length) {
+      users.forEach(function(u, idx) {
+        html += '<tr><td><strong>' + esc(u.id) + '</strong></td>'
+          + '<td>' + esc(u.name) + '</td>'
+          + '<td>' + esc(u.email || u.contact || '—') + '</td>'
+          + '<td>' + esc(u.username || '—') + '</td>'
+          + '<td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;">' + esc(u.password || '—') + '</code></td>'
+          + '<td><button class="btn btn-sm btn-primary" onclick="saPwResetUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(u.id) + '\')"><i class="fas fa-key"></i> Reset</button></td></tr>';
+      });
+    } else {
+      html += '<tr><td colspan="6" class="empty-state" style="padding:30px;text-align:center;color:#718096;">No ' + role + ' found.</td></tr>';
+    }
+    html += '</tbody></table></div>';
+    document.getElementById('saPwRoleData').innerHTML = html;
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+function saPwResetUser(tenantId, role, userId) {
+  var key = getTenantDataKey(tenantId);
+  var raw = localStorage.getItem(key);
+  if (!raw) { toast('School data not found', 'error'); return; }
+  var d = JSON.parse(raw);
+  var users = d[role] || [];
+  var user = users.find(function(u) { return u.id === userId; });
+  if (!user) { toast('User not found', 'error'); return; }
+
+  var html = '<div style="padding:8px 0;">'
+    + '<h3 style="font-size:18px;margin-bottom:4px;"><i class="fas fa-key"></i> Reset Password</h3>'
+    + '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">'
+    + 'Resetting password for <strong>' + esc(user.name) + '</strong> (' + esc(role) + ')</p>'
+    + '<div class="form-group"><label>New Password</label>'
+    + '<input type="text" id="saPwNewPass" value="' + esc(user.password || '') + '" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:monospace;"></div>'
+    + '<p style="font-size:12px;color:#718096;margin-bottom:16px;">Enter a new password for this user. Minimum 4 characters.</p>'
+    + '<div class="modal-actions">'
+    + '<button class="btn btn-outline" onclick="closeModal()">Cancel</button>'
+    + '<button class="btn btn-primary" onclick="saPwConfirmReset(\'' + tenantId + '\',\'' + role + '\',\'' + esc(userId) + '\')"><i class="fas fa-save"></i> Save Password</button>'
+    + '</div></div>';
+
+  openModal(html);
+}
+
+function saPwConfirmReset(tenantId, role, userId) {
+  var newPass = document.getElementById('saPwNewPass');
+  if (!newPass) return;
+  var pass = newPass.value.trim();
+  if (!pass || pass.length < 4) { toast('Password must be at least 4 characters', 'error'); return; }
+
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (!raw) { toast('Data not found', 'error'); return; }
+    var d = JSON.parse(raw);
+    var users = d[role] || [];
+    var user = users.find(function(u) { return u.id === userId; });
+    if (!user) { toast('User not found', 'error'); return; }
+
+    user.password = pass;
+    localStorage.setItem(key, JSON.stringify(d));
+
+    closeModal();
+    logActivity('Password reset: ' + user.name + ' (' + role + ') in tenant ' + tenantId);
+    toast('Password for <strong>' + esc(user.name) + '</strong> has been reset successfully!');
+    saPwShowRole(tenantId, role);
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
 
 
