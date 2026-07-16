@@ -29,12 +29,7 @@
 
 [[redirects]]
   from = "/login"
-  to = "/login/student.html"
-  status = 302
-
-[[redirects]]
-  from = "/login/*"
-  to = "/login/:splat.html"
+  to = "/login.html"
   status = 200
 
 [[redirects]]

@@ -39,12 +39,34 @@ body{font-family:Inter,system-ui,-apple-system,sans-serif;background:linear-grad
 .back-link a:hover{color:#2563eb;}
 @media(max-width:400px){.login-card{padding:28px 20px;}.role-tab{font-size:12px;}}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script>
+var FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 var SESSION_KEY = 'eduverse_session';
 var SESSION_VERSION = 1;
 
+var FB_READY = false;
+function initLoginFirebase() {
+  if (typeof firebase !== 'undefined' && !FB_READY) {
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      FB_READY = true;
+    } catch(e) {}
+  }
+}
+initLoginFirebase();
+
 function getData() {
-  // When school param is present, read from that school's data (where SA password resets are saved)
   try {
     var schoolParam = new URLSearchParams(window.location.search).get('school');
     if (schoolParam) {
@@ -106,19 +128,41 @@ function doLogin(e) {
 
   if (!idVal || !pwVal) { showError('Please fill in all fields'); return; }
 
+  if (FB_READY && idVal.indexOf('@') !== -1) {
+    firebase.auth().signInWithEmailAndPassword(idVal, pwVal).then(function(cred) {
+      if (typeof firebaseGetUserProfile === 'function') {
+        return firebaseGetUserProfile(cred.user.uid);
+      }
+      return null;
+    }).then(function(profile) {
+      var schoolParam = new URLSearchParams(window.location.search).get('school');
+      var user = { id: idVal, name: (profile ? profile.name : idVal), email: idVal, username: idVal, password: pwVal };
+      setLSession(roleId, user, schoolParam || null);
+      if (schoolParam) {
+        window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
+      } else {
+        window.location.href = '/?login=' + roleId;
+      }
+    }).catch(function(authErr) {
+      doLocalLogin(roleId, idVal, pwVal);
+    });
+  } else {
+    doLocalLogin(roleId, idVal, pwVal);
+  }
+}
+
+function doLocalLogin(roleId, idVal, pwVal) {
   setTimeout(function() {
     var user = findUser(roleId, idVal, pwVal);
     if (user) {
       var schoolParam = new URLSearchParams(window.location.search).get('school');
       setLSession(roleId, user, schoolParam || null);
-      // Force password change for newly approved admin accounts
       if (roleId === 'admin' && user.forcePasswordChange) {
         showForcePasswordChange(user, idVal, pwVal);
-        btn.disabled = false;
-        btn.innerHTML = 'Sign In';
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').innerHTML = 'Sign In';
         return;
       }
-      // Redirect to school-specific URL if school param is present
       if (schoolParam) {
         window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
       } else {
@@ -126,8 +170,8 @@ function doLogin(e) {
       }
     } else {
       showError('Invalid credentials. Please check your ID/email and password.');
-      btn.disabled = false;
-      btn.innerHTML = 'Sign In';
+      document.getElementById('loginBtn').disabled = false;
+      document.getElementById('loginBtn').innerHTML = 'Sign In';
     }
   }, 400);
 }

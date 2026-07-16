@@ -1,0 +1,281 @@
+(function() {
+  var FB_READY = false;
+  var _fsUnsubscribe = null;
+  var _tenantsUnsub = null;
+  var _configUnsub = null;
+  var _writeTimer = null;
+  var _pendingWrite = false;
+  var _initRetries = 0;
+
+  function initFirebase() {
+    if (typeof firebase === 'undefined') return false;
+    if (FB_READY) return true;
+    try {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      FB_READY = true;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function db() {
+    return firebase.firestore();
+  }
+
+  function getSchoolDocId() {
+    try { return localStorage.getItem('activeTenant') || 'default'; } catch (e) { return 'default'; }
+  }
+
+  function debounceWrite() {
+    if (_writeTimer) clearTimeout(_writeTimer);
+    _pendingWrite = true;
+    _writeTimer = setTimeout(flushWrite, 500);
+  }
+
+  function flushWrite() {
+    _writeTimer = null;
+    if (!_pendingWrite || !FB_READY) return;
+    _pendingWrite = false;
+    var schoolId = getSchoolDocId();
+    var payload = {};
+    try {
+      if (typeof window.data !== 'undefined' && window.data) {
+        var keys = Object.keys(window.data);
+        for (var i = 0; i < keys.length; i++) {
+          payload[keys[i]] = window.data[keys[i]];
+        }
+      } else {
+        return;
+      }
+    } catch (e) { return; }
+    db().collection('schools').doc(schoolId).set(payload, { merge: true }).catch(function(err) {
+      console.warn('Firestore write failed', err);
+      if (typeof toast === 'function') toast('Sync failed — data saved locally', 'error');
+    });
+  }
+
+  function subscribeSchoolData() {
+    if (_fsUnsubscribe) { _fsUnsubscribe(); _fsUnsubscribe = null; }
+    var schoolId = getSchoolDocId();
+    _fsUnsubscribe = db().collection('schools').doc(schoolId).onSnapshot(function(doc) {
+      if (doc.exists) {
+        var remote = doc.data();
+        if (typeof window.data !== 'undefined' && window.data) {
+          var keys = Object.keys(remote);
+          for (var i = 0; i < keys.length; i++) {
+            if (keys[i] !== 'id' && Array.isArray(remote[keys[i]])) {
+              window.data[keys[i]] = remote[keys[i]];
+            }
+          }
+          if (typeof toast === 'function') toast('Data synced from cloud', 'info');
+          if (typeof renderAll === 'function') renderAll();
+        }
+      }
+    }, function(err) {
+      console.warn('Firestore snapshot error', err);
+    });
+  }
+
+  function subscribeTenants() {
+    if (_tenantsUnsub) { _tenantsUnsub(); _tenantsUnsub = null; }
+    _tenantsUnsub = db().collection('tenants').doc('list').onSnapshot(function(doc) {
+      if (doc.exists) {
+        var data = doc.data();
+        if (data && data.tenants) {
+          try { localStorage.setItem('eduverse_tenants', JSON.stringify(data.tenants)); } catch (e) {}
+        }
+      }
+    }, function(err) {
+      console.warn('Tenants snapshot error', err);
+    });
+  }
+
+  function subscribePlatformConfig() {
+    if (_configUnsub) { _configUnsub(); _configUnsub = null; }
+    _configUnsub = db().collection('platform').doc('config').onSnapshot(function(doc) {
+      if (doc.exists) {
+        var data = doc.data();
+        try { localStorage.setItem('eduverse_platform_config', JSON.stringify(data)); } catch (e) {}
+        if (typeof window._platformConfigCache !== 'undefined') {
+          window._platformConfigCache = data;
+        }
+      }
+    }, function(err) {
+      console.warn('Platform config snapshot error', err);
+    });
+  }
+
+  function retryInit() {
+    if (_initRetries > 10) return;
+    _initRetries++;
+    setTimeout(function() {
+      if (initFirebase()) {
+        subscribeSchoolData();
+        subscribeTenants();
+        subscribePlatformConfig();
+      } else {
+        retryInit();
+      }
+    }, 500);
+  }
+
+  initFirebase();
+  if (FB_READY) {
+    subscribeSchoolData();
+    subscribeTenants();
+    subscribePlatformConfig();
+  } else {
+    retryInit();
+  }
+
+  var _origLoadData = window.loadData;
+  if (typeof _origLoadData === 'function') {
+    window.loadData = function() {
+      var result = _origLoadData();
+      return result;
+    };
+  }
+
+  var _origSaveData = window.saveData;
+  if (typeof _origSaveData === 'function') {
+    window.saveData = function() {
+      _origSaveData();
+      debounceWrite();
+    };
+  }
+
+  var _origGetTenants = window.getTenants;
+  if (typeof _origGetTenants === 'function') {
+    window.getTenants = function() {
+      return _origGetTenants();
+    };
+  }
+
+  var _origSaveTenants = window.saveTenants;
+  if (typeof _origSaveTenants === 'function') {
+    window.saveTenants = function(t) {
+      _origSaveTenants(t);
+      if (FB_READY) {
+        db().collection('tenants').doc('list').set({ tenants: t }, { merge: true }).catch(function(err) {
+          console.warn('Firestore tenants save failed', err);
+        });
+      }
+    };
+  }
+
+  var _origGetPlatformConfig = window.getPlatformConfig;
+  if (typeof _origGetPlatformConfig === 'function') {
+    window.getPlatformConfig = function() {
+      return _origGetPlatformConfig();
+    };
+  }
+
+  var _origSavePlatformConfig = window.savePlatformConfig;
+  if (typeof _origSavePlatformConfig === 'function') {
+    window.savePlatformConfig = function(cfg) {
+      _origSavePlatformConfig(cfg);
+      if (FB_READY) {
+        db().collection('platform').doc('config').set(cfg, { merge: true }).catch(function(err) {
+          console.warn('Firestore config save failed', err);
+        });
+      }
+    };
+  }
+
+  var _origGetApplications = window.getApplications;
+  if (typeof _origGetApplications === 'function') {
+    window.getApplications = function() {
+      return _origGetApplications();
+    };
+  }
+
+  var _origSaveApplications = window.saveApplications;
+  if (typeof _origSaveApplications === 'function') {
+    window.saveApplications = function(apps) {
+      _origSaveApplications(apps);
+      if (FB_READY) {
+        db().collection('tenants').doc('list').set({ applications: apps }, { merge: true }).catch(function(err) {
+          console.warn('Firestore applications save failed', err);
+        });
+      }
+    };
+  }
+
+  var _origGetSuperAdmin = window.getSuperAdmin;
+  if (typeof _origGetSuperAdmin === 'function') {
+    window.getSuperAdmin = function() {
+      return _origGetSuperAdmin();
+    };
+  }
+
+  var _origSaveSuperAdmin = window.saveSuperAdmin;
+  if (typeof _origSaveSuperAdmin === 'function') {
+    window.saveSuperAdmin = function(admin) {
+      _origSaveSuperAdmin(admin);
+      if (FB_READY) {
+        db().collection('superAdmin').doc('config').set(admin, { merge: true }).catch(function(err) {
+          console.warn('Firestore super admin save failed', err);
+        });
+      }
+    };
+  }
+
+  window.forceFirestoreSync = function() {
+    flushWrite();
+  };
+
+  window.getFirestoreStatus = function() {
+    return { ready: FB_READY, pendingWrite: _pendingWrite };
+  };
+
+  window.firebaseSignUp = function(email, password, name, role, schoolId, userId) {
+    if (!FB_READY) return Promise.reject(new Error('Firebase not ready'));
+    return firebase.auth().createUserWithEmailAndPassword(email, password).then(function(cred) {
+      return db().collection('users').doc(cred.user.uid).set({
+        email: email,
+        role: role,
+        schoolId: schoolId || 'default',
+        name: name,
+        id: userId || '',
+        displayName: name,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function() {
+        return cred.user;
+      });
+    });
+  };
+
+  window.firebaseSignIn = function(email, password) {
+    if (!FB_READY) return Promise.reject(new Error('Firebase not ready'));
+    return firebase.auth().signInWithEmailAndPassword(email, password);
+  };
+
+  window.firebaseSignOut = function() {
+    if (!FB_READY) return Promise.resolve();
+    return firebase.auth().signOut();
+  };
+
+  window.firebaseGetUserProfile = function(uid) {
+    if (!FB_READY) return Promise.resolve(null);
+    return db().collection('users').doc(uid).get().then(function(doc) {
+      return doc.exists ? doc.data() : null;
+    });
+  };
+
+  window.firebaseCreateUserDocument = function(uid, data) {
+    if (!FB_READY) return Promise.resolve(null);
+    return db().collection('users').doc(uid).set(data, { merge: true });
+  };
+
+  window.firebaseOnAuthChange = function(callback) {
+    if (!FB_READY) return function() {};
+    return firebase.auth().onAuthStateChanged(callback);
+  };
+
+  window.subscribeSchoolData = subscribeSchoolData;
+  window.subscribeTenants = subscribeTenants;
+  window.subscribePlatformConfig = subscribePlatformConfig;
+})();
