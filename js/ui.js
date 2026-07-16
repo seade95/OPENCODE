@@ -32,17 +32,12 @@ function hideError(el) { if (el) { el.textContent = ''; el.style.display = 'none
 // ===== UNIFIED SESSION MANAGER =====
 var SESSION_KEY = 'eduverse_session';
 var SESSION_VERSION = 1;
-var SESSION_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days absolute max lifetime
 function getSession() {
   try {
     var raw = localStorage.getItem(SESSION_KEY);
     if (raw) {
       var s = JSON.parse(raw);
       if (s && s.version === SESSION_VERSION) {
-        if (s.initialLogin && Date.now() - s.initialLogin > SESSION_TTL) {
-          localStorage.removeItem(SESSION_KEY);
-          return null;
-        }
         return s;
       }
     }
@@ -57,7 +52,6 @@ function saveSession(s) {
 }
 function clearSession(type) {
   if (type) {
-    // Clear only the specified session type
     var s = getSession();
     if (s && s.type === type) {
       localStorage.removeItem(SESSION_KEY);
@@ -72,6 +66,8 @@ function clearSession(type) {
     try { sessionStorage.removeItem('lastActivity'); } catch(e) {}
     currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
   }
+  try { localStorage.removeItem('activeTenant'); } catch(e) {}
+  try { localStorage.removeItem('activeTenantKey'); } catch(e) {}
 }
 function setSession(type, user, tenantId) {
   var s = { version: SESSION_VERSION, type: type, user: null, timestamp: Date.now(), tenantId: tenantId || null };
@@ -81,6 +77,13 @@ function setSession(type, user, tenantId) {
 function syncSession() {
   var s = getSession();
   if (!s || !s.type) { clearSession(); return; }
+  // Restore tenant context from session
+  if (s.tenantId && typeof switchTenant === 'function') {
+    var currentTenant = localStorage.getItem('activeTenant');
+    if (s.tenantId !== currentTenant) {
+      try { switchTenant(s.tenantId); } catch(e) {}
+    }
+  }
   // Restore the correct current* variable from the persisted session
   if (s.type === 'admin') {
     if (!currentAdmin && data && data.admins) currentAdmin = data.admins.find(function(a) { return a.id === s.user.id; }) || null;

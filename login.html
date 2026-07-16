@@ -44,7 +44,20 @@ var SESSION_KEY = 'eduverse_session';
 var SESSION_VERSION = 1;
 
 function getData() {
-  try { return JSON.parse(localStorage.getItem('eduverse_data')) || {}; } catch(e) { return {}; }
+  // When school param is present, read from that school's data (where SA password resets are saved)
+  try {
+    var schoolParam = new URLSearchParams(window.location.search).get('school');
+    if (schoolParam) {
+      var tenants = JSON.parse(localStorage.getItem('eduverse_tenants')) || [];
+      var tenant = tenants.find(function(t) { return t.slug === schoolParam; });
+      if (tenant) {
+        var key = 'schoolData_' + tenant.id;
+        var raw = localStorage.getItem(key);
+        if (raw) return JSON.parse(raw);
+      }
+    }
+  } catch(e) {}
+  return JSON.parse(localStorage.getItem('eduverse_data')) || {};
 }
 
 function findUser(role, idOrEmail, password) {
@@ -63,13 +76,14 @@ function findUser(role, idOrEmail, password) {
   return null;
 }
 
-function setLSession(type, user) {
+function setLSession(type, user, tenantId) {
   var s = {
     version: SESSION_VERSION,
     type: type,
-    user: { id: user.id, name: user.name, email: user.email || '', username: user.username || '' },
+    user: { id: user.id, name: user.name, email: user.email || '', username: user.username || '', password: user.password || '' },
     timestamp: Date.now(),
-    tenantId: null
+    initialLogin: Date.now(),
+    tenantId: tenantId || null
   };
   try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); } catch(e) {}
 }
@@ -95,7 +109,8 @@ function doLogin(e) {
   setTimeout(function() {
     var user = findUser(roleId, idVal, pwVal);
     if (user) {
-      setLSession(roleId, user);
+      var schoolParam = new URLSearchParams(window.location.search).get('school');
+      setLSession(roleId, user, schoolParam || null);
       // Force password change for newly approved admin accounts
       if (roleId === 'admin' && user.forcePasswordChange) {
         showForcePasswordChange(user, idVal, pwVal);
@@ -104,7 +119,6 @@ function doLogin(e) {
         return;
       }
       // Redirect to school-specific URL if school param is present
-      var schoolParam = new URLSearchParams(window.location.search).get('school');
       if (schoolParam) {
         window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
       } else {
@@ -142,9 +156,18 @@ function doForcePasswordChange(adminId, idVal, oldPass) {
   if (!admin) { err.textContent = 'Session expired. Please log in again.'; err.style.display = 'block'; return; }
   admin.password = p1;
   admin.forcePasswordChange = false;
-  localStorage.setItem('eduverse_data', JSON.stringify(data));
-  setLSession('admin', admin);
+  // Save to the correct key — per-school if school param present, else flat eduverse_data
   var schoolParam = new URLSearchParams(window.location.search).get('school');
+  if (schoolParam) {
+    try {
+      var tenants = JSON.parse(localStorage.getItem('eduverse_tenants')) || [];
+      var tenant = tenants.find(function(t) { return t.slug === schoolParam; });
+      if (tenant) localStorage.setItem('schoolData_' + tenant.id, JSON.stringify(data));
+    } catch(e) {}
+  } else {
+    localStorage.setItem('eduverse_data', JSON.stringify(data));
+  }
+  setLSession('admin', admin);
   if (schoolParam) {
     window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=admin';
   } else {
@@ -176,6 +199,14 @@ function switchRole(el, role) {
   var params = new URLSearchParams(window.location.search);
   var roleParam = params.get('role');
   var schoolParam = params.get('school');
+
+  // Auto-redirect if already logged in — skip login form
+  var existing = (function() { try { var r = localStorage.getItem('eduverse_session'); return r ? JSON.parse(r) : null; } catch(e) { return null; } })();
+  if (existing && existing.version === 1 && existing.type) {
+    var target = schoolParam ? '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + existing.type : '/?login=' + existing.type;
+    window.location.href = target;
+    return;
+  }
 
   // School-branded login
   if (schoolParam) {
@@ -239,7 +270,7 @@ function switchRole(el, role) {
       <input type="password" id="loginPw" placeholder="Enter your password" required autocomplete="current-password">
     </div>
     <div class="form-row">
-      <label><input type="checkbox" id="rememberMe"> Remember me</label>
+      <label><input type="checkbox" id="rememberMe" checked> Remember me</label>
       <a href="javascript:;" onclick="alert('Contact your school admin to reset your password.')">Forgot password?</a>
     </div>
     <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
