@@ -296,7 +296,11 @@ function renderSaSchools(container) {
           + '</td>'
           + '<td><span class="badge ' + statusBadgeClass + '">' + esc(t.status) + '</span></td>'
           + '<td><div style="display:flex;gap:4px;flex-wrap:wrap;">'
-          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open"><i class="fas fa-external-link-alt"></i></button>'
+          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open Dashboard"><i class="fas fa-external-link-alt"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'admin\')" title="Admin Portal"><i class="fas fa-user-shield"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'teacher\')" title="Teacher Portal"><i class="fas fa-chalkboard-teacher"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'student\')" title="Student Portal"><i class="fas fa-user-graduate"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'parent\')" title="Parent Portal"><i class="fas fa-users"></i></button>'
           + statusActions
           + '<button class="btn btn-sm btn-outline" style="color:#dc2626;" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>'
           + '</div></td></tr>';
@@ -361,6 +365,16 @@ function saDeleteTenant(id) {
   logActivity('Deleted school: ' + t.name);
   renderSaTab('schools');
   toast('School "' + t.name + '" deleted');
+}
+
+function saOpenPortal(slug, portal) {
+  closeSaDashboard();
+  localStorage.setItem('activeTenant', slug);
+  if (portal === 'admin') {
+    window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
+  } else {
+    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
+  }
 }
 
 function _saCheckPremium(tenantId) {
