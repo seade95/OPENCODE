@@ -46,9 +46,16 @@ function migrateLocalStorageToFirestore() {
   var batch = {};
   var count = 0;
 
+  // Check for plain schoolData key (default, no tenant suffix)
+  try {
+    var raw = localStorage.getItem('schoolData');
+    if (raw) { batch['schools/default'] = JSON.parse(raw); count++; console.log('Found schoolData (' + raw.length + ' bytes) → schools/default'); }
+  } catch(e) {}
+
+  // Also check eduverse_data (alternative key name)
   try {
     var raw = localStorage.getItem('eduverse_data');
-    if (raw) { batch['schools/default'] = JSON.parse(raw); count++; }
+    if (raw && !batch['schools/default']) { batch['schools/default'] = JSON.parse(raw); count++; }
   } catch(e) {}
 
   try {

@@ -306,12 +306,13 @@
     var count = 0;
 
     try {
+      var raw = localStorage.getItem('schoolData');
+      if (raw) { batch['schools/default'] = JSON.parse(raw); count++; }
+    } catch(e) {}
+
+    try {
       var raw = localStorage.getItem('eduverse_data');
-      if (raw) {
-        var parsed = JSON.parse(raw);
-        batch['schools/default'] = parsed;
-        count++;
-      }
+      if (raw && !batch['schools/default']) { batch['schools/default'] = JSON.parse(raw); count++; }
     } catch(e) {}
 
     try {
