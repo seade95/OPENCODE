@@ -376,6 +376,75 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
+
+// Inline migration function — works independently of firestore-adapter.js loading
+window.migrateLocalStorageToFirestore = function() {
+  if (typeof firebase === 'undefined' || typeof firebase.firestore === 'undefined') {
+    console.error('Firebase SDK not loaded');
+    if (typeof toast === 'function') toast('Firebase SDK not loaded on this page', 'error');
+    return Promise.reject(new Error('Firebase SDK not loaded'));
+  }
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+  } catch(e) {}
+  var db = firebase.firestore();
+  var batch = {};
+  var count = 0;
+
+  try {
+    var raw = localStorage.getItem('eduverse_data');
+    if (raw) { batch['schools/default'] = JSON.parse(raw); count++; }
+  } catch(e) {}
+
+  try {
+    var tenantsRaw = localStorage.getItem('eduverse_tenants');
+    if (tenantsRaw) {
+      var tenantsList = JSON.parse(tenantsRaw);
+      batch['tenants/list'] = { tenants: tenantsList };
+      count++;
+      for (var i = 0; i < tenantsList.length; i++) {
+        try {
+          var sr = localStorage.getItem('schoolData_' + tenantsList[i].id);
+          if (sr) { batch['schools/' + tenantsList[i].id] = JSON.parse(sr); count++; }
+        } catch(e) {}
+      }
+    }
+  } catch(e) {}
+
+  try {
+    var cr = localStorage.getItem('eduverse_platform_config');
+    if (cr) { batch['platform/config'] = JSON.parse(cr); count++; }
+  } catch(e) {}
+
+  try {
+    var ar = localStorage.getItem('eduverse_school_applications');
+    if (ar) {
+      if (!batch['tenants/list']) batch['tenants/list'] = {};
+      batch['tenants/list'].applications = JSON.parse(ar);
+    }
+  } catch(e) {}
+
+  try {
+    var sar = localStorage.getItem('eduverse_super_admin');
+    if (sar) { batch['superAdmin/config'] = JSON.parse(sar); count++; }
+  } catch(e) {}
+
+  var promises = Object.keys(batch).map(function(key) {
+    var parts = key.split('/');
+    return db.collection(parts[0]).doc(parts[1]).set(batch[key], { merge: true });
+  });
+
+  return Promise.all(promises).then(function() {
+    var msg = 'Migrated ' + count + ' documents to Firestore';
+    console.log(msg);
+    if (typeof toast === 'function') toast(msg, 'success');
+    return count;
+  }).catch(function(err) {
+    console.error('Migration failed:', err);
+    if (typeof toast === 'function') toast('Migration failed: ' + err.message, 'error');
+    throw err;
+  });
+};
 </script>
 </body>
 </html>
