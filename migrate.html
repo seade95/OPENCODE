@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduVerse — Data Migration</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyClI13ldpl8UkwhQQvnB8OG0bKdk9YgdLE",
+  authDomain: "eduverse-508a7.firebaseapp.com",
+  projectId: "eduverse-508a7",
+  storageBucket: "eduverse-508a7.firebasestorage.app",
+  messagingSenderId: "500067704675",
+  appId: "1:500067704675:web:22e033dd77d39580dabd56",
+  measurementId: "G-M5DYNJHW44"
+};
+try { firebase.initializeApp(FIREBASE_CONFIG); } catch(e) {}
+
+function migrateLocalStorageToFirestore() {
+  var db = firebase.firestore();
+  var batch = {};
+  var count = 0;
+
+  try {
+    var raw = localStorage.getItem('eduverse_data');
+    if (raw) { batch['schools/default'] = JSON.parse(raw); count++; }
+  } catch(e) {}
+
+  try {
+    var tenantsRaw = localStorage.getItem('eduverse_tenants');
+    if (tenantsRaw) {
+      var tenantsList = JSON.parse(tenantsRaw);
+      batch['tenants/list'] = { tenants: tenantsList };
+      count++;
+      for (var i = 0; i < tenantsList.length; i++) {
+        try {
+          var sr = localStorage.getItem('schoolData_' + tenantsList[i].id);
+          if (sr) { batch['schools/' + tenantsList[i].id] = JSON.parse(sr); count++; }
+        } catch(e) {}
+      }
+    }
+  } catch(e) {}
+
+  try {
+    var cr = localStorage.getItem('eduverse_platform_config');
+    if (cr) { batch['platform/config'] = JSON.parse(cr); count++; }
+  } catch(e) {}
+
+  try {
+    var ar = localStorage.getItem('eduverse_school_applications');
+    if (ar) { batch['tenants/list'].applications = JSON.parse(ar); }
+  } catch(e) {}
+
+  try {
+    var sar = localStorage.getItem('eduverse_super_admin');
+    if (sar) { batch['superAdmin/config'] = JSON.parse(sar); count++; }
+  } catch(e) {}
+
+  var promises = Object.keys(batch).map(function(key) {
+    var parts = key.split('/');
+    return db.collection(parts[0]).doc(parts[1]).set(batch[key], { merge: true });
+  });
+
+  return Promise.all(promises).then(function() {
+    var msg = 'Migrated ' + count + ' documents to Firestore';
+    document.getElementById('status').textContent = msg;
+    document.getElementById('status').style.color = '#059669';
+    return count;
+  }).catch(function(err) {
+    document.getElementById('status').textContent = 'Migration failed: ' + err.message;
+    document.getElementById('status').style.color = '#dc2626';
+    throw err;
+  });
+}
+</script>
+<style>
+body{font-family:Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f0f4f8;padding:20px;}
+.card{background:#fff;border-radius:16px;padding:40px;max-width:500px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.08);text-align:center;}
+h1{font-size:22px;color:#1e293b;margin-bottom:8px;}
+p{color:#64748b;font-size:14px;margin-bottom:24px;}
+.btn{padding:12px 32px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;background:#2563eb;color:#fff;}
+.btn:hover{background:#1d4ed8;}
+#status{margin-top:20px;font-size:14px;padding:12px;border-radius:8px;background:#f8fafc;}
+small{display:block;margin-top:16px;color:#94a3b8;font-size:12px;}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1><i class="fas fa-database"></i> Data Migration</h1>
+  <p>Migrate all localStorage data to Firestore</p>
+  <button class="btn" onclick="migrateLocalStorageToFirestore().then(function(c){console.log('Done:',c)})">Start Migration</button>
+  <div id="status">Ready</div>
+  <small>This page is standalone — no other scripts loaded</small>
+</div>
+</body>
+</html>
