@@ -19,6 +19,28 @@ var FIREBASE_CONFIG = {
 };
 try { firebase.initializeApp(FIREBASE_CONFIG); } catch(e) {}
 
+function scanLocalStorage() {
+  var keys = Object.keys(localStorage).filter(function(k) {
+    return k.startsWith('eduverse') || k.startsWith('schoolData');
+  });
+  var info = keys.length === 0 ? 'No matching keys found' : '';
+  var el = document.getElementById('scanResult');
+  el.innerHTML = '';
+  keys.forEach(function(k) {
+    try {
+      var val = localStorage.getItem(k);
+      var size = (new Blob([val])).size;
+      var preview = val.length > 120 ? val.substring(0, 120) + '...' : val;
+      el.innerHTML += '<div style="text-align:left;padding:6px 0;border-bottom:1px solid #e2e8f0;"><strong>' + k + '</strong> (' + size + ' bytes)<br><code style="font-size:11px;color:#64748b;word-break:break-all;">' + preview + '</code></div>';
+    } catch(e) {}
+  });
+  if (keys.length > 0) {
+    el.innerHTML = '<div style="text-align:left;margin-bottom:8px;font-weight:600;color:#1e293b;">Found ' + keys.length + ' key(s):</div>' + el.innerHTML;
+  } else {
+    el.innerHTML = '<div style="color:#dc2626;">No eduverse or schoolData keys found in localStorage</div>';
+  }
+}
+
 function migrateLocalStorageToFirestore() {
   var db = firebase.firestore();
   var batch = {};
@@ -91,7 +113,9 @@ small{display:block;margin-top:16px;color:#94a3b8;font-size:12px;}
 <div class="card">
   <h1><i class="fas fa-database"></i> Data Migration</h1>
   <p>Migrate all localStorage data to Firestore</p>
+  <button class="btn" onclick="scanLocalStorage()" style="background:#64748b;margin-right:8px;">Scan localStorage</button>
   <button class="btn" onclick="migrateLocalStorageToFirestore().then(function(c){console.log('Done:',c)})">Start Migration</button>
+  <div id="scanResult" style="margin-top:12px;font-size:13px;"></div>
   <div id="status">Ready</div>
   <small>This page is standalone — no other scripts loaded</small>
 </div>
