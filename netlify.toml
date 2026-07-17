@@ -33,6 +33,16 @@
   status = 200
 
 [[redirects]]
+  from = "/superadmin"
+  to = "/superadmin.html"
+  status = 200
+
+[[redirects]]
+  from = "/apply"
+  to = "/apply.html"
+  status = 200
+
+[[redirects]]
   from = "/pricing"
   to = "/pricing.html"
   status = 200
@@ -75,4 +85,10 @@
 [[redirects]]
   from = "/school/*"
   to = "/school-portal.html"
+  status = 200
+
+# SPA catch-all — serve index.html for unmatched routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200

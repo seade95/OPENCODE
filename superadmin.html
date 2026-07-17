@@ -376,8 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
-
-// Inline migration function — works independently of firestore-adapter.js loading
+</script>
+<script>
 window.migrateLocalStorageToFirestore = function() {
   if (typeof firebase === 'undefined' || typeof firebase.firestore === 'undefined') {
     console.error('Firebase SDK not loaded');
