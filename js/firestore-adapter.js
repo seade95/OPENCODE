@@ -130,9 +130,11 @@
     }, 500);
   }
 
+  var IS_ADMIN_PAGE = window.location.pathname.indexOf('admin.html') !== -1;
+
   initFirebase();
   if (FB_READY) {
-    subscribeSchoolData();
+    if (!IS_ADMIN_PAGE) subscribeSchoolData();
     subscribeTenants();
     subscribePlatformConfig();
     firebase.auth().onAuthStateChanged(function(user) {
