@@ -2,51 +2,57 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ===== Super Admin — only the person whose email matches can access =====
-    match /superAdmin/{doc} {
-      allow read, write: if request.auth != null && (
-        request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
-      );
-    }
-
-    // ===== Platform config — readable by all authenticated, writable by super admin =====
-    match /platform/{doc} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && (
-        request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
-      );
-    }
-
-    // ===== Tenants list — readable by all authenticated, writable by super admin =====
-    match /tenants/{doc} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && (
-        request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
-      );
-    }
-
-    // ===== Users collection — each user reads/writes their own doc =====
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow read: if request.auth != null && (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
-      );
-    }
-
-    // ===== Schools — role-based access =====
-    match /schools/{schoolId} {
-      allow read, write: if request.auth != null && (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
-      );
-      allow read: if request.auth != null && (
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'student']
-      );
-    }
-
+    // ================================================================
+    // SETUP MODE — open for 30 days (until 2026-08-16)
+    // After setup is complete, replace with the production rules below.
+    // ================================================================
     match /{document=**} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
+
+    // ================================================================
+    // PRODUCTION RULES — paste these after setup is complete:
+    // ================================================================
+    // match /superAdmin/{doc} {
+    //   allow read, write: if request.auth != null && (
+    //     request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
+    //   );
+    // }
+    //
+    // match /platform/{doc} {
+    //   allow read: if request.auth != null;
+    //   allow write: if request.auth != null && (
+    //     request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
+    //   );
+    // }
+    //
+    // match /tenants/{doc} {
+    //   allow read: if request.auth != null;
+    //   allow write: if request.auth != null && (
+    //     request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
+    //   );
+    // }
+    //
+    // match /users/{userId} {
+    //   allow read, write: if request.auth != null && request.auth.uid == userId;
+    //   allow read: if request.auth != null && (
+    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
+    //   );
+    // }
+    //
+    // match /schools/{schoolId} {
+    //   allow read, write: if request.auth != null && (
+    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId &&
+    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
+    //   );
+    //   allow read: if request.auth != null && (
+    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId &&
+    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'student']
+    //   );
+    // }
+    //
+    // match /{document=**} {
+    //   allow read, write: if false;
+    // }
   }
 }
