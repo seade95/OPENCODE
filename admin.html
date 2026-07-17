@@ -887,6 +887,18 @@
 <script src="js/subdomain-middleware.js"></script>
 <script src="js/path-router.js"></script>
 <script src="js/feature-upgrades.js"></script>
+<!-- Set tenant context from URL immediately, BEFORE app.js calls loadData() -->
+<script>
+try {
+  var _sp = new URLSearchParams(window.location.search).get('school');
+  if (_sp) {
+    var _tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+    var _t = _tenants.find(function(x) { return x.slug === _sp; });
+    if (_t) { localStorage.setItem('activeTenant', _t.id); localStorage.setItem('activeTenantKey', 'schoolData_' + _t.id); }
+    else { localStorage.setItem('activeTenant', _sp); localStorage.setItem('activeTenantKey', 'schoolData_' + _sp); }
+  }
+} catch(e) {}
+</script>
 <script src="js/app.js"></script>
 <!-- Firebase SDK — enables cross-platform sync -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>

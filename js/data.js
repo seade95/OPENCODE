@@ -489,11 +489,19 @@ function getDefaultData() {
 
 function loadData() {
   try {
-    const dataKey = getDataKey();
-    const raw = localStorage.getItem(dataKey);
+    var dataKey = getDataKey();
+    var raw = localStorage.getItem(dataKey);
+    if (!raw) {
+      // Fallback: try the default schoolData key (no tenant suffix)
+      var altKey = DATA_KEY;
+      if (dataKey !== altKey) {
+        var altRaw = localStorage.getItem(altKey);
+        if (altRaw) { raw = altRaw; }
+      }
+    }
     if (raw) {
-      const parsed = JSON.parse(raw);
-      const defaults = getDefaultData();
+      var parsed = JSON.parse(raw);
+      var defaults = getDefaultData();
       for (const dk of Object.keys(defaults)) {
         const isDefaultArray = Array.isArray(defaults[dk]);
         const isParsedArray = Array.isArray(parsed[dk]);

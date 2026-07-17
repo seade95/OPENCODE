@@ -66,8 +66,6 @@ function clearSession(type) {
     try { sessionStorage.removeItem('lastActivity'); } catch(e) {}
     currentAdmin = null; currentStudent = null; currentTeacher = null; currentParent = null;
   }
-  try { localStorage.removeItem('activeTenant'); } catch(e) {}
-  try { localStorage.removeItem('activeTenantKey'); } catch(e) {}
 }
 function setSession(type, user, tenantId) {
   var s = { version: SESSION_VERSION, type: type, user: null, timestamp: Date.now(), tenantId: tenantId || null };
