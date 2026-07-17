@@ -88,7 +88,7 @@
         <a href="#news"><i class="fas fa-calendar-alt"></i> Announcements</a>
       </div>
     </li>
-    <li><a href="#" class="btn-portal" id="adminLink"><i class="fas fa-user-shield"></i> Admin</a></li>
+    <li><a href="javascript:;" class="btn-portal" onclick="redirectToPortal(slug, 'admin')"><i class="fas fa-user-shield"></i> Admin</a></li>
     <li><a href="javascript:;" onclick="showEduverseLogin()" class="btn-portal" style="background:var(--accent);color:var(--primary-dark);font-weight:700;"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
     <li><a href="javascript:;" onclick="toggleDarkMode()" style="color:rgba(255,255,255,0.7);padding:8px 12px;" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
   </ul>
@@ -134,19 +134,19 @@
         <li><a href="#portals">Portals</a></li>
         <li><a href="#courses">Subjects</a></li>
         <li><a href="#news">Announcements</a></li>
-        <li><a href="admin.html">Admin Portal</a></li>
-        <li><a href="#" onclick="showTeacherLogin();return false">Teacher Portal</a></li>
-        <li><a href="#" onclick="showStudentLogin();return false">Student Portal</a></li>
-        <li><a href="#" onclick="showAdmissionPortal();return false">Admission Portal</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admin')">Admin Portal</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'teacher')">Teacher Portal</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'student')">Student Portal</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'cbt')">Admission Portal</a></li>
       </ul>
     </div>
     <div class="footer-widget">
       <h5>Portals</h5>
       <ul>
-        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
-        <li><a href="#" onclick="showTeacherLogin();return false"><i class="fas fa-angle-right"></i> Teachers</a></li>
-        <li><a href="#" onclick="showStudentLogin();return false"><i class="fas fa-angle-right"></i> Students</a></li>
-        <li><a href="#" onclick="showParentLogin();return false"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admin')"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'teacher')"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'student')"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'parent')"><i class="fas fa-angle-right"></i> Parents</a></li>
         <li><a href="#" onclick="showAlumniPortal();return false"><i class="fas fa-angle-right"></i> Alumni</a></li>
       </ul>
     </div>
@@ -205,6 +205,29 @@ try {
     if (di) di.className = 'fas fa-sun';
   }
 } catch(e) {}
+
+function redirectToPortal(slug, portal) {
+  localStorage.setItem('activeTenant', slugToTenantId(slug));
+  if (portal === 'cbt') {
+    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=student';
+  } else if (portal === 'admin') {
+    window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
+  } else {
+    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
+  }
+}
+
+function slugToTenantId(slug) {
+  try {
+    var tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+    var t = tenants.find(function(x) { return x.slug === slug; });
+    return t ? t.id : slug;
+  } catch(e) { return slug; }
+}
+
+function setActiveTenant(id) {
+  try { localStorage.setItem('activeTenant', id); localStorage.setItem('activeTenantKey', 'schoolData_' + id); } catch(e) {}
+}
 
 function showEduverseLogin() { window.location.href = '/login'; }
 function showSchoolSelector() { window.location.href = '/schools'; }
@@ -361,22 +384,22 @@ function renderPortal(slug, tenant, data) {
   html += '<section class="section-area" id="portals">'
     + '<div class="section-title"><h2>Choose Your <span>Portal</span></h2><p>Select the portal that matches your role to get started</p></div>'
     + '<div class="services-grid">'
-    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/admin\'">'
+    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'admin\')">'
     + '<div class="img-box" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-shield" style="font-size:56px;color:var(--accent);"></i></div>'
     + '<div class="info-box"><h4>Admin Portal</h4><p>Full access to manage students, teachers, fees, results, and attendance.</p></div></div>'
-    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/teacher\'">'
+    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')">'
     + '<div class="img-box" style="background:linear-gradient(135deg,#16a34a,#15803d);display:flex;align-items:center;justify-content:center;"><i class="fas fa-chalkboard-teacher" style="font-size:56px;color:white;"></i></div>'
     + '<div class="info-box"><h4>Teacher Portal</h4><p>Manage your class, upload assignments, track student progress and attendance.</p></div></div>'
-    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/student\'">'
+    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')">'
     + '<div class="img-box" style="background:linear-gradient(135deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-graduate" style="font-size:56px;color:var(--primary-dark);"></i></div>'
     + '<div class="info-box"><h4>Student Portal</h4><p>View your results, assignments, fee status, attendance, and activities.</p></div></div>'
-    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/parent\'">'
+    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')">'
     + '<div class="img-box" style="background:linear-gradient(135deg,#06b6d4,#0891b2);display:flex;align-items:center;justify-content:center;"><i class="fas fa-users" style="font-size:56px;color:white;"></i></div>'
     + '<div class="info-box"><h4>Parent Portal</h4><p>Monitor your child\'s academic progress, attendance, fees, and activities.</p></div></div>'
     + '<div class="service-card" onclick="window.location.href=\'/login/admission.html?school=' + qSlug + '\'">'
     + '<div class="img-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;"><i class="fas fa-graduation-cap" style="font-size:56px;color:white;"></i></div>'
     + '<div class="info-box"><h4>Admission Portal</h4><p>Apply for admission, explore programs, and track your application status.</p></div></div>'
-    + '<div class="service-card" onclick="window.location.href=\'/school/' + qSlug + '/login?role=student\'">'
+    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')">'
     + '<div class="img-box" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);display:flex;align-items:center;justify-content:center;"><i class="fas fa-laptop-code" style="font-size:56px;color:white;"></i></div>'
     + '<div class="info-box"><h4>CBT Portal</h4><p>Take computer-based tests and exams online with real-time grading and results.</p></div></div>'
     + '</div></section>';
@@ -485,9 +508,9 @@ function renderPortal(slug, tenant, data) {
     if (cbt.registrationOpen) {
       html += '<div style="text-align:center;padding:32px;background:linear-gradient(135deg,' + primary + ',' + primary + 'dd);border-radius:var(--radius);max-width:500px;margin:0 auto;">'
         + '<h4 style="color:white;font-size:16px;font-weight:700;margin-bottom:12px;">' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
-        + '<a href="/school/' + qSlug + '/login?role=student" class="btn btn-primary"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+        + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
     } else if (cbt.ctaText) {
-      html += '<div style="text-align:center;"><a href="/school/' + qSlug + '/login?role=student" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+      html += '<div style="text-align:center;"><a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
     }
     html += '</section>';
   }
@@ -498,16 +521,17 @@ function renderPortal(slug, tenant, data) {
     + '<h2 style="color:white;font-size:28px;margin:0 0 8px;">Ready to Get Started?</h2>'
     + '<p style="opacity:0.85;font-size:15px;margin:0 0 24px;">Access your portal or learn more about ' + esc(name) + '</p>'
     + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'
-    + '<a href="/school/' + qSlug + '/login?role=student" class="btn" style="background:white;color:' + primary + ';font-weight:700;"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a href="/school/' + qSlug + '/login?role=parent" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-users"></i> Parent Login</a>'
-    + '<a href="/school/' + qSlug + '/login?role=teacher" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')" class="btn" style="background:white;color:' + primary + ';font-weight:700;"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-users"></i> Parent Login</a>'
+    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
     + '</div></div></section>';
 
   document.getElementById('app').innerHTML = html;
 }
 
 function init() {
-  var slug = getSlug();
+  window.slug = getSlug();
+  var slug = window.slug;
   if (!slug) {
     document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-map-signs" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>School Not Found</h2>'
       + '<p style="color:var(--text-light);margin-bottom:24px;">No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
@@ -565,19 +589,8 @@ function init() {
 }
 
 function routePortal(portal, slug, tenant) {
-  var validPortals = ['admin', 'teacher', 'student', 'parent', 'login'];
-  if (validPortals.indexOf(portal) === -1) {
-    window.location.href = '/school/' + encodeURIComponent(slug);
-    return;
-  }
   setActiveTenant(tenant.id);
-  if (portal === 'login') {
-    window.location.href = '/login?school=' + encodeURIComponent(slug);
-  } else if (portal === 'admin') {
-    window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
-  } else {
-    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
-  }
+  redirectToPortal(slug, portal);
 }
 
 window.addEventListener('load', function() {
