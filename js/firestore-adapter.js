@@ -131,12 +131,20 @@
   }
 
   var IS_ADMIN_PAGE = window.location.pathname.indexOf('admin.html') !== -1;
+  var IS_SUPERADMIN_PAGE = window.location.pathname.indexOf('superadmin.html') !== -1;
+
+  // Flush pending writes before page closes (regardless of Firebase ready state)
+  window.addEventListener('beforeunload', function() { if (_pendingWrite) flushWrite(); });
+  window.addEventListener('pagehide', function() { if (_pendingWrite) flushWrite(); });
 
   initFirebase();
   if (FB_READY) {
-    if (!IS_ADMIN_PAGE) subscribeSchoolData();
+    if (!IS_ADMIN_PAGE && !IS_SUPERADMIN_PAGE) subscribeSchoolData();
     subscribeTenants();
     subscribePlatformConfig();
+    // Flush pending writes before page closes
+    window.addEventListener('beforeunload', function() { if (_pendingWrite) flushWrite(); });
+    window.addEventListener('pagehide', function() { if (_pendingWrite) flushWrite(); });
     firebase.auth().onAuthStateChanged(function(user) {
       if (!user) {
         var s = null;
