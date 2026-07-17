@@ -283,6 +283,9 @@ function adminSignup() {
   const admin = { id: 'ADM' + Date.now(), name: name, email: email, password: pass };
   data.admins.push(admin);
   saveData();
+  if (typeof tryFirebaseProvision === 'function') {
+    tryFirebaseProvision(email, pass, name, 'admin', null, admin.id);
+  }
   hideError(errEl);
   nameEl.value = '';
   emailEl.value = '';

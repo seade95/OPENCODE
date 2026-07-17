@@ -163,6 +163,9 @@ function saveStudent() {
   data.students.push({ id, name, class: cls, contact, username: username || name.toLowerCase().replace(/\s+/g, '.'), password: password || 'stu123' });
   saveData();
   logActivity(`Added student ${name} (${id})`);
+  if (typeof tryFirebaseProvision === 'function' && contact && contact.indexOf('@') !== -1) {
+    tryFirebaseProvision(contact, password || 'stu123', name, 'student', null, id);
+  }
   closeModal();
   renderStudents();
   toast(`Student ${name} added successfully`);
@@ -371,6 +374,9 @@ function saveTeacher() {
   data.teachers.push({ id, name, email, password, username: username || name.toLowerCase().replace(/\s+/g, '.'), assignedClass });
   saveData();
   logActivity(`Added teacher ${name} (${id}) for ${assignedClass}`);
+  if (typeof tryFirebaseProvision === 'function' && email) {
+    tryFirebaseProvision(email, password, name, 'teacher', null, id);
+  }
   closeModal();
   renderTeachers();
   toast(`Teacher ${name} added`);

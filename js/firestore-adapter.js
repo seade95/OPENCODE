@@ -64,6 +64,14 @@
       if (doc.exists) {
         var remote = doc.data();
         if (typeof window.data !== 'undefined' && window.data) {
+          var currentUserRole = null;
+          try {
+            var raw = localStorage.getItem('eduverse_session');
+            if (raw) {
+              var s = JSON.parse(raw);
+              if (s && s.type) currentUserRole = s.type;
+            }
+          } catch(e) {}
           var keys = Object.keys(remote);
           for (var i = 0; i < keys.length; i++) {
             if (keys[i] !== 'id' && Array.isArray(remote[keys[i]])) {
@@ -127,6 +135,16 @@
     subscribeSchoolData();
     subscribeTenants();
     subscribePlatformConfig();
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) {
+        var s = null;
+        try { s = JSON.parse(localStorage.getItem('eduverse_session')); } catch(e) {}
+        if (s && s.user && s.user.email) {
+          toast('Session expired — please sign in again', 'warning');
+          clearSession();
+        }
+      }
+    });
   } else {
     retryInit();
   }
@@ -278,4 +296,108 @@
   window.subscribeSchoolData = subscribeSchoolData;
   window.subscribeTenants = subscribeTenants;
   window.subscribePlatformConfig = subscribePlatformConfig;
+
+  window.migrateLocalStorageToFirestore = function() {
+    if (!FB_READY) {
+      if (typeof toast === 'function') toast('Firebase not ready yet', 'error');
+      return Promise.reject(new Error('Firebase not ready'));
+    }
+    var batch = {};
+    var count = 0;
+
+    try {
+      var raw = localStorage.getItem('eduverse_data');
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        batch['schools/default'] = parsed;
+        count++;
+      }
+    } catch(e) {}
+
+    try {
+      var tenantsRaw = localStorage.getItem('eduverse_tenants');
+      if (tenantsRaw) {
+        var tenantsList = JSON.parse(tenantsRaw);
+        batch['tenants/list'] = { tenants: tenantsList };
+        count++;
+        for (var i = 0; i < tenantsList.length; i++) {
+          var t = tenantsList[i];
+          try {
+            var schoolRaw = localStorage.getItem('schoolData_' + t.id);
+            if (schoolRaw) {
+              batch['schools/' + t.id] = JSON.parse(schoolRaw);
+              count++;
+            }
+          } catch(e) {}
+        }
+      }
+    } catch(e) {}
+
+    try {
+      var configRaw = localStorage.getItem('eduverse_platform_config');
+      if (configRaw) {
+        batch['platform/config'] = JSON.parse(configRaw);
+        count++;
+      }
+    } catch(e) {}
+
+    try {
+      var appsRaw = localStorage.getItem('eduverse_school_applications');
+      if (appsRaw) {
+        if (!batch['tenants/list']) batch['tenants/list'] = {};
+        batch['tenants/list'].applications = JSON.parse(appsRaw);
+      }
+    } catch(e) {}
+
+    try {
+      var saRaw = localStorage.getItem('eduverse_super_admin');
+      if (saRaw) {
+        batch['superAdmin/config'] = JSON.parse(saRaw);
+        count++;
+      }
+    } catch(e) {}
+
+    var promises = Object.keys(batch).map(function(key) {
+      var parts = key.split('/');
+      return db().collection(parts[0]).doc(parts[1]).set(batch[key], { merge: true });
+    });
+
+    return Promise.all(promises).then(function() {
+      if (typeof toast === 'function') toast('Migrated ' + count + ' documents to Firestore', 'success');
+      return count;
+    }).catch(function(err) {
+      if (typeof toast === 'function') toast('Migration failed: ' + err.message, 'error');
+      throw err;
+    });
+  };
+
+  window.getCurrentUserRole = function() {
+    try {
+      var raw = localStorage.getItem('eduverse_session');
+      if (raw) {
+        var s = JSON.parse(raw);
+        return s && s.type ? s.type : null;
+      }
+    } catch(e) {}
+    return null;
+  };
+
+  window.tryFirebaseProvision = function(email, password, name, role, schoolId, userId) {
+    if (!FB_READY || !email || !password) return;
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(cred) {
+      return db().collection('users').doc(cred.user.uid).set({
+        email: email,
+        role: role || 'student',
+        schoolId: schoolId || getSchoolDocId(),
+        name: name || email,
+        id: userId || email,
+        displayName: name || email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }).catch(function(err) {
+      if (err.code !== 'email-already-in-use') {
+        console.warn('Firebase provision failed for', email, err);
+      }
+    });
+  };
 })();

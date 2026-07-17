@@ -1827,6 +1827,9 @@ function saPwConfirmCreateAdmin(tenantId) {
     localStorage.setItem(key, JSON.stringify(d));
     closeModal();
     logActivity('Created admin: ' + name + ' (' + email + ') in tenant ' + tenantId);
+    if (typeof tryFirebaseProvision === 'function') {
+      tryFirebaseProvision(email, pass, name, 'admin', tenantId, nextId);
+    }
     toast('Admin <strong>' + esc(name) + '</strong> created successfully!');
     saPwShowRole(tenantId, 'admins');
     // Refresh role badge count
