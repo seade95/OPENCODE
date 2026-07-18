@@ -58,6 +58,7 @@
   }
 
   function subscribeSchoolData() {
+    if (IS_ADMIN_PAGE || IS_SUPERADMIN_PAGE) return;
     if (_fsUnsubscribe) { _fsUnsubscribe(); _fsUnsubscribe = null; }
     var schoolId = getSchoolDocId();
     _fsUnsubscribe = db().collection('schools').doc(schoolId).onSnapshot(function(doc) {
@@ -121,7 +122,7 @@
     _initRetries++;
     setTimeout(function() {
       if (initFirebase()) {
-        subscribeSchoolData();
+        if (!IS_ADMIN_PAGE && !IS_SUPERADMIN_PAGE) subscribeSchoolData();
         subscribeTenants();
         subscribePlatformConfig();
       } else {
