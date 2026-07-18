@@ -163,6 +163,23 @@
   if (typeof _origLoadData === 'function') {
     window.loadData = function() {
       var result = _origLoadData();
+      // If result has no real data (empty/default), try the other key
+      if (result && (!result.students || result.students.length === 0 || result.students[0] && result.students[0].id && result.students[0].id.indexOf('STU') === 0)) {
+        try {
+          var activeT = localStorage.getItem('activeTenant');
+          var defaultRaw = localStorage.getItem('schoolData');
+          var tenantRaw = activeT ? localStorage.getItem('schoolData_' + activeT) : null;
+          var betterRaw = null;
+          if (activeT && tenantRaw) betterRaw = tenantRaw;
+          else if (defaultRaw) betterRaw = defaultRaw;
+          if (betterRaw) {
+            var better = JSON.parse(betterRaw);
+            if (better && better.students && better.students.length > (result.students || []).length) {
+              result = better;
+            }
+          }
+        } catch(e) {}
+      }
       return result;
     };
   }
@@ -171,6 +188,13 @@
   if (typeof _origSaveData === 'function') {
     window.saveData = function() {
       _origSaveData();
+      // Save to the default key too for redundancy
+      try {
+        var activeT = localStorage.getItem('activeTenant');
+        if (activeT && window.data) {
+          localStorage.setItem('schoolData', JSON.stringify(window.data));
+        }
+      } catch(e) {}
       debounceWrite();
     };
   }
