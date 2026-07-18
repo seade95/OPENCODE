@@ -20,7 +20,6 @@ var FIREBASE_CONFIG = {
 try { firebase.initializeApp(FIREBASE_CONFIG); } catch(e) {}
 
 function scanLocalStorage() {
-  var keys = Object.keys(localStorage).filter(function(k) {
     return k.startsWith('eduverse') || k.startsWith('schoolData');
   });
   var info = keys.length === 0 ? 'No matching keys found' : '';
@@ -39,6 +38,24 @@ function scanLocalStorage() {
   } else {
     el.innerHTML = '<div style="color:#dc2626;">No eduverse or schoolData keys found in localStorage</div>';
   }
+}
+
+function checkDataConsistency() {
+  var el = document.getElementById('scanResult');
+  var defaultRaw = localStorage.getItem('schoolData');
+  var tenant = localStorage.getItem('activeTenant');
+  var tenantRaw = tenant ? localStorage.getItem('schoolData_' + tenant) : null;
+  var html = '<div style="text-align:left;font-size:13px;">';
+  html += '<strong>Default key (schoolData):</strong> ' + (defaultRaw ? (defaultRaw.length + ' bytes, students: ' + (JSON.parse(defaultRaw).students || []).length) : 'NOT FOUND') + '<br>';
+  html += '<strong>Active tenant:</strong> ' + (tenant || 'NOT SET') + '<br>';
+  html += '<strong>Tenant key (schoolData_' + (tenant || '?') + '):</strong> ' + (tenantRaw ? (tenantRaw.length + ' bytes, students: ' + (JSON.parse(tenantRaw).students || []).length) : 'NOT FOUND') + '<br>';
+  html += '<strong>Other tenant keys:</strong> ';
+  var tenantKeys = Object.keys(localStorage).filter(function(k) { return k.startsWith('schoolData_') && k !== 'schoolData_' + tenant; });
+  html += tenantKeys.length ? tenantKeys.join(', ') : 'none found';
+  html += '<br><strong>eduverse_tenants:</strong> ' + (localStorage.getItem('eduverse_tenants') ? 'EXISTS' : 'NOT FOUND');
+  html += '<br><strong>eduverse_super_admin:</strong> ' + (localStorage.getItem('eduverse_super_admin') ? 'EXISTS' : 'NOT FOUND');
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 function migrateLocalStorageToFirestore() {
@@ -122,6 +139,7 @@ small{display:block;margin-top:16px;color:#94a3b8;font-size:12px;}
   <p>Migrate all localStorage data to Firestore</p>
   <button class="btn" onclick="scanLocalStorage()" style="background:#64748b;margin-right:8px;">Scan localStorage</button>
   <button class="btn" onclick="migrateLocalStorageToFirestore().then(function(c){console.log('Done:',c)})">Start Migration</button>
+  <button class="btn" onclick="checkDataConsistency()" style="background:#d97706;margin-right:8px;">Check Data</button>
   <div id="scanResult" style="margin-top:12px;font-size:13px;"></div>
   <div id="status">Ready</div>
   <small>This page is standalone — no other scripts loaded</small>
