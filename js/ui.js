@@ -73,6 +73,20 @@ function setSession(type, user, tenantId) {
   saveSession(s);
 }
 function syncSession() {
+  // Try early restore from inline head script (sets __savedAdmin before any other JS runs)
+  if (window.__savedAdmin && !currentAdmin) {
+    currentAdmin = window.__savedAdmin;
+    if (typeof showAdminPortal === 'function') { showAdminPortal(); return; }
+  }
+  // Fallback: check eduverse_auth key directly (simple, hard to break)
+  try {
+    var _aRaw = localStorage.getItem('eduverse_auth');
+    if (_aRaw && !currentAdmin) {
+      var _a = JSON.parse(_aRaw);
+      if (_a && _a.id) { currentAdmin = _a; window.__savedAdmin = _a; }
+    }
+  } catch(e) {}
+  if (currentAdmin && typeof showAdminPortal === 'function') { showAdminPortal(); return; }
   var s = getSession();
   if (!s || !s.type) { clearSession(); return; }
   // Restore tenant context from session
@@ -216,6 +230,7 @@ function adminLogin() {
   if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
   if (typeof setSession === 'function') setSession('admin', admin);
+  try { localStorage.setItem('eduverse_auth', JSON.stringify(admin)); } catch(e) {}
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
   emailEl.value = '';
   passEl.value = '';

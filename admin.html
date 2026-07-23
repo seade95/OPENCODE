@@ -4,6 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EDUVERSE - ADMIN PORTAL</title>
+<script>
+// Restore admin session from localStorage immediately (before any other JS)
+// Also unregister old Service Workers that cache stale data.js
+(function() {
+  try {
+    var _raw = localStorage.getItem('eduverse_session');
+    if (_raw) {
+      var _s = JSON.parse(_raw);
+      if (_s && _s.type === 'admin' && _s.user) {
+        window.__savedAdmin = _s.user;
+      }
+    } else {
+      var _aRaw = localStorage.getItem('eduverse_auth');
+      if (_aRaw) {
+        var _a = JSON.parse(_aRaw);
+        if (_a && _a.id) { window.__savedAdmin = _a; }
+      }
+    }
+  } catch(e) {}
+  // Unregister stale SW so old cached data.js doesn't run the session-clearing code
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.getRegistrations().then(function(regs) {
+      regs.forEach(function(r) { r.unregister().catch(function(){}); });
+    });
+  }
+})();
+</script>
 <!-- Preconnect to critical origins -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -928,6 +955,9 @@ showAdminPortal = function() {
 // Override adminLogout
 adminLogout = function() {
   currentAdmin = null;
+  window.__savedAdmin = null;
+  try { localStorage.removeItem('eduverse_session'); } catch(e) {}
+  try { localStorage.removeItem('eduverse_auth'); } catch(e) {}
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.admin-login-wrapper').forEach(el => el.style.display = '');
   document.getElementById('adminLoginPage').classList.add('active');
