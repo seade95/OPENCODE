@@ -9,8 +9,6 @@ var APP_VERSION = '2026.06.19.1';
     var stored = localStorage.getItem(key);
     if (stored !== APP_VERSION) {
       localStorage.setItem(key, APP_VERSION);
-      // Clear possibly stale computed data
-      try { localStorage.removeItem('eduverse_session'); } catch(e) {}
     }
   } catch(e) {}
 })();
