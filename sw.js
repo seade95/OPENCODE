@@ -1,4 +1,4 @@
-const CACHE = 'eduverse-v3';
+const CACHE = 'eduverse-v4';
 const OFFLINE_URL = '/offline.html';
 
 const SHELL = [
