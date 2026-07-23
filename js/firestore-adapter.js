@@ -35,6 +35,8 @@
     _writeTimer = setTimeout(flushWrite, 500);
   }
 
+  var _dataVersion = Date.now();
+
   function flushWrite() {
     _writeTimer = null;
     if (!_pendingWrite || !FB_READY) return;
@@ -51,6 +53,9 @@
         return;
       }
     } catch (e) { return; }
+    _dataVersion = Date.now();
+    payload._version = _dataVersion;
+    try { localStorage.setItem('_dataVersion_' + schoolId, String(_dataVersion)); } catch(e) {}
     db().collection('schools').doc(schoolId).set(payload, { merge: true }).catch(function(err) {
       console.warn('Firestore write failed', err);
       if (typeof toast === 'function') toast('Sync failed — data saved locally', 'error');
@@ -65,20 +70,17 @@
       if (doc.exists) {
         var remote = doc.data();
         if (typeof window.data !== 'undefined' && window.data) {
-          var currentUserRole = null;
-          try {
-            var raw = localStorage.getItem('eduverse_session');
-            if (raw) {
-              var s = JSON.parse(raw);
-              if (s && s.type) currentUserRole = s.type;
-            }
-          } catch(e) {}
+          var localVer = 0;
+          var remoteVer = remote._version || 0;
+          try { localVer = parseInt(localStorage.getItem('_dataVersion_' + schoolId) || '0', 10); } catch(e) {}
+          if (remoteVer <= localVer) return;
           var keys = Object.keys(remote);
           for (var i = 0; i < keys.length; i++) {
-            if (keys[i] !== 'id' && Array.isArray(remote[keys[i]])) {
+            if (keys[i] !== 'id' && keys[i] !== '_version' && Array.isArray(remote[keys[i]])) {
               window.data[keys[i]] = remote[keys[i]];
             }
           }
+          localStorage.setItem('_dataVersion_' + schoolId, String(remoteVer));
           if (typeof toast === 'function') toast('Data synced from cloud', 'info');
           if (typeof renderAll === 'function') renderAll();
         }
@@ -189,11 +191,14 @@
   if (typeof _origSaveData === 'function') {
     window.saveData = function() {
       _origSaveData();
-      // Save to the default key too for redundancy
+      _dataVersion = Date.now();
       try {
+        var schoolId = getSchoolDocId();
+        localStorage.setItem('_dataVersion_' + schoolId, String(_dataVersion));
         var activeT = localStorage.getItem('activeTenant');
         if (activeT && window.data) {
           localStorage.setItem('schoolData', JSON.stringify(window.data));
+          localStorage.setItem('_dataVersion_schoolData', String(_dataVersion));
         }
       } catch(e) {}
       debounceWrite();
