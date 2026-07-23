@@ -492,12 +492,30 @@ function loadData() {
     var dataKey = getDataKey();
     var raw = localStorage.getItem(dataKey);
     if (!raw) {
-      // Fallback: try the default schoolData key (no tenant suffix)
-      var altKey = DATA_KEY;
-      if (dataKey !== altKey) {
-        var altRaw = localStorage.getItem(altKey);
-        if (altRaw) { raw = altRaw; }
+      // Try all possible key variations to find data
+      var possibleKeys = [DATA_KEY];
+      try {
+        var t = localStorage.getItem('activeTenant');
+        if (t) possibleKeys.push('schoolData_' + t);
+        var tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+        for (var _i = 0; _i < tenants.length; _i++) {
+          if (tenants[_i].slug) possibleKeys.push('schoolData_' + tenants[_i].slug);
+          if (tenants[_i].id) possibleKeys.push('schoolData_' + tenants[_i].id);
+        }
+      } catch(e) {}
+      var _bestRaw = null;
+      var _bestCount = -1;
+      for (var _k = 0; _k < possibleKeys.length; _k++) {
+        var _r = localStorage.getItem(possibleKeys[_k]);
+        if (_r) {
+          try {
+            var _p = JSON.parse(_r);
+            var _c = (_p.students || []).length;
+            if (_c > _bestCount) { _bestCount = _c; _bestRaw = _r; }
+          } catch(e) { if (!_bestRaw) _bestRaw = _r; }
+        }
       }
+      if (_bestRaw) raw = _bestRaw;
     }
     if (raw) {
       var parsed = JSON.parse(raw);
@@ -552,7 +570,13 @@ function loadData() {
 }
 
 function saveData() {
-  localStorage.setItem(getDataKey(), JSON.stringify(data));
+  var serialized = JSON.stringify(data);
+  localStorage.setItem(getDataKey(), serialized);
+  // Save to all possible key variations for redundancy
+  try {
+    var t = localStorage.getItem('activeTenant');
+    if (t) localStorage.setItem('schoolData', serialized);
+  } catch(e) {}
 }
 
 function __saveCurrentData() {
