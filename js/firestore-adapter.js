@@ -62,10 +62,18 @@
     });
   }
 
+  var _subscribedSchool = null;
+
   function subscribeSchoolData() {
     if (IS_ADMIN_PAGE || IS_SUPERADMIN_PAGE) return;
-    if (_fsUnsubscribe) { _fsUnsubscribe(); _fsUnsubscribe = null; }
     var schoolId = getSchoolDocId();
+    if (!schoolId || schoolId === 'default') {
+      setTimeout(subscribeSchoolData, 200);
+      return;
+    }
+    if (_subscribedSchool === schoolId) return;
+    if (_fsUnsubscribe) { _fsUnsubscribe(); _fsUnsubscribe = null; }
+    _subscribedSchool = schoolId;
     _fsUnsubscribe = db().collection('schools').doc(schoolId).onSnapshot(function(doc) {
       if (doc.exists) {
         var remote = doc.data();

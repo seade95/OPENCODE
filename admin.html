@@ -892,8 +892,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="js/firebase-config.js"></script>
-<script src="js/firestore-adapter.js"></script>
-<!-- Set tenant context from URL immediately, BEFORE app.js calls loadData() -->
+<!-- Set tenant context from URL immediately, BEFORE firestore-adapter.js loads -->
 <script>
 try {
   var _sp = new URLSearchParams(window.location.search).get('school');
@@ -905,6 +904,7 @@ try {
   }
 } catch(e) {}
 </script>
+<script src="js/firestore-adapter.js"></script>
 <script src="js/app.js"></script>
 <script>
 // Override goHome for standalone admin page
