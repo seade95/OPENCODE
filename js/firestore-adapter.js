@@ -156,16 +156,6 @@
     // Flush pending writes before page closes
     window.addEventListener('beforeunload', function() { if (_pendingWrite) flushWrite(); });
     window.addEventListener('pagehide', function() { if (_pendingWrite) flushWrite(); });
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) {
-        var s = null;
-        try { s = JSON.parse(localStorage.getItem('eduverse_session')); } catch(e) {}
-        if (s && s.user && s.user.email) {
-          toast('Session expired — please sign in again', 'warning');
-          clearSession();
-        }
-      }
-    });
   } else {
     retryInit();
   }
