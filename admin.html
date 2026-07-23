@@ -1127,5 +1127,145 @@ window.addEventListener('load', function() {
   }
 });
 </script>
+<script>
+// === EDUVERSE DATA STORAGE ===
+// This saves all data to browser localStorage (survives refreshes)
+
+const DB = {
+  key: 'eduverse_admin_data',
+  
+  init: function() {
+    if (!localStorage.getItem(this.key)) {
+      localStorage.setItem(this.key, JSON.stringify({
+        students: [],
+        teachers: [],
+        classes: [],
+        fees: [],
+        announcements: [],
+        settings: { schoolName: 'My School', term: 'First Term' }
+      }));
+    }
+  },
+  
+  get: function() {
+    return JSON.parse(localStorage.getItem(this.key));
+  },
+  
+  save: function(data) {
+    localStorage.setItem(this.key, JSON.stringify(data));
+  },
+  
+  addStudent: function(student) {
+    const data = this.get();
+    student.id = Date.now();
+    student.createdAt = new Date().toLocaleString();
+    data.students.push(student);
+    this.save(data);
+    return student;
+  },
+  
+  getStudents: function() {
+    return this.get().students;
+  },
+  
+  deleteStudent: function(id) {
+    const data = this.get();
+    data.students = data.students.filter(s => s.id !== id);
+    this.save(data);
+  },
+  
+  addTeacher: function(teacher) {
+    const data = this.get();
+    teacher.id = Date.now();
+    teacher.createdAt = new Date().toLocaleString();
+    data.teachers.push(teacher);
+    this.save(data);
+    return teacher;
+  },
+  
+  getTeachers: function() {
+    return this.get().teachers;
+  }
+};
+
+// Initialize database
+DB.init();
+
+// === AUTO-RESTORE DATA ON PAGE LOAD ===
+window.addEventListener('DOMContentLoaded', function() {
+  // Restore students table
+  const students = DB.getStudents();
+  const studentTable = document.getElementById('studentTableBody') || document.querySelector('#studentsTable tbody');
+  if (studentTable && students.length > 0) {
+    studentTable.innerHTML = students.map(s => `
+      <tr>
+        <td>${s.studentId || s.id}</td>
+        <td>${s.firstName} ${s.lastName}</td>
+        <td>${s.class || '-'}</td>
+        <td>${s.gender || '-'}</td>
+        <td>${s.dateOfBirth || '-'}</td>
+        <td><button onclick="deleteStudent(${s.id})">Delete</button></td>
+      </tr>
+    `).join('');
+  }
+  
+  // Restore teachers table
+  const teachers = DB.getTeachers();
+  const teacherTable = document.getElementById('teacherTableBody') || document.querySelector('#teachersTable tbody');
+  if (teacherTable && teachers.length > 0) {
+    teacherTable.innerHTML = teachers.map(t => `
+      <tr>
+        <td>${t.teacherId || t.id}</td>
+        <td>${t.firstName} ${t.lastName}</td>
+        <td>${t.subjects || '-'}</td>
+        <td>${t.classes || '-'}</td>
+        <td>${t.phone || '-'}</td>
+        <td><button onclick="deleteTeacher(${t.id})">Delete</button></td>
+      </tr>
+    `).join('');
+  }
+});
+
+// === SAVE FUNCTIONS ===
+function saveStudent() {
+  const student = {
+    studentId: document.getElementById('studentId')?.value || 'STD-' + Date.now(),
+    firstName: document.getElementById('firstName')?.value,
+    lastName: document.getElementById('lastName')?.value,
+    class: document.getElementById('studentClass')?.value,
+    gender: document.getElementById('gender')?.value,
+    dateOfBirth: document.getElementById('dob')?.value,
+    parentPhone: document.getElementById('parentPhone')?.value,
+    address: document.getElementById('address')?.value
+  };
+  
+  DB.addStudent(student);
+  alert('Student saved! Refresh to see all data.');
+  location.reload();
+}
+
+function saveTeacher() {
+  const teacher = {
+    teacherId: document.getElementById('teacherId')?.value || 'TCH-' + Date.now(),
+    firstName: document.getElementById('teacherFirstName')?.value,
+    lastName: document.getElementById('teacherLastName')?.value,
+    subjects: document.getElementById('subjects')?.value,
+    classes: document.getElementById('classes')?.value,
+    phone: document.getElementById('teacherPhone')?.value,
+    email: document.getElementById('teacherEmail')?.value
+  };
+  
+  DB.addTeacher(teacher);
+  alert('Teacher saved! Refresh to see all data.');
+  location.reload();
+}
+
+function deleteStudent(id) {
+  if (confirm('Delete this student?')) {
+    DB.deleteStudent(id);
+    location.reload();
+  }
+}
+</script>
 </body>
 </html>
