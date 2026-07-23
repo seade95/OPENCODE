@@ -73,20 +73,17 @@ function setSession(type, user, tenantId) {
   saveSession(s);
 }
 function syncSession() {
-  // Try early restore from inline head script (sets __savedAdmin before any other JS runs)
-  if (window.__savedAdmin && !currentAdmin) {
-    currentAdmin = window.__savedAdmin;
-    if (typeof showAdminPortal === 'function') { showAdminPortal(); return; }
-  }
-  // Fallback: check eduverse_auth key directly (simple, hard to break)
+  // Restored by EduVerseAuth in head script (loads before any other JS)
+  if (currentAdmin && typeof showAdminPortal === 'function') { try { showAdminPortal(); } catch(e) {} return; }
+  // Fallback: check eduverse_auth key directly
   try {
     var _aRaw = localStorage.getItem('eduverse_auth');
     if (_aRaw && !currentAdmin) {
       var _a = JSON.parse(_aRaw);
-      if (_a && _a.id) { currentAdmin = _a; window.__savedAdmin = _a; }
+      if (_a && _a.id) { currentAdmin = _a; }
     }
   } catch(e) {}
-  if (currentAdmin && typeof showAdminPortal === 'function') { showAdminPortal(); return; }
+  if (currentAdmin && typeof showAdminPortal === 'function') { try { showAdminPortal(); } catch(e) {} return; }
   var s = getSession();
   if (!s || !s.type) { clearSession(); return; }
   // Restore tenant context from session
@@ -231,6 +228,9 @@ function adminLogin() {
   currentAdmin = admin;
   if (typeof setSession === 'function') setSession('admin', admin);
   try { localStorage.setItem('eduverse_auth', JSON.stringify(admin)); } catch(e) {}
+  if (typeof EduVerseAuth !== 'undefined') {
+    try { localStorage.setItem('eduverse_session', JSON.stringify({ version: 1, type: 'admin', user: { id: admin.id, name: admin.name, email: admin.email }, loginTime: Date.now(), timestamp: Date.now() })); } catch(e) {}
+  }
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
   emailEl.value = '';
   passEl.value = '';

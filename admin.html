@@ -4,32 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>EDUVERSE - ADMIN PORTAL</title>
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
 <script>
-// Restore admin session from localStorage immediately (before any other JS)
-// Also unregister old Service Workers that cache stale data.js
-(function() {
-  try {
-    var _raw = localStorage.getItem('eduverse_session');
-    if (_raw) {
-      var _s = JSON.parse(_raw);
-      if (_s && _s.type === 'admin' && _s.user) {
-        window.__savedAdmin = _s.user;
-      }
-    } else {
-      var _aRaw = localStorage.getItem('eduverse_auth');
-      if (_aRaw) {
-        var _a = JSON.parse(_aRaw);
-        if (_a && _a.id) { window.__savedAdmin = _a; }
-      }
-    }
-  } catch(e) {}
-  // Unregister stale SW so old cached data.js doesn't run the session-clearing code
-  if (navigator.serviceWorker) {
-    navigator.serviceWorker.getRegistrations().then(function(regs) {
-      regs.forEach(function(r) { r.unregister().catch(function(){}); });
-    });
+// EduVerseDB loads data, EduVerseAuth restores session — both self-contained
+// Restore currentAdmin so the page works without waiting for dom-ready scripts
+if (typeof EduVerseAuth !== 'undefined') {
+  if (EduVerseAuth.isLoggedIn()) {
+    var _u = EduVerseAuth.getUser();
+    if (_u && _u.user) window.currentAdmin = _u.user;
   }
-})();
+}
+// Unregister stale SW so old cached data.js doesn't run old session-clearing code
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    regs.forEach(function(r) { r.unregister().catch(function(){}); });
+  });
+}
 </script>
 <!-- Preconnect to critical origins -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -955,7 +946,6 @@ showAdminPortal = function() {
 // Override adminLogout
 adminLogout = function() {
   currentAdmin = null;
-  window.__savedAdmin = null;
   try { localStorage.removeItem('eduverse_session'); } catch(e) {}
   try { localStorage.removeItem('eduverse_auth'); } catch(e) {}
   document.querySelectorAll('.portal-page').forEach(p => p.classList.remove('active'));
@@ -979,10 +969,15 @@ adminSignup = function() {
     document.getElementById('adminSignupError').textContent = 'An admin with this email already exists';
     document.getElementById('adminSignupError').style.display = 'block'; return;
   }
-  if (!data.admins) data.admins = [];
-  const admin = { id: 'ADM' + Date.now(), name, email, password: pass };
-  data.admins.push(admin);
-  saveData();
+  var admin;
+  if (typeof EduVerseDB !== 'undefined') {
+    admin = EduVerseDB.add('admins', { name: name, email: email, password: pass });
+  } else {
+    if (!data.admins) data.admins = [];
+    admin = { id: 'ADM' + Date.now(), name: name, email: email, password: pass };
+    data.admins.push(admin);
+    saveData();
+  }
   document.getElementById('adminSignupError').style.display = 'none';
   document.getElementById('adminSignupName').value = '';
   document.getElementById('adminSignupEmail').value = '';
@@ -1014,10 +1009,14 @@ adminLogin = function() {
   if (!email || !pass) { showError(errEl, 'Please enter both email and password'); return; }
   if (!isValidEmail(email)) { showError(errEl, 'Invalid email format'); return; }
   if (!isValidPassword(pass)) { showError(errEl, 'Password must be at least 6 characters'); return; }
-  const admin = (data.admins || []).find(a => a.email === email && a.password === pass);
-  if (!admin) { showError(errEl, 'Invalid email or password'); return; }
-  currentAdmin = admin;
-  if (typeof setSession === 'function') setSession('admin', admin);
+  if (typeof EduVerseAuth !== 'undefined') {
+    if (!EduVerseAuth.login(email, pass, 'admin')) { showError(errEl, 'Invalid email or password'); return; }
+  } else {
+    const admin = (data.admins || []).find(a => a.email === email && a.password === pass);
+    if (!admin) { showError(errEl, 'Invalid email or password'); return; }
+    currentAdmin = admin;
+    if (typeof setSession === 'function') setSession('admin', admin);
+  }
   document.getElementById('adminLoginEmail').value = '';
   document.getElementById('adminLoginPass').value = '';
   hideError(errEl);
