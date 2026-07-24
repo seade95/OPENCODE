@@ -74,7 +74,7 @@
           return false;
         }
         var d = JSON.parse(s);
-        if (!d || !d.type) return false;
+        if (!d || (!d.type && !d.role)) return false;
         var elapsed = Date.now() - (d.loginTime || d.timestamp || 0);
         if (elapsed > SESSION_TTL) {
           this.logout();
@@ -87,7 +87,11 @@
     getUser: function() {
       try {
         var s = localStorage.getItem(AUTH_KEY);
-        return s ? JSON.parse(s) : null;
+        if (!s) return null;
+        var d = JSON.parse(s);
+        if (!d || (!d.type && !d.role)) return null;
+        if (!d.user) d.user = { email: d.email };
+        return d;
       } catch(e) { return null; }
     },
 
