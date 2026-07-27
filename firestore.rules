@@ -2,57 +2,139 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ================================================================
-    // SETUP MODE — open for 30 days (until 2026-08-16)
-    // After setup is complete, replace with the production rules below.
-    // ================================================================
-    match /{document=**} {
-      allow read, write: if true;
+    // ============================================================
+    // Helper functions
+    // ============================================================
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // ================================================================
-    // PRODUCTION RULES — paste these after setup is complete:
-    // ================================================================
-    // match /superAdmin/{doc} {
-    //   allow read, write: if request.auth != null && (
-    //     request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
-    //   );
-    // }
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email;
+    }
+
+    function isStaffOfSchool(schoolId) {
+      return isSignedIn() &&
+        userDoc().schoolId == schoolId &&
+        userDoc().role in ['admin', 'teacher'];
+    }
+
+    function isAdminOfSchool(schoolId) {
+      return isSignedIn() &&
+        userDoc().schoolId == schoolId &&
+        userDoc().role == 'admin';
+    }
+
+    function isMemberOfSchool(schoolId) {
+      return isSignedIn() && userDoc().schoolId == schoolId;
+    }
+
+    // ============================================================
+    // superAdmin/config — platform owner only
+    // ============================================================
+    match /superAdmin/{doc} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    // ============================================================
+    // platform/config — any signed-in user may read (e.g. feature
+    // flags, branding); only super admin may write
+    // ============================================================
+    match /platform/{doc} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ============================================================
+    // tenants/list — directory of schools. Signed-in users can
+    // read; only super admin can write (school provisioning should
+    // go through a Cloud Function, not direct client writes, but
+    // this keeps current behavior working until that migration).
+    // ============================================================
+    match /tenants/{doc} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ============================================================
+    // users/{userId} — each user manages their own profile.
+    // Staff within the same school can read each other's profile
+    // (needed for admin dashboards / staff directories).
+    // schoolId and role are NEVER client-settable after creation
+    // by anyone except an admin of that school or super admin —
+    // this stops a user from promoting themselves to 'admin'.
+    // ============================================================
+    match /users/{userId} {
+      allow read: if isSignedIn() && (
+        request.auth.uid == userId ||
+        isMemberOfSchool(resource.data.schoolId) ||
+        isSuperAdmin()
+      );
+
+      allow create: if isSignedIn() && request.auth.uid == userId;
+
+      allow update: if isSignedIn() && (
+        (request.auth.uid == userId &&
+          request.resource.data.role == resource.data.role &&
+          request.resource.data.schoolId == resource.data.schoolId) ||
+        isAdminOfSchool(resource.data.schoolId) ||
+        isSuperAdmin()
+      );
+
+      allow delete: if isAdminOfSchool(resource.data.schoolId) || isSuperAdmin();
+    }
+
+    // ============================================================
+    // schools/{schoolId} — the main per-school data document
+    // (students, teachers, fees, results, etc. all live inside
+    // this one document today).
     //
-    // match /platform/{doc} {
-    //   allow read: if request.auth != null;
-    //   allow write: if request.auth != null && (
-    //     request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
-    //   );
-    // }
-    //
-    // match /tenants/{doc} {
-    //   allow read: if request.auth != null;
-    //   allow write: if request.auth != null && (
-    //     request.auth.token.email == get(/databases/$(database)/documents/superAdmin/config).data.email
-    //   );
-    // }
-    //
-    // match /users/{userId} {
-    //   allow read, write: if request.auth != null && request.auth.uid == userId;
-    //   allow read: if request.auth != null && (
-    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
-    //   );
-    // }
-    //
-    // match /schools/{schoolId} {
-    //   allow read, write: if request.auth != null && (
-    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId &&
-    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super_admin']
-    //   );
-    //   allow read: if request.auth != null && (
-    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.schoolId == schoolId &&
-    //     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'student']
-    //   );
-    // }
-    //
-    // match /{document=**} {
-    //   allow read, write: if false;
-    // }
+    // NOTE: this is a whole-document model — any staff member of
+    // the school gets read/write to the ENTIRE doc, including
+    // fields a teacher shouldn't be able to touch (e.g. other
+    // staff salaries, payment settings). That's a schema-level
+    // limitation, not something rules alone can fix. Splitting
+    // `schools/{schoolId}` into subcollections (students/, fees/,
+    // staffHR/, etc.) with per-collection rules is the real fix —
+    // flagged separately, out of scope for this pass.
+    // ============================================================
+    match /schools/{schoolId} {
+      allow read: if isMemberOfSchool(schoolId) || isSuperAdmin();
+      allow write: if
+        isStaffOfSchool(schoolId) ||
+        isSuperAdmin() ||
+        // Students/parents may write only to user-facing fields
+        (isMemberOfSchool(schoolId) && (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'submissions', 'notifications', 'maintenanceReqs', 'library',
+            'storeOrders', 'forumPosts', 'messages', 'activityLog',
+            'currentLanguage', 'waitlists', '_version'
+          ])
+        ));
+    }
+
+    // ============================================================
+    // paymentSecrets/{schoolId} — payment gateway SECRET keys.
+    // No client, ever, under any role, may read or write this
+    // collection directly. Only the Firebase Admin SDK (i.e. your
+    // Cloud Functions) can touch it, because Admin SDK calls
+    // bypass these rules entirely. This is intentional: secret
+    // keys must never reach the browser.
+    // ============================================================
+    match /paymentSecrets/{schoolId} {
+      allow read, write: if false;
+    }
+
+    // ============================================================
+    // Deny everything else by default
+    // ============================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }

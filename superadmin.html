@@ -2,148 +2,95 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EDUVERSE - Super Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Super Admin — EduVerse</title>
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link rel="preconnect" href="https://js.paystack.co" crossorigin>
-<link rel="preconnect" href="https://checkout.flutterwave.com" crossorigin>
-<link rel="dns-prefetch" href="https://fonts.googleapis.com">
-<link rel="dns-prefetch" href="https://fonts.gstatic.com">
-<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-<link rel="preload" href="css/style.css" as="style">
-<link rel="preload" href="images/favicon.svg" as="image">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
-<link rel="stylesheet" href="css/style.css">
-<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
-<link rel="alternate icon" href="images/favicon.svg">
-<meta name="theme-color" content="#2563eb">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  body { margin:0; font-family:Inter,system-ui,sans-serif; background:#f0f4f8; }
-  #saStandaloneRoot { min-height:100vh; display:flex; flex-direction:column; }
-  .sa-login-page, .sa-signup-page { display:flex; align-items:center; justify-content:center; min-height:100vh; background:linear-gradient(135deg,#0f2440,#1a3a5c); padding:20px; }
-  .sa-login-card { background:#fff; border-radius:16px; padding:40px; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
-  .sa-login-card h2 { text-align:center; margin-bottom:8px; font-size:22px; display:flex; align-items:center; justify-content:center; gap:10px; }
-  .sa-login-card h2 i { color:#f5a623; }
-  .sa-login-card p { text-align:center; color:#718096; font-size:14px; margin-bottom:24px; }
-  .sa-login-card .form-group { margin-bottom:16px; }
-  .sa-login-card .form-group label { display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#2d3748; }
-  .sa-login-card .form-group input { width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:14px; font-family:inherit; box-sizing:border-box; transition:border-color 0.2s; }
-  .sa-login-card .form-group input:focus { outline:none; border-color:#2563eb; }
-  .sa-login-card .btn { width:100%; padding:12px; border:none; border-radius:8px; font-size:15px; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; }
-  .sa-login-card .btn-primary { background:#2563eb; color:#fff; }
-  .sa-login-card .btn-primary:hover { background:#1d4ed8; transform:translateY(-1px); }
-  .sa-login-card .btn-success { background:#059669; color:#fff; }
-  .sa-login-card .btn-success:hover { background:#047857; transform:translateY(-1px); }
-  .sa-login-card .btn-outline { background:transparent; border:2px solid #e2e8f0; color:#4a5568; }
-  .sa-login-card .btn-outline:hover { border-color:#2563eb; color:#2563eb; }
-  .sa-login-card .error-box { display:none; background:#fed7d7; color:#c53030; padding:10px; border-radius:6px; margin-bottom:12px; font-size:13px; }
-  .sa-login-card .footer-link { text-align:center; margin-top:16px; font-size:13px; color:#718096; }
-  .sa-login-card .footer-link a { color:#2563eb; font-weight:600; text-decoration:none; cursor:pointer; }
-  .sa-login-card .footer-link a:hover { text-decoration:underline; }
-  .sa-dashboard { display:flex; min-height:100vh; background:#f0f4f8; }
-  .sa-sidebar { width:220px; background:#0f2440; color:white; display:flex; flex-direction:column; flex-shrink:0; }
-  .sa-sidebar-header { padding:20px 16px; font-size:18px; font-weight:700; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(255,255,255,0.1); }
-  .sa-sidebar-header i { font-size:22px; color:#f5a623; }
-  .sa-sidebar-user { padding:12px 16px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.08); line-height:1.4; }
-  .sa-nav { flex:1; padding:8px 0; }
-  .sa-nav-item { display:flex; align-items:center; gap:10px; padding:10px 16px; color:rgba(255,255,255,0.7); text-decoration:none; font-size:14px; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
-  .sa-nav-item:hover { background:rgba(255,255,255,0.08); color:white; }
-  .sa-nav-item.active { background:rgba(255,255,255,0.12); color:white; border-left-color:#f5a623; }
-  .sa-nav-item i { width:20px; text-align:center; font-size:15px; }
-  .sa-sidebar-footer { padding:12px 16px; border-top:1px solid rgba(255,255,255,0.1); }
-  .sa-main { flex:1; display:flex; flex-direction:column; min-width:0; }
-  .sa-main-header { padding:20px 24px; background:white; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; }
-  .sa-main-header h2 { font-size:20px; font-weight:700; margin:0; }
-  .sa-content { flex:1; padding:20px 24px; overflow-y:auto; }
-  .sa-section { background:white; border-radius:12px; padding:20px; margin-bottom:16px; box-shadow:0 1px 4px rgba(0,0,0,0.05); }
-  .sa-section h3 { font-size:16px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-  .sa-stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin-bottom:16px; }
-  .sa-stat-card { background:white; border-radius:12px; padding:16px 20px; box-shadow:0 1px 4px rgba(0,0,0,0.05); display:flex; align-items:center; gap:14px; }
-  .sa-stat-card.mini { flex-direction:column; text-align:center; padding:20px; }
-  .sa-stat-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
-  .sa-stat-value { font-size:24px; font-weight:700; line-height:1.2; }
-  .sa-stat-label { font-size:13px; color:#718096; }
-  .sa-log-item { display:flex; gap:12px; padding:8px 0; border-bottom:1px solid #f1f5f9; font-size:13px; }
-  .sa-log-item:last-child { border-bottom:none; }
-  .sa-log-time { color:#718096; white-space:nowrap; min-width:160px; }
-  .sa-log-msg { flex:1; }
-  .sa-settings-form { max-width:700px; }
-  .sa-settings-form .form-row { margin-bottom:14px; }
-  .sa-settings-form .form-row label { display:block; font-size:13px; font-weight:500; margin-bottom:4px; color:#2d3748; }
-  .sa-settings-form .form-row input, .sa-settings-form .form-row textarea, .sa-settings-form .form-row select { width:100%; padding:8px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:14px; font-family:inherit; box-sizing:border-box; }
-  .sa-settings-form .form-row textarea { resize:vertical; min-height:60px; }
-  .field-hint { font-size:11px; color:#718096; margin:2px 0 0; }
-  .sa-bank-card { background:#f8fafc; border-radius:8px; padding:12px; margin-bottom:8px; border:1px solid #e2e8f0; }
-  .sa-bank-card input, .sa-bank-card select { padding:6px 10px; border:1px solid #d1d5db; border-radius:5px; font-size:13px; font-family:inherit; }
-  .sa-plans-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
-  .sa-plan-card { background:white; border-radius:12px; padding:20px; box-shadow:0 1px 4px rgba(0,0,0,0.05); border:1px solid #e2e8f0; }
-  .sa-plan-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
-  .sa-plan-card.inactive { opacity:0.6; }
-  .sa-plan-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-  .sa-plan-header h4 { font-size:16px; font-weight:600; margin:0; }
-  .sa-plan-status { font-size:11px; padding:2px 8px; border-radius:4px; font-weight:500; }
-  .sa-plan-status.active { background:#d1fae5; color:#065f46; }
-  .sa-plan-status.disabled { background:#f3f4f6; color:#6b7280; }
-  .sa-plan-amount { font-size:22px; font-weight:700; margin-bottom:4px; color:#1a3a5c; }
-  .sa-plan-interval { font-size:13px; font-weight:400; color:#718096; }
-  .sa-plan-features { font-size:13px; color:#718096; margin-bottom:12px; line-height:1.4; }
-  .sa-plan-actions { display:flex; gap:6px; flex-wrap:wrap; }
-  .sa-chart-bars { display:flex; flex-direction:column; gap:8px; }
-  .sa-bar-row { display:flex; align-items:center; gap:12px; font-size:13px; }
-  .sa-bar-label { min-width:100px; font-weight:500; text-align:right; }
-  .sa-bar-track { flex:1; height:24px; background:#f1f5f9; border-radius:6px; overflow:hidden; }
-  .sa-bar-fill { height:100%; border-radius:6px; transition:width 0.6s ease; min-width:2px; }
-  .sa-bar-count { min-width:70px; color:#718096; font-size:12px; }
-  .toast-container { position:fixed; top:20px; right:20px; z-index:10000; display:flex; flex-direction:column; gap:8px; }
-  .toast { padding:12px 20px; border-radius:8px; font-size:14px; font-weight:500; box-shadow:0 4px 16px rgba(0,0,0,0.15); display:flex; align-items:center; gap:8px; animation:slideIn 0.3s ease; max-width:400px; }
-  .toast-success { background:#d1fae5; color:#065f46; border-left:4px solid #059669; }
-  .toast-error { background:#fee2e2; color:#991b1b; border-left:4px solid #dc2626; }
-  .toast-warning { background:#fef3c7; color:#92400e; border-left:4px solid #f59e0b; }
-  .toast-info { background:#dbeafe; color:#1e40af; border-left:4px solid #3b82f6; }
-  @keyframes slideIn { from { transform:translateX(100px); opacity:0; } to { transform:translateX(0); opacity:1; } }
-  .modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; }
-  .modal-overlay.active { display:flex; }
-  .modal { background:#fff; border-radius:16px; max-width:560px; width:90%; max-height:85vh; overflow-y:auto; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,0.3); position:relative; }
-  .modal-close { position:absolute; top:12px; right:16px; background:none; border:none; font-size:24px; cursor:pointer; color:#718096; line-height:1; }
-  .modal-close:hover { color:#2d3748; }
-  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
-  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:8px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; transition:all 0.2s; text-decoration:none; }
-  .btn:hover { transform:translateY(-1px); }
-  .btn-sm { padding:4px 10px; font-size:12px; }
-  .btn-primary { background:#2563eb; color:#fff; }
-  .btn-primary:hover { background:#1d4ed8; }
-  .btn-success { background:#059669; color:#fff; }
-  .btn-success:hover { background:#047857; }
-  .btn-outline { background:transparent; border:2px solid #e2e8f0; color:#4a5568; }
-  .btn-outline:hover { border-color:#2563eb; color:#2563eb; }
-  .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
-  .badge-paid { background:#d1fae5; color:#065f46; }
-  .badge-absent { background:#fee2e2; color:#991b1b; }
-  .badge-grade { background:#fef3c7; color:#92400e; }
-  .badge-excused { background:#e2e8f0; color:#475569; }
-  .empty-state { text-align:center; padding:40px 20px; color:#718096; }
-  .empty-state i { font-size:40px; margin-bottom:12px; opacity:0.4; }
-  .empty-state p { font-size:14px; margin:0; }
-  .table { width:100%; border-collapse:collapse; font-size:13px; }
-  .table th { text-align:left; padding:10px 12px; background:#f8fafc; color:#718096; font-weight:600; text-transform:uppercase; font-size:11px; letter-spacing:0.5px; border-bottom:2px solid #e2e8f0; }
-  .table td { padding:10px 12px; border-bottom:1px solid #e2e8f0; }
-  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .form-group { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
-  .form-group label { font-size:12px; font-weight:600; color:#718096; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.5px; }
-  .form-group input, .form-group textarea, .form-group select { padding:8px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:14px; font-family:inherit; background:white; color:#2d3748; transition:border-color 0.2s; box-sizing:border-box; width:100%; }
-  .form-group input:focus, .form-group select:focus { border-color:#2563eb; outline:none; }
-  @media (max-width:768px) { .sa-sidebar { width:56px; } .sa-sidebar-header span, .sa-sidebar-user, .sa-nav-item span, .sa-sidebar-footer { display:none; } .sa-nav-item { justify-content:center; padding:12px; } .sa-main-header { padding:16px; } .sa-content { padding:16px; } .form-grid { grid-template-columns:1fr; } }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
+.login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0f2440,#1a3a5c);padding:20px}
+.login-card{background:#fff;border-radius:16px;padding:40px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.login-card h2{text-align:center;margin-bottom:8px;font-size:22px;display:flex;align-items:center;justify-content:center;gap:10px}
+.login-card h2 i{color:#f5a623}
+.login-card p{text-align:center;color:#718096;font-size:14px;margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:#2d3748}
+.form-group input{width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;transition:border-color .2s}
+.form-group input:focus{outline:none;border-color:#2563eb}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:#2563eb;color:#fff}
+.btn-primary:hover{background:#1d4ed8}
+.btn-success{background:#059669;color:#fff}
+.btn-success:hover{background:#047857}
+.btn-danger{background:#dc2626;color:#fff}
+.btn-danger:hover{background:#b91c1c}
+.btn-outline{background:transparent;border:2px solid #e2e8f0;color:#475569}
+.btn-outline:hover{border-color:#2563eb;color:#2563eb}
+.error-box{display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px}
+.footer-link{text-align:center;margin-top:16px;font-size:13px;color:#718096}
+.footer-link a{color:#2563eb;font-weight:600;text-decoration:none;cursor:pointer}
+.footer-link a:hover{text-decoration:underline}
+.dashboard{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#0f2440;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-header{padding:20px 16px;font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sidebar-header i{font-size:22px;color:#f5a623}
+.sidebar-user{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.08);line-height:1.4}
+.nav{flex:1;padding:8px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;transition:all .2s;border-left:3px solid transparent;cursor:pointer}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-item.active{background:rgba(255,255,255,0.12);color:#fff;border-left-color:#f5a623}
+.nav-item i{width:20px;text-align:center;font-size:15px}
+.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1)}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.main-header{padding:20px 24px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}
+.main-header h2{font-size:20px;font-weight:700;margin:0}
+.content{flex:1;padding:20px 24px;overflow-y:auto}
+.section{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:16px}
+.stat-card{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);display:flex;align-items:center;gap:14px}
+.stat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.stat-value{font-size:24px;font-weight:700;line-height:1.2;color:#1e293b}
+.stat-label{font-size:13px;color:#718096}
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid #e2e8f0}
+.tab{padding:10px 20px;border:none;background:transparent;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;color:#718096;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab:hover{color:#2563eb}
+.tab.active{color:#2563eb;border-bottom-color:#2563eb}
+.tab .count{background:#e2e8f0;color:#475569;border-radius:10px;padding:1px 8px;font-size:11px;margin-left:6px}
+.tab.active .count{background:#dbeafe;color:#2563eb}
+.app-table{width:100%;border-collapse:collapse;font-size:13px}
+.app-table th{text-align:left;padding:10px 12px;background:#f8fafc;color:#718096;font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px;border-bottom:2px solid #e2e8f0}
+.app-table td{padding:10px 12px;border-bottom:1px solid #e2e8f0}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-pending{background:#fef3c7;color:#92400e}
+.badge-approved{background:#d1fae5;color:#065f46}
+.badge-rejected{background:#fee2e2;color:#991b1b}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:16px;max-width:560px;width:90%;max-height:85vh;overflow-y:auto;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.3);position:relative}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:#718096;line-height:1}
+.modal-close:hover{color:#2d3748}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
+.cred-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:12px 0;font-family:monospace;font-size:14px;line-height:1.6}
+.cred-box strong{color:#2563eb}
+.toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.15);display:flex;align-items:center;gap:8px;animation:slideIn .3s ease;max-width:400px}
+.toast-success{background:#d1fae5;color:#065f46;border-left:4px solid #059669}
+.toast-error{background:#fee2e2;color:#991b1b;border-left:4px solid #dc2626}
+@keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+.empty-state{text-align:center;padding:40px 20px;color:#718096}
+.empty-state i{font-size:40px;margin-bottom:12px;opacity:0.4}
+.empty-state p{font-size:14px}
+@media(max-width:768px){.sidebar{width:56px}.sidebar-header span,.sidebar-user,.nav-item span,.sidebar-footer{display:none}.nav-item{justify-content:center;padding:12px}.main-header{padding:16px}.content{padding:16px}}
 </style>
 </head>
 <body>
-<div id="saStandaloneRoot"></div>
+
+<div id="root"></div>
 <div class="toast-container" id="toastContainer"></div>
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
@@ -152,304 +99,393 @@
   </div>
 </div>
 
-<script src="js/screen-protection.js"></script>
-<script async src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/data.js"></script>
-<script src="js/firestore-adapter.js"></script>
-<script src="js/schoolprofile.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/system.js"></script>
-<script src="js/multitenant.js"></script>
-<script src="js/superadmin.js"></script>
-<script src="js/data-sync.js"></script>
-<script src="js/path-router.js"></script>
-<script src="js/feature-upgrades.js"></script>
 <script>
-// SA session persistence — login stays alive for 24h
-var SA_SESSION_KEY = 'eduverse_sa_session';
-var SA_SESSION_TTL = 24 * 60 * 60 * 1000;
+var APP_KEY = 'eduverse_applications';
+var SA_KEY = 'eduverse_sa_session';
+var SCHOOLS_KEY = 'eduverse_schools';
+var TENANTS_KEY = 'eduverse_tenants';
+var SA_TTL = 24 * 60 * 60 * 1000;
+var _currentTab = 'pending';
 
-function saveSASession(id) {
-  try { localStorage.setItem(SA_SESSION_KEY, JSON.stringify({ id: id, loginTime: Date.now() })); } catch(e) {}
+// --- Super Admin credentials (hardcoded for now) ---
+var SA_CREDENTIALS = { email: 'super@eduverse.com', password: 'SuperAdmin123!' };
+
+function toast(msg, type) {
+  type = type || 'success';
+  var c = document.getElementById('toastContainer');
+  var t = document.createElement('div');
+  t.className = 'toast toast-' + type;
+  t.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle') + '"></i> ' + msg;
+  c.appendChild(t);
+  setTimeout(function() { t.remove(); }, 4000);
 }
 
-function getSASession() {
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function getApps() {
+  try { return JSON.parse(localStorage.getItem(APP_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveApps(apps) {
+  try { localStorage.setItem(APP_KEY, JSON.stringify(apps)); } catch(e) {}
+}
+
+function getSchools() {
+  try { return JSON.parse(localStorage.getItem(SCHOOLS_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveSchools(schools) {
+  try { localStorage.setItem(SCHOOLS_KEY, JSON.stringify(schools)); } catch(e) {}
+}
+
+function getTenants() {
+  try { return JSON.parse(localStorage.getItem(TENANTS_KEY)) || []; } catch(e) { return []; }
+}
+
+function saveTenants(tenants) {
+  try { localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants)); } catch(e) {}
+}
+
+function genId(prefix) {
+  return (prefix || 'ID') + '-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+}
+
+function formatDate(iso) {
+  try { return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch(e) { return iso; }
+}
+
+function getDefaultSchoolData(schoolName) {
+  return {
+    students: [], teachers: [], fees: [], results: [], admins: [],
+    classes: [], subjects: [], attendance: [], parents: [],
+    announcements: [], activities: [],
+    settings: { schoolName: schoolName, academicYear: new Date().getFullYear() + '/' + (new Date().getFullYear() + 1), term: 'First Term' }
+  };
+}
+
+// --- Session Management ---
+function saveSession(id) {
+  try { localStorage.setItem(SA_KEY, JSON.stringify({ id: id, loginTime: Date.now() })); } catch(e) {}
+}
+
+function getSession() {
   try {
-    var raw = localStorage.getItem(SA_SESSION_KEY);
-    if (raw) {
-      var s = JSON.parse(raw);
-      if (s && s.id && s.loginTime && Date.now() - s.loginTime < SA_SESSION_TTL) return s;
-    }
+    var raw = localStorage.getItem(SA_KEY);
+    if (!raw) return null;
+    var s = JSON.parse(raw);
+    if (s && s.id && s.loginTime && Date.now() - s.loginTime < SA_TTL) return s;
   } catch(e) {}
   return null;
 }
 
-function clearSASession() {
-  try { localStorage.removeItem(SA_SESSION_KEY); } catch(e) {}
+function clearSession() {
+  try { localStorage.removeItem(SA_KEY); } catch(e) {}
 }
 
-// Override showSuperAdminLogin to render inline on standalone page
-var _origShowSuperAdminLogin = showSuperAdminLogin;
-showSuperAdminLogin = function() {
-  clearSASession();
-  var root = document.getElementById('saStandaloneRoot');
-  if (!root) { _origShowSuperAdminLogin(); return; }
-  root.innerHTML = '<div class="sa-login-page" id="saLoginPage">'
-    + '<div class="sa-login-card">'
+// --- UI: Login ---
+function showLogin() {
+  clearSession();
+  document.getElementById('root').innerHTML =
+    '<div class="login-page">'
+    + '<div class="login-card">'
     + '<h2><i class="fas fa-user-shield"></i> Super Admin</h2>'
-    + '<p>Sign in to manage all schools on the platform</p>'
-    + '<div id="superAdminLoginError" class="error-box"></div>'
-    + '<div class="form-group"><label>Email</label><input type="email" id="supAdminEmail" placeholder="super@eduverse.com" oninput="validateField(this,\'email\')"></div>'
-    + '<div class="form-group"><label>Password</label><input type="password" id="supAdminPass" placeholder="Enter password" oninput="validateField(this,\'password\')"></div>'
-    + '<button class="btn btn-primary" onclick="superAdminLogin()" style="width:100%;margin-top:8px;"><i class="fas fa-arrow-right"></i> Sign In</button>'
-    + '<div class="footer-link">No account? <a onclick="showSuperAdminSignup()">Create One</a></div>'
-    + '<div class="footer-link"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to EDUVERSE</a></div>'
+    + '<p>Sign in to manage school applications</p>'
+    + '<div id="loginError" class="error-box"></div>'
+    + '<div class="form-group"><label>Email</label><input type="email" id="saEmail" placeholder="super@eduverse.com"></div>'
+    + '<div class="form-group"><label>Password</label><input type="password" id="saPass" placeholder="Enter password"></div>'
+    + '<button class="btn btn-primary" onclick="handleLogin()" style="width:100%;margin-top:8px"><i class="fas fa-arrow-right"></i> Sign In</button>'
+    + '<div class="footer-link"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to EduVerse</a></div>'
     + '</div></div>';
-};
+}
 
-// Override showSuperAdminSignup to render inline on standalone page
-var _origShowSuperAdminSignup = showSuperAdminSignup;
-showSuperAdminSignup = function() {
-  clearSASession();
-  if (getSuperAdmin()) {
-    toast('A super admin already exists. Please login.', 'error');
-    showSuperAdminLogin();
+function handleLogin() {
+  var email = document.getElementById('saEmail').value.trim();
+  var pass = document.getElementById('saPass').value.trim();
+  var err = document.getElementById('loginError');
+  if (!email || !pass) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; return; }
+  if (email !== SA_CREDENTIALS.email || pass !== SA_CREDENTIALS.password) {
+    err.textContent = 'Invalid email or password'; err.style.display = 'block'; return;
+  }
+  err.style.display = 'none';
+  saveSession(email);
+  showDashboard();
+}
+
+// --- UI: Dashboard ---
+function showDashboard() {
+  var s = getSession();
+  if (!s) { showLogin(); return; }
+
+  var apps = getApps();
+  var pending = apps.filter(function(a) { return a.status === 'pending'; });
+  var approved = apps.filter(function(a) { return a.status === 'approved'; });
+  var rejected = apps.filter(function(a) { return a.status === 'rejected'; });
+  var schools = getSchools();
+
+  document.getElementById('root').innerHTML =
+    '<div class="dashboard">'
+    + '<div class="sidebar">'
+    + '<div class="sidebar-header"><i class="fas fa-user-shield"></i><span>Super Admin</span></div>'
+    + '<div class="sidebar-user">' + SA_CREDENTIALS.email + '<br><span style="font-size:11px;color:rgba(255,255,255,0.5)">Platform Admin</span></div>'
+    + '<div class="nav">'
+    + '<a href="javascript:;" class="nav-item active" onclick="switchView(\'applications\')"><i class="fas fa-file-alt"></i><span>Applications</span></a>'
+    + '<a href="javascript:;" class="nav-item" onclick="switchView(\"schools\")"><i class="fas fa-school"></i><span>Schools</span></a>'
+    + '</div>'
+    + '<div class="sidebar-footer"><button class="btn btn-sm btn-outline" onclick="handleLogout()" style="width:100%;color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);background:transparent"><i class="fas fa-sign-out-alt"></i> Sign Out</button></div>'
+    + '</div>'
+    + '<div class="main">'
+    + '<div class="main-header"><h2 id="panelTitle">Applications</h2><div style="font-size:13px;color:#718096"><i class="fas fa-school"></i> ' + schools.length + ' schools</div></div>'
+    + '<div class="content" id="mainContent"></div>'
+    + '</div></div>';
+
+  _currentTab = 'pending';
+  renderApplications();
+}
+
+function switchView(view) {
+  document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active'); });
+  event.target.closest('.nav-item').classList.add('active');
+  document.getElementById('panelTitle').textContent = view === 'applications' ? 'Applications' : 'Schools';
+  if (view === 'applications') renderApplications();
+  else renderSchools();
+}
+
+// --- Render: Applications ---
+function renderApplications() {
+  var apps = getApps();
+  var pending = apps.filter(function(a) { return a.status === 'pending'; });
+  var approved = apps.filter(function(a) { return a.status === 'approved'; });
+  var rejected = apps.filter(function(a) { return a.status === 'rejected'; });
+
+  var html = '<div class="tabs">'
+    + '<button class="tab' + (_currentTab === 'pending' ? ' active' : '') + '" onclick="switchTab(\'pending\')">Pending<span class="count">' + pending.length + '</span></button>'
+    + '<button class="tab' + (_currentTab === 'approved' ? ' active' : '') + '" onclick="switchTab(\'approved\')">Approved<span class="count">' + approved.length + '</span></button>'
+    + '<button class="tab' + (_currentTab === 'rejected' ? ' active' : '') + '" onclick="switchTab(\'rejected\')">Rejected<span class="count">' + rejected.length + '</span></button>'
+    + '</div>';
+
+  var list = _currentTab === 'pending' ? pending : _currentTab === 'approved' ? approved : rejected;
+
+  if (list.length === 0) {
+    html += '<div class="empty-state"><i class="fas fa-inbox"></i><p>No ' + _currentTab + ' applications</p></div>';
+  } else {
+    html += '<div class="section" style="overflow-x:auto"><table class="app-table">'
+      + '<tr><th>School</th><th>Contact</th><th>Email</th><th>City</th><th>Applied</th><th>Actions</th></tr>';
+    list.forEach(function(app) {
+      html += '<tr>'
+        + '<td><strong>' + app.schoolName + '</strong></td>'
+        + '<td>' + app.contactName + '</td>'
+        + '<td>' + app.email + '</td>'
+        + '<td>' + app.city + '</td>'
+        + '<td>' + formatDate(app.appliedAt) + '</td>'
+        + '<td style="white-space:nowrap">'
+        + '<button class="btn btn-sm btn-outline" onclick="viewApp(\'' + app.id + '\')" style="margin-right:4px"><i class="fas fa-eye"></i></button>';
+      if (app.status === 'pending') {
+        html += '<button class="btn btn-sm btn-success" onclick="approveApp(\'' + app.id + '\')" style="margin-right:4px"><i class="fas fa-check"></i> Approve</button>'
+          + '<button class="btn btn-sm btn-danger" onclick="rejectApp(\'' + app.id + '\')"><i class="fas fa-times"></i> Reject</button>';
+      }
+      html += '</td></tr>';
+    });
+    html += '</table></div>';
+  }
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function switchTab(tab) {
+  _currentTab = tab;
+  renderApplications();
+}
+
+// --- View Application Detail ---
+function viewApp(id) {
+  var apps = getApps();
+  var app = apps.find(function(a) { return a.id === id; });
+  if (!app) { toast('Application not found', 'error'); return; }
+
+  document.getElementById('modalBody').innerHTML =
+    '<h3 style="margin-bottom:12px">Application Details</h3>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px">'
+    + '<div><strong>School Name:</strong> ' + app.schoolName + '</div>'
+    + '<div><strong>Application ID:</strong> ' + app.id + '</div>'
+    + '<div><strong>Contact Person:</strong> ' + app.contactName + '</div>'
+    + '<div><strong>Email:</strong> ' + app.email + '</div>'
+    + '<div><strong>Phone:</strong> ' + app.phone + '</div>'
+    + '<div><strong>City:</strong> ' + app.city + '</div>'
+    + '<div><strong>Country:</strong> ' + app.country + '</div>'
+    + '<div><strong>School Size:</strong> ' + app.schoolSize + '</div>'
+    + '<div><strong>Curriculum:</strong> ' + app.curriculumType + '</div>'
+    + '<div><strong>Address:</strong> ' + (app.address || '-') + '</div>'
+    + '<div><strong>Applied:</strong> ' + formatDate(app.appliedAt) + '</div>'
+    + '<div><strong>Status:</strong> <span class="badge badge-' + app.status + '">' + app.status + '</span></div>'
+    + '</div>'
+    + '<div class="modal-actions">'
+    + '<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+  if (app.status === 'pending') {
+    document.getElementById('modalBody').innerHTML +=
+      '<button class="btn btn-success" onclick="closeModal();approveApp(\'' + app.id + '\')"><i class="fas fa-check"></i> Approve</button>'
+      + '<button class="btn btn-danger" onclick="closeModal();rejectApp(\'' + app.id + '\')"><i class="fas fa-times"></i> Reject</button>';
+  }
+  document.getElementById('modalBody').innerHTML += '</div>';
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// --- Approve Application ---
+function approveApp(id) {
+  var apps = getApps();
+  var app = apps.find(function(a) { return a.id === id; });
+  if (!app || app.status !== 'pending') { toast('Application not found or already processed', 'error'); return; }
+
+  var schoolId = genId('SCH');
+  var adminId = genId('ADM');
+  var adminPass = 'School' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+  app.status = 'approved';
+  app.approvedAt = new Date().toISOString();
+
+  var school = {
+    id: schoolId,
+    schoolName: app.schoolName,
+    contactName: app.contactName,
+    email: app.email,
+    adminEmail: app.email,
+    phone: app.phone,
+    address: app.address,
+    city: app.city,
+    country: app.country,
+    schoolSize: app.schoolSize,
+    curriculumType: app.curriculumType,
+    tenantId: schoolId,
+    adminId: adminId,
+    adminPassword: adminPass,
+    approvedAt: app.approvedAt,
+    appliedAt: app.appliedAt
+  };
+
+  // Save school record
+  var schools = getSchools();
+  schools.push(school);
+  saveSchools(schools);
+  saveApps(apps);
+
+  // Create tenant
+  var tenants = getTenants();
+  tenants.push({
+    id: schoolId,
+    name: app.schoolName,
+    slug: app.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+    email: app.email,
+    logo: '',
+    adminId: adminId
+  });
+  saveTenants(tenants);
+
+  // Create school data store
+  var schoolData = getDefaultSchoolData(app.schoolName);
+  schoolData.admins = [{ id: adminId, name: app.contactName, email: app.email, username: app.email, password: adminPass }];
+  try { localStorage.setItem('schoolData_' + schoolId, JSON.stringify(schoolData)); } catch(e) {}
+
+  renderApplications();
+  toast('Approved! Credentials created for ' + app.schoolName, 'success');
+  showCredentials(app);
+}
+
+function showCredentials(app) {
+  var schools = getSchools();
+  var school = schools.find(function(s) { return s.email === app.email; });
+  if (!school) return;
+
+  document.getElementById('modalBody').innerHTML =
+    '<h3 style="margin-bottom:12px;color:#059669"><i class="fas fa-check-circle"></i> School Approved!</h3>'
+    + '<p style="font-size:14px;color:#475569;margin-bottom:12px">The following credentials have been generated for <strong>' + app.schoolName + '</strong>:</p>'
+    + '<div class="cred-box">'
+    + '<strong>School ID:</strong> ' + school.id + '<br>'
+    + '<strong>School Name:</strong> ' + school.schoolName + '<br>'
+    + '<strong>Admin Email:</strong> ' + school.adminEmail + '<br>'
+    + '<strong>Admin Password:</strong> ' + school.adminPassword + '<br>'
+    + '<strong>Login URL:</strong> ' + window.location.origin + '/login.html?school=' + (school.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) + '&role=admin'
+    + '</div>'
+    + '<p style="font-size:13px;color:#718096;margin-bottom:12px">Share these credentials with the school admin. They can log in at <strong>login.html</strong> using their email and password.</p>'
+    + '<div class="modal-actions">'
+    + '<button class="btn btn-primary" onclick="closeModal()">Done</button>'
+    + '</div>';
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// --- Reject Application ---
+function rejectApp(id) {
+  var apps = getApps();
+  var app = apps.find(function(a) { return a.id === id; });
+  if (!app || app.status !== 'pending') { toast('Application not found or already processed', 'error'); return; }
+  app.status = 'rejected';
+  app.rejectedAt = new Date().toISOString();
+  saveApps(apps);
+  renderApplications();
+  toast('Application rejected', 'error');
+}
+
+// --- Render: Schools ---
+function renderSchools() {
+  var schools = getSchools();
+  if (schools.length === 0) {
+    document.getElementById('mainContent').innerHTML =
+      '<div class="empty-state"><i class="fas fa-school"></i><p>No approved schools yet</p></div>';
     return;
   }
-  var root = document.getElementById('saStandaloneRoot');
-  if (!root) { _origShowSuperAdminSignup(); return; }
-  root.innerHTML = '<div class="sa-signup-page" id="saSignupPage">'
-    + '<div class="sa-login-card">'
-    + '<h2><i class="fas fa-user-shield"></i> Create Super Admin</h2>'
-    + '<p>Set up the platform administrator account</p>'
-    + '<div id="superAdminSignupError" class="error-box"></div>'
-    + '<div class="form-group"><label>Full Name</label><input type="text" id="supAdminName" placeholder="Super admin name" oninput="validateField(this,\'name\')"></div>'
-    + '<div class="form-group"><label>Email</label><input type="email" id="supAdminEmail" placeholder="super@eduverse.com" oninput="validateField(this,\'email\')"></div>'
-    + '<div class="form-group"><label>Password (min 6 chars)</label><input type="password" id="supAdminPass" placeholder="Min 6 characters" oninput="validateField(this,\'password\')"></div>'
-    + '<button class="btn btn-success" onclick="createSuperAdminAccount()" style="width:100%;margin-top:8px;"><i class="fas fa-user-plus"></i> Create Account</button>'
-    + '<div class="footer-link"><a onclick="showSuperAdminLogin()"><i class="fas fa-arrow-left"></i> Back to login</a></div>'
-    + '</div></div>';
-};
-
-// Override showSuperAdminDashboard to render inline on standalone page
-var _origShowSuperAdminDashboard = showSuperAdminDashboard;
-showSuperAdminDashboard = function() {
-  var admin = getSuperAdmin();
-  if (!admin) { showSuperAdminLogin(); return; }
-  saveSASession(admin.id);
-  var root = document.getElementById('saStandaloneRoot');
-  if (!root) { _origShowSuperAdminDashboard(); return; }
-
-  var tenants = typeof getTenants === 'function' ? getTenants() : [];
-  _saCurrentTab = 'overview';
-
-  root.innerHTML = '<div class="sa-dashboard"><div class="sa-sidebar" id="saSidebar">'
-    + '<div class="sa-sidebar-header"><i class="fas fa-user-shield"></i><span>Super Admin</span></div>'
-    + '<div class="sa-sidebar-user">' + (typeof esc === 'function' ? esc(admin.name) : admin.name) + '<br><span style="font-size:11px;color:rgba(255,255,255,0.5);">' + (typeof esc === 'function' ? esc(admin.email) : admin.email) + '</span></div>'
-    + '<nav class="sa-nav">'
-    + '<a href="javascript:;" class="sa-nav-item active" data-tab="overview" onclick="switchSaTab(\'overview\')"><i class="fas fa-chart-pie"></i><span>Overview</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="schools" onclick="switchSaTab(\'schools\')"><i class="fas fa-school"></i><span>Schools</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="password-reset" onclick="switchSaTab(\'password-reset\')"><i class="fas fa-key"></i><span>Password Reset</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="platform" onclick="switchSaTab(\'platform\')"><i class="fas fa-cogs"></i><span>Platform Settings</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="subscriptions" onclick="switchSaTab(\'subscriptions\')"><i class="fas fa-credit-card"></i><span>Subscription Plans</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="analytics" onclick="switchSaTab(\'analytics\')"><i class="fas fa-chart-line"></i><span>Analytics</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="broadcast" onclick="switchSaTab(\'broadcast\')"><i class="fas fa-bullhorn"></i><span>Broadcast</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="revenue" onclick="switchSaTab(\'revenue\')"><i class="fas fa-money-bill-wave"></i><span>Revenue</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="tickets" onclick="switchSaTab(\'tickets\')"><i class="fas fa-headset"></i><span>Support Tickets</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="features" onclick="switchSaTab(\'features\')"><i class="fas fa-toggle-on"></i><span>Feature Flags</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="backup" onclick="switchSaTab(\'backup\')"><i class="fas fa-database"></i><span>Backup &amp; Data</span></a>'
-    + '<a href="javascript:;" class="sa-nav-item" data-tab="system" onclick="switchSaTab(\'system\')"><i class="fas fa-server"></i><span>System</span></a>'
-    + '</nav>'
-    + '<div class="sa-sidebar-footer"><button class="btn btn-sm btn-outline" onclick="saLogout()" style="width:100%;color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);background:transparent;"><i class="fas fa-sign-out-alt"></i> Sign Out</button></div>'
-    + '</div><div class="sa-main" id="saMain"><div class="sa-main-header"><h2 id="saPanelTitle">Overview</h2></div><div class="sa-content" id="saContent"></div></div></div>';
-
-  renderSaTab('overview');
-};
-
-// SA logout — clears session and shows login
-function saLogout() {
-  clearSASession();
-  showSuperAdminLogin();
+  var html = '<div class="section" style="overflow-x:auto"><table class="app-table">'
+    + '<tr><th>School</th><th>Email</th><th>City</th><th>Approved</th><th>Admin ID</th><th>Actions</th></tr>';
+  schools.forEach(function(s) {
+    html += '<tr>'
+      + '<td><strong>' + s.schoolName + '</strong></td>'
+      + '<td>' + (s.adminEmail || s.email) + '</td>'
+      + '<td>' + s.city + '</td>'
+      + '<td>' + (s.approvedAt ? formatDate(s.approvedAt) : '-') + '</td>'
+      + '<td style="font-family:monospace;font-size:12px">' + s.adminId + '</td>'
+      + '<td><button class="btn btn-sm btn-outline" onclick="viewSchool(\'' + s.id + '\')"><i class="fas fa-eye"></i></button></td>'
+      + '</tr>';
+  });
+  html += '</table></div>';
+  document.getElementById('mainContent').innerHTML = html;
 }
 
-// Init on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', function() {
-  var FB_SA_READY = false;
-  if (typeof firebase !== 'undefined') {
-    try {
-      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-      FB_SA_READY = true;
-    } catch(e) {}
+function viewSchool(id) {
+  var schools = getSchools();
+  var s = schools.find(function(sch) { return sch.id === id; });
+  if (!s) { toast('School not found', 'error'); return; }
+
+  document.getElementById('modalBody').innerHTML =
+    '<h3 style="margin-bottom:12px">School Details</h3>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px">'
+    + '<div><strong>School Name:</strong> ' + s.schoolName + '</div>'
+    + '<div><strong>School ID:</strong> ' + s.id + '</div>'
+    + '<div><strong>Contact:</strong> ' + s.contactName + '</div>'
+    + '<div><strong>Email:</strong> ' + (s.adminEmail || s.email) + '</div>'
+    + '<div><strong>Phone:</strong> ' + s.phone + '</div>'
+    + '<div><strong>City:</strong> ' + s.city + '</div>'
+    + '<div><strong>Admin ID:</strong> ' + s.adminId + '</div>'
+    + '<div><strong>Password:</strong> ' + s.adminPassword + '</div>'
+    + '<div><strong>Approved:</strong> ' + formatDate(s.approvedAt) + '</div>'
+    + '</div>'
+    + '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Close</button></div>';
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// --- Logout ---
+function handleLogout() {
+  clearSession();
+  showLogin();
+}
+
+// --- Init ---
+(function() {
+  var session = getSession();
+  if (session) {
+    showDashboard();
+  } else {
+    showLogin();
   }
-
-  // Override superAdminLogin to try Firebase Auth first
-  window.superAdminLogin = function() {
-    const email = document.getElementById('supAdminEmail')?.value?.trim();
-    const pass = document.getElementById('supAdminPass')?.value?.trim();
-    const err = document.getElementById('superAdminLoginError');
-    if (!email || !pass) { showError(err, 'Please fill all fields'); return; }
-    if (typeof isValidEmail === 'function' && !isValidEmail(email)) { showError(err, 'Invalid email format'); return; }
-    if (typeof isValidPassword === 'function' && !isValidPassword(pass)) { showError(err, 'Password must be at least 6 characters'); return; }
-
-    function proceedLocal() {
-      const admin = verifySuperAdmin(email, pass);
-      if (!admin) { showError(err, 'Invalid email or password'); return; }
-      hideError(err);
-      saveSASession(admin.id);
-      showSuperAdminDashboard();
-    }
-
-    if (FB_SA_READY) {
-      firebase.auth().signInWithEmailAndPassword(email, pass).then(function() {
-        hideError(err);
-        var admin = verifySuperAdmin(email, pass) || { id: email, name: email, email: email };
-        saveSASession(admin.id);
-        showSuperAdminDashboard();
-      }).catch(function() {
-        proceedLocal();
-      });
-    } else {
-      proceedLocal();
-    }
-  };
-
-  // Override createSuperAdminAccount to also create Firebase Auth user
-  window.createSuperAdminAccount = function() {
-    const name = document.getElementById('supAdminName')?.value?.trim();
-    const email = document.getElementById('supAdminEmail')?.value?.trim();
-    const pass = document.getElementById('supAdminPass')?.value?.trim();
-    const err = document.getElementById('superAdminSignupError');
-    if (!name || !email || !pass) { showError(err, 'Please fill all fields'); return; }
-    if (typeof isValidEmail === 'function' && !isValidEmail(email)) { showError(err, 'Invalid email format'); return; }
-    if (typeof isValidPassword === 'function' && !isValidPassword(pass)) { showError(err, 'Password must be at least 6 characters'); return; }
-    const result = createSuperAdmin(name, email, pass);
-    if (!result) { showError(err, 'A super admin already exists'); return; }
-
-    if (FB_SA_READY && typeof firebaseSignUp === 'function') {
-      firebaseSignUp(email, pass, name, 'super_admin', 'platform', 'SUP001').catch(function(e) {
-        console.warn('Firebase SA signup failed, data saved locally', e);
-      });
-    }
-    hideError(err);
-    toast('Super admin account created!');
-    saveSASession(result.id);
-    showSuperAdminDashboard();
-  };
-
-  // Override saLogout to sign out of Firebase Auth too
-  window.saLogout = function() {
-    clearSASession();
-    if (FB_SA_READY && typeof firebaseSignOut === 'function') {
-      firebaseSignOut();
-    }
-    showSuperAdminLogin();
-  };
-
-  var root = document.getElementById('saStandaloneRoot');
-  if (!root) return;
-
-  // Ensure data is loaded
-  if (typeof loadData === 'function' && typeof data === 'undefined' || data === null) {
-    try { data = loadData(); } catch(e) {}
-  }
-
-  // Check SA session first (auto-login)
-  var session = getSASession();
-  if (session && typeof getSuperAdmin === 'function') {
-    var admin = getSuperAdmin();
-    if (admin && admin.id === session.id) {
-      showSuperAdminDashboard();
-      return;
-    }
-  }
-
-  // No session — show login
-  if (typeof getSuperAdmin === 'function') {
-    if (getSuperAdmin()) {
-      showSuperAdminLogin();
-    } else {
-      showSuperAdminSignup();
-    }
-  }
-});
-</script>
-<script>
-window.migrateLocalStorageToFirestore = function() {
-  if (typeof firebase === 'undefined' || typeof firebase.firestore === 'undefined') {
-    console.error('Firebase SDK not loaded');
-    if (typeof toast === 'function') toast('Firebase SDK not loaded on this page', 'error');
-    return Promise.reject(new Error('Firebase SDK not loaded'));
-  }
-  try {
-    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
-  } catch(e) {}
-  var db = firebase.firestore();
-  var batch = {};
-  var count = 0;
-
-  try {
-    var raw = localStorage.getItem('schoolData');
-    if (raw) { batch['schools/default'] = JSON.parse(raw); count++; }
-  } catch(e) {}
-
-  try {
-    var raw = localStorage.getItem('eduverse_data');
-    if (raw && !batch['schools/default']) { batch['schools/default'] = JSON.parse(raw); count++; }
-  } catch(e) {}
-
-  try {
-    var tenantsRaw = localStorage.getItem('eduverse_tenants');
-    if (tenantsRaw) {
-      var tenantsList = JSON.parse(tenantsRaw);
-      batch['tenants/list'] = { tenants: tenantsList };
-      count++;
-      for (var i = 0; i < tenantsList.length; i++) {
-        try {
-          var sr = localStorage.getItem('schoolData_' + tenantsList[i].id);
-          if (sr) { batch['schools/' + tenantsList[i].id] = JSON.parse(sr); count++; }
-        } catch(e) {}
-      }
-    }
-  } catch(e) {}
-
-  try {
-    var cr = localStorage.getItem('eduverse_platform_config');
-    if (cr) { batch['platform/config'] = JSON.parse(cr); count++; }
-  } catch(e) {}
-
-  try {
-    var ar = localStorage.getItem('eduverse_school_applications');
-    if (ar) {
-      if (!batch['tenants/list']) batch['tenants/list'] = {};
-      batch['tenants/list'].applications = JSON.parse(ar);
-    }
-  } catch(e) {}
-
-  try {
-    var sar = localStorage.getItem('eduverse_super_admin');
-    if (sar) { batch['superAdmin/config'] = JSON.parse(sar); count++; }
-  } catch(e) {}
-
-  var promises = Object.keys(batch).map(function(key) {
-    var parts = key.split('/');
-    return db.collection(parts[0]).doc(parts[1]).set(batch[key], { merge: true });
-  });
-
-  return Promise.all(promises).then(function() {
-    var msg = 'Migrated ' + count + ' documents to Firestore';
-    console.log(msg);
-    if (typeof toast === 'function') toast(msg, 'success');
-    return count;
-  }).catch(function(err) {
-    console.error('Migration failed:', err);
-    if (typeof toast === 'function') toast('Migration failed: ' + err.message, 'error');
-    throw err;
-  });
-};
+})();
 </script>
 </body>
 </html>

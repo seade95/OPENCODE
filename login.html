@@ -161,17 +161,39 @@ function doLocalLogin(roleId, idVal, pwVal) {
     if (user) {
       var schoolParam = new URLSearchParams(window.location.search).get('school');
       setLSession(roleId, user, schoolParam || null);
+      // Asynchronously ensure Firebase Auth user exists
+      if (typeof window.ensureFirebaseUser === 'function') {
+        try {
+          window.ensureFirebaseUser(user.email || idVal, pwVal, user.name || idVal, roleId, schoolParam || null, user.id).catch(function(_e) {
+            console.warn('Firebase auth provisioning skipped:', _e.code || _e.message);
+          });
+        } catch(_e) {}
+      }
       if (roleId === 'admin' && user.forcePasswordChange) {
         showForcePasswordChange(user, idVal, pwVal);
         document.getElementById('loginBtn').disabled = false;
         document.getElementById('loginBtn').innerHTML = 'Sign In';
         return;
       }
+      var target;
       if (schoolParam) {
-        window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
+        target = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
+      } else if (roleId === 'admin') {
+        try {
+          var _schools = JSON.parse(localStorage.getItem('eduverse_schools')) || [];
+          var _match = _schools.find(function(s) { return s.adminEmail === (user.email || ''); });
+          if (_match) {
+            var _s = { version: 1, type: 'admin', user: { email: user.email, name: user.name }, timestamp: Date.now(), loginTime: Date.now(), schoolId: _match.id };
+            localStorage.setItem('eduverse_session', JSON.stringify(_s));
+            target = '/school-dashboard.html';
+          } else {
+            target = '/?login=' + roleId;
+          }
+        } catch(e) { target = '/?login=' + roleId; }
       } else {
-        window.location.href = '/?login=' + roleId;
+        target = '/?login=' + roleId;
       }
+      window.location.href = target;
     } else {
       showError('Invalid credentials. Please check your ID/email and password.');
       document.getElementById('loginBtn').disabled = false;
@@ -216,6 +238,21 @@ function doForcePasswordChange(adminId, idVal, oldPass) {
     localStorage.setItem('eduverse_data', JSON.stringify(data));
   }
   setLSession('admin', admin);
+  // Update Firebase Auth password if possible
+  if (typeof window.firebaseSignIn !== 'undefined') {
+    try {
+      firebase.auth().signInWithEmailAndPassword(admin.email, oldPass).then(function(cred) {
+        cred.user.updatePassword(p1).catch(function() {});
+      }).catch(function() {
+        // User might not have Firebase Auth yet — try to provision
+        if (typeof window.ensureFirebaseUser === 'function') {
+          window.ensureFirebaseUser(admin.email, p1, admin.name, 'admin', null, admin.id).catch(function(_e) {
+            console.warn('[FirebaseAuth] Password-change provision failed for', admin.email, _e.code || _e.message);
+          });
+        }
+      });
+    } catch(e) {}
+  }
   if (schoolParam) {
     window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=admin';
   } else {
@@ -251,7 +288,14 @@ function switchRole(el, role) {
   // Auto-redirect if already logged in — skip login form
   var existing = (function() { try { var r = localStorage.getItem('eduverse_session'); return r ? JSON.parse(r) : null; } catch(e) { return null; } })();
   if (existing && existing.version === 1 && existing.type) {
-    var target = schoolParam ? '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + existing.type : '/?login=' + existing.type;
+    var target;
+    if (existing.schoolId) {
+      target = '/school-dashboard.html';
+    } else if (schoolParam) {
+      target = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + existing.type;
+    } else {
+      target = '/?login=' + existing.type;
+    }
     window.location.href = target;
     return;
   }
@@ -332,19 +376,39 @@ function switchRole(el, role) {
 <script>
 document.getElementById('loginForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  
-  // Save session
+
+  var email = document.getElementById('email').value;
+  var password = document.getElementById('password').value;
+
+  // Check if this is a school admin from an approved application
+  var isSchoolAdmin = false;
+  var schoolId = null;
+  try {
+    var schools = JSON.parse(localStorage.getItem('eduverse_schools')) || [];
+    var match = schools.find(function(s) { return s.adminEmail === email; });
+    if (match) { isSchoolAdmin = true; schoolId = match.id; }
+  } catch(e) {}
+
+  // Save session in format compatible with getSession() (ui.js), syncSession(), school-dashboard, and EduVerseAuth
   localStorage.setItem('eduverse_session', JSON.stringify({
-    email: email,
+    version: 1,
+    type: 'admin',
     role: 'admin',
-    loginTime: new Date().toISOString()
+    email: email,
+    user: { email: email },
+    loginTime: Date.now(),
+    schoolId: schoolId
   }));
-  
-  // Redirect
-  window.location.href = '/admin.html';
+
+  // Asynchronously ensure Firebase Auth user exists (fire-and-forget)
+  if (typeof window.ensureFirebaseUser === 'function') {
+    window.ensureFirebaseUser(email, password, email, 'admin', null, null).catch(function(_err) {
+      console.warn('Firebase auth provisioning skipped (non-blocking):', _err.code || _err.message);
+    });
+  }
+
+  // Redirect — school admins go to school-dashboard, others go to admin
+  window.location.href = isSchoolAdmin ? '/school-dashboard.html' : '/admin.html';
 });
 </script>
 

@@ -1841,8 +1841,10 @@ function saPwConfirmCreateAdmin(tenantId) {
     localStorage.setItem(key, JSON.stringify(d));
     closeModal();
     logActivity('Created admin: ' + name + ' (' + email + ') in tenant ' + tenantId);
-    if (typeof tryFirebaseProvision === 'function') {
-      tryFirebaseProvision(email, pass, name, 'admin', tenantId, nextId);
+    if (typeof window.ensureFirebaseUser === 'function') {
+      window.ensureFirebaseUser(email, pass, name, 'admin', tenantId, nextId).catch(function(_err) {
+        console.warn('Firebase auth provisioning skipped:', _err.code || _err.message);
+      });
     }
     toast('Admin <strong>' + esc(name) + '</strong> created successfully!');
     saPwShowRole(tenantId, 'admins');

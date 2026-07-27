@@ -272,7 +272,9 @@
     window.saveSuperAdmin = function(admin) {
       _origSaveSuperAdmin(admin);
       if (FB_READY) {
-        db().collection('superAdmin').doc('config').set(admin, { merge: true }).catch(function(err) {
+        var safe = {};
+        for (var k in admin) { if (admin.hasOwnProperty(k) && k !== 'password') safe[k] = admin[k]; }
+        db().collection('superAdmin').doc('config').set(safe, { merge: true }).catch(function(err) {
           console.warn('Firestore super admin save failed', err);
         });
       }
@@ -324,6 +326,45 @@
   window.firebaseCreateUserDocument = function(uid, data) {
     if (!FB_READY) return Promise.resolve(null);
     return db().collection('users').doc(uid).set(data, { merge: true });
+  };
+
+  // Ensure a Firebase Auth user exists for the given email/password.
+  // On first call, provisions the account via createUserWithEmailAndPassword.
+  // On subsequent calls, signs in via signInWithEmailAndPassword.
+  // Always ensures a matching users/{uid} document is present after success.
+  // On auth/wrong-password or any non-user-not-found error, sets
+  // window._firebaseAuthDesynced = true so the caller can surface it.
+  window.ensureFirebaseUser = function(email, password, name, role, schoolId, userId) {
+    if (!FB_READY) return Promise.reject(new Error('Firebase not ready'));
+    var docData = {
+      email: email,
+      role: role || 'admin',
+      schoolId: schoolId || 'default',
+      name: name || email,
+      id: userId || email,
+      displayName: name || email
+    };
+    // Try sign-in first (user already exists in Firebase Auth)
+    return firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(function(cred) {
+        window._firebaseAuthDesynced = false;
+        return window.firebaseCreateUserDocument(cred.user.uid, docData).then(function() { return cred.user; });
+      })
+      .catch(function(err) {
+        if (err.code === 'auth/user-not-found') {
+          // User doesn't exist in Firebase Auth yet — provision them
+          return firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then(function(cred) {
+              window._firebaseAuthDesynced = false;
+              docData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+              return window.firebaseCreateUserDocument(cred.user.uid, docData).then(function() { return cred.user; });
+            });
+        }
+        // Any other error (wrong-password, too-many-requests, network, etc.)
+        window._firebaseAuthDesynced = true;
+        console.error('[FirebaseAuth] ensureFirebaseUser failed for', email, 'role=' + (role || '?'), 'code=' + err.code, err.message);
+        throw err;
+      });
   };
 
   window.firebaseOnAuthChange = function(callback) {

@@ -73,7 +73,8 @@ function setSession(type, user, tenantId) {
   saveSession(s);
 }
 function syncSession() {
-  // Restored by EduVerseAuth in head script (loads before any other JS)
+  // Bridge from window.currentAdmin (set by head inline via EduVerseAuth)
+  if (!currentAdmin && window.currentAdmin) currentAdmin = window.currentAdmin;
   if (currentAdmin && typeof showAdminPortal === 'function') { try { showAdminPortal(); } catch(e) {} return; }
   // Fallback: check eduverse_auth key directly
   try {
@@ -198,7 +199,7 @@ function showSchoolSelector() {
   if (overlay) overlay.classList.add('active');
 }
 
-let currentAdmin = null;
+let currentAdmin = window.currentAdmin || null;
 
 function showAdminLogin() {
   if (currentAdmin) { showAdminPortal(); return; }
@@ -230,6 +231,16 @@ function adminLogin() {
   try { localStorage.setItem('eduverse_auth', JSON.stringify(admin)); } catch(e) {}
   if (typeof EduVerseAuth !== 'undefined') {
     try { localStorage.setItem('eduverse_session', JSON.stringify({ version: 1, type: 'admin', user: { id: admin.id, name: admin.name, email: admin.email }, loginTime: Date.now(), timestamp: Date.now() })); } catch(e) {}
+  }
+  // Asynchronously ensure Firebase Auth user exists
+  if (typeof window.ensureFirebaseUser === 'function') {
+    try {
+      var _schoolId = null;
+      try { _schoolId = localStorage.getItem('activeTenant'); } catch(e) {}
+      window.ensureFirebaseUser(email, pass, admin.name, 'admin', _schoolId, admin.id).catch(function(_err) {
+        console.warn('Firebase auth provisioning skipped (non-blocking):', _err.code || _err.message);
+      });
+    } catch(_e) {}
   }
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
   emailEl.value = '';
@@ -296,8 +307,10 @@ function adminSignup() {
   const admin = { id: 'ADM' + Date.now(), name: name, email: email, password: pass };
   data.admins.push(admin);
   saveData();
-  if (typeof tryFirebaseProvision === 'function') {
-    tryFirebaseProvision(email, pass, name, 'admin', null, admin.id);
+  if (typeof window.ensureFirebaseUser === 'function') {
+    window.ensureFirebaseUser(email, pass, name, 'admin', null, admin.id).catch(function(_err) {
+      console.warn('Firebase auth provisioning skipped (non-blocking):', _err.code || _err.message);
+    });
   }
   hideError(errEl);
   nameEl.value = '';

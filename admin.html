@@ -994,6 +994,12 @@ adminSignup = function() {
     data.admins.push(admin);
     saveData();
   }
+  // Asynchronously ensure Firebase Auth user exists
+  if (typeof window.ensureFirebaseUser === 'function') {
+    window.ensureFirebaseUser(email, pass, name, 'admin', null, admin.id).catch(function(_err) {
+      console.warn('Firebase auth provisioning skipped (non-blocking):', _err.code || _err.message);
+    });
+  }
   document.getElementById('adminSignupError').style.display = 'none';
   document.getElementById('adminSignupName').value = '';
   document.getElementById('adminSignupEmail').value = '';

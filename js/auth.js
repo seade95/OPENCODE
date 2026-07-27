@@ -53,6 +53,16 @@
       try { localStorage.setItem(AUTH_KEY, JSON.stringify(session)); } catch(e) {}
       try { localStorage.setItem(AUTH_BACKUP, JSON.stringify({ email: email, role: role || 'admin', loginTime: new Date().toISOString() })); } catch(e) {}
       window.currentAdmin = admin;
+      // Asynchronously ensure Firebase Auth user exists (fire-and-forget for migration)
+      if (typeof window.ensureFirebaseUser === 'function') {
+        try {
+          var schoolId = null;
+          try { schoolId = localStorage.getItem('activeTenant'); } catch(e) {}
+          window.ensureFirebaseUser(email, password, admin.name, role || 'admin', schoolId, admin.id).catch(function(err) {
+            console.warn('Firebase auth provisioning skipped (non-blocking):', err.code || err.message);
+          });
+        } catch(e) {}
+      }
       return true;
     },
 
@@ -80,6 +90,8 @@
           this.logout();
           return false;
         }
+        if (!d.user) d.user = { email: d.email };
+        window.currentAdmin = d.user;
         return true;
       } catch(e) { return false; }
     },
@@ -91,6 +103,7 @@
         var d = JSON.parse(s);
         if (!d || (!d.type && !d.role)) return null;
         if (!d.user) d.user = { email: d.email };
+        window.currentAdmin = d.user;
         return d;
       } catch(e) { return null; }
     },
@@ -98,6 +111,9 @@
     logout: function() {
       try { localStorage.removeItem(AUTH_KEY); } catch(e) {}
       try { localStorage.removeItem(AUTH_BACKUP); } catch(e) {}
+      if (typeof window.firebaseSignOut === 'function') {
+        try { window.firebaseSignOut().catch(function(){}); } catch(e) {}
+      }
       if (typeof clearSession === 'function') clearSession('admin');
       window.currentAdmin = null;
       window.location.href = 'login.html';

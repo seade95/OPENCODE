@@ -163,8 +163,10 @@ function saveStudent() {
   data.students.push({ id, name, class: cls, contact, username: username || name.toLowerCase().replace(/\s+/g, '.'), password: password || 'stu123' });
   saveData();
   logActivity(`Added student ${name} (${id})`);
-  if (typeof tryFirebaseProvision === 'function' && contact && contact.indexOf('@') !== -1) {
-    tryFirebaseProvision(contact, password || 'stu123', name, 'student', null, id);
+  if (typeof window.ensureFirebaseUser === 'function' && contact && contact.indexOf('@') !== -1) {
+    window.ensureFirebaseUser(contact, password || 'stu123', name, 'student', null, id).catch(function(_err) {
+      console.warn('Firebase auth provisioning skipped:', _err.code || _err.message);
+    });
   }
   closeModal();
   renderStudents();
@@ -374,8 +376,10 @@ function saveTeacher() {
   data.teachers.push({ id, name, email, password, username: username || name.toLowerCase().replace(/\s+/g, '.'), assignedClass });
   saveData();
   logActivity(`Added teacher ${name} (${id}) for ${assignedClass}`);
-  if (typeof tryFirebaseProvision === 'function' && email) {
-    tryFirebaseProvision(email, password, name, 'teacher', null, id);
+  if (typeof window.ensureFirebaseUser === 'function' && email) {
+    window.ensureFirebaseUser(email, password, name, 'teacher', null, id).catch(function(_err) {
+      console.warn('Firebase auth provisioning skipped:', _err.code || _err.message);
+    });
   }
   closeModal();
   renderTeachers();
