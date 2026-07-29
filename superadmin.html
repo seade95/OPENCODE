@@ -200,18 +200,57 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
 .sa-dashboard~.modal-close,.sa-dashboard+.modal-close{display:none}
 #modalOverlay.active .modal-close{display:none}
 
-/* Responsive sidebar */
+/* Responsive */
+@media(max-width:1024px){
+  .sa-sidebar{width:200px}
+  .sa-main-header h2{font-size:17px}
+  .sa-content{padding:16px 20px}
+  .sa-stats-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .sa-stat-card{padding:14px 16px}
+  .sa-stat-value{font-size:20px}
+}
+
 @media(max-width:768px){
-  .sa-sidebar{width:56px}
+  .sa-sidebar{width:56px;overflow-y:auto}
   .sa-sidebar-header span,.sa-sidebar-user,.sa-nav-item span,.sa-sidebar-footer{display:none}
-  .sa-nav-item{justify-content:center;padding:12px}
-  .sa-nav-item i{margin:0}
-  .sa-main-header{padding:16px}
-  .sa-content{padding:16px}
-  .sa-stats-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-  .sa-stat-card{padding:12px 14px}
-  .sa-stat-value{font-size:18px}
+  .sa-nav-item{justify-content:center;padding:12px 0}
+  .sa-nav-item i{margin:0;width:auto;font-size:17px}
+  .sa-main-header{padding:14px 16px}
+  .sa-main-header h2{font-size:15px}
+  .sa-content{padding:12px 14px}
+  .sa-stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .sa-stat-card{padding:10px 12px;gap:10px}
+  .sa-stat-icon{width:36px;height:36px;font-size:16px}
+  .sa-stat-value{font-size:17px}
+  .sa-stat-label{font-size:11px}
+  .sa-section{padding:14px;margin-bottom:12px}
+  .sa-section h3{font-size:14px}
+  .sa-log-item{font-size:12px;flex-wrap:wrap;gap:4px}
+  .sa-log-time{min-width:60px}
   .modal{width:100vw;max-width:100vw;height:100vh;max-height:100vh;border-radius:0}
+  .sa-plan-card{padding:12px}
+  .sa-plan-amount{font-size:18px}
+}
+
+@media(max-width:480px){
+  .sa-content{padding:10px}
+  .sa-stats-grid{grid-template-columns:1fr;gap:8px}
+  .sa-stat-card{padding:10px}
+  .sa-main-header{flex-direction:column;gap:6px;align-items:flex-start}
+  .sa-main-header h2{font-size:14px}
+  .sa-section{padding:12px}
+  .sa-section h3{font-size:13px}
+  .sa-content .table th,.sa-content table th,.sa-content .table td,.sa-content table td{padding:6px 8px;font-size:11px;white-space:nowrap}
+  .sa-content .table td .btn,.sa-content table td .btn{padding:4px 8px;font-size:11px}
+  .sa-content .table td code{font-size:10px}
+  .form-row input,.form-row select,.form-row textarea{padding:8px 10px;font-size:13px}
+  .sa-plan-amount{font-size:16px}
+  .sa-plan-header{flex-direction:column;align-items:flex-start;gap:4px}
+  .sa-stat-value{font-size:16px}
+  .sa-stat-icon{width:32px;height:32px;font-size:14px}
+  .sa-section>div[style*="display:flex"]{flex-direction:column;align-items:stretch!important}
+  .sa-section>div[style*="display:flex"] .btn{width:100%;justify-content:center}
+  .form-row:has(.toggle-switch){flex-wrap:wrap}
 }
 </style>
 </head>
