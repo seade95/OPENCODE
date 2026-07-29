@@ -228,6 +228,8 @@ document.addEventListener('DOMContentLoaded', function() {
       var docHeight = document.documentElement.scrollHeight - window.innerHeight;
       topBtn.classList.toggle('visible', scrollTop > 300);
       bottomBtn.classList.toggle('visible', docHeight - scrollTop > 300);
+      var nav = document.getElementById('navbar');
+      if (nav) nav.classList.toggle('scrolled', scrollTop > 50);
     }
     window.addEventListener('scroll', function() {
       if (!_scrollRafId) _scrollRafId = requestAnimationFrame(toggleScrollBtns);

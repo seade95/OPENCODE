@@ -108,27 +108,33 @@
 <!-- Top Bar -->
 <nav class="navbar" id="navbar">
   <a class="nav-logo" href="#"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">EDUVERSE</span></a>
-  <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
-  <ul class="nav-links" id="navLinks">
-    <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
-      <a href="javascript:;">Features <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></a>
-      <div class="nav-dropdown-menu">
-        <a href="#services"><i class="fas fa-cogs"></i> Services</a>
-        <a href="#courses"><i class="fas fa-book-open"></i> Courses</a>
-        <a href="#events"><i class="fas fa-calendar-alt"></i> Events</a>
-        <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
-      </div>
-    </li>
-    <li><a href="/pricing">Pricing</a></li>
-    <li><a href="/schools">Schools</a></li>
-    <li><a href="javascript:;" onclick="showApplySchool()" style="color:#fbbf24;"><i class="fas fa-pen"></i> Apply as School</a></li>
-    <li><a href="admin.html" class="btn-portal"><i class="fas fa-user-shield"></i> Admin</a></li>
-    <li><a href="javascript:;" onclick="showSchoolSelector()" class="btn-portal" style="background:rgba(255,215,0,0.15);color:gold;" title="Switch School"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
-    <li><a href="superadmin.html" style="color:rgba(255,255,255,0.5);padding:8px 10px;font-size:13px;" title="Super Admin" id="superAdminCog"><i class="fas fa-user-cog"></i></a></li>
-    <li><a href="javascript:;" onclick="showEduverseLogin()" class="btn-portal" style="background:var(--accent);color:var(--primary-dark);font-weight:700;"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
-    <li><a href="javascript:;" onclick="showEduverseSignup()" class="btn-portal" style="background:rgba(255,255,255,0.15);color:white;" id="navJoinBtn"><i class="fas fa-user-plus"></i> Join EduVerse</a></li>
-    <li><a href="javascript:;" onclick="toggleDarkMode()" style="color:rgba(255,255,255,0.7);padding:8px 12px;" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
-  </ul>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
+  <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
+        <a href="javascript:;" class="nav-link">Features <i class="fas fa-chevron-down nav-dropdown-arrow"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="#services"><i class="fas fa-cogs"></i> Services</a>
+          <a href="#courses"><i class="fas fa-book-open"></i> Courses</a>
+          <a href="#events"><i class="fas fa-calendar-alt"></i> Events</a>
+          <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
+        </div>
+      </li>
+      <li><a href="/pricing" class="nav-link">Pricing</a></li>
+      <li><a href="/schools" class="nav-link">Schools</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-accent" onclick="showApplySchool()"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-btn nav-btn-admin"><i class="fas fa-user-shield"></i> Admin</a></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-school" onclick="showSchoolSelector()"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-primary" onclick="showEduverseLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-secondary" onclick="showEduverseSignup()" id="navJoinBtn"><i class="fas fa-user-plus"></i> Join EduVerse</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="superadmin.html" class="nav-link nav-link-subtle" id="superAdminCog" title="Super Admin"><i class="fas fa-user-cog"></i></a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
 </nav>
 
 <!-- Hero Slider -->

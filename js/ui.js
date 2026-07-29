@@ -152,13 +152,17 @@ function closeModal() {
 
 // ===== NAVIGATION =====
 function toggleNav() {
-  const links = document.getElementById('navLinks');
-  if (links) links.classList.toggle('open');
+  const menu = document.getElementById('navMenu');
+  const backdrop = document.getElementById('navBackdrop');
+  const icon = document.getElementById('navToggleIcon');
+  if (menu) {
+    menu.classList.toggle('open');
+    if (backdrop) backdrop.classList.toggle('active');
+    if (icon) icon.className = menu.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
+  }
 }
 function toggleNavDropdown(el) {
   el.classList.toggle('open');
-  var menu = el.querySelector('.nav-dropdown-menu');
-  if (menu) { menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; }
 }
 
 function goHome() {
