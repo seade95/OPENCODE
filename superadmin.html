@@ -194,7 +194,169 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
 /* Bank info display */
 .sa-bank-info{background:#f8fafc;border:1px solid var(--sa-border);border-radius:var(--sa-radius-sm);padding:12px;margin-bottom:8px;font-size:13px;line-height:1.6}
 
-/* Plan selector in schools table */
+/* ===== Design System Additions ===== */
+:root {
+  --sa-blue: #2563eb; --sa-blue-bg: #dbeafe;
+  --sa-indigo: #4338ca; --sa-indigo-bg: #e0e7ff;
+  --sa-amber: #d97706; --sa-amber-bg: #fef3c7;
+  --sa-green: #059669; --sa-green-bg: #d1fae5;
+  --sa-pink: #db2777; --sa-pink-bg: #fce7f3;
+  --sa-red: #dc2626; --sa-red-bg: #fee2e2;
+  --sa-gray: #64748b; --sa-gray-bg: #f1f5f9;
+}
+
+/* Stat icon color variants */
+.sa-stat-icon--blue{background:var(--sa-blue-bg);color:var(--sa-blue)}
+.sa-stat-icon--indigo{background:var(--sa-indigo-bg);color:var(--sa-indigo)}
+.sa-stat-icon--amber{background:var(--sa-amber-bg);color:var(--sa-amber)}
+.sa-stat-icon--green{background:var(--sa-green-bg);color:var(--sa-green)}
+.sa-stat-icon--pink{background:var(--sa-pink-bg);color:var(--sa-pink)}
+.sa-stat-icon--red{background:var(--sa-red-bg);color:var(--sa-red)}
+.sa-stat-icon--gray{background:var(--sa-gray-bg);color:var(--sa-gray)}
+
+/* Error / success boxes */
+.sa-error-box{display:none;background:var(--sa-red-bg);color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px}
+.sa-success-box{background:var(--sa-green-bg);color:#065f46;padding:12px;border-radius:8px;font-size:13px;margin-bottom:12px}
+.sa-success-box strong{color:#047857}
+
+/* Action / flex rows */
+.sa-actions-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sa-actions-row--center{justify-content:center}
+.sa-actions-row--end{justify-content:flex-end}
+
+/* Empty state */
+.sa-empty-state{text-align:center;padding:32px 16px;color:var(--sa-text-light)}
+.sa-empty-state i{font-size:40px;margin-bottom:12px;opacity:.4;display:block}
+.sa-empty-state p{font-size:14px;margin:0}
+
+/* Card */
+.sa-card{background:var(--sa-white);border-radius:var(--sa-radius-sm);padding:24px;box-shadow:var(--sa-shadow);max-width:500px;margin:0 auto}
+
+/* Code block */
+.sa-code-block{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:8px;overflow:auto;max-height:70vh;font-size:12px;line-height:1.5;white-space:pre-wrap;font-family:monospace}
+
+/* Inline code */
+.sa-code-inline{background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:13px;font-family:monospace;color:var(--sa-text)}
+
+/* Danger zone */
+.sa-danger-zone{margin-top:20px;border:1px solid #fecaca;background:#fff5f5;border-radius:var(--sa-radius-sm);padding:20px}
+.sa-danger-zone h3{color:var(--sa-red)!important}
+.sa-danger-zone p{font-size:13px;color:var(--sa-text-light);margin-bottom:12px}
+
+/* Section header with action */
+.sa-section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sa-section-header h3{margin:0!important}
+.sa-section-header p{margin:0;color:var(--sa-text-light);font-size:14px}
+
+/* Badge colors */
+.sa-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.sa-badge--blue{background:var(--sa-blue-bg);color:var(--sa-blue)}
+.sa-badge--green{background:var(--sa-green-bg);color:var(--sa-green)}
+.sa-badge--amber{background:var(--sa-amber-bg);color:var(--sa-amber)}
+.sa-badge--red{background:var(--sa-red-bg);color:var(--sa-red)}
+.sa-badge--gray{background:var(--sa-gray-bg);color:var(--sa-gray)}
+.sa-badge--pink{background:var(--sa-pink-bg);color:var(--sa-pink)}
+
+/* Table row actions */
+.sa-row-actions{display:flex;gap:4px;flex-wrap:wrap}
+
+/* Button danger outline */
+.btn-danger-outline{background:transparent;border:2px solid var(--sa-red);color:var(--sa-red)}
+.btn-danger-outline:hover{background:var(--sa-red);color:#fff}
+
+/* Enhanced table */
+.sa-content .table tbody tr:nth-child(even) td{background:#fafbfc}
+.sa-content .table tbody tr:hover td{background:#f1f5f9!important}
+
+/* Form base */
+.sa-input{width:100%;padding:10px 12px;border:2px solid var(--sa-border);border-radius:var(--sa-radius-sm);font-size:14px;font-family:inherit;box-sizing:border-box;transition:border-color .2s;background:var(--sa-white)}
+.sa-input:focus{outline:none;border-color:var(--sa-blue)}
+.sa-input--mono{font-family:monospace}
+.sa-input--sm{font-size:12px;padding:6px 10px}
+
+/* Section subtitle/spacer */
+.sa-subtitle{font-size:13px;color:var(--sa-text-light);margin-bottom:16px}
+
+/* Spacing utilities */
+.sa-mt-8{margin-top:8px}
+.sa-mt-12{margin-top:12px}
+.sa-mt-16{margin-top:16px}
+.sa-mt-24{margin-top:24px}
+.sa-mb-8{margin-bottom:8px}
+.sa-mb-12{margin-bottom:12px}
+.sa-mb-16{margin-bottom:16px}
+
+/* Grid layouts */
+.sa-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sa-grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.sa-grid-auto--sm{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+
+/* Ticket card */
+.sa-ticket{border:1px solid var(--sa-border);border-radius:var(--sa-radius-sm);margin-bottom:10px;overflow:hidden;transition:box-shadow .2s}
+.sa-ticket:hover{box-shadow:var(--sa-shadow-md)}
+.sa-ticket-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;cursor:pointer;gap:12px}
+.sa-ticket-date{font-size:12px;color:var(--sa-text-light);white-space:nowrap}
+.sa-ticket-status{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.sa-ticket-body{display:none;padding:12px 16px;border-top:1px solid var(--sa-border)}
+.sa-ticket-text{font-size:14px;margin-bottom:12px;color:var(--sa-text)}
+.sa-ticket-reply{display:flex;gap:8px}
+.sa-ticket-reply textarea{flex:1;padding:8px;border:1px solid #d1d5db;border-radius:6px;font-family:inherit;font-size:13px}
+.sa-ticket-response{margin-top:8px;padding:8px 12px;background:var(--sa-green-bg);border-radius:6px;border-left:3px solid var(--sa-green);font-size:13px}
+
+/* Feature flag card */
+.sa-feature-card{display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;padding:10px 12px;border-radius:var(--sa-radius-sm);border:1px solid var(--sa-border);transition:all .2s}
+.sa-feature-card--on{background:var(--sa-green-bg);border-color:#bbf7d0}
+.sa-feature-card--off{background:#f8fafc}
+.sa-feature-card input[type=checkbox]{width:16px;height:16px;flex-shrink:0}
+.sa-feature-card .sa-feature-label{flex:1}
+.sa-feature-card .sa-feature-state{font-size:11px}
+
+/* Newsletter table */
+.sa-newsletter-table td, .sa-newsletter-table th{padding:8px 12px;border-bottom:1px solid var(--sa-border);font-size:13px}
+.sa-newsletter-table th{text-align:left;padding:10px 12px;border-bottom:2px solid var(--sa-border);color:var(--sa-text-light);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px}
+
+/* Bank list row */
+.sa-bank-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px;background:var(--sa-white);border:1px solid var(--sa-border);border-radius:var(--sa-radius-sm)}
+.sa-bank-row input,.sa-bank-row select{width:auto!important}
+
+/* Recent list refinements */
+.sa-recent-list{font-size:13px}
+
+/* Interactive school item (inspect school modal) */
+.sa-school-card{background:var(--sa-white);border-radius:6px;padding:8px 12px;text-align:center;box-shadow:var(--sa-shadow)}
+.sa-school-card-value{font-size:18px;font-weight:700;color:var(--sa-text)}
+.sa-school-card-label{font-size:11px;color:var(--sa-text-light)}
+
+/* Subscriber list item */
+.sa-sub-row{background:var(--sa-white);border-radius:var(--sa-radius-sm);padding:12px 16px;font-size:13px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;box-shadow:var(--sa-shadow);margin-bottom:8px}
+.sa-sub-row span:first-child{font-weight:500;flex:1;min-width:140px}
+
+/* Plan select */
+.sa-plan-select{padding:3px 6px;border:2px solid var(--sa-border);border-radius:6px;font-size:11px;font-family:inherit;max-width:130px;background:var(--sa-white);cursor:pointer;transition:border-color .2s}
+
+/* Analytics charts */
+.sa-chart-bars{display:flex;flex-direction:column;gap:10px}
+.sa-bar-row{display:flex;align-items:center;gap:12px}
+.sa-bar-label{font-size:13px;font-weight:500;min-width:100px;color:var(--sa-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sa-bar-track{flex:1;height:24px;background:#e2e8f0;border-radius:12px;overflow:hidden;position:relative}
+.sa-bar-fill{height:100%;border-radius:12px;transition:width .6s ease;position:relative}
+.sa-bar-fill::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,0.15);border-radius:12px 12px 0 0}
+.sa-bar-count{font-size:12px;color:var(--sa-text-light);min-width:70px;text-align:right;font-weight:500}
+
+/* Small text utility */
+.sa-text-small{font-size:11px;color:var(--sa-text-light)}
+
+/* Analytics section refinements */
+.sa-section .sa-bar-row:hover .sa-bar-fill{filter:brightness(1.1)}
+.sa-section .sa-bar-row:hover .sa-bar-count{color:var(--sa-text)}
+
+/* Recent schools list */
+.sa-recent-list{font-size:13px}
+.sa-recent-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--sa-border);border-radius:6px;transition:all .15s;gap:12px}
+.sa-recent-item:last-child{border-bottom:none}
+.sa-recent-item:hover{background:#f8fafc}
+.sa-recent-meta{color:var(--sa-text-light);font-size:12px;white-space:nowrap}
+
 .sa-plan-select{padding:3px 6px;border:2px solid var(--sa-border);border-radius:6px;font-size:11px;font-family:inherit;max-width:130px;background:var(--sa-white);cursor:pointer;transition:border-color .2s}
 .sa-plan-select:hover{border-color:#94a3b8}
 .sa-plan-select:focus{outline:none;border-color:#2563eb}
@@ -218,6 +380,11 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
 
 @media(max-width:768px){
   .sa-sidebar{width:56px;overflow-y:auto}
+  .sa-bank-row{flex-direction:column;align-items:stretch}
+  .sa-bank-row input,.sa-bank-row select{flex:1!important;min-width:auto!important}
+  .sa-ticket-header{flex-wrap:wrap}
+  .sa-sub-row{flex-direction:column;align-items:stretch}
+  .sa-feature-card .sa-feature-state{text-align:right}
   .sa-sidebar-header span,.sa-sidebar-user,.sa-nav-item span,.sa-sidebar-footer{display:none}
   .sa-nav-item{justify-content:center;padding:12px 0}
   .sa-nav-item i{margin:0;width:auto;font-size:17px}
