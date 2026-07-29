@@ -9,6 +9,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyClI13ldpl8UkwhQQvnB8OG0bKdk9YgdLE",
+  authDomain: "eduverse-508a7.firebaseapp.com",
+  projectId: "eduverse-508a7",
+  storageBucket: "eduverse-508a7.firebasestorage.app",
+  messagingSenderId: "500067704675",
+  appId: "1:500067704675:web:22e033dd77d39580dabd56",
+  measurementId: "G-M5DYNJHW44"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
@@ -107,8 +121,7 @@ var TENANTS_KEY = 'eduverse_tenants';
 var SA_TTL = 24 * 60 * 60 * 1000;
 var _currentTab = 'pending';
 
-// --- Super Admin credentials (hardcoded for now) ---
-var SA_CREDENTIALS = { email: 'super@eduverse.com', password: 'SuperAdmin123!' };
+// --- Super Admin login uses Firebase Auth ---
 
 function toast(msg, type) {
   type = type || 'success';
@@ -205,12 +218,16 @@ function handleLogin() {
   var pass = document.getElementById('saPass').value.trim();
   var err = document.getElementById('loginError');
   if (!email || !pass) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; return; }
-  if (email !== SA_CREDENTIALS.email || pass !== SA_CREDENTIALS.password) {
-    err.textContent = 'Invalid email or password'; err.style.display = 'block'; return;
-  }
   err.style.display = 'none';
-  saveSession(email);
-  showDashboard();
+  firebase.auth().signInWithEmailAndPassword(email, pass)
+    .then(function() {
+      saveSession(email);
+      showDashboard();
+    })
+    .catch(function(error) {
+      err.textContent = error.code === 'auth/user-not-found' ? 'Account not found' : 'Invalid email or password';
+      err.style.display = 'block';
+    });
 }
 
 // --- UI: Dashboard ---
@@ -228,7 +245,7 @@ function showDashboard() {
     '<div class="dashboard">'
     + '<div class="sidebar">'
     + '<div class="sidebar-header"><i class="fas fa-user-shield"></i><span>Super Admin</span></div>'
-    + '<div class="sidebar-user">' + SA_CREDENTIALS.email + '<br><span style="font-size:11px;color:rgba(255,255,255,0.5)">Platform Admin</span></div>'
+    + '<div class="sidebar-user">' + (getSession().id || 'Super Admin') + '<br><span style="font-size:11px;color:rgba(255,255,255,0.5)">Platform Admin</span></div>'
     + '<div class="nav">'
     + '<a href="javascript:;" class="nav-item active" onclick="switchView(\'applications\')"><i class="fas fa-file-alt"></i><span>Applications</span></a>'
     + '<a href="javascript:;" class="nav-item" onclick="switchView(\"schools\")"><i class="fas fa-school"></i><span>Schools</span></a>'
@@ -474,6 +491,7 @@ function viewSchool(id) {
 // --- Logout ---
 function handleLogout() {
   clearSession();
+  try { firebase.auth().signOut(); } catch(e) {}
   showLogin();
 }
 
