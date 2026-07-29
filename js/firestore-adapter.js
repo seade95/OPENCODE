@@ -58,7 +58,9 @@
     try { localStorage.setItem('_dataVersion_' + schoolId, String(_dataVersion)); } catch(e) {}
     db().collection('schools').doc(schoolId).set(payload, { merge: true }).catch(function(err) {
       console.warn('Firestore write failed', err);
-      if (typeof toast === 'function') toast('Sync failed — data saved locally', 'error');
+      if (typeof toast === 'function' && err.code !== 'permission-denied') {
+        toast('Sync failed — data saved locally', 'error');
+      }
     });
   }
 
