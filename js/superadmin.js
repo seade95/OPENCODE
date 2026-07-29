@@ -289,7 +289,7 @@ function renderSaSchools(container) {
           + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
         return '<tr><td><strong>' + esc(t.name) + '</strong></td><td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;">' + esc(t.slug || '—') + '</code></td><td>' + esc(t.email) + '</td>'
           + '<td><span class="badge badge-grade">' + esc(t.tier) + '</span></td>'
-          + '<td><span class="badge" style="background:#dbeafe;color:#1e40af;">' + esc(t.plan) + '</span></td>'
+          + '<td><select class="sa-plan-select" onchange="saAssignPlan(\'' + t.id + '\',this.value)" style="padding:3px 6px;border:2px solid #e2e8f0;border-radius:6px;font-size:11px;font-family:inherit;max-width:130px;background:#fff;cursor:pointer;">' + _saPlanOptions(t.plan) + '</select></td>'
           + '<td>' + (isPremium
             ? '<span class="badge" style="background:#c6f6d5;color:#22543d;cursor:pointer;" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to revoke"><i class="fas fa-crown"></i> Active</span>'
             : '<span class="badge" style="background:#e2e8f0;color:#4a5568;cursor:pointer;" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to grant"><i class="fas fa-lock"></i> Free</span>')
@@ -423,6 +423,47 @@ function saTogglePremium(tenantId) {
     }
   } catch(e) { toast('Error: ' + e.message, 'error'); }
   renderSaTab('schools');
+}
+
+function _saPlanOptions(currentPlan) {
+  var cfg = getPlatformConfig();
+  var plans = cfg.subscriptionPlans || [];
+  var opts = '';
+  var seen = {};
+  if (currentPlan && currentPlan !== 'free') {
+    opts += '<option value="' + esc(currentPlan) + '">' + esc(currentPlan) + '</option>';
+    seen[currentPlan] = true;
+  }
+  plans.forEach(function(p) {
+    if (!seen[p.name]) {
+      opts += '<option value="' + esc(p.name) + '"' + (p.name === currentPlan ? ' selected' : '') + '>' + esc(p.name) + '</option>';
+      seen[p.name] = true;
+    }
+  });
+  if (!seen['Free']) opts += '<option value="Free"' + (currentPlan === 'Free' || !currentPlan ? ' selected' : '') + '>Free</option>';
+  return opts;
+}
+
+function saAssignPlan(tenantId, planName) {
+  var tenants = getTenants();
+  var t = tenants.find(function(x) { return x.id === tenantId; });
+  if (!t) { toast('School not found', 'error'); return; }
+  t.plan = planName;
+  saveTenants(tenants);
+  try {
+    var key = getTenantDataKey(tenantId);
+    var raw = localStorage.getItem(key);
+    if (raw) {
+      var d = JSON.parse(raw);
+      if (!d.subscription) d.subscription = {};
+      d.subscription.plan = planName.toLowerCase();
+      d.subscription.planName = planName;
+      d.subscription.status = 'active';
+      localStorage.setItem(key, JSON.stringify(d));
+    }
+  } catch(e) {}
+  logActivity('Changed plan for ' + t.name + ' to ' + planName);
+  toast('Plan for "' + t.name + '" updated to ' + planName);
 }
 
 // ===== Applications Tab =====
