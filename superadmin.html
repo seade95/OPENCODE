@@ -9,8 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
 <script>
 var FIREBASE_CONFIG = {
   apiKey: "AIzaSyClI13ldpl8UkwhQQvnB8OG0bKdk9YgdLE",
@@ -23,18 +26,25 @@ var FIREBASE_CONFIG = {
 };
 firebase.initializeApp(FIREBASE_CONFIG);
 </script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
+
+/* Login page */
 .login-page{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0f2440,#1a3a5c);padding:20px}
 .login-card{background:#fff;border-radius:16px;padding:40px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 .login-card h2{text-align:center;margin-bottom:8px;font-size:22px;display:flex;align-items:center;justify-content:center;gap:10px}
 .login-card h2 i{color:#f5a623}
 .login-card p{text-align:center;color:#718096;font-size:14px;margin-bottom:24px}
+
+/* Forms */
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:#2d3748}
 .form-group input{width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box;transition:border-color .2s}
 .form-group input:focus{outline:none;border-color:#2563eb}
+
+/* Buttons */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;text-decoration:none}
 .btn:hover{transform:translateY(-1px)}
 .btn-primary{background:#2563eb;color:#fff}
@@ -45,61 +55,39 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
 .btn-danger:hover{background:#b91c1c}
 .btn-outline{background:transparent;border:2px solid #e2e8f0;color:#475569}
 .btn-outline:hover{border-color:#2563eb;color:#2563eb}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* Utilities */
 .error-box{display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;font-size:13px}
 .footer-link{text-align:center;margin-top:16px;font-size:13px;color:#718096}
 .footer-link a{color:#2563eb;font-weight:600;text-decoration:none;cursor:pointer}
 .footer-link a:hover{text-decoration:underline}
-.dashboard{display:flex;min-height:100vh}
-.sidebar{width:220px;background:#0f2440;color:#fff;display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-header{padding:20px 16px;font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.sidebar-header i{font-size:22px;color:#f5a623}
-.sidebar-user{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.08);line-height:1.4}
-.nav{flex:1;padding:8px 0}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;transition:all .2s;border-left:3px solid transparent;cursor:pointer}
-.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
-.nav-item.active{background:rgba(255,255,255,0.12);color:#fff;border-left-color:#f5a623}
-.nav-item i{width:20px;text-align:center;font-size:15px}
-.sidebar-footer{padding:12px 16px;border-top:1px solid rgba(255,255,255,0.1)}
-.main{flex:1;display:flex;flex-direction:column;min-width:0}
-.main-header{padding:20px 24px;background:#fff;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}
-.main-header h2{font-size:20px;font-weight:700;margin:0}
-.content{flex:1;padding:20px 24px;overflow-y:auto}
-.section{background:#fff;border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:16px}
-.stat-card{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.05);display:flex;align-items:center;gap:14px}
-.stat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.stat-value{font-size:24px;font-weight:700;line-height:1.2;color:#1e293b}
-.stat-label{font-size:13px;color:#718096}
-.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid #e2e8f0}
-.tab{padding:10px 20px;border:none;background:transparent;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;color:#718096;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
-.tab:hover{color:#2563eb}
-.tab.active{color:#2563eb;border-bottom-color:#2563eb}
-.tab .count{background:#e2e8f0;color:#475569;border-radius:10px;padding:1px 8px;font-size:11px;margin-left:6px}
-.tab.active .count{background:#dbeafe;color:#2563eb}
-.app-table{width:100%;border-collapse:collapse;font-size:13px}
-.app-table th{text-align:left;padding:10px 12px;background:#f8fafc;color:#718096;font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px;border-bottom:2px solid #e2e8f0}
-.app-table td{padding:10px 12px;border-bottom:1px solid #e2e8f0}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .badge-pending{background:#fef3c7;color:#92400e}
 .badge-approved{background:#d1fae5;color:#065f46}
 .badge-rejected{background:#fee2e2;color:#991b1b}
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center}
-.modal-overlay.active{display:flex}
-.modal{background:#fff;border-radius:16px;max-width:560px;width:90%;max-height:85vh;overflow-y:auto;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.3);position:relative}
-.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:#718096;line-height:1}
-.modal-close:hover{color:#2d3748}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
-.cred-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:12px 0;font-family:monospace;font-size:14px;line-height:1.6}
-.cred-box strong{color:#2563eb}
+
+/* Toast */
 .toast-container{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:8px}
 .toast{padding:12px 20px;border-radius:8px;font-size:14px;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,0.15);display:flex;align-items:center;gap:8px;animation:slideIn .3s ease;max-width:400px}
 .toast-success{background:#d1fae5;color:#065f46;border-left:4px solid #059669}
 .toast-error{background:#fee2e2;color:#991b1b;border-left:4px solid #dc2626}
 @keyframes slideIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Modal (used by SA dashboard) */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:16px;width:95vw;max-width:1400px;max-height:90vh;overflow:hidden;padding:0;box-shadow:0 20px 60px rgba(0,0,0,0.3);position:relative}
+.modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:#718096;line-height:1;z-index:10}
+.modal-close:hover{color:#2d3748}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
 .empty-state{text-align:center;padding:40px 20px;color:#718096}
 .empty-state i{font-size:40px;margin-bottom:12px;opacity:0.4}
 .empty-state p{font-size:14px}
-@media(max-width:768px){.sidebar{width:56px}.sidebar-header span,.sidebar-user,.nav-item span,.sidebar-footer{display:none}.nav-item{justify-content:center;padding:12px}.main-header{padding:16px}.content{padding:16px}}
+
+/* Credentials box (used by approval modals) */
+.cred-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:12px 0;font-family:monospace;font-size:14px;line-height:1.6}
+.cred-box strong{color:#2563eb}
 </style>
 </head>
 <body>
@@ -113,397 +101,96 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
   </div>
 </div>
 
+<!-- Shared modules in dependency order -->
+<script src="js/data.js"></script>
+<script src="js/schoolprofile.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/multitenant.js"></script>
+<script src="js/superadmin.js"></script>
+
+<!-- Auth + Login + Init -->
 <script>
-var APP_KEY = 'eduverse_applications';
-var SA_KEY = 'eduverse_sa_session';
-var SCHOOLS_KEY = 'eduverse_schools';
-var TENANTS_KEY = 'eduverse_tenants';
-var SA_TTL = 24 * 60 * 60 * 1000;
-var _currentTab = 'pending';
+var SUPER_ADMIN_KEY = 'eduverse_super_admin';
+var _lastAuthError = null;
 
-// --- Super Admin login uses Firebase Auth ---
-
-function toast(msg, type) {
-  type = type || 'success';
-  var c = document.getElementById('toastContainer');
-  var t = document.createElement('div');
-  t.className = 'toast toast-' + type;
-  t.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle') + '"></i> ' + msg;
-  c.appendChild(t);
-  setTimeout(function() { t.remove(); }, 4000);
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('active');
-}
-
-function getApps() {
-  try { return JSON.parse(localStorage.getItem(APP_KEY)) || []; } catch(e) { return []; }
-}
-
-function saveApps(apps) {
-  try { localStorage.setItem(APP_KEY, JSON.stringify(apps)); } catch(e) {}
-}
-
-function getSchools() {
-  try { return JSON.parse(localStorage.getItem(SCHOOLS_KEY)) || []; } catch(e) { return []; }
-}
-
-function saveSchools(schools) {
-  try { localStorage.setItem(SCHOOLS_KEY, JSON.stringify(schools)); } catch(e) {}
-}
-
-function getTenants() {
-  try { return JSON.parse(localStorage.getItem(TENANTS_KEY)) || []; } catch(e) { return []; }
-}
-
-function saveTenants(tenants) {
-  try { localStorage.setItem(TENANTS_KEY, JSON.stringify(tenants)); } catch(e) {}
-}
-
-function genId(prefix) {
-  return (prefix || 'ID') + '-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-}
-
-function formatDate(iso) {
-  try { return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch(e) { return iso; }
-}
-
-function getDefaultSchoolData(schoolName) {
-  return {
-    students: [], teachers: [], fees: [], results: [], admins: [],
-    classes: [], subjects: [], attendance: [], parents: [],
-    announcements: [], activities: [],
-    settings: { schoolName: schoolName, academicYear: new Date().getFullYear() + '/' + (new Date().getFullYear() + 1), term: 'First Term' }
-  };
-}
-
-// --- Session Management ---
-function saveSession(id) {
-  try { localStorage.setItem(SA_KEY, JSON.stringify({ id: id, loginTime: Date.now() })); } catch(e) {}
-}
-
-function getSession() {
-  try {
-    var raw = localStorage.getItem(SA_KEY);
-    if (!raw) return null;
-    var s = JSON.parse(raw);
-    if (s && s.id && s.loginTime && Date.now() - s.loginTime < SA_TTL) return s;
-  } catch(e) {}
-  return null;
-}
-
-function clearSession() {
-  try { localStorage.removeItem(SA_KEY); } catch(e) {}
-}
-
-// --- UI: Login ---
+// --- Login form ---
 function showLogin() {
-  clearSession();
+  _lastAuthError = _lastAuthError || null;
   document.getElementById('root').innerHTML =
     '<div class="login-page">'
     + '<div class="login-card">'
     + '<h2><i class="fas fa-user-shield"></i> Super Admin</h2>'
-    + '<p>Sign in to manage school applications</p>'
-    + '<div id="loginError" class="error-box"></div>'
+    + '<p>Sign in to manage the platform</p>'
+    + '<div id="loginError" class="error-box"' + (_lastAuthError ? '' : '') + '>' + (_lastAuthError || '') + '</div>'
     + '<div class="form-group"><label>Email</label><input type="email" id="saEmail" placeholder="super@eduverse.com"></div>'
     + '<div class="form-group"><label>Password</label><input type="password" id="saPass" placeholder="Enter password"></div>'
     + '<button class="btn btn-primary" onclick="handleLogin()" style="width:100%;margin-top:8px"><i class="fas fa-arrow-right"></i> Sign In</button>'
     + '<div class="footer-link"><a href="index.html"><i class="fas fa-arrow-left"></i> Back to EduVerse</a></div>'
     + '</div></div>';
+  if (_lastAuthError) {
+    document.getElementById('loginError').style.display = 'block';
+    _lastAuthError = null;
+  }
 }
 
+// --- Login handler ---
 function handleLogin() {
   var email = document.getElementById('saEmail').value.trim();
   var pass = document.getElementById('saPass').value.trim();
   var err = document.getElementById('loginError');
   if (!email || !pass) { err.textContent = 'Please fill all fields'; err.style.display = 'block'; return; }
   err.style.display = 'none';
+  var btn = document.querySelector('.btn-primary');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+  btn.disabled = true;
   firebase.auth().signInWithEmailAndPassword(email, pass)
-    .then(function() {
-      saveSession(email);
-      showDashboard();
-    })
     .catch(function(error) {
-      err.textContent = (error.code === 'auth/user-not-found' ? 'Account not found' : error.message || 'Invalid email or password');
+      err.textContent = error.message || 'Invalid email or password';
       err.style.display = 'block';
+      btn.innerHTML = '<i class="fas fa-arrow-right"></i> Sign In';
+      btn.disabled = false;
     });
 }
 
-// --- UI: Dashboard ---
-function showDashboard() {
-  var s = getSession();
-  if (!s) { showLogin(); return; }
-
-  var apps = getApps();
-  var pending = apps.filter(function(a) { return a.status === 'pending'; });
-  var approved = apps.filter(function(a) { return a.status === 'approved'; });
-  var rejected = apps.filter(function(a) { return a.status === 'rejected'; });
-  var schools = getSchools();
-
-  document.getElementById('root').innerHTML =
-    '<div class="dashboard">'
-    + '<div class="sidebar">'
-    + '<div class="sidebar-header"><i class="fas fa-user-shield"></i><span>Super Admin</span></div>'
-    + '<div class="sidebar-user">' + (getSession().id || 'Super Admin') + '<br><span style="font-size:11px;color:rgba(255,255,255,0.5)">Platform Admin</span></div>'
-    + '<div class="nav">'
-    + '<a href="javascript:;" class="nav-item active" onclick="switchView(\'applications\')"><i class="fas fa-file-alt"></i><span>Applications</span></a>'
-    + '<a href="javascript:;" class="nav-item" onclick="switchView(\"schools\")"><i class="fas fa-school"></i><span>Schools</span></a>'
-    + '</div>'
-    + '<div class="sidebar-footer"><button class="btn btn-sm btn-outline" onclick="handleLogout()" style="width:100%;color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);background:transparent"><i class="fas fa-sign-out-alt"></i> Sign Out</button></div>'
-    + '</div>'
-    + '<div class="main">'
-    + '<div class="main-header"><h2 id="panelTitle">Applications</h2><div style="font-size:13px;color:#718096"><i class="fas fa-school"></i> ' + schools.length + ' schools</div></div>'
-    + '<div class="content" id="mainContent"></div>'
-    + '</div></div>';
-
-  _currentTab = 'pending';
-  renderApplications();
-}
-
-function switchView(view) {
-  document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active'); });
-  event.target.closest('.nav-item').classList.add('active');
-  document.getElementById('panelTitle').textContent = view === 'applications' ? 'Applications' : 'Schools';
-  if (view === 'applications') renderApplications();
-  else renderSchools();
-}
-
-// --- Render: Applications ---
-function renderApplications() {
-  var apps = getApps();
-  var pending = apps.filter(function(a) { return a.status === 'pending'; });
-  var approved = apps.filter(function(a) { return a.status === 'approved'; });
-  var rejected = apps.filter(function(a) { return a.status === 'rejected'; });
-
-  var html = '<div class="tabs">'
-    + '<button class="tab' + (_currentTab === 'pending' ? ' active' : '') + '" onclick="switchTab(\'pending\')">Pending<span class="count">' + pending.length + '</span></button>'
-    + '<button class="tab' + (_currentTab === 'approved' ? ' active' : '') + '" onclick="switchTab(\'approved\')">Approved<span class="count">' + approved.length + '</span></button>'
-    + '<button class="tab' + (_currentTab === 'rejected' ? ' active' : '') + '" onclick="switchTab(\'rejected\')">Rejected<span class="count">' + rejected.length + '</span></button>'
-    + '</div>';
-
-  var list = _currentTab === 'pending' ? pending : _currentTab === 'approved' ? approved : rejected;
-
-  if (list.length === 0) {
-    html += '<div class="empty-state"><i class="fas fa-inbox"></i><p>No ' + _currentTab + ' applications</p></div>';
-  } else {
-    html += '<div class="section" style="overflow-x:auto"><table class="app-table">'
-      + '<tr><th>School</th><th>Contact</th><th>Email</th><th>City</th><th>Applied</th><th>Actions</th></tr>';
-    list.forEach(function(app) {
-      html += '<tr>'
-        + '<td><strong>' + app.schoolName + '</strong></td>'
-        + '<td>' + app.contactName + '</td>'
-        + '<td>' + app.email + '</td>'
-        + '<td>' + app.city + '</td>'
-        + '<td>' + formatDate(app.appliedAt) + '</td>'
-        + '<td style="white-space:nowrap">'
-        + '<button class="btn btn-sm btn-outline" onclick="viewApp(\'' + app.id + '\')" style="margin-right:4px"><i class="fas fa-eye"></i></button>';
-      if (app.status === 'pending') {
-        html += '<button class="btn btn-sm btn-success" onclick="approveApp(\'' + app.id + '\')" style="margin-right:4px"><i class="fas fa-check"></i> Approve</button>'
-          + '<button class="btn btn-sm btn-danger" onclick="rejectApp(\'' + app.id + '\')"><i class="fas fa-times"></i> Reject</button>';
-      }
-      html += '</td></tr>';
-    });
-    html += '</table></div>';
+// --- Override: close SA dashboard also signs out ---
+function closeSaDashboard() {
+  var overlay = document.getElementById('modalOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    overlay.style.overflowY = '';
   }
-
-  document.getElementById('mainContent').innerHTML = html;
+  firebase.auth().signOut();
 }
 
-function switchTab(tab) {
-  _currentTab = tab;
-  renderApplications();
-}
+// --- Init: show loading, then react to auth state ---
+document.getElementById('root').innerHTML = '<div class="login-page"><div class="login-card"><p style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading...</p></div></div>';
 
-// --- View Application Detail ---
-function viewApp(id) {
-  var apps = getApps();
-  var app = apps.find(function(a) { return a.id === id; });
-  if (!app) { toast('Application not found', 'error'); return; }
-
-  document.getElementById('modalBody').innerHTML =
-    '<h3 style="margin-bottom:12px">Application Details</h3>'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px">'
-    + '<div><strong>School Name:</strong> ' + app.schoolName + '</div>'
-    + '<div><strong>Application ID:</strong> ' + app.id + '</div>'
-    + '<div><strong>Contact Person:</strong> ' + app.contactName + '</div>'
-    + '<div><strong>Email:</strong> ' + app.email + '</div>'
-    + '<div><strong>Phone:</strong> ' + app.phone + '</div>'
-    + '<div><strong>City:</strong> ' + app.city + '</div>'
-    + '<div><strong>Country:</strong> ' + app.country + '</div>'
-    + '<div><strong>School Size:</strong> ' + app.schoolSize + '</div>'
-    + '<div><strong>Curriculum:</strong> ' + app.curriculumType + '</div>'
-    + '<div><strong>Address:</strong> ' + (app.address || '-') + '</div>'
-    + '<div><strong>Applied:</strong> ' + formatDate(app.appliedAt) + '</div>'
-    + '<div><strong>Status:</strong> <span class="badge badge-' + app.status + '">' + app.status + '</span></div>'
-    + '</div>'
-    + '<div class="modal-actions">'
-    + '<button class="btn btn-outline" onclick="closeModal()">Close</button>';
-  if (app.status === 'pending') {
-    document.getElementById('modalBody').innerHTML +=
-      '<button class="btn btn-success" onclick="closeModal();approveApp(\'' + app.id + '\')"><i class="fas fa-check"></i> Approve</button>'
-      + '<button class="btn btn-danger" onclick="closeModal();rejectApp(\'' + app.id + '\')"><i class="fas fa-times"></i> Reject</button>';
+var _authCheckTimer = setTimeout(function() {
+  if (document.getElementById('root').querySelector('.fa-spinner')) {
+    firebase.auth().signOut();
   }
-  document.getElementById('modalBody').innerHTML += '</div>';
-  document.getElementById('modalOverlay').classList.add('active');
-}
+}, 10000);
 
-// --- Approve Application ---
-function approveApp(id) {
-  var apps = getApps();
-  var app = apps.find(function(a) { return a.id === id; });
-  if (!app || app.status !== 'pending') { toast('Application not found or already processed', 'error'); return; }
-
-  var schoolId = genId('SCH');
-  var adminId = genId('ADM');
-  var adminPass = 'School' + Math.random().toString(36).slice(2, 8).toUpperCase();
-
-  app.status = 'approved';
-  app.approvedAt = new Date().toISOString();
-
-  var school = {
-    id: schoolId,
-    schoolName: app.schoolName,
-    contactName: app.contactName,
-    email: app.email,
-    adminEmail: app.email,
-    phone: app.phone,
-    address: app.address,
-    city: app.city,
-    country: app.country,
-    schoolSize: app.schoolSize,
-    curriculumType: app.curriculumType,
-    tenantId: schoolId,
-    adminId: adminId,
-    adminPassword: adminPass,
-    approvedAt: app.approvedAt,
-    appliedAt: app.appliedAt
-  };
-
-  // Save school record
-  var schools = getSchools();
-  schools.push(school);
-  saveSchools(schools);
-  saveApps(apps);
-
-  // Create tenant
-  var tenants = getTenants();
-  tenants.push({
-    id: schoolId,
-    name: app.schoolName,
-    slug: app.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
-    email: app.email,
-    logo: '',
-    adminId: adminId
-  });
-  saveTenants(tenants);
-
-  // Create school data store
-  var schoolData = getDefaultSchoolData(app.schoolName);
-  schoolData.admins = [{ id: adminId, name: app.contactName, email: app.email, username: app.email, password: adminPass }];
-  try { localStorage.setItem('schoolData_' + schoolId, JSON.stringify(schoolData)); } catch(e) {}
-
-  renderApplications();
-  toast('Approved! Credentials created for ' + app.schoolName, 'success');
-  showCredentials(app);
-}
-
-function showCredentials(app) {
-  var schools = getSchools();
-  var school = schools.find(function(s) { return s.email === app.email; });
-  if (!school) return;
-
-  document.getElementById('modalBody').innerHTML =
-    '<h3 style="margin-bottom:12px;color:#059669"><i class="fas fa-check-circle"></i> School Approved!</h3>'
-    + '<p style="font-size:14px;color:#475569;margin-bottom:12px">The following credentials have been generated for <strong>' + app.schoolName + '</strong>:</p>'
-    + '<div class="cred-box">'
-    + '<strong>School ID:</strong> ' + school.id + '<br>'
-    + '<strong>School Name:</strong> ' + school.schoolName + '<br>'
-    + '<strong>Admin Email:</strong> ' + school.adminEmail + '<br>'
-    + '<strong>Admin Password:</strong> ' + school.adminPassword + '<br>'
-    + '<strong>Login URL:</strong> ' + window.location.origin + '/login.html?school=' + (school.schoolName.toLowerCase().replace(/[^a-z0-9]+/g, '-')) + '&role=admin'
-    + '</div>'
-    + '<p style="font-size:13px;color:#718096;margin-bottom:12px">Share these credentials with the school admin. They can log in at <strong>login.html</strong> using their email and password.</p>'
-    + '<div class="modal-actions">'
-    + '<button class="btn btn-primary" onclick="closeModal()">Done</button>'
-    + '</div>';
-  document.getElementById('modalOverlay').classList.add('active');
-}
-
-// --- Reject Application ---
-function rejectApp(id) {
-  var apps = getApps();
-  var app = apps.find(function(a) { return a.id === id; });
-  if (!app || app.status !== 'pending') { toast('Application not found or already processed', 'error'); return; }
-  app.status = 'rejected';
-  app.rejectedAt = new Date().toISOString();
-  saveApps(apps);
-  renderApplications();
-  toast('Application rejected', 'error');
-}
-
-// --- Render: Schools ---
-function renderSchools() {
-  var schools = getSchools();
-  if (schools.length === 0) {
-    document.getElementById('mainContent').innerHTML =
-      '<div class="empty-state"><i class="fas fa-school"></i><p>No approved schools yet</p></div>';
-    return;
-  }
-  var html = '<div class="section" style="overflow-x:auto"><table class="app-table">'
-    + '<tr><th>School</th><th>Email</th><th>City</th><th>Approved</th><th>Admin ID</th><th>Actions</th></tr>';
-  schools.forEach(function(s) {
-    html += '<tr>'
-      + '<td><strong>' + s.schoolName + '</strong></td>'
-      + '<td>' + (s.adminEmail || s.email) + '</td>'
-      + '<td>' + s.city + '</td>'
-      + '<td>' + (s.approvedAt ? formatDate(s.approvedAt) : '-') + '</td>'
-      + '<td style="font-family:monospace;font-size:12px">' + s.adminId + '</td>'
-      + '<td><button class="btn btn-sm btn-outline" onclick="viewSchool(\'' + s.id + '\')"><i class="fas fa-eye"></i></button></td>'
-      + '</tr>';
-  });
-  html += '</table></div>';
-  document.getElementById('mainContent').innerHTML = html;
-}
-
-function viewSchool(id) {
-  var schools = getSchools();
-  var s = schools.find(function(sch) { return sch.id === id; });
-  if (!s) { toast('School not found', 'error'); return; }
-
-  document.getElementById('modalBody').innerHTML =
-    '<h3 style="margin-bottom:12px">School Details</h3>'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:14px">'
-    + '<div><strong>School Name:</strong> ' + s.schoolName + '</div>'
-    + '<div><strong>School ID:</strong> ' + s.id + '</div>'
-    + '<div><strong>Contact:</strong> ' + s.contactName + '</div>'
-    + '<div><strong>Email:</strong> ' + (s.adminEmail || s.email) + '</div>'
-    + '<div><strong>Phone:</strong> ' + s.phone + '</div>'
-    + '<div><strong>City:</strong> ' + s.city + '</div>'
-    + '<div><strong>Admin ID:</strong> ' + s.adminId + '</div>'
-    + '<div><strong>Password:</strong> ' + s.adminPassword + '</div>'
-    + '<div><strong>Approved:</strong> ' + formatDate(s.approvedAt) + '</div>'
-    + '</div>'
-    + '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal()">Close</button></div>';
-  document.getElementById('modalOverlay').classList.add('active');
-}
-
-// --- Logout ---
-function handleLogout() {
-  clearSession();
-  try { firebase.auth().signOut(); } catch(e) {}
-  showLogin();
-}
-
-// --- Init ---
-(function() {
-  var session = getSession();
-  if (session) {
-    showDashboard();
+firebase.auth().onAuthStateChanged(function(user) {
+  clearTimeout(_authCheckTimer);
+  if (user) {
+    document.getElementById('root').innerHTML = '<div class="login-page"><div class="login-card"><p style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Verifying credentials...</p></div></div>';
+    firebase.firestore().doc('superAdmin/config').get()
+      .then(function() {
+        localStorage.setItem(SUPER_ADMIN_KEY, JSON.stringify({
+          id: 'SUP001', name: user.email, email: user.email,
+          super_admin_level: 'super', createdAt: new Date().toISOString()
+        }));
+        showSuperAdminDashboard();
+      })
+      .catch(function() {
+        _lastAuthError = 'Not authorized as super admin';
+        firebase.auth().signOut();
+      });
   } else {
     showLogin();
   }
-})();
+});
 </script>
 </body>
 </html>
