@@ -225,7 +225,7 @@ function handleLogin() {
       showDashboard();
     })
     .catch(function(error) {
-      err.textContent = error.code === 'auth/user-not-found' ? 'Account not found' : 'Invalid email or password';
+      err.textContent = (error.code === 'auth/user-not-found' ? 'Account not found' : error.message || 'Invalid email or password');
       err.style.display = 'block';
     });
 }
