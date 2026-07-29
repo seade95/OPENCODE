@@ -1591,7 +1591,7 @@ function renderSaFeatures(container) {
 
   var html = '<div class="sa-section"><h3><i class="fas fa-toggle-on"></i> Global Feature Toggles</h3>'
     + '<p class="sa-subtitle">Toggle features ON/OFF for ALL schools at once. Disabled features will be hidden from school portals.</p>'
-    + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">'
+    + '<div class="sa-feature-grid">'
     + Object.keys(featureLabels).map(function(k) {
       var enabled = flags[k] !== false;
       return '<label class="sa-feature-card ' + (enabled ? 'sa-feature-card--on' : 'sa-feature-card--off') + '">'
