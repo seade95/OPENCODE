@@ -2818,8 +2818,10 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .calc-btn.sci { background:#f0f0ff;color:#4f46e5;font-size:12px;font-weight:600; }
 .calc-btn.mem { background:#f0fdf4;color:#166534;font-size:12px;font-weight:600; }
 .calc-btn.mem:hover { background:#dcfce7; }
-.calc-footer { display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;flex-shrink:0; }
+.calc-content { max-width:380px !important; }
+.calc-footer { display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;flex-shrink:0; }
 .calc-footer .btn { font-size:11px;padding:4px 10px; }
+#calcMode { font-size:11px;color:var(--text-light); }
 @media (max-width:480px) {
   .calc-wrapper { max-height:85vh; }
   .calc-grid { gap:4px; }

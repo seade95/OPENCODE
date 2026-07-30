@@ -5504,8 +5504,8 @@ function _calcHandleKey(e) {
 }
 
 function openCalculator() {
-  openModal('<div class="calc-wrapper"><div class="calc-display"><div class="calc-expr" id="calcExpr"></div><div class="calc-result" id="calcResult">0</div></div><div class="calc-scroll"><div class="calc-grid" id="calcGrid"></div></div><div class="calc-footer"><button class="btn btn-sm" onclick="calcHistory()"><i class="fas fa-history"></i> History</button><button class="btn btn-sm" onclick="calcInput(\'ans\')" style="margin-left:6px;"><i class="fas fa-redo"></i> ANS</button><span id="calcMode" style="font-size:11px;color:var(--text-light);margin-left:8px;">DEG</span></div></div>');
-  document.getElementById('modalContent').style.maxWidth = '380px';
+  openModal('<div class="calc-wrapper"><div class="calc-display"><div class="calc-expr" id="calcExpr"></div><div class="calc-result" id="calcResult">0</div></div><div class="calc-scroll"><div class="calc-grid" id="calcGrid"></div></div><div class="calc-footer"><button class="btn btn-sm" onclick="calcHistory()"><i class="fas fa-history"></i> History</button><button class="btn btn-sm" onclick="calcInput(\'ans\')"><i class="fas fa-redo"></i> ANS</button><span id="calcMode">DEG</span></div></div>');
+  document.getElementById('modalContent').classList.add('calc-content');
   _calcState.expr = '';
   _calcRenderButtons();
   _calcUpdateDisplay();
