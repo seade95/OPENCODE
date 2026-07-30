@@ -715,13 +715,16 @@ function renderLandingPageSections() {
   var tGrid = document.getElementById('testimonialsGrid');
   if (tGrid && prof.testimonials) {
     if (prof.testimonials.length) {
-      tGrid.innerHTML = prof.testimonials.map(function(t) {
-        var avatar = '<i class="fas fa-user"></i>';
-        if (t.role && t.role.toLowerCase().includes('student')) avatar = '<i class="fas fa-user-graduate"></i>';
-        else if (t.role && t.role.toLowerCase().includes('teacher')) avatar = '<i class="fas fa-chalkboard-teacher"></i>';
-        else if (t.role && t.role.toLowerCase().includes('parent')) avatar = '<i class="fas fa-user-tie"></i>';
-        return '<div class="testimonial-card"><div class="avatar">' + avatar + '</div><div class="name">' + esc(t.name) + '</div>'
-          + '<div class="role">' + esc(t.role || '') + '</div><div class="text">' + esc(t.text) + '</div></div>';
+      var tColors = ['#2563eb','#7c3aed','#059669','#d97706','#dc2626','#0891b2'];
+      tGrid.innerHTML = prof.testimonials.map(function(t, ti) {
+        var initial = (t.name || '?')[0].toUpperCase();
+        var ci = ti % tColors.length;
+        return '<div class="testimonial-card" style="--avatar-bg:' + tColors[ci] + '">'
+          + '<div class="stars" style="display:flex;gap:2px;font-size:14px;color:#f59e0b;">'
+          + '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>'
+          + '<p class="quote">"' + esc(t.text) + '"</p>'
+          + '<div class="author"><div class="avatar" style="background:linear-gradient(135deg,' + tColors[ci] + ',' + tColors[ci] + 'cc);">' + initial + '</div>'
+          + '<div><div class="name">' + esc(t.name) + '</div><div class="role">' + esc(t.role || '') + '</div></div></div></div>';
       }).join('');
     } else {
       tGrid.innerHTML = '<p class="empty-state" style="text-align:center;padding:40px;">No testimonials yet.</p>';
