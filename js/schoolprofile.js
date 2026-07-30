@@ -1219,6 +1219,250 @@ function subscribeNewsletter(input) {
   window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subj + '&body=' + body, '_blank');
 }
 
+// ===== School Setup Wizard (Onboarding) =====
+var SETUP_WIZARD_KEY = '_setupWizardDone';
+
+function needsSetupWizard() {
+  if (localStorage.getItem(SETUP_WIZARD_KEY)) return false;
+  var prof = getSchoolProfile();
+  return !prof.schoolName || prof.schoolName === 'Demo International School' || !prof.schoolMotto || prof.facilities.length === 0;
+}
+
+function dismissSetupWizard() {
+  localStorage.setItem(SETUP_WIZARD_KEY, 'true');
+  var m = document.getElementById('setupWizardModal');
+  if (m) m.remove();
+}
+
+function showSetupWizard() {
+  if (!needsSetupWizard()) return;
+  var existing = document.getElementById('setupWizardModal');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', buildSetupWizardHTML());
+  showSetupStep(1);
+}
+
+function buildSetupWizardHTML() {
+  return '<div id="setupWizardModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:center;justify-content:center;overflow-y:auto;">' +
+    '<div style="background:var(--card-bg,#fff);border-radius:16px;max-width:640px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:modalSlideUp 0.3s ease;">' +
+    '<div style="padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;">' +
+    '<h3 style="font-size:20px;font-weight:700;"><i class="fas fa-magic" style="color:var(--primary,#2563eb);"></i> Welcome! Let\'s Set Up Your School</h3>' +
+    '<button onclick="dismissSetupWizard()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-light);" title="Skip for now">&times;</button>' +
+    '</div>' +
+    // Progress bar
+    '<div style="padding:16px 28px 0;"><div id="setupWizardProgress" style="display:flex;gap:4px;"></div></div>' +
+    // Step content
+    '<div id="setupWizardContent" style="padding:28px;"></div>' +
+    // Footer buttons
+    '<div style="padding:16px 28px 24px;display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--border,#e2e8f0);">' +
+    '<button id="setupWizardBackBtn" class="btn btn-outline" onclick="prevSetupStep()" style="display:none;"><i class="fas fa-arrow-left"></i> Back</button>' +
+    '<div></div>' +
+    '<div style="display:flex;gap:8px;">' +
+    '<button class="btn btn-outline" onclick="dismissSetupWizard()">Skip</button>' +
+    '<button id="setupWizardNextBtn" class="btn btn-primary" onclick="nextSetupStep()">Next <i class="fas fa-arrow-right"></i></button>' +
+    '</div></div></div></div>';
+}
+
+var _setupStep = 1;
+var _setupTotalSteps = 5;
+
+function updateWizardProgress() {
+  var bar = document.getElementById('setupWizardProgress');
+  if (!bar) return;
+  var html = '';
+  for (var i = 1; i <= _setupTotalSteps; i++) {
+    var done = i < _setupStep;
+    var active = i === _setupStep;
+    html += '<div style="flex:1;height:6px;border-radius:3px;background:' + (done ? 'var(--success,#38a169)' : active ? 'var(--primary,#2563eb)' : '#e2e8f0') + ';transition:0.3s;"></div>';
+  }
+  bar.innerHTML = html;
+}
+
+function showSetupStep(step) {
+  _setupStep = step;
+  updateWizardProgress();
+  var content = document.getElementById('setupWizardContent');
+  if (!content) return;
+  var prof = getSchoolProfile();
+  var backBtn = document.getElementById('setupWizardBackBtn');
+  var nextBtn = document.getElementById('setupWizardNextBtn');
+  if (backBtn) backBtn.style.display = step > 1 ? '' : 'none';
+  if (nextBtn) {
+    if (step >= _setupTotalSteps) {
+      nextBtn.innerHTML = 'Finish <i class="fas fa-check"></i>';
+      nextBtn.className = 'btn btn-success';
+    } else {
+      nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+      nextBtn.className = 'btn btn-primary';
+    }
+  }
+  var steps = [
+    { title: 'School Information', icon: 'fa-school', html: setupStep1HTML(prof) },
+    { title: 'Institution Type', icon: 'fa-layer-group', html: setupStep2HTML() },
+    { title: 'Branding & Theme', icon: 'fa-palette', html: setupStep3HTML(prof) },
+    { title: 'Portal Features', icon: 'fa-toggle-on', html: setupStep4HTML(prof) },
+    { title: 'Congratulations!', icon: 'fa-check-circle', html: setupStep5HTML(prof) },
+  ];
+  var s = steps[step - 1];
+  content.innerHTML = '<h4 style="font-size:16px;font-weight:600;margin-bottom:16px;"><i class="fas ' + s.icon + '" style="color:var(--primary,#2563eb);margin-right:8px;"></i>Step ' + step + ': ' + s.title + '</h4>' + s.html;
+}
+
+function setupStep1HTML(prof) {
+  return '<p style="color:var(--text-light);margin-bottom:16px;">Tell us about your school. This information will appear on your school\'s public landing page and portals.</p>' +
+    '<div style="display:flex;flex-direction:column;gap:12px;">' +
+    '<label style="font-weight:500;font-size:13px;">School Name <span style="color:var(--danger);">*</span></label>' +
+    '<input id="wizSchoolName" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="e.g., Demo International School" value="' + esc(prof.schoolName || '') + '">' +
+    '<label style="font-weight:500;font-size:13px;">School Motto</label>' +
+    '<input id="wizSchoolMotto" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="e.g., Excellence, Character, Service" value="' + esc(prof.schoolMotto || '') + '">' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
+    '<div><label style="font-weight:500;font-size:13px;">Phone</label><input id="wizPhone" style="width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="+234..." value="' + esc(prof.contactPhone || '') + '"></div>' +
+    '<div><label style="font-weight:500;font-size:13px;">Email</label><input id="wizEmail" style="width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="school@example.com" value="' + esc(prof.contactEmail || '') + '"></div>' +
+    '</div>' +
+    '<label style="font-weight:500;font-size:13px;">Address</label>' +
+    '<input id="wizAddress" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="School address" value="' + esc(prof.contactAddress || '') + '">' +
+    '<label style="font-weight:500;font-size:13px;">School Type</label>' +
+    '<select id="wizSchoolType" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;">' +
+    '<option value="day" ' + (prof.schoolType === 'day' ? 'selected' : '') + '>Day School</option>' +
+    '<option value="boarding" ' + (prof.schoolType === 'boarding' ? 'selected' : '') + '>Boarding School</option>' +
+    '<option value="mixed" ' + (prof.schoolType === 'mixed' ? 'selected' : '') + '>Day & Boarding</option>' +
+    '</select></div>';
+}
+
+function setupStep2HTML() {
+  var tier = data.schoolTier || 'full_k12';
+  var tiers = [
+    { value: 'eccde', label: 'Nursery Only', desc: 'Creche through Reception', icon: 'fa-baby' },
+    { value: 'primary', label: 'Basic/Primary Only', desc: 'Basic 1 through Basic 6', icon: 'fa-book-reader' },
+    { value: 'secondary', label: 'Secondary Only', desc: 'JSS 1 through SSS 3', icon: 'fa-user-graduate' },
+    { value: 'full_k12', label: 'Full K-12', desc: 'Complete Nigerian curriculum', icon: 'fa-graduation-cap' },
+    { value: 'tertiary', label: 'Tertiary / Higher Ed', desc: 'University, polytechnic, college', icon: 'fa-university' },
+  ];
+  var html = '<p style="color:var(--text-light);margin-bottom:16px;">Select your institution type. This will auto-configure classes, subjects, and grading for your school.</p>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">';
+  tiers.forEach(function(t) {
+    var active = t.value === tier;
+    html += '<div class="card wiz-tier-card" style="padding:16px;cursor:pointer;text-align:center;border:2px solid ' + (active ? 'var(--primary,#2563eb)' : '#e2e8f0') + ';background:' + (active ? 'var(--primary-light, #ebf4ff)' : 'var(--card-bg,#fff)') + ';" onclick="document.querySelectorAll(\'.wiz-tier-card\').forEach(function(c){c.style.borderColor=\'#e2e8f0\';c.style.background=\'var(--card-bg,#fff)\'});this.style.borderColor=\'var(--primary,#2563eb)\';this.style.background=\'var(--primary-light,#ebf4ff)\';document.getElementById(\'wizTier\').value=\'' + t.value + '\';">' +
+    '<div style="font-size:28px;color:' + (active ? 'var(--primary,#2563eb)' : 'var(--text-light)') + ';margin-bottom:8px;"><i class="fas ' + t.icon + '"></i></div>' +
+    '<h4 style="font-weight:600;font-size:13px;color:' + (active ? 'var(--primary,#2563eb)' : 'var(--text)') + ';">' + t.label + '</h4>' +
+    '<p style="font-size:11px;color:var(--text-light);margin-top:4px;">' + t.desc + '</p>' +
+    (active ? '<div style="margin-top:6px;"><span class="badge" style="background:var(--primary,#2563eb);color:#fff;font-size:10px;">Selected</span></div>' : '') +
+    '</div>';
+  });
+  html += '</div><input type="hidden" id="wizTier" value="' + tier + '">';
+  return html;
+}
+
+function setupStep3HTML(prof) {
+  return '<p style="color:var(--text-light);margin-bottom:16px;">Customize your school\'s look and feel. These settings will be applied across all portals and the public landing page.</p>' +
+    '<div style="display:flex;flex-direction:column;gap:12px;">' +
+    '<label style="font-weight:500;font-size:13px;">School Logo URL</label>' +
+    '<input id="wizLogo" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="Paste image URL or upload" value="' + esc(prof.logoUrl || '') + '">' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">' +
+    '<div><label style="font-weight:500;font-size:13px;">Primary Color</label><input type="color" id="wizPrimaryColor" value="' + (prof.theme && prof.theme.primaryColor || '#2563eb') + '" style="width:100%;height:40px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;"></div>' +
+    '<div><label style="font-weight:500;font-size:13px;">Accent Color</label><input type="color" id="wizAccentColor" value="' + (prof.theme && prof.theme.accentColor || '#fbbf24') + '" style="width:100%;height:40px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;"></div>' +
+    '<div><label style="font-weight:500;font-size:13px;">Secondary Color</label><input type="color" id="wizSecondaryColor" value="' + (prof.schoolSecondaryColor || '#7c3aed') + '" style="width:100%;height:40px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;"></div>' +
+    '</div></div>';
+}
+
+function setupStep4HTML(prof) {
+  var features = prof.enableFeatures || {
+    library: true, transport: true, health: true, activities: true,
+    alumni: true, hostel: true, chat: true, gallery: true, examSimulation: true
+  };
+  var items = [
+    { key: 'library', label: 'Library Module', desc: 'Book catalog, borrowing, and e-resources' },
+    { key: 'transport', label: 'Transport', desc: 'Bus routes, tracking, and fee management' },
+    { key: 'health', label: 'Health Services', desc: 'Clinic records, checkups, and medical history' },
+    { key: 'activities', label: 'Activities & Clubs', desc: 'Extracurricular clubs and activity tracking' },
+    { key: 'alumni', label: 'Alumni Network', desc: 'Alumni directory, reunions, and donations' },
+    { key: 'hostel', label: 'Hostel Management', desc: 'Boarding, room allocation, and hostel fees' },
+    { key: 'chat', label: 'Chat & Messaging', desc: 'In-app messaging between staff, students, parents' },
+    { key: 'gallery', label: 'Photo Gallery', desc: 'School photo albums and media sharing' },
+    { key: 'examSimulation', label: 'CBT Exam Simulation', desc: 'Computer-based testing and practice exams' },
+  ];
+  var html = '<p style="color:var(--text-light);margin-bottom:16px;">Choose which features to enable on your school\'s portals. You can change these anytime in Settings.</p>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">';
+  items.forEach(function(item) {
+    var checked = features[item.key] !== false;
+    html += '<label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;font-size:13px;">' +
+      '<input type="checkbox" class="wiz-feature-check" data-key="' + item.key + '" ' + (checked ? 'checked' : '') + ' style="width:16px;height:16px;">' +
+      '<div><div style="font-weight:500;">' + item.label + '</div><div style="font-size:11px;color:var(--text-light);">' + item.desc + '</div></div></label>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function setupStep5HTML() {
+  return '<div style="text-align:center;padding:20px 0;">' +
+    '<div style="font-size:64px;color:var(--success,#38a169);margin-bottom:16px;"><i class="fas fa-check-circle"></i></div>' +
+    '<h3 style="font-size:22px;font-weight:700;margin-bottom:8px;">All Set!</h3>' +
+    '<p style="color:var(--text-light);max-width:400px;margin:0 auto 16px;">Your school is now configured. You can always revisit these settings from the School Setup and Settings panels.</p>' +
+    '<div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">' +
+    '<a href="admin.html" class="btn btn-primary" style="text-decoration:none;"><i class="fas fa-tachometer-alt"></i> Go to Dashboard</a>' +
+    '<button class="btn btn-outline" onclick="dismissSetupWizard()"><i class="fas fa-plus-circle"></i> Continue Configuring</button>' +
+    '</div></div>';
+}
+
+function nextSetupStep() {
+  if (_setupStep < _setupTotalSteps) {
+    saveWizardStep(_setupStep);
+    showSetupStep(_setupStep + 1);
+  } else {
+    saveWizardStep(_setupStep);
+    localStorage.setItem(SETUP_WIZARD_KEY, 'true');
+    var m = document.getElementById('setupWizardModal');
+    if (m) {
+      showToast('School setup complete! 🎉');
+      setTimeout(function() { m.remove(); }, 800);
+    }
+  }
+}
+
+function prevSetupStep() {
+  if (_setupStep > 1) showSetupStep(_setupStep - 1);
+}
+
+function saveWizardStep(step) {
+  var prof = getSchoolProfile();
+  var needsSave = false;
+  if (step === 1) {
+    var name = document.getElementById('wizSchoolName');
+    if (name && name.value.trim()) { prof.schoolName = name.value.trim(); needsSave = true; }
+    var motto = document.getElementById('wizSchoolMotto');
+    if (motto && motto.value.trim()) { prof.schoolMotto = motto.value.trim(); needsSave = true; }
+    var phone = document.getElementById('wizPhone');
+    if (phone && phone.value.trim()) { prof.contactPhone = phone.value.trim(); needsSave = true; }
+    var email = document.getElementById('wizEmail');
+    if (email && email.value.trim()) { prof.contactEmail = email.value.trim(); needsSave = true; }
+    var addr = document.getElementById('wizAddress');
+    if (addr && addr.value.trim()) { prof.contactAddress = addr.value.trim(); needsSave = true; }
+    var type = document.getElementById('wizSchoolType');
+    if (type) { prof.schoolType = type.value; needsSave = true; }
+  }
+  if (step === 2) {
+    var tier = document.getElementById('wizTier');
+    if (tier && tier.value) { data.schoolTier = tier.value; needsSave = true; }
+  }
+  if (step === 3) {
+    var logo = document.getElementById('wizLogo');
+    if (logo && logo.value.trim()) { prof.logoUrl = logo.value.trim(); needsSave = true; }
+    var pc = document.getElementById('wizPrimaryColor');
+    if (pc) { if (!prof.theme) prof.theme = {}; prof.theme.primaryColor = pc.value; needsSave = true; }
+    var ac = document.getElementById('wizAccentColor');
+    if (ac) { if (!prof.theme) prof.theme = {}; prof.theme.accentColor = ac.value; needsSave = true; }
+    var sc = document.getElementById('wizSecondaryColor');
+    if (sc) { prof.schoolSecondaryColor = sc.value; needsSave = true; }
+  }
+  if (step === 4) {
+    if (!prof.enableFeatures) prof.enableFeatures = {};
+    document.querySelectorAll('.wiz-feature-check').forEach(function(cb) {
+      prof.enableFeatures[cb.getAttribute('data-key')] = cb.checked;
+    });
+    needsSave = true;
+  }
+  if (needsSave) saveData();
+}
+
 // Show toast notification
 function showToast(msg) {
   var t = document.createElement('div');

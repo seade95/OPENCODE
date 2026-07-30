@@ -363,6 +363,8 @@ function showAdminPortal() {
   if (typeof renderAll === 'function') renderAll();
   if (typeof renderSubscriptionBanner === 'function') renderSubscriptionBanner();
   if (typeof updateNotifBadge === 'function') updateNotifBadge();
+  // Show setup wizard if school is not yet configured
+  if (typeof showSetupWizard === 'function') setTimeout(showSetupWizard, 500);
 }
 
 function showStudentLogin() {

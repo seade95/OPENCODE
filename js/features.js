@@ -5513,22 +5513,30 @@ function openCalculator() {
 }
 
 var _calcButtons = [
+  // Memory & Mode
+  {l:'MC',a:'mc',c:'mem'},{l:'MR',a:'mr',c:'mem'},{l:'M+',a:'mplus',c:'mem'},{l:'M−',a:'mminus',c:'mem'},{l:'DEG',a:'mode',c:'sci'},
+  // separator
+  {sep:true},
+  // Number pad + controls
   {l:'(',a:'('},{l:')',a:')'},{l:'C',a:'clear',c:'danger'},{l:'⌫',a:'back',c:'danger'},{l:'±',a:'neg',c:'danger'},
   {l:'7',a:'7'},{l:'8',a:'8'},{l:'9',a:'9'},{l:'÷',a:'/',c:'op'},{l:'√',a:'sqrt(',c:'sci'},
   {l:'4',a:'4'},{l:'5',a:'5'},{l:'6',a:'6'},{l:'×',a:'*',c:'op'},{l:'x²',a:'^2',c:'sci'},
   {l:'1',a:'1'},{l:'2',a:'2'},{l:'3',a:'3'},{l:'−',a:'-',c:'op'},{l:'x³',a:'^3',c:'sci'},
   {l:'0',a:'0'},{l:'.',a:'.'},{l:'π',a:'pi',c:'sci'},{l:'+',a:'+',c:'op'},{l:'=',a:'=',c:'eq'},
+  // separator
+  {sep:true},
+  // Scientific functions
   {l:'sin',a:'sin(',c:'sci'},{l:'cos',a:'cos(',c:'sci'},{l:'tan',a:'tan(',c:'sci'},{l:'log',a:'log(',c:'sci'},{l:'ln',a:'ln(',c:'sci'},
   {l:'sin⁻¹',a:'asin(',c:'sci'},{l:'cos⁻¹',a:'acos(',c:'sci'},{l:'tan⁻¹',a:'atan(',c:'sci'},{l:'xʸ',a:'^',c:'sci'},{l:'10ˣ',a:'10^',c:'sci'},
   {l:'sinh',a:'sinh(',c:'sci'},{l:'cosh',a:'cosh(',c:'sci'},{l:'tanh',a:'tanh(',c:'sci'},{l:'x!',a:'!',c:'sci'},{l:'|x|',a:'abs(',c:'sci'},
   {l:'e',a:'euler',c:'sci'},{l:'eˣ',a:'exp(',c:'sci'},{l:'1/x',a:'inv',c:'sci'},{l:'∛',a:'cbrt(',c:'sci'},{l:'log₂',a:'log2(',c:'sci'},
-  {l:'MC',a:'mc',c:'mem'},{l:'MR',a:'mr',c:'mem'},{l:'M+',a:'mplus',c:'mem'},{l:'M−',a:'mminus',c:'mem'},{l:'DEG',a:'mode',c:'sci'}
 ];
 
 function _calcRenderButtons() {
   var grid = document.getElementById('calcGrid');
   if (!grid) return;
   grid.innerHTML = _calcButtons.map(function(b) {
+    if (b.sep) return '<div class="calc-sep"></div>';
     var cls = 'calc-btn' + (b.c ? ' calc-' + b.c : '');
     return '<button class="' + cls + '" onclick="calcInput(\'' + b.a.replace(/'/g, "\\'") + '\')" tabindex="-1">' + b.l + '</button>';
   }).join('');

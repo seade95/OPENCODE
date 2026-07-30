@@ -269,7 +269,7 @@ function getDefaultData() {
     schoolTier: 'full_k12',
     examRegistrations: [],
     schoolProfile: {
-      schoolName: '',
+      schoolName: 'Demo International School',
       logoUrl: '',
       services: [
         { icon: 'fa-graduation-cap', title: 'Academic Excellence', description: 'Rigorous curriculum aligned with national standards, delivered by qualified educators.' },
@@ -301,18 +301,24 @@ function getDefaultData() {
         { name: 'Art Club', type: 'Arts', description: 'Painting, drawing, sculpture, and creative design.', schedule: 'Fri 2-4pm' }
       ],
       events: [
-        { title: 'Academic Year Opening', date: '2026-09-15', description: 'Opening ceremony for the new academic year.' },
-        { title: 'Inter-House Sports', date: '2026-10-20', description: 'Annual sports competition between school houses.' },
-        { title: 'Science Fair', date: '2026-11-10', description: 'Students showcase their science and innovation projects.' }
+        { title: 'Academic Year Opening', date: '2026-09-15', description: 'Opening ceremony for the 2026/2027 academic year.' },
+        { title: 'Inter-House Sports', date: '2026-10-20', description: 'Annual sports competition between the four school houses.' },
+        { title: 'Science & Technology Fair', date: '2026-11-12', description: 'Students showcase their science and innovation projects.' },
+        { title: 'Cultural Day', date: '2027-01-28', description: 'Celebration of cultural diversity with traditional displays.' },
+        { title: 'Career Day', date: '2027-03-05', description: 'Career guidance with guest speakers from various professions.' },
+        { title: 'Arts & Drama Festival', date: '2027-06-10', description: 'Annual festival featuring drama, music, dance, and visual arts.' },
+        { title: 'Prize Giving Day', date: '2027-07-15', description: 'Award ceremony recognizing outstanding student achievements.' }
       ],
       testimonials: [
-        { name: 'Mr. Robert Johnson', text: 'This school has transformed my child\'s academic performance. The teachers are dedicated and the facilities are excellent.', role: 'Parent' },
-        { name: 'Alice Johnson', text: 'I love the science labs and the debate club! The teachers make learning fun and interesting.', role: 'Student' },
-        { name: 'Mr. John Doe', text: 'Teaching here is a privilege. The school provides all the resources we need to deliver quality education.', role: 'Teacher' }
+        { name: 'Mrs. Adebayo', text: 'Demo International School has transformed my child\'s academic performance. The teachers are dedicated and the facilities are excellent.', role: 'Parent' },
+        { name: 'Chisom Eze', text: 'I love the science labs and the debate club! The teachers make learning fun and interesting every day.', role: 'Student — SSS 2' },
+        { name: 'Mr. Emeka Nwachukwu', text: 'Teaching here is a privilege. The school provides all the resources we need to deliver quality education.', role: 'Mathematics Teacher' },
+        { name: 'Mrs. Grace Okafor', text: 'My daughter has grown in confidence and academic ability since joining. The holistic approach to education is outstanding.', role: 'Parent' },
+        { name: 'Daniel Ibrahim', text: 'The career guidance program helped me choose my path. I\'m now pursuing my dream course at university.', role: 'Alumnus — Class of 2024' }
       ],
-      heroTitle: 'Shape Your Future With Us',
-      heroSubtitle: 'Empowering students with world-class education, innovative learning, and a supportive community.',
-      aboutText: 'We are committed to providing quality education that nurtures academic excellence, character development, and lifelong learning.',
+      heroTitle: 'Demo International School — Excellence in Education',
+      heroSubtitle: 'Empowering the next generation of leaders with world-class education, innovative learning methods, and a supportive community.',
+      aboutText: 'Founded in 1995, Demo International School is a premier educational institution committed to nurturing academic excellence, character development, and lifelong learning. We provide a comprehensive K-12 curriculum that prepares students for success in a rapidly changing world. Our dedicated faculty, modern facilities, and student-centered approach create an environment where every learner can thrive and reach their full potential.',
       contactEmail: 'eduversemgt@gmail.com',
       contactPhone: '+2347069332955',
       whatsappNumber: '+2347069332955',
@@ -328,7 +334,7 @@ function getDefaultData() {
       heroImages: ['images/hero/slide1.jpg', 'images/hero/slide2.jpg', 'images/hero/slide3.jpg'],
       theme: { primaryColor: '#2563eb', accentColor: '#fbbf24', successColor: '#38a169', infoColor: '#3182ce' },
       // Branding
-      schoolMotto: '',
+      schoolMotto: 'Excellence, Character, Service — Shaping Future Leaders',
       schoolSecondaryColor: '#7c3aed',
       fontFamily: 'Inter, sans-serif',
       borderRadius: '8px',
@@ -341,7 +347,7 @@ function getDefaultData() {
       sessionTimeout: 30,
       dateFormat: 'DD/MM/YYYY',
       // School info
-      foundingYear: '',
+      foundingYear: '1995',
       schoolType: 'day',
       gender: 'coeducational',
       curriculumLabel: 'Nigerian Curriculum',
@@ -351,15 +357,53 @@ function getDefaultData() {
       // Admissions
       admissionOpen: false,
       admissionSeason: '2026/2027 Admissions Open',
-      admissionRequirements: [],
+      admissionRequirements: [
+        'Completed application form',
+        'Birth certificate (original & copy)',
+        'Previous school report card (last 2 terms)',
+        '2 passport photographs (recent)',
+        'Immunization records',
+        'Transfer certificate from previous school'
+      ],
       // About
       aboutImages: [],
       // Facilities
-      facilities: [],
+      facilities: [
+        { name: 'Science Laboratory', type: 'Academic', description: 'Fully equipped physics, chemistry, and biology lab for practical sessions.', capacity: '40 students', image: '' },
+        { name: 'Computer Lab', type: 'Technology', description: 'Modern computer lab with internet access for ICT lessons.', capacity: '30 students', image: '' },
+        { name: 'Library', type: 'Academic', description: 'Well-stocked library with textbooks, reference materials, and e-learning resources.', capacity: '60 students', image: '' },
+        { name: 'Sports Field', type: 'Sports', description: 'Multi-purpose sports field for football, athletics, and outdoor activities.', capacity: '500 people', image: '' },
+        { name: 'Basketball Court', type: 'Sports', description: 'Standard basketball court for training and inter-house competitions.', capacity: '30 players', image: '' },
+        { name: 'Music Room', type: 'Arts', description: 'Soundproof music room with instruments for band practice and music lessons.', capacity: '20 students', image: '' },
+        { name: 'Art Studio', type: 'Arts', description: 'Creative art studio for painting, drawing, and sculpture classes.', capacity: '25 students', image: '' },
+        { name: 'School Clinic', type: 'Health', description: 'Well-equipped clinic with a resident nurse for first aid and health emergencies.', capacity: '5 beds', image: '' },
+        { name: 'Cafeteria', type: 'General', description: 'Spacious cafeteria serving nutritious meals during break hours.', capacity: '200 students', image: '' },
+        { name: 'Multipurpose Hall', type: 'General', description: 'Large hall for assemblies, events, examinations, and indoor activities.', capacity: '400 people', image: '' }
+      ],
       // Staff
-      staff: [],
+      staff: [
+        { name: 'Dr. Amina Okonkwo', role: 'Principal', department: 'Administration', email: 'a.okonkwo@demo-school.edu', phone: '+2348012345001', bio: 'PhD in Educational Leadership with 20 years of experience.', photo: '' },
+        { name: 'Mr. Chidi Okafor', role: 'Vice Principal (Academics)', department: 'Administration', email: 'c.okafor@demo-school.edu', phone: '+2348012345002', bio: 'M.Ed in Curriculum Development, 15 years in education.', photo: '' },
+        { name: 'Mrs. Funke Adeleke', role: 'Head Teacher (Primary)', department: 'Primary Education', email: 'f.adeleke@demo-school.edu', phone: '+2348012345003', bio: 'B.Ed in Primary Education, specialist in early childhood development.', photo: '' },
+        { name: 'Mr. Emeka Nwachukwu', role: 'Mathematics Teacher', department: 'Science & Maths', email: 'e.nwachukwu@demo-school.edu', phone: '+2348012345004', bio: 'B.Sc Mathematics, 8 years teaching experience.', photo: '' },
+        { name: 'Ms. Sarah Bello', role: 'English Teacher', department: 'Languages', email: 's.bello@demo-school.edu', phone: '+2348012345005', bio: 'BA English Literature, passionate about developing literacy skills.', photo: '' },
+        { name: 'Mr. James Adeyemi', role: 'Science Teacher', department: 'Science & Maths', email: 'j.adeyemi@demo-school.edu', phone: '+2348012345006', bio: 'B.Sc Biology/Chemistry, 10 years teaching experience.', photo: '' },
+        { name: 'Mrs. Ngozi Eze', role: 'ICT / Computer Teacher', department: 'Technology', email: 'n.eze@demo-school.edu', phone: '+2348012345007', bio: 'B.Sc Computer Science, certified in educational technology.', photo: '' },
+        { name: 'Mr. Ibrahim Danjuma', role: 'Social Studies Teacher', department: 'Humanities', email: 'i.danjuma@demo-school.edu', phone: '+2348012345008', bio: 'B.Sc Social Studies, 7 years teaching experience.', photo: '' },
+        { name: 'Coach Peter Obi', role: 'Physical Education Teacher', department: 'Sports', email: 'p.obi@demo-school.edu', phone: '+2348012345009', bio: 'NIS-certified coach, former state-level athlete.', photo: '' },
+        { name: 'Ms. Chioma Uche', role: 'School Nurse', department: 'Health Services', email: 'c.uche@demo-school.edu', phone: '+2348012345010', bio: 'RN with 12 years experience in school health services.', photo: '' }
+      ],
       // FAQs
-      faqs: [],
+      faqs: [
+        { question: 'What are the school hours?', answer: 'School runs from 8:00 AM to 3:00 PM, Monday through Friday. Extracurricular activities run from 3:00 PM to 5:00 PM.' },
+        { question: 'How do I enroll my child?', answer: 'Visit our admissions page to complete the application form. You will need to submit birth certificate, previous school reports, and passport photographs.' },
+        { question: 'What is the tuition fee?', answer: 'Tuition fees vary by class level. Please contact our admissions office or check the School Fees section for detailed fee schedules.' },
+        { question: 'Does the school provide transportation?', answer: 'Yes, we offer school bus services within designated routes. Contact the administrative office for route availability and fees.' },
+        { question: 'Are there boarding facilities?', answer: 'Yes, we have hostels for both boys and girls with 24/7 supervision, study areas, and recreational facilities.' },
+        { question: 'How can I contact my child\'s teacher?', answer: 'Parent-teacher communication is available through the Parent Portal. You can also schedule in-person meetings during designated visiting hours.' },
+        { question: 'What is the school\'s disciplinary policy?', answer: 'We follow a positive discipline approach. Our code of conduct is shared during enrollment and is available in the student handbook.' },
+        { question: 'Do you offer scholarship programs?', answer: 'Yes, we offer merit-based and need-based scholarships. Details are announced during the admissions season.' }
+      ],
       // Footer
       footerColumns: [],
       accreditations: [],
@@ -368,7 +412,14 @@ function getDefaultData() {
       // Portal feature toggles
       enableFeatures: { library: true, transport: true, health: true, activities: true, alumni: true, hostel: true, chat: true, gallery: true, examSimulation: true },
       // Grading
-      gradingScale: [],
+      gradingScale: [
+        { grade: 'A', minScore: 75, maxScore: 100, remark: 'Excellent', gpa: 5.0 },
+        { grade: 'B', minScore: 65, maxScore: 74, remark: 'Very Good', gpa: 4.0 },
+        { grade: 'C', minScore: 55, maxScore: 64, remark: 'Good', gpa: 3.0 },
+        { grade: 'D', minScore: 45, maxScore: 54, remark: 'Fair', gpa: 2.0 },
+        { grade: 'E', minScore: 35, maxScore: 44, remark: 'Poor', gpa: 1.0 },
+        { grade: 'F', minScore: 0, maxScore: 34, remark: 'Fail', gpa: 0.0 }
+      ],
       // Announcements
       announcementBar: { text: '', enabled: false },
       // Custom domains
@@ -378,7 +429,12 @@ function getDefaultData() {
       // Social feed
       socialFeed: { instagram: '', twitter: '' },
       // Sports houses
-      sportHouses: [],
+      sportHouses: [
+        { name: 'Red House', color: '#e53e3e', motto: 'Courage and Strength', mascot: 'Lion' },
+        { name: 'Blue House', color: '#3182ce', motto: 'Wisdom and Integrity', mascot: 'Eagle' },
+        { name: 'Green House', color: '#38a169', motto: 'Growth and Unity', mascot: 'Oak Tree' },
+        { name: 'Yellow House', color: '#d69e2e', motto: 'Excellence and Ambition', mascot: 'Cheetah' }
+      ],
       // CBT exams
       cbtExams: [],
       cbtResults: [],
@@ -401,10 +457,37 @@ function getDefaultData() {
       }
     },
     academicCalendar: [
-      { id: 'CAL001', title: 'First Term Begins', date: '2026-09-15', type: 'academic', description: 'Opening day for the first academic term.' },
-      { id: 'CAL002', title: 'Inter-House Sports', date: '2026-10-20', type: 'sports', description: 'Annual athletics and team sports competition.' },
-      { id: 'CAL003', title: 'Mid-Term Break', date: '2026-11-01', type: 'holiday', description: 'School closed for mid-term break.' },
-      { id: 'CAL004', title: 'Revision Week', date: '2026-11-15', type: 'academic', description: 'Revision and preparation for end-of-term exams.' }
+      // === 2026/2027 Academic Year — First Term ===
+      { id: 'CAL001', title: 'First Term Begins', date: '2026-09-15', type: 'academic', description: 'Opening day for the 2026/2027 academic session. All students resume.' },
+      { id: 'CAL002', title: 'First Term — Week 2: Orientation', date: '2026-09-22', type: 'academic', description: 'New student orientation and parent-teacher introductory meetings.' },
+      { id: 'CAL003', title: 'Independence Day Celebration', date: '2026-10-01', type: 'holiday', description: 'School closed for Nigeria\'s Independence Day.' },
+      { id: 'CAL004', title: 'First Term — Open Day', date: '2026-10-08', type: 'academic', description: 'Parents visit to observe classes and meet teachers.' },
+      { id: 'CAL005', title: 'Inter-House Sports', date: '2026-10-20', type: 'sports', description: 'Annual athletics and team sports competition between the four houses.' },
+      { id: 'CAL006', title: 'Mid-Term Break', date: '2026-11-02', type: 'holiday', description: 'School closed for mid-term break. Students resume November 9.' },
+      { id: 'CAL007', title: 'Science & Technology Fair', date: '2026-11-12', type: 'academic', description: 'Students showcase science projects and innovation displays.' },
+      { id: 'CAL008', title: 'Revision Week', date: '2026-11-30', type: 'academic', description: 'Revision and preparation for end-of-term examinations.' },
+      { id: 'CAL009', title: 'First Term Examinations', date: '2026-12-07', type: 'exam', description: 'End-of-first-term written examinations begin.' },
+      { id: 'CAL010', title: 'First Term Ends / Break', date: '2026-12-18', type: 'holiday', description: 'School closes for first term. Christmas break begins.' },
+      // === Second Term ===
+      { id: 'CAL011', title: 'Second Term Begins', date: '2027-01-11', type: 'academic', description: 'Second term resumes after Christmas break.' },
+      { id: 'CAL012', title: 'Cultural Day', date: '2027-01-28', type: 'social', description: 'Cultural display, traditional dress, food, and dance competition.' },
+      { id: 'CAL013', title: 'Second Term — Open Day', date: '2027-02-11', type: 'academic', description: 'Second term open day for parent-teacher consultations.' },
+      { id: 'CAL014', title: 'Mid-Term Break', date: '2027-02-22', type: 'holiday', description: 'School closed for mid-term break.' },
+      { id: 'CAL015', title: 'Career Day', date: '2027-03-05', type: 'academic', description: 'Career guidance event with guest speakers from various professions.' },
+      { id: 'CAL016', title: 'Revision Week', date: '2027-03-22', type: 'academic', description: 'Revision week before second term examinations.' },
+      { id: 'CAL017', title: 'Second Term Examinations', date: '2027-03-29', type: 'exam', description: 'End-of-second-term examinations begin.' },
+      { id: 'CAL018', title: 'Second Term Ends / Break', date: '2027-04-09', type: 'holiday', description: 'School closes for second term. Easter break begins.' },
+      // === Third Term ===
+      { id: 'CAL019', title: 'Third Term Begins', date: '2027-05-04', type: 'academic', description: 'Third term resumes. Final term of the academic session.' },
+      { id: 'CAL020', title: 'Sports Day', date: '2027-05-20', type: 'sports', description: 'Annual sports day with track events, relays, and prize-giving.' },
+      { id: 'CAL021', title: 'Children\'s Day', date: '2027-05-27', type: 'holiday', description: 'School closed for Children\'s Day celebrations.' },
+      { id: 'CAL022', title: 'Third Term — Open Day', date: '2027-06-03', type: 'academic', description: 'Final open day for the academic session.' },
+      { id: 'CAL023', title: 'Arts & Drama Festival', date: '2027-06-10', type: 'arts', description: 'Annual arts festival featuring drama, music, dance, and visual arts.' },
+      { id: 'CAL024', title: 'Revision Week', date: '2027-06-21', type: 'academic', description: 'Final revision week before end-of-session examinations.' },
+      { id: 'CAL025', title: 'Third Term Examinations', date: '2027-06-28', type: 'exam', description: 'End-of-session final examinations.' },
+      { id: 'CAL026', title: 'Award & Prize Giving Day', date: '2027-07-15', type: 'academic', description: 'Annual award ceremony recognizing outstanding students.' },
+      { id: 'CAL027', title: 'Academic Session Ends', date: '2027-07-16', type: 'holiday', description: 'School closes for the 2026/2027 academic session. Summer break.' },
+      { id: 'CAL028', title: 'Summer Coaching / Remedial Classes', date: '2027-07-28', type: 'academic', description: 'Optional summer coaching and remedial programs begin.' }
     ],
     chatRooms: [],
     chatMessages: [],
