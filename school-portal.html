@@ -28,7 +28,7 @@
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 <link rel="dns-prefetch" href="https://cdn.sheetjs.com">
 <!-- Preload critical assets -->
-<link rel="preload" href="css/style.css" as="style">
+<link rel="preload" href="css/style.css?v=20260730" as="style">
 <link rel="preload" href="icons/icon.svg" as="image">
 <!-- Google Fonts - async, non-blocking -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"></noscript>
 <!-- Main stylesheet -->
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20260730">
 <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 <link rel="alternate icon" href="images/favicon.svg">
 <link rel="manifest" href="/manifest.json">
@@ -537,8 +537,14 @@ function renderPortal(slug, tenant, data) {
     for (var ti = 0; ti < testimonials.length; ti++) {
       var t = testimonials[ti];
       var initial = (t.name || '?')[0].toUpperCase();
-      html += '<div class="testimonial-card"><p class="quote">"' + esc(t.text || '') + '"</p>'
-        + '<div class="author"><div class="avatar">' + initial + '</div><div><div class="name">' + esc(t.name || '') + '</div>'
+      var colors = ['#2563eb','#7c3aed','#059669','#d97706','#dc2626','#0891b2'];
+      var ci = ti % colors.length;
+      html += '<div class="testimonial-card" style="--avatar-bg:' + colors[ci] + '">'
+        + '<div class="stars" style="display:flex;gap:2px;font-size:14px;color:#f59e0b;">'
+        + '<i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>'
+        + '<p class="quote">"' + esc(t.text || '') + '"</p>'
+        + '<div class="author"><div class="avatar" style="background:linear-gradient(135deg,' + colors[ci] + ',' + colors[ci] + 'cc);">' + initial + '</div>'
+        + '<div><div class="name">' + esc(t.name || '') + '</div>'
         + '<div class="role">' + esc(t.role || '') + '</div></div></div></div>';
     }
     html += '</div></section>';
