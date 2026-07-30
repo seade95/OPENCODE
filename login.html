@@ -316,8 +316,9 @@ function switchRole(el, role) {
       }
     } catch(e) {}
     // Always redirect back arrow to school profile when school param is present
-    var backLink = document.querySelector('.back-link a');
-    if (backLink) backLink.href = '/school/' + encodeURIComponent(schoolParam);
+    var backLink = document.getElementById('loginBackLink');
+    if (backLink) backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Home';
+    if (backLink) backLink.href = '/?school=' + encodeURIComponent(schoolParam);
   }
 
   if (roleParam) {
@@ -369,7 +370,7 @@ function switchRole(el, role) {
   </form>
 
   <div class="back-link">
-    <a href="/"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+    <a id="loginBackLink" href="/"><i class="fas fa-arrow-left"></i> Back to Home</a>
   </div>
 </div>
 

@@ -167,6 +167,16 @@ function toggleNavDropdown(el) {
 
 function goHome() {
   clearSession();
+  var activeTenant = (function() { try { return localStorage.getItem('activeTenant'); } catch(e) { return null; } })();
+  if (activeTenant) {
+    var tenants = [];
+    try { tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]'); } catch(e) {}
+    var t = tenants.find(function(x) { return x.id === activeTenant; });
+    if (t && t.slug) {
+      window.location.href = '/?school=' + encodeURIComponent(t.slug);
+      return;
+    }
+  }
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');
   if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }

@@ -135,10 +135,12 @@
       Need access? <a href="../apply.html">Apply for a school account</a>
     </p>
 
-    <a href="../index.html" class="back-link">← Back to EduVerse</a>
+    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
+    (function(){var m=location.search.match(/[?&]school=([^&]*)/);var slug=m?m[1]:'';var el=document.getElementById('backToHomeLink');if(el&&slug)el.href='../?school='+encodeURIComponent(slug);
+
     document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const email = document.getElementById('email').value;
@@ -146,7 +148,8 @@
       console.log('Admin login:', { email, password });
       localStorage.setItem('eduverse_role', 'admin');
       localStorage.setItem('eduverse_user', email);
-      window.location.href = '../?role=admin&portal=dashboard';
+      var dest = slug ? '../?school=' + encodeURIComponent(slug) + '&role=admin&portal=dashboard' : '../?role=admin&portal=dashboard';
+      window.location.href = dest;
     });
   </script>
 </body>

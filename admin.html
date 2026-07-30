@@ -118,7 +118,7 @@ if (navigator.serviceWorker) {
     </div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="adminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
     <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Need access? <a href="apply.html" style="color:var(--primary);font-weight:600;">Apply for a school account</a></p>
-    <p style="text-align:center;margin-top:8px;"><a href="index.html" style="font-size:13px;color:var(--text-light);"><i class="fas fa-home"></i> Back to Home</a></p>
+    <p style="text-align:center;margin-top:8px;"><a id="adminBackToHome" href="index.html" style="font-size:13px;color:var(--text-light);"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 
@@ -148,7 +148,7 @@ if (navigator.serviceWorker) {
     </div>
     <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="adminSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
     <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Already have an account? <a href="javascript:;" onclick="showAdminLogin()" style="color:var(--primary);font-weight:600;">Sign In</a></p>
-    <p style="text-align:center;margin-top:8px;"><a href="index.html" style="font-size:13px;color:var(--text-light);"><i class="fas fa-home"></i> Back to Home</a></p>
+    <p style="text-align:center;margin-top:8px;"><a id="adminBackToHome2" href="index.html" style="font-size:13px;color:var(--text-light);"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 </div>
@@ -941,9 +941,19 @@ try {
 <script src="js/firestore-adapter.js"></script>
 <script src="js/app.js"></script>
 <script>
+// Fix Back to Home links to point to school profile if active
+(function(){try{var at=localStorage.getItem('activeTenant');if(at){var ts=JSON.parse(localStorage.getItem('eduverse_tenants')||'[]'),t=ts.find(function(x){return x.id===at});if(t&&t.slug){var els=document.querySelectorAll('[id^=adminBackToHome]');els.forEach(function(el){el.href='/?school='+encodeURIComponent(t.slug)})}}}catch(e){}})();
+
 // Override goHome for standalone admin page
 function goHome() {
   if (typeof cleanupExam === 'function') cleanupExam();
+  var activeTenant = (function() { try { return localStorage.getItem('activeTenant'); } catch(e) { return null; } })();
+  if (activeTenant) {
+    var tenants = [];
+    try { tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]'); } catch(e) {}
+    var t = tenants.find(function(x) { return x.id === activeTenant; });
+    if (t && t.slug) { window.location.href = '/?school=' + encodeURIComponent(t.slug); return; }
+  }
   window.location.href = 'index.html';
 }
 // Override showAdminPortal to work without landing-page

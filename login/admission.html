@@ -135,7 +135,7 @@
       Don't have an application? <a href="../" id="applyForAdmissionLink">Apply for admission</a>
     </p>
 
-    <a href="../" class="back-link">← Back to School</a>
+    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
@@ -149,6 +149,8 @@
     if (applyLink) {
       applyLink.href = schoolSlug ? '../?school=' + encodeURIComponent(schoolSlug) + '&role=admission' : '../?role=admission';
     }
+    var homeLink = document.getElementById('backToHomeLink');
+    if (homeLink && schoolSlug) homeLink.href = '../?school=' + encodeURIComponent(schoolSlug);
 
     document.getElementById('admissionLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();

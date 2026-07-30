@@ -135,10 +135,12 @@
       Don't have access? Contact your school administrator.
     </p>
 
-    <a href="../index.html" class="back-link">← Back to EduVerse</a>
+    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
+    (function(){var m=location.search.match(/[?&]school=([^&]*)/);if(m){var el=document.getElementById('backToHomeLink');if(el)el.href='../?school='+encodeURIComponent(m[1]);}})();
+
     document.getElementById('teacherLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const teacherId = document.getElementById('teacherId').value;
