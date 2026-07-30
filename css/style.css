@@ -1906,7 +1906,6 @@ tr:hover td { background: #f7fafc; }
   text-align: center;
   box-shadow: var(--shadow);
   transition: var(--transition);
-  cursor: pointer;
   border: 2px solid transparent;
 }
 .feat-item:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
