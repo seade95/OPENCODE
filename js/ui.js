@@ -496,6 +496,8 @@ function switchTeacherPanel(panel) {
   document.querySelectorAll('#teacherPage .admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var tp = document.getElementById('teacher-' + panel);
   if (tp) tp.classList.add('active');
+  var teacherPage = document.getElementById('teacherPage');
+  if (teacherPage) teacherPage.scrollTop = 0;
   document.querySelectorAll('#teacherPage .admin-sidebar-item').forEach(function(i) { i.classList.remove('active'); });
   var sp = document.querySelector('#teacherPage .admin-sidebar-item[data-teacher-panel="' + panel + '"]');
   if (sp) sp.classList.add('active');
@@ -526,6 +528,8 @@ function switchAdminPanel(panel) {
   document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var ap = document.getElementById('admin-' + panel);
   if (ap) ap.classList.add('active');
+  var adminPage = document.getElementById('adminPage');
+  if (adminPage) adminPage.scrollTop = 0;
   switch(panel) {
     case 'dashboard': if (typeof renderDashboard === 'function') renderDashboard(); break;
     case 'students': if (typeof renderStudents === 'function') renderStudents(); break;
