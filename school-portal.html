@@ -135,21 +135,25 @@
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
   <a class="nav-logo" href="/"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
-  <button class="nav-toggle" onclick="toggleNav()"><i class="fas fa-bars"></i></button>
-  <ul class="nav-links" id="navLinks">
-    <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
-      <a href="javascript:;">Features <i class="fas fa-chevron-down" style="font-size:10px;margin-left:4px;"></i></a>
-      <div class="nav-dropdown-menu">
-        <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
-        <a href="#about"><i class="fas fa-info-circle"></i> About</a>
-        <a href="#courses"><i class="fas fa-book-open"></i> Subjects</a>
-        <a href="#news"><i class="fas fa-calendar-alt"></i> Announcements</a>
-      </div>
-    </li>
-    <li><a href="javascript:;" class="btn-portal" onclick="redirectToPortal(slug, 'admin')"><i class="fas fa-user-shield"></i> Admin</a></li>
-    <li><a href="javascript:;" onclick="showEduverseLogin()" class="btn-portal" style="background:var(--accent);color:var(--primary-dark);font-weight:700;"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
-    <li><a href="javascript:;" onclick="toggleDarkMode()" style="color:rgba(255,255,255,0.7);padding:8px 12px;" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
-  </ul>
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
+  <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
+        <a href="javascript:;" class="nav-link">Features <i class="fas fa-chevron-down nav-dropdown-arrow"></i></a>
+        <div class="nav-dropdown-menu">
+          <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
+          <a href="#about"><i class="fas fa-info-circle"></i> About</a>
+          <a href="#courses"><i class="fas fa-book-open"></i> Subjects</a>
+          <a href="#news"><i class="fas fa-calendar-alt"></i> Announcements</a>
+        </div>
+      </li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-admin" onclick="redirectToPortal(slug, 'admin')"><i class="fas fa-user-shield"></i> Admin</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-primary" onclick="showEduverseLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
 </nav>
 <!-- Dynamic App Content -->
 <div id="app">
@@ -236,8 +240,14 @@
 </div>
 <script>
 function toggleNav() {
-  var el = document.getElementById('navLinks');
-  if (el) el.classList.toggle('open');
+  var menu = document.getElementById('navMenu');
+  var backdrop = document.getElementById('navBackdrop');
+  var icon = document.getElementById('navToggleIcon');
+  if (menu) {
+    menu.classList.toggle('open');
+    if (backdrop) backdrop.classList.toggle('active');
+    if (icon) icon.className = menu.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
+  }
 }
 function toggleNavDropdown(el) {
   if (el) el.classList.toggle('open');
