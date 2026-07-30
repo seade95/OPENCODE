@@ -2796,36 +2796,46 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .calc-float-btn i { pointer-events:none; }
 
 /* ===== SCIENTIFIC CALCULATOR MODAL ===== */
-.calc-wrapper { user-select:none; }
-.calc-display { background:#1a1a2e;border-radius:12px;padding:16px 20px;margin-bottom:12px;min-height:80px;display:flex;flex-direction:column;justify-content:flex-end;text-align:right; }
+.calc-wrapper { user-select:none;max-height:80vh;display:flex;flex-direction:column; }
+.calc-display { background:#1a1a2e;border-radius:12px;padding:16px 20px;margin-bottom:12px;min-height:80px;flex-shrink:0;display:flex;flex-direction:column;justify-content:flex-end;text-align:right; }
 .calc-expr { font-size:14px;color:rgba(255,255,255,0.6);min-height:20px;word-break:break-all;overflow-wrap:break-word;overflow:hidden;font-family:'Courier New',monospace; }
 .calc-result { font-size:28px;font-weight:700;color:#fff;min-height:36px;word-break:break-all;overflow-wrap:break-word;overflow:hidden;font-family:'Courier New',monospace;transition:color 0.2s; }
 .calc-result.error { color:#fc8181; }
+.calc-scroll { flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;padding-right:2px;margin-right:-2px; }
 .calc-grid { display:grid;grid-template-columns:repeat(5,1fr);gap:6px; }
-.calc-btn { display:flex;align-items:center;justify-content:center;padding:10px 4px;border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.15s;background:#f1f5f9;color:#1a202c;box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.calc-btn { display:flex;align-items:center;justify-content:center;padding:10px 4px;border:none;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.12s;background:#f1f5f9;color:#1a202c;box-shadow:0 1px 3px rgba(0,0,0,0.08);outline:none; }
+.calc-btn:focus-visible { box-shadow:0 0 0 2px #667eea; }
 .calc-btn:hover { transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.12); }
-.calc-btn:active { transform:scale(0.95);box-shadow:none; }
+.calc-btn:active { transform:scale(0.93);box-shadow:none; }
 .calc-btn.op { background:#e2e8f0;color:#2d3748;font-size:16px; }
 .calc-btn.danger { background:#fed7d7;color:#c53030; }
 .calc-btn.eq { background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:18px; }
 .calc-btn.eq:hover { background:linear-gradient(135deg,#5a6fd6,#6a3f96); }
-.calc-btn.sci { background:#e9d8fd;color:#553c9a;font-size:12px; }
-.calc-btn.mem { background:#c6f6d5;color:#22543d;font-size:12px; }
-.calc-btn.span2 { grid-column:span 2; }
-.calc-footer { text-align:center;margin-top:8px; }
+.calc-btn.sci { background:#e9d8fd;color:#553c9a;font-size:11px; }
+.calc-btn.mem { background:#c6f6d5;color:#22543d;font-size:11px; }
+.calc-footer { text-align:center;margin-top:8px;flex-shrink:0; }
 .calc-footer .btn { font-size:11px;padding:4px 10px; }
 @media (max-width:480px) {
+  .calc-wrapper { max-height:85vh; }
   .calc-grid { gap:4px; }
-  .calc-btn { padding:8px 2px;font-size:12px;border-radius:6px; }
-  .calc-display { padding:12px 14px;min-height:64px; }
-  .calc-result { font-size:22px; }
-  .calc-expr { font-size:12px; }
+  .calc-btn { padding:7px 2px;font-size:11px;border-radius:5px; }
+  .calc-btn.sci,.calc-btn.mem { font-size:10px; }
+  .calc-display { padding:10px 12px;min-height:60px; }
+  .calc-result { font-size:20px; }
+  .calc-expr { font-size:11px; }
+}
+@media (max-width:360px) {
+  .calc-grid { gap:3px; }
+  .calc-btn { padding:5px 1px;font-size:10px;border-radius:4px; }
+  .calc-btn.sci,.calc-btn.mem { font-size:9px; }
+  .calc-result { font-size:17px;min-height:28px; }
 }
 [data-theme="dark"] .calc-btn { background:#4a5568;color:#e2e8f0; }
 [data-theme="dark"] .calc-btn.op { background:#2d3748;color:#e2e8f0; }
 [data-theme="dark"] .calc-btn.danger { background:#742a2a;color:#fc8181; }
 [data-theme="dark"] .calc-btn.sci { background:#44337a;color:#d6bcfa; }
 [data-theme="dark"] .calc-btn.mem { background:#22543d;color:#c6f6d5; }
+[data-theme="dark"] .calc-btn:focus-visible { box-shadow:0 0 0 2px #a78bfa; }
 
 /* ===== SUPER ADMIN DASHBOARD ===== */
 .sa-dashboard { display:flex;min-height:80vh;background:var(--bg,#f0f4f8);border-radius:var(--radius);overflow:hidden; }

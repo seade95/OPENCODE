@@ -5486,34 +5486,51 @@ function checkoutStore() {
 }
 
 // ===== SCIENTIFIC CALCULATOR =====
-var _calcState = { expr: '', memory: 0, isRadian: false, history: [] };
+var _calcState = { expr: '', memory: 0, isRadian: false, history: [], ans: 0 };
+
+function _calcHandleKey(e) {
+  var grid = document.getElementById('calcGrid');
+  var overlay = document.getElementById('modalOverlay');
+  if (!grid || !overlay || !overlay.classList.contains('active')) { document.removeEventListener('keydown', _calcHandleKey); return; }
+  var key = e.key;
+  var map = {
+    'Enter': '=', 'Escape': 'clear', 'Delete': 'clear', 'Backspace': 'back',
+    '*': '*', '/': '/', '+': '+', '-': '-', '.': '.', '%': '%',
+    '(': '(', ')': ')', '^': '^'
+  };
+  if (key === 'c' || key === 'C') { calcInput('clear'); e.preventDefault(); return; }
+  if (key in map) { calcInput(map[key]); e.preventDefault(); return; }
+  if (/^[0-9]$/.test(key)) { calcInput(key); e.preventDefault(); return; }
+}
 
 function openCalculator() {
-  openModal('<div class="calc-wrapper"><div class="calc-display"><div class="calc-expr" id="calcExpr"></div><div class="calc-result" id="calcResult">0</div></div><div class="calc-grid" id="calcGrid"></div><div class="calc-footer"><button class="btn btn-sm" onclick="calcHistory()"><i class="fas fa-history"></i> History</button> <span id="calcMode" style="font-size:11px;color:var(--text-light);margin-left:8px;">DEG</span></div></div>');
+  openModal('<div class="calc-wrapper"><div class="calc-display"><div class="calc-expr" id="calcExpr"></div><div class="calc-result" id="calcResult">0</div></div><div class="calc-scroll"><div class="calc-grid" id="calcGrid"></div></div><div class="calc-footer"><button class="btn btn-sm" onclick="calcHistory()"><i class="fas fa-history"></i> History</button><button class="btn btn-sm" onclick="calcInput(\'ans\')" style="margin-left:6px;"><i class="fas fa-redo"></i> ANS</button><span id="calcMode" style="font-size:11px;color:var(--text-light);margin-left:8px;">DEG</span></div></div>');
   document.getElementById('modalContent').style.maxWidth = '380px';
   _calcState.expr = '';
   _calcRenderButtons();
   _calcUpdateDisplay();
+  document.addEventListener('keydown', _calcHandleKey);
 }
+
+var _calcButtons = [
+  {l:'(',a:'('},{l:')',a:')'},{l:'C',a:'clear',c:'danger'},{l:'⌫',a:'back',c:'danger'},{l:'±',a:'neg',c:'danger'},
+  {l:'7',a:'7'},{l:'8',a:'8'},{l:'9',a:'9'},{l:'÷',a:'/',c:'op'},{l:'√',a:'sqrt(',c:'sci'},
+  {l:'4',a:'4'},{l:'5',a:'5'},{l:'6',a:'6'},{l:'×',a:'*',c:'op'},{l:'x²',a:'^2',c:'sci'},
+  {l:'1',a:'1'},{l:'2',a:'2'},{l:'3',a:'3'},{l:'−',a:'-',c:'op'},{l:'x³',a:'^3',c:'sci'},
+  {l:'0',a:'0'},{l:'.',a:'.'},{l:'π',a:'pi',c:'sci'},{l:'+',a:'+',c:'op'},{l:'=',a:'=',c:'eq'},
+  {l:'sin',a:'sin(',c:'sci'},{l:'cos',a:'cos(',c:'sci'},{l:'tan',a:'tan(',c:'sci'},{l:'log',a:'log(',c:'sci'},{l:'ln',a:'ln(',c:'sci'},
+  {l:'sin⁻¹',a:'asin(',c:'sci'},{l:'cos⁻¹',a:'acos(',c:'sci'},{l:'tan⁻¹',a:'atan(',c:'sci'},{l:'xʸ',a:'^',c:'sci'},{l:'10ˣ',a:'10^',c:'sci'},
+  {l:'sinh',a:'sinh(',c:'sci'},{l:'cosh',a:'cosh(',c:'sci'},{l:'tanh',a:'tanh(',c:'sci'},{l:'x!',a:'!',c:'sci'},{l:'|x|',a:'abs(',c:'sci'},
+  {l:'e',a:'euler',c:'sci'},{l:'eˣ',a:'exp(',c:'sci'},{l:'1/x',a:'inv',c:'sci'},{l:'∛',a:'cbrt(',c:'sci'},{l:'log₂',a:'log2(',c:'sci'},
+  {l:'MC',a:'mc',c:'mem'},{l:'MR',a:'mr',c:'mem'},{l:'M+',a:'mplus',c:'mem'},{l:'M−',a:'mminus',c:'mem'},{l:'DEG',a:'mode',c:'sci'}
+];
 
 function _calcRenderButtons() {
   var grid = document.getElementById('calcGrid');
   if (!grid) return;
-  var rows = [
-    [{l:'sin',a:'sin(',c:'sci'},{l:'cos',a:'cos(',c:'sci'},{l:'tan',a:'tan(',c:'sci'},{l:'(',a:'('},{l:')',a:')'}],
-    [{l:'log',a:'log(',c:'sci'},{l:'ln',a:'ln(',c:'sci'},{l:'√',a:'sqrt(',c:'sci'},{l:'x²',a:'^2',c:'sci'},{l:'x³',a:'^3',c:'sci'}],
-    [{l:'π',a:'pi',c:'sci'},{l:'e',a:'euler',c:'sci'},{l:'!',a:'!',c:'sci'},{l:'1/x',a:'inv',c:'sci'},{l:'|x|',a:'abs(',c:'sci'}],
-    [{l:'MC',a:'mc',c:'mem'},{l:'MR',a:'mr',c:'mem'},{l:'M+',a:'mplus',c:'mem'},{l:'M-',a:'mminus',c:'mem'},{l:'C',a:'clear',c:'danger'}],
-    [{l:'⌫',a:'back',c:'danger'},{l:'±',a:'neg',c:'danger'},{l:'%',a:'%'},{l:'÷',a:'/',c:'op'},{l:'×',a:'*',c:'op'}],
-    [{l:'7',a:'7'},{l:'8',a:'8'},{l:'9',a:'9'},{l:'-',a:'-',c:'op'},{l:'+',a:'+',c:'op'}],
-    [{l:'4',a:'4'},{l:'5',a:'5'},{l:'6',a:'6'},{l:'.',a:'.'},{l:'=',a:'=',c:'eq'}],
-    [{l:'1',a:'1'},{l:'2',a:'2'},{l:'3',a:'3'},{l:'0',a:'0'},{l:'DEG',a:'mode',c:'sci'}]
-  ];
-  grid.innerHTML = rows.map(function(row) {
-    return '<div style="display:contents">' + row.map(function(b) {
-      var cls = 'calc-btn' + (b.c ? ' calc-' + b.c : '');
-      return '<button class="' + cls + '" onclick="calcInput(\'' + b.a.replace(/'/g, "\\'") + '\')">' + b.l + '</button>';
-    }).join('') + '</div>';
+  grid.innerHTML = _calcButtons.map(function(b) {
+    var cls = 'calc-btn' + (b.c ? ' calc-' + b.c : '');
+    return '<button class="' + cls + '" onclick="calcInput(\'' + b.a.replace(/'/g, "\\'") + '\')" tabindex="-1">' + b.l + '</button>';
   }).join('');
 }
 
@@ -5532,12 +5549,14 @@ function calcInput(val) {
   if (val === 'mr') { _calcState.expr += _calcState.memory; _calcUpdateDisplay(); return; }
   if (val === 'mplus') { try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) _calcState.memory += r; } catch(e){} return; }
   if (val === 'mminus') { try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) _calcState.memory -= r; } catch(e){} return; }
-  if (val === 'mode') { _calcState.isRadian = !_calcState.isRadian; var m = document.getElementById('calcMode'); if (m) m.textContent = _calcState.isRadian ? 'RAD' : 'DEG'; return; }
+  if (val === 'mode') { _calcState.isRadian = !_calcState.isRadian; var m2 = document.getElementById('calcMode'); if (m2) m2.textContent = _calcState.isRadian ? 'RAD' : 'DEG'; return; }
+  if (val === 'ans') { _calcState.expr += _calcState.ans; _calcUpdateDisplay(); return; }
   if (val === '=') {
     try {
       var r = _calcEvaluate(_calcState.expr);
       if (typeof r === 'number' && isFinite(r)) {
         _calcState.history.push({ expr: _calcState.expr, result: r });
+        _calcState.ans = r;
         _calcState.expr = String(r);
       } else throw new Error('Invalid');
     } catch(e) {
@@ -5557,20 +5576,24 @@ function _calcEvaluate(expr) {
   s = s.replace(/÷/g, '/').replace(/×/g, '*');
   s = s.replace(/π/g, 'Math.PI').replace(/euler/g, 'Math.E');
   s = s.replace(/sin\(/g, '_sin(').replace(/cos\(/g, '_cos(').replace(/tan\(/g, '_tan(');
-  s = s.replace(/log\(/g, '_log(').replace(/ln\(/g, '_ln(');
-  s = s.replace(/sqrt\(/g, 'Math.sqrt(').replace(/abs\(/g, 'Math.abs(');
+  s = s.replace(/asin\(/g, 'Math.asin(').replace(/acos\(/g, 'Math.acos(').replace(/atan\(/g, 'Math.atan(');
+  s = s.replace(/sinh\(/g, 'Math.sinh(').replace(/cosh\(/g, 'Math.cosh(').replace(/tanh\(/g, 'Math.tanh(');
+  s = s.replace(/log\(/g, '_log(').replace(/ln\(/g, '_ln(').replace(/log2\(/g, '_log2(');
+  s = s.replace(/sqrt\(/g, 'Math.sqrt(').replace(/cbrt\(/g, 'Math.cbrt(').replace(/abs\(/g, 'Math.abs(');
+  s = s.replace(/exp\(/g, 'Math.exp(');
   s = s.replace(/\^/g, '**');
   s = s.replace(/inv/g, '(1/');
   s = s.replace(/(\d+)!/g, 'factorial($1)');
   s = s.replace(/\)!/g, ')!');
   s = s.replace(/%/g, '/100');
-  var fn = new Function('_sin', '_cos', '_tan', '_log', '_ln', 'factorial', 'return (' + s + ')');
+  var fn = new Function('_sin', '_cos', '_tan', '_log', '_ln', '_log2', 'factorial', 'return (' + s + ')');
   return fn(
     function(x) { return Math.sin(_calcState.isRadian ? x : x * Math.PI / 180); },
     function(x) { return Math.cos(_calcState.isRadian ? x : x * Math.PI / 180); },
     function(x) { return Math.tan(_calcState.isRadian ? x : x * Math.PI / 180); },
     function(x) { return Math.log10 ? Math.log10(x) : Math.log(x) / Math.LN10; },
     function(x) { return Math.log(x); },
+    function(x) { return Math.log2 ? Math.log2(x) : Math.log(x) / Math.LN2; },
     function(n) { if (n < 0 || !Number.isInteger(n)) return NaN; if (n === 0 || n === 1) return 1; for (var i = n - 1; i > 0; i--) n *= i; return n; }
   );
 }
@@ -5581,7 +5604,7 @@ function _calcUpdateDisplay() {
   if (ex) ex.textContent = _calcState.expr || '\u200B';
   if (res) {
     if (_calcState.expr) {
-      try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) { res.textContent = r; res.classList.remove('error'); } else { res.textContent = '...'; res.classList.remove('error'); } } catch(e) { res.textContent = '...'; res.classList.remove('error'); }
+      try { var r = _calcEvaluate(_calcState.expr); if (typeof r === 'number' && isFinite(r)) { res.textContent = Number(r.toPrecision(12)).toString(); res.classList.remove('error'); } else { res.textContent = '...'; res.classList.remove('error'); } } catch(e) { res.textContent = '...'; res.classList.remove('error'); }
     } else { res.textContent = '0'; res.classList.remove('error'); }
   }
 }
@@ -5589,7 +5612,7 @@ function _calcUpdateDisplay() {
 function calcHistory() {
   if (!_calcState.history.length) { toast('No history', 'info'); return; }
   var h = _calcState.history.map(function(item, i) {
-    return '<div style="padding:8px 12px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>' + htmlEscape(item.expr) + ' = <strong>' + item.result + '</strong></span><button class="btn btn-sm" onclick="closeModal();_calcState.expr=' + JSON.stringify(item.expr) + ';_calcUpdateDisplay()"><i class="fas fa-redo"></i></button></div>';
+    return '<div style="padding:8px 12px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;font-size:13px;"><span>' + htmlEscape(item.expr) + ' = <strong>' + item.result + '</strong></span><button class="btn btn-sm" onclick="closeModal();openCalculator();_calcState.expr=' + JSON.stringify(item.expr) + ';_calcUpdateDisplay()"><i class="fas fa-redo"></i></button></div>';
   }).join('');
   openModal('<h3><i class="fas fa-history"></i> Calculation History</h3>' + (h || '<div class="empty-state"><i class="fas fa-calculator"></i><p>No calculations yet</p></div>') + '<div class="modal-actions"><button class="btn btn-outline" onclick="closeModal();openCalculator()">Back</button><button class="btn btn-danger" onclick="if(confirm(\'Clear all history?\')){_calcState.history=[];calcHistory()}">Clear All</button></div>');
 }
