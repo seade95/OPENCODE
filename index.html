@@ -1407,14 +1407,16 @@ try {
     var role = params.get('role') || params.get('login');
 
     // School-specific portal: set active tenant first
-    if (school && portal && typeof getTenants === 'function') {
-      var tenants = getTenants();
-      var tenant = tenants.find(function(t) { return t.slug === school; });
-      if (tenant) {
-        localStorage.setItem('activeTenant', tenant.id);
-        localStorage.setItem('activeTenantKey', 'schoolData_' + tenant.id);
-        role = portal; // treat portal param as the role
+    if (school && portal) {
+      if (typeof getTenants === 'function') {
+        var tenants = getTenants();
+        var tenant = tenants.find(function(t) { return t.slug === school; });
+        if (tenant) {
+          localStorage.setItem('activeTenant', tenant.id);
+          localStorage.setItem('activeTenantKey', 'schoolData_' + tenant.id);
+        }
       }
+      role = portal; // treat portal param as the role (even if tenant not yet registered)
     }
 
     if (role) {
