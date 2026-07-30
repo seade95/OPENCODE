@@ -948,14 +948,25 @@ tr:hover td { background: #f7fafc; }
 .modal-actions { display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end; }
 .modal-close {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 12px;
+  right: 12px;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 700;
   cursor: pointer;
-  color: var(--text-light);
+  color: #dc2626;
+  opacity: 0.9;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.15s;
 }
+.modal-close:hover { background: #fef2f2; opacity: 1; }
+.modal-close:active { background: #fee2e2; transform: scale(0.92); }
 
 /* ===================================================================== */
 /* RESPONSIVE — Mobile-First Across All Components                       */
@@ -2051,7 +2062,7 @@ html { transition: background-color 0.3s ease, color 0.3s ease; }
 [data-theme="dark"] .modal { background: var(--card-bg); }
 [data-theme="dark"] .form-group input, [data-theme="dark"] .form-group select, [data-theme="dark"] .search-bar input { background: #4a5568; border-color: #4a5568; color: var(--text); }
 [data-theme="dark"] .form-group input:focus { border-color: var(--primary); }
-[data-theme="dark"] .modal-close { color: var(--text); }
+[data-theme="dark"] .modal-close:hover { background: #3b1a1a; }
 [data-theme="dark"] thead { background: #1a202c; }
 [data-theme="dark"] .toast { box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
 [data-theme="dark"] .search-bar input::placeholder { color: var(--text-light); }
