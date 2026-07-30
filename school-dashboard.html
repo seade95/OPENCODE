@@ -78,7 +78,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh;
     <div class="links-grid">
       <a href="admin.html" class="link-card"><i class="fas fa-cog"></i><span>Admin Panel</span></a>
       <a href="login.html" class="link-card"><i class="fas fa-sign-in-alt"></i><span>Login Page</span></a>
-      <a href="index.html" class="link-card"><i class="fas fa-home"></i><span>Home</span></a>
+      <a id="sdHomeLink" href="index.html" class="link-card"><i class="fas fa-home"></i><span>Home</span></a>
     </div>
   </div>
 
@@ -138,6 +138,18 @@ function doLogout() {
     document.getElementById('schoolInfo').innerHTML = 'Your school account was not found. Please contact support.';
     return;
   }
+
+  // Fix Home link to point to school profile if slug is available
+  (function(){try{
+    var at = localStorage.getItem('activeTenant');
+    var tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+    var t = at ? tenants.find(function(x){return x.id===at}) : null;
+    if (!t) t = tenants.find(function(x){return x.name===school.name});
+    if (t && t.slug) {
+      var hl = document.getElementById('sdHomeLink');
+      if (hl) hl.href = '/?school=' + encodeURIComponent(t.slug);
+    }
+  }catch(e){}})();
 
   document.getElementById('schoolNameDisplay').textContent = school.schoolName;
   document.getElementById('welcomeMsg').textContent = 'Welcome to ' + school.schoolName;

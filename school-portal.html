@@ -669,7 +669,9 @@ function routePortal(portal, slug, tenant) {
 
 window.addEventListener('load', function() {
   try { init(); } catch(e) {
-    document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-exclamation-triangle"></i><h2>Something went wrong</h2><p>' + esc(e.message) + '</p><a href="/" class="btn btn-primary">Go Home</a></div>';
+    var _slug = window.slug || getSlug();
+    var _homeHref = _slug ? '/?school=' + encodeURIComponent(_slug) : '/';
+    document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-exclamation-triangle"></i><h2>Something went wrong</h2><p>' + esc(e.message) + '</p><a href="' + _homeHref + '" class="btn btn-primary">Go Home</a></div>';
   }
 });
 </script>
