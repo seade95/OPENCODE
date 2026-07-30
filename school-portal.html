@@ -46,6 +46,64 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 @media(max-width:640px){.ev-pros-cons-grid{grid-template-columns:1fr!important}header .container,.section-area,.section-enhanced{padding-left:16px!important;padding-right:16px!important}}
+/* School Portal design system */
+.sp-hero-logo{width:80px;height:80px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);margin-bottom:12px;object-fit:cover}
+.sp-hero-logo[src=""],.sp-hero-logo:not([src]){display:none}
+.sp-hero-city{font-size:14px;opacity:.7;margin:-16px 0 32px}
+.sp-hero-city i{margin-right:6px}
+.sp-about-card{max-width:900px;margin:0 auto}
+.sp-about-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.sp-about-info p{margin-bottom:8px}
+.sp-about-desc{font-size:14px;color:var(--text-light);line-height:1.6}
+.sp-facility-tag{display:inline-flex;padding:4px 12px;background:var(--bg-subtle,#f7fafc);border-radius:20px;font-size:12px;color:var(--text-light)}
+.sp-facilities-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.sp-cta{background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:48px 20px;text-align:center;color:#fff}
+.sp-cta-inner{max-width:700px;margin:0 auto}
+.sp-cta h2{color:#fff;font-size:28px;margin:0 0 8px}
+.sp-cta p{opacity:.85;font-size:15px;margin:0 0 24px}
+.sp-cta-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.sp-cta-btn-light{background:#fff;color:var(--primary);font-weight:700}
+.sp-cta-btn-light:hover{background:#f1f5f9;transform:translateY(-2px)}
+.sp-cta-btn-outline{border:2px solid rgba(255,255,255,0.5);color:#fff}
+.sp-cta-btn-outline:hover{background:rgba(255,255,255,0.1);border-color:var(--accent)}
+.sp-cbt-section .section-title h2 span{color:var(--primary)}
+.sp-cbt-features{margin-bottom:24px}
+.sp-cbt-exams-title{font-size:15px;font-weight:600;margin-bottom:12px;text-align:center;color:var(--primary)}
+.sp-cbt-exams-title i{margin-right:6px}
+.sp-cbt-reg{text-align:center;padding:32px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius);max-width:500px;margin:0 auto}
+.sp-cbt-reg h4{color:#fff;font-size:16px;font-weight:700;margin-bottom:12px}
+.sp-card-icon-wrap{display:flex;align-items:center;justify-content:center;height:100%}
+.sp-card-icon-wrap i{font-size:56px}
+.sp-card-admin .sp-card-icon-wrap{background:linear-gradient(135deg,var(--primary),var(--primary-light))}
+.sp-card-admin .sp-card-icon-wrap i{color:var(--accent)}
+.sp-card-teacher .sp-card-icon-wrap{background:linear-gradient(135deg,#16a34a,#15803d)}
+.sp-card-teacher .sp-card-icon-wrap i,.sp-card-parent .sp-card-icon-wrap i,.sp-card-admission .sp-card-icon-wrap i,.sp-card-cbt .sp-card-icon-wrap i{color:#fff}
+.sp-card-student .sp-card-icon-wrap{background:linear-gradient(135deg,var(--accent),var(--accent-light))}
+.sp-card-student .sp-card-icon-wrap i{color:var(--primary-dark)}
+.sp-card-parent .sp-card-icon-wrap{background:linear-gradient(135deg,#06b6d4,#0891b2)}
+.sp-card-admission .sp-card-icon-wrap{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.sp-card-cbt .sp-card-icon-wrap{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+.sp-text-center{text-align:center}
+.sp-ft-logo{height:36px;border-radius:4px}
+.sp-ft-motto{font-style:italic;font-size:13px;color:var(--accent);margin-bottom:8px}
+.sp-ft-text{font-size:12px;color:var(--text-light);margin:4px 0}
+.sp-ft-legal{display:flex;gap:16px;justify-content:center;font-size:13px}
+.sp-ft-legal a{color:rgba(255,255,255,0.5);text-decoration:none}
+.sp-ft-legal a:hover{color:rgba(255,255,255,0.8)}
+.sp-ft-contact a{color:rgba(255,255,255,0.7);text-decoration:none}
+.sp-ft-contact a:hover{color:var(--accent)}
+.sp-ft-accred{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.sp-announce-bar{background:var(--accent,#fbbf24);color:var(--text,#1a202c);padding:10px 20px;text-align:center;font-size:14px;font-weight:500}
+.sp-error-state{text-align:center;padding:120px 20px 80px}
+.sp-error-state i{font-size:64px;color:var(--text-light);margin-bottom:16px;display:block}
+.sp-error-state p{color:var(--text-light);margin-bottom:24px}
+.sp-error-btn{display:inline-block;padding:10px 24px;background:var(--primary);color:#fff;border-radius:8px;font-weight:600;text-decoration:none}
+.sp-error-btn:hover{background:var(--primary-dark);color:#fff}
+.sp-loading-state{text-align:center;padding:120px 20px 80px}
+.sp-loading-state .loading-spinner{margin:0 auto 16px}
+.sp-loading-state p{color:var(--text-light)}
+@media(max-width:768px){.sp-about-grid{grid-template-columns:1fr}.sp-hero-logo{width:60px;height:60px}.sp-cta h2{font-size:22px}.sp-cta{padding:32px 16px}.sp-card-icon-wrap i{font-size:40px}.sp-cbt-reg{padding:24px 16px}.sp-ft-legal{flex-direction:column;align-items:center;gap:8px}}
+@media(max-width:480px){.sp-hero-logo{width:48px;height:48px;border-width:3px}.sp-hero-city{font-size:12px}.sp-cta h2{font-size:18px}.sp-cta{padding:24px 12px}.sp-cta-actions{flex-direction:column;align-items:center}.sp-cta-actions .btn{width:100%;justify-content:center}}
 </style>
 </head>
 <body>
@@ -73,7 +131,7 @@
   <a class="chat-btn chat-email" id="chatEmailBtn" href="javascript:;" target="_blank" rel="noopener" aria-label="Send email" title="Send email"><i class="fas fa-envelope"></i></a>
 </div>
 <!-- Announcement Bar -->
-<div id="announcementBar" style="display:none;background:var(--accent,#fbbf24);color:var(--text,#1a202c);padding:10px 20px;text-align:center;font-size:14px;font-weight:500;"></div>
+<div id="announcementBar" style="display:none;" class="sp-announce-bar"></div>
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
   <a class="nav-logo" href="/"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
@@ -95,16 +153,16 @@
 </nav>
 <!-- Dynamic App Content -->
 <div id="app">
-  <div style="text-align:center;padding:120px 20px 80px;">
-    <div class="loading-spinner" style="margin:0 auto 16px;"></div>
-    <p style="color:var(--text-light);">Loading school information...</p>
+  <div class="sp-loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading school information...</p>
   </div>
 </div>
 <!-- Enhanced Footer -->
 <footer class="footer-enhanced">
   <div class="footer-top-bar">
     <div class="logo">
-      <img id="footerLogo" class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" style="height:36px;border-radius:4px;">
+      <img id="footerLogo" class="school-logo-img sp-ft-logo" src="icons/icon.svg" alt="EDUVERSE">
       EDUVERSE
     </div>
     <div class="footer-social">
@@ -118,13 +176,13 @@
   <div class="footer-main">
     <div class="footer-widget">
       <h5>About Us</h5>
-      <p class="school-motto" style="font-style:italic;font-size:13px;color:var(--accent);margin-bottom:8px;"></p>
+      <p class="school-motto sp-ft-motto"></p>
       <p id="footerAboutText">EDUVERSE, SCHOOL MANAGEMENT PLATFORM is committed to providing quality education that nurtures academic excellence, character development, and lifelong learning skills in every student.</p>
-      <p id="footerSchoolExtra" style="font-size:12px;color:var(--text-light);margin:4px 0;"></p>
-      <p id="footerSchoolInfo" style="font-size:12px;color:var(--text-light);margin:4px 0;"></p>
-      <p id="footerContact"><strong><i class="fas fa-map-marker-alt"></i></strong> 123 Education Avenue, Lagos, Nigeria<br>
-      <strong><i class="fas fa-phone"></i></strong> <a href="tel:+2347069332955" style="color:rgba(255,255,255,0.7);text-decoration:none;">+2347069332955</a><br>
-      <strong><i class="fas fa-envelope"></i></strong> <a href="mailto:eduversemgt@gmail.com" style="color:rgba(255,255,255,0.7);text-decoration:none;">eduversemgt@gmail.com</a></p>
+      <p id="footerSchoolExtra" class="sp-ft-text"></p>
+      <p id="footerSchoolInfo" class="sp-ft-text"></p>
+      <p id="footerContact" class="sp-ft-contact"><strong><i class="fas fa-map-marker-alt"></i></strong> 123 Education Avenue, Lagos, Nigeria<br>
+      <strong><i class="fas fa-phone"></i></strong> <a href="tel:+2347069332955">+2347069332955</a><br>
+      <strong><i class="fas fa-envelope"></i></strong> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a></p>
     </div>
     <div class="footer-widget">
       <h5>Quick Links</h5>
@@ -161,17 +219,17 @@
           </div>
         </form>
       </div>
-      <div class="footer-accreditations" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;"></div>
-      <div id="footerMap" style="margin-top:12px;"></div>
+      <div class="footer-accreditations sp-ft-accred"></div>
+      <div id="footerMap" class="sp-ft-accred"></div>
     </div>
   </div>
   <div class="footer-bottom">
     <p>&copy; 2026 EDUVERSE, SCHOOL MANAGEMENT PLATFORM. All rights reserved.</p>
-    <div class="footer-legal-links" style="margin-top:8px;display:flex;gap:16px;justify-content:center;font-size:13px;">
-      <a href="/privacy-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy Policy</a>
-      <a href="/terms-of-service" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms of Service</a>
-      <a href="/cookie-policy" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookie Policy</a>
-      <a href="/gdpr-compliance" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR Compliance</a>
+    <div class="sp-ft-legal">
+      <a href="/privacy-policy">Privacy Policy</a>
+      <a href="/terms-of-service">Terms of Service</a>
+      <a href="/cookie-policy">Cookie Policy</a>
+      <a href="/gdpr-compliance">GDPR Compliance</a>
     </div>
   </div>
 </footer>
@@ -362,13 +420,13 @@ function renderPortal(slug, tenant, data) {
 
   // Hero
   html += '<section class="hero-slider" id="heroSlider"><div class="slides-container" id="slidesContainer">'
-    + '<div class="slide" style="background:linear-gradient(135deg,' + primary + ',' + primary + 'ee);">'
+    + '<div class="slide">'
     + '<div class="slide-content">'
-    + '<img src="' + esc(logo) + '" alt="" style="width:80px;height:80px;border-radius:50%;border:4px solid rgba(255,255,255,0.3);margin-bottom:12px;object-fit:cover;" onerror="this.style.display=\'none\'">'
+    + '<img src="' + esc(logo) + '" alt="" class="sp-hero-logo" onerror="this.style.display=\'none\'">'
     + '<div class="badge"><i class="fas fa-school"></i> ' + esc(name) + '</div>'
     + '<h1>' + esc(name) + '</h1>'
     + '<p>' + esc(motto) + '</p>'
-    + '<p style="font-size:14px;opacity:0.7;margin:-16px 0 32px;"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>'
+    + (city ? '<p class="sp-hero-city"><i class="fas fa-map-marker-alt"></i> ' + esc(city) + '</p>' : '')
     + '</div></div></div>'
     + '<div class="slider-dots" id="sliderDots"><div class="slider-dot active"></div></div></section>';
 
@@ -384,43 +442,43 @@ function renderPortal(slug, tenant, data) {
   html += '<section class="section-area" id="portals">'
     + '<div class="section-title"><h2>Choose Your <span>Portal</span></h2><p>Select the portal that matches your role to get started</p></div>'
     + '<div class="services-grid">'
-    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'admin\')">'
-    + '<div class="img-box" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-shield" style="font-size:56px;color:var(--accent);"></i></div>'
+    + '<div class="service-card sp-card-admin" onclick="redirectToPortal(\'' + qSlug + '\', \'admin\')">'
+    + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-user-shield"></i></div>'
     + '<div class="info-box"><h4>Admin Portal</h4><p>Full access to manage students, teachers, fees, results, and attendance.</p></div></div>'
-    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')">'
-    + '<div class="img-box" style="background:linear-gradient(135deg,#16a34a,#15803d);display:flex;align-items:center;justify-content:center;"><i class="fas fa-chalkboard-teacher" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="service-card sp-card-teacher" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')">'
+    + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-chalkboard-teacher"></i></div>'
     + '<div class="info-box"><h4>Teacher Portal</h4><p>Manage your class, upload assignments, track student progress and attendance.</p></div></div>'
-    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')">'
-    + '<div class="img-box" style="background:linear-gradient(135deg,var(--accent),var(--accent-light));display:flex;align-items:center;justify-content:center;"><i class="fas fa-user-graduate" style="font-size:56px;color:var(--primary-dark);"></i></div>'
+    + '<div class="service-card sp-card-student" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')">'
+    + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-user-graduate"></i></div>'
     + '<div class="info-box"><h4>Student Portal</h4><p>View your results, assignments, fee status, attendance, and activities.</p></div></div>'
-    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')">'
-    + '<div class="img-box" style="background:linear-gradient(135deg,#06b6d4,#0891b2);display:flex;align-items:center;justify-content:center;"><i class="fas fa-users" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="service-card sp-card-parent" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')">'
+    + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-users"></i></div>'
     + '<div class="info-box"><h4>Parent Portal</h4><p>Monitor your child\'s academic progress, attendance, fees, and activities.</p></div></div>'
-    + '<div class="service-card" onclick="window.location.href=\'/login/admission.html?school=' + qSlug + '\'">'
-    + '<div class="img-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;"><i class="fas fa-graduation-cap" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="service-card sp-card-admission" onclick="window.location.href=\'/login/admission.html?school=' + qSlug + '\'">'
+    + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-graduation-cap"></i></div>'
     + '<div class="info-box"><h4>Admission Portal</h4><p>Apply for admission, explore programs, and track your application status.</p></div></div>'
-    + '<div class="service-card" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')">'
-    + '<div class="img-box" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);display:flex;align-items:center;justify-content:center;"><i class="fas fa-laptop-code" style="font-size:56px;color:white;"></i></div>'
+    + '<div class="service-card sp-card-cbt" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')">'
+    + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-laptop-code"></i></div>'
     + '<div class="info-box"><h4>CBT Portal</h4><p>Take computer-based tests and exams online with real-time grading and results.</p></div></div>'
     + '</div></section>';
 
   // About
   html += '<section class="section-area gray-bg" id="about">'
     + '<div class="section-title"><h2>About <span>' + esc(name) + '</span></h2><p>Learn more about our school community</p></div>'
-    + '<div class="card" style="max-width:900px;margin:0 auto;">'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">'
-    + '<div>'
-    + (foundingYear ? '<p style="margin-bottom:8px;"><strong>Founded:</strong> ' + esc(foundingYear) + '</p>' : '')
-    + '<p style="margin-bottom:8px;"><strong>Type:</strong> ' + (typeLabels[schoolType] || 'Day School') + '</p>'
-    + '<p style="margin-bottom:8px;"><strong>Curriculum:</strong> ' + esc(curriculum) + '</p>'
-    + '<p style="margin-bottom:8px;"><strong>Students:</strong> ' + studentCount + '</p>'
-    + '<p style="margin-bottom:8px;"><strong>Teachers:</strong> ' + teacherCount + '</p>'
+    + '<div class="card sp-about-card">'
+    + '<div class="sp-about-grid">'
+    + '<div class="sp-about-info">'
+    + (foundingYear ? '<p><strong>Founded:</strong> ' + esc(foundingYear) + '</p>' : '')
+    + '<p><strong>Type:</strong> ' + (typeLabels[schoolType] || 'Day School') + '</p>'
+    + '<p><strong>Curriculum:</strong> ' + esc(curriculum) + '</p>'
+    + '<p><strong>Students:</strong> ' + studentCount + '</p>'
+    + '<p><strong>Teachers:</strong> ' + teacherCount + '</p>'
     + '</div><div>'
-    + (aboutText ? '<p style="font-size:14px;color:var(--text-light);line-height:1.6;">' + esc(aboutText) + '</p>' : '<p style="font-size:14px;color:var(--text-light);line-height:1.6;">' + esc(name) + ' is dedicated to providing quality education and nurturing academic excellence.</p>')
-    + '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;">';
+    + (aboutText ? '<p class="sp-about-desc">' + esc(aboutText) + '</p>' : '<p class="sp-about-desc">' + esc(name) + ' is dedicated to providing quality education and nurturing academic excellence.</p>')
+    + '<div class="sp-facilities-wrap">';
   var facItems = facilities.length ? facilities : [{name:'Science Labs'},{name:'Library'},{name:'ICT Center'},{name:'Sports Complex'}];
   for (var fi = 0; fi < facItems.length; fi++) {
-    html += '<span style="padding:4px 12px;background:var(--bg-subtle,#f7fafc);border-radius:20px;font-size:12px;color:var(--text-light);">' + esc(facItems[fi].name || facItems[fi]) + '</span>';
+    html += '<span class="sp-facility-tag">' + esc(facItems[fi].name || facItems[fi]) + '</span>';
   }
   html += '</div></div></div></div></section>';
 
@@ -478,13 +536,13 @@ function renderPortal(slug, tenant, data) {
   // CBT
   var cbt = prof.cbtConfig || {};
   if (cbt.enabled) {
-    html += '<section class="section-area" id="cbtSection"><div class="section-title"><h2><span>' + esc(cbt.title || 'Computer-Based Testing') + '</span></h2>'
+    html += '<section class="section-area sp-cbt-section" id="cbtSection"><div class="section-title"><h2><span>' + esc(cbt.title || 'Computer-Based Testing') + '</span></h2>'
       + (cbt.headline ? '<p>' + esc(cbt.headline) + '</p>' : '')
       + (cbt.description ? '<p>' + esc(cbt.description) + '</p>' : '')
       + '</div>';
     var cbtFeatures = cbt.features || [];
     if (cbtFeatures.length) {
-      html += '<div class="features-enhanced" style="margin-bottom:24px;">';
+      html += '<div class="features-enhanced sp-cbt-features">';
       for (var fi2 = 0; fi2 < cbtFeatures.length; fi2++) {
         var f = cbtFeatures[fi2];
         html += '<div class="feat-item"><div class="icon"><i class="fas ' + esc(f.icon || 'fa-laptop') + '"></i></div>'
@@ -494,8 +552,8 @@ function renderPortal(slug, tenant, data) {
     }
     var cbtExams = cbt.upcomingExams || [];
     if (cbtExams.length) {
-      html += '<h4 style="font-size:15px;font-weight:600;margin-bottom:12px;text-align:center;color:var(--primary);"><i class="fas fa-calendar-alt"></i> Upcoming CBT Exams</h4>'
-        + '<div class="events-grid" style="max-width:600px;">';
+      html += '<h4 class="sp-cbt-exams-title"><i class="fas fa-calendar-alt"></i> Upcoming CBT Exams</h4>'
+        + '<div class="events-grid">';
       for (var ei = 0; ei < cbtExams.length; ei++) {
         var ex = cbtExams[ei];
         html += '<div class="event-card"><div class="date-box"><span class="day">' + ((ex.date || '').split('-')[2] || '') + '</span><span class="month">' + ((ex.date || '').split('-')[1] || '') + '</span></div>'
@@ -506,24 +564,24 @@ function renderPortal(slug, tenant, data) {
       html += '</div>';
     }
     if (cbt.registrationOpen) {
-      html += '<div style="text-align:center;padding:32px;background:linear-gradient(135deg,' + primary + ',' + primary + 'dd);border-radius:var(--radius);max-width:500px;margin:0 auto;">'
-        + '<h4 style="color:white;font-size:16px;font-weight:700;margin-bottom:12px;">' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
+      html += '<div class="sp-cbt-reg">'
+        + '<h4>' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
         + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
     } else if (cbt.ctaText) {
-      html += '<div style="text-align:center;"><a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+      html += '<div class="sp-text-center"><a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
     }
     html += '</section>';
   }
 
   // CTA
-  html += '<section style="background:linear-gradient(135deg,' + primary + ',' + primary + 'cc);padding:48px 20px;text-align:center;color:white;">'
-    + '<div style="max-width:700px;margin:0 auto;">'
-    + '<h2 style="color:white;font-size:28px;margin:0 0 8px;">Ready to Get Started?</h2>'
-    + '<p style="opacity:0.85;font-size:15px;margin:0 0 24px;">Access your portal or learn more about ' + esc(name) + '</p>'
-    + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'
-    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')" class="btn" style="background:white;color:' + primary + ';font-weight:700;"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-users"></i> Parent Login</a>'
-    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+  html += '<section class="sp-cta">'
+    + '<div class="sp-cta-inner">'
+    + '<h2>Ready to Get Started?</h2>'
+    + '<p>Access your portal or learn more about ' + esc(name) + '</p>'
+    + '<div class="sp-cta-actions">'
+    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')" class="btn sp-cta-btn-light"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')" class="btn sp-cta-btn-outline"><i class="fas fa-users"></i> Parent Login</a>'
+    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')" class="btn sp-cta-btn-outline"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
     + '</div></div></section>';
 
   document.getElementById('app').innerHTML = html;
@@ -533,9 +591,9 @@ function init() {
   window.slug = getSlug();
   var slug = window.slug;
   if (!slug) {
-    document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-map-signs" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>School Not Found</h2>'
-      + '<p style="color:var(--text-light);margin-bottom:24px;">No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
-      + '<a href="/" style="display:inline-block;padding:10px 24px;background:var(--primary);color:white;border-radius:8px;font-weight:600;text-decoration:none;">Back to Home</a></div>';
+    document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-map-signs"></i><h2>School Not Found</h2>'
+      + '<p>No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
+      + '<a href="/" class="sp-error-btn">Back to Home</a></div>';
     return;
   }
 
@@ -545,9 +603,9 @@ function init() {
     if (tenants[ti2].slug === slug) { tenant = tenants[ti2]; break; }
   }
   if (!tenant) {
-    document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-school" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>School Not Found</h2>'
-      + '<p style="color:var(--text-light);margin-bottom:24px;">We couldn\'t find a school with the slug "' + esc(slug) + '". It may not exist or may have been removed.</p>'
-      + '<a href="/schools" style="display:inline-block;padding:10px 24px;background:var(--primary);color:white;border-radius:8px;font-weight:600;text-decoration:none;"><i class="fas fa-school"></i> Browse Schools</a></div>';
+    document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-school"></i><h2>School Not Found</h2>'
+      + '<p>We couldn\'t find a school with the slug "' + esc(slug) + '". It may not exist or may have been removed.</p>'
+      + '<a href="/schools" class="sp-error-btn"><i class="fas fa-school"></i> Browse Schools</a></div>';
     document.title = 'School Not Found - EduVerse';
     return;
   }
@@ -595,7 +653,7 @@ function routePortal(portal, slug, tenant) {
 
 window.addEventListener('load', function() {
   try { init(); } catch(e) {
-    document.getElementById('app').innerHTML = '<div class="error-state" style="text-align:center;padding:120px 20px 80px;"><i class="fas fa-exclamation-triangle" style="font-size:64px;color:var(--text-light);margin-bottom:16px;display:block;"></i><h2>Something went wrong</h2><p style="color:var(--text-light);margin-bottom:24px;">' + esc(e.message) + '</p><a href="/" class="btn btn-primary">Go Home</a></div>';
+    document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-exclamation-triangle"></i><h2>Something went wrong</h2><p>' + esc(e.message) + '</p><a href="/" class="btn btn-primary">Go Home</a></div>';
   }
 });
 </script>
