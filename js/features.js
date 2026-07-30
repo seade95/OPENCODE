@@ -5586,6 +5586,9 @@ function _calcEvaluate(expr) {
   s = s.replace(/(\d+)!/g, 'factorial($1)');
   s = s.replace(/\)!/g, ')!');
   s = s.replace(/%/g, '/100');
+  var openC = (s.match(/\(/g) || []).length;
+  var closeC = (s.match(/\)/g) || []).length;
+  while (closeC < openC) { s += ')'; closeC++; }
   var fn = new Function('_sin', '_cos', '_tan', '_log', '_ln', '_log2', 'factorial', 'return (' + s + ')');
   return fn(
     function(x) { return Math.sin(_calcState.isRadian ? x : x * Math.PI / 180); },
