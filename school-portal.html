@@ -199,7 +199,7 @@
         <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admin')">Admin Portal</a></li>
         <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'teacher')">Teacher Portal</a></li>
         <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'student')">Student Portal</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'cbt')">Admission Portal</a></li>
+        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admission')">Admission Portal</a></li>
       </ul>
     </div>
     <div class="footer-widget">
@@ -276,8 +276,8 @@ try {
 
 function redirectToPortal(slug, portal) {
   localStorage.setItem('activeTenant', slugToTenantId(slug));
-  if (portal === 'cbt') {
-    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=student';
+  if (portal === 'admission') {
+    window.location.href = '/login/admission.html?school=' + encodeURIComponent(slug);
   } else if (portal === 'admin') {
     window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
   } else {
@@ -303,7 +303,7 @@ function showApplySchool() { window.location.href = '/pricing'; }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
 function showTeacherLogin() { window.location.href = '/?role=teacher'; }
 function showStudentLogin() { window.location.href = '/?role=student'; }
-function showAdmissionPortal() { window.location.href = '/login/admission.html'; }
+function showAdmissionPortal() { window.location.href = '/login/admission.html?school=' + encodeURIComponent(window.slug || getSlug()); }
 function showParentLogin() { window.location.href = '/?role=parent'; }
 function showAlumniPortal() { window.location.href = '/?role=alumni'; }
 function subscribeNewsletter(input) { if (input && input.value) { alert('Subscribed! Thank you.'); input.value = ''; } }

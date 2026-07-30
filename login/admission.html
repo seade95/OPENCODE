@@ -132,13 +132,24 @@
     </form>
 
     <p class="help-text">
-      Don't have an application? <a href="../apply.html">Apply for admission</a>
+      Don't have an application? <a href="../" id="applyForAdmissionLink">Apply for admission</a>
     </p>
 
-    <a href="../index.html" class="back-link">← Back to EduVerse</a>
+    <a href="../" class="back-link">← Back to School</a>
   </div>
 
   <script>
+    // Preserve school slug from URL query params
+    function getQs(name) {
+      var m = location.search.match(new RegExp('[?&]' + name + '=([^&]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    var schoolSlug = getQs('school') || getQs('slug') || '';
+    var applyLink = document.getElementById('applyForAdmissionLink');
+    if (applyLink) {
+      applyLink.href = schoolSlug ? '../?school=' + encodeURIComponent(schoolSlug) + '&role=admission' : '../?role=admission';
+    }
+
     document.getElementById('admissionLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const applicationId = document.getElementById('applicationId').value;
@@ -146,7 +157,8 @@
       console.log('Admission login:', { applicationId, password });
       localStorage.setItem('eduverse_role', 'admission');
       localStorage.setItem('eduverse_user', applicationId);
-      window.location.href = '../?role=admission&portal=dashboard';
+      var dest = schoolSlug ? '../?school=' + encodeURIComponent(schoolSlug) + '&role=admission&portal=dashboard' : '../?role=admission&portal=dashboard';
+      window.location.href = dest;
     });
   </script>
 </body>
