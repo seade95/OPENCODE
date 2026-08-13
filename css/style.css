@@ -2189,6 +2189,25 @@ html { transition: background-color 0.3s ease, color 0.3s ease; }
 /* Grid row */
 [data-theme="dark"] .grid-row:hover td { background: #4a5568; }
 
+/* EduVerse platform */
+[data-theme="dark"] .ev-topbar { background: var(--card-bg); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+[data-theme="dark"] .ev-dropdown { background: var(--card-bg); }
+[data-theme="dark"] .ev-dropdown a:hover { background: #4a5568; }
+[data-theme="dark"] .ev-dropdown-divider { background: #4a5568; }
+[data-theme="dark"] .ev-right-card { background: var(--card-bg); }
+[data-theme="dark"] .ev-create-post { background: var(--card-bg); }
+[data-theme="dark"] .ev-create-post textarea { background: #4a5568; border-color: #4a5568; color: var(--text); }
+[data-theme="dark"] .ev-feed-item { background: var(--card-bg); }
+[data-theme="dark"] .ev-school-card { background: var(--card-bg); }
+[data-theme="dark"] .ev-school-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+[data-theme="dark"] .ev-school-card-icon { background: #2d3748; }
+[data-theme="dark"] .ev-school-content { background: var(--card-bg); }
+
+/* Dark mode: admin login classes */
+[data-theme="dark"] .admin-demo-hint { background: #4a3b0a; color: #fefcbf; }
+[data-theme="dark"] .admin-error-box { background: #4a2020; color: #feb2b2; }
+[data-theme="dark"] .form-select { border-color: #4a5568; }
+
 /* ===== LOADING SPINNER ===== */
 .loading-overlay {
   display: none;
@@ -3129,3 +3148,19 @@ button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c)
   .cbt-exam-grid { grid-template-columns:1fr; }
   .cbt-stats { flex-direction:column; }
 }
+
+/* ─── Admin login reusable classes ─── */
+.admin-avatar-icon { width:72px;height:72px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:white; }
+.admin-avatar-icon.green { background:var(--success); }
+.admin-login-title { font-size:22px;font-weight:700;color:var(--primary); }
+.admin-login-subtitle { color:var(--text-light);font-size:14px; }
+.admin-login-footer { text-align:center;margin-top:16px;font-size:13px;color:var(--text-light); }
+.admin-login-footer a { color:var(--primary);font-weight:600; }
+.admin-demo-hint { display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px; }
+.admin-error-box { display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:16px;font-size:14px; }
+.admin-term-badge { display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--primary-light);color:#fff;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer; }
+.admin-inst-badge { display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--accent);color:#fff;border-radius:20px;font-size:12px;font-weight:600; }
+.sidebar-section-header { padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px; }
+.form-select { padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--card-bg);color:var(--text); }
+.conn-dot { color:#22c55e;font-size:10px;margin:0 8px; }
+.btn-block { width:100%;justify-content:center; }

@@ -102,12 +102,12 @@ if (navigator.serviceWorker) {
       <h2 id="adminLoginSchoolName">Admin Portal</h2>
     </div>
     <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:white;"><i class="fas fa-user-shield"></i></div>
-      <h3 style="font-size:22px;font-weight:700;color:var(--primary);">Admin Portal</h3>
-      <p style="color:var(--text-light);font-size:14px;">Sign in with your admin credentials</p>
-    <div id="adminDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — using <strong>admin@demo.com</strong> / <strong>demo123</strong></div>
+      <div class="admin-avatar-icon"><i class="fas fa-user-shield"></i></div>
+      <h3 class="admin-login-title">Admin Portal</h3>
+      <p class="admin-login-subtitle">Sign in with your admin credentials</p>
+    <div id="adminDemoHint" class="admin-demo-hint"><i class="fas fa-info-circle"></i> Demo mode — using <strong>admin@demo.com</strong> / <strong>demo123</strong></div>
     </div>
-    <div id="adminLoginError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:16px;font-size:14px;"></div>
+    <div id="adminLoginError" class="admin-error-box"></div>
     <div class="form-group" style="margin-bottom:16px;">
       <label><i class="fas fa-envelope"></i> Email</label>
       <input type="email" id="adminLoginEmail" placeholder="admin@school.edu" value="" oninput="validateField(this,'email')">
@@ -116,9 +116,9 @@ if (navigator.serviceWorker) {
       <label><i class="fas fa-lock"></i> Password</label>
       <input type="password" id="adminLoginPass" placeholder="Enter password" value="" oninput="validateField(this,'password')">
     </div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="adminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
-    <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Need access? <a href="apply.html" style="color:var(--primary);font-weight:600;">Apply for a school account</a></p>
-    <p style="text-align:center;margin-top:8px;"><a id="adminBackToHome" href="index.html" style="font-size:13px;color:var(--text-light);"><i class="fas fa-home"></i> Back to Home</a></p>
+    <button class="btn btn-primary btn-block" onclick="adminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
+    <p class="admin-login-footer">Need access? <a href="apply.html">Apply for a school account</a></p>
+    <p class="admin-login-footer"><a id="adminBackToHome" href="index.html"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 
@@ -129,11 +129,11 @@ if (navigator.serviceWorker) {
       <h2 id="adminSignupSchoolName">Create School Account</h2>
     </div>
     <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:72px;height:72px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:white;"><i class="fas fa-user-plus"></i></div>
-      <h3 style="font-size:22px;font-weight:700;color:var(--primary);">Create Admin Account</h3>
-      <p style="color:var(--text-light);font-size:14px;">Set up the school administrator account</p>
+      <div class="admin-avatar-icon green"><i class="fas fa-user-plus"></i></div>
+      <h3 class="admin-login-title">Create Admin Account</h3>
+      <p class="admin-login-subtitle">Set up the school administrator account</p>
     </div>
-    <div id="adminSignupError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:16px;font-size:14px;"></div>
+    <div id="adminSignupError" class="admin-error-box"></div>
     <div class="form-group" style="margin-bottom:16px;">
       <label><i class="fas fa-user"></i> Full Name</label>
       <input type="text" id="adminSignupName" placeholder="Admin full name" oninput="validateField(this,'name')">
@@ -146,9 +146,9 @@ if (navigator.serviceWorker) {
       <label><i class="fas fa-lock"></i> Password</label>
       <input type="password" id="adminSignupPass" placeholder="Min 6 characters" oninput="validateField(this,'password')">
     </div>
-    <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="adminSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
-    <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Already have an account? <a href="javascript:;" onclick="showAdminLogin()" style="color:var(--primary);font-weight:600;">Sign In</a></p>
-    <p style="text-align:center;margin-top:8px;"><a id="adminBackToHome2" href="index.html" style="font-size:13px;color:var(--text-light);"><i class="fas fa-home"></i> Back to Home</a></p>
+    <button class="btn btn-success btn-block" onclick="adminSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
+    <p class="admin-login-footer">Already have an account? <a href="javascript:;" onclick="showAdminLogin()">Sign In</a></p>
+    <p class="admin-login-footer"><a id="adminBackToHome2" href="index.html"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 </div>
@@ -162,12 +162,12 @@ if (navigator.serviceWorker) {
     </div>
     <div class="portal-header-right">
       <div id="langSelector" style="margin-right:8px;"></div>
-      <div id="adminTermBadge" style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--primary-light);color:#fff;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;" onclick="showTermSwitcherModal()" title="Click to switch term">
+      <div id="adminTermBadge" class="admin-term-badge" onclick="showTermSwitcherModal()" title="Click to switch term">
         <i class="fas fa-calendar-alt"></i>
         <span id="adminTermBadgeText"></span>
         <i class="fas fa-chevron-down" style="font-size:8px;"></i>
       </div>
-      <div id="adminInstBadge" style="display:inline-flex;align-items:center;gap:6px;margin-right:8px;padding:4px 12px;background:var(--accent);color:#fff;border-radius:20px;font-size:12px;font-weight:600;" title="Institution Type">
+      <div id="adminInstBadge" class="admin-inst-badge" title="Institution Type">
         <i class="fas fa-school"></i>
         <span id="adminInstBadgeText"></span>
       </div>
@@ -180,7 +180,7 @@ if (navigator.serviceWorker) {
           <div id="notifDropdownContent"></div>
         </div>
       </div>
-      <span class="conn-status" id="connStatusAdmin" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin:0 8px;"></i></span>
+      <span class="conn-status" id="connStatusAdmin" title="Connected"><i class="fas fa-circle conn-dot"></i></span>
       <button class="portal-back-btn" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
       <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
     </div>
@@ -223,7 +223,7 @@ if (navigator.serviceWorker) {
       <div class="admin-sidebar-item" data-panel="idcards"><i class="fas fa-id-card"></i><span data-i18n="idcards">ID Cards</span></div>
       <div class="admin-sidebar-item" data-panel="terms"><i class="fas fa-calendar-alt"></i><span data-i18n="termsession">Terms</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">K-12 Academic Schema</div>
+      <div class="sidebar-section-header">K-12 Academic Schema</div>
       <div class="admin-sidebar-item" data-panel="schoolsetup"><i class="fas fa-school"></i><span data-i18n="schoolsetup">School Setup</span></div>
       <div class="admin-sidebar-item" data-panel="subjects"><i class="fas fa-book-open"></i><span data-i18n="subjects">Subjects</span></div>
       <div class="admin-sidebar-item" data-panel="streams"><i class="fas fa-code-branch"></i><span data-i18n="streams">Streams</span></div>
@@ -234,17 +234,17 @@ if (navigator.serviceWorker) {
       <div class="admin-sidebar-item" data-panel="transcript"><i class="fas fa-scroll"></i><span data-i18n="transcript">Transcript</span></div>
       <div class="admin-sidebar-item" data-panel="reportcards"><i class="fas fa-file-alt"></i><span data-i18n="reportcards">Report Cards</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">School Profile</div>
+      <div class="sidebar-section-header">School Profile</div>
       <div class="admin-sidebar-item" data-panel="schoolprofile"><i class="fas fa-paint-brush"></i><span data-i18n="customizeportal">Customize Portal</span></div>
       <div class="admin-sidebar-item" data-panel="website"><i class="fas fa-globe"></i><span>Website Builder</span></div>
       <div class="admin-sidebar-item" data-panel="paymentgateway"><i class="fas fa-credit-card"></i><span data-i18n="paymentgateway">Payment Gateway</span></div>
       <div class="admin-sidebar-item" data-panel="subscription"><i class="fas fa-crown"></i><span data-i18n="subscription">Subscription</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">System</div>
+      <div class="sidebar-section-header">System</div>
       <div class="admin-sidebar-item" data-panel="notifications"><i class="fas fa-bell"></i><span data-i18n="notifications">Notifications</span></div>
       <div class="admin-sidebar-item" data-panel="system"><i class="fas fa-cogs"></i><span data-i18n="systemtools">System Tools</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;"><span data-i18n="admissions">Admissions</span></div>
+      <div class="sidebar-section-header"><span data-i18n="admissions">Admissions</span></div>
       <div class="admin-sidebar-item" data-panel="programs"><i class="fas fa-book"></i><span data-i18n="programs">Programs</span></div>
       <div class="admin-sidebar-item" data-panel="applications"><i class="fas fa-file-signature"></i><span data-i18n="applications">Applications</span></div>
       <div class="admin-sidebar-item" data-panel="exambank"><i class="fas fa-question-circle"></i><span data-i18n="exambank">Exam Bank</span></div>
@@ -252,26 +252,26 @@ if (navigator.serviceWorker) {
       <div class="admin-sidebar-item" data-panel="handwritingocr"><i class="fas fa-pen"></i><span data-i18n="handwritingocr">Handwriting OCR</span></div>
       <div class="admin-sidebar-item" data-panel="teacherexams"><i class="fas fa-file-word"></i><span data-i18n="teacherexams">Teacher Uploads</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Communications</div>
+      <div class="sidebar-section-header">Communications</div>
       <div class="admin-sidebar-item" data-panel="broadcast"><i class="fas fa-bullhorn"></i><span>Broadcast</span></div>
       <div class="admin-sidebar-item" data-panel="edunews"><i class="fas fa-newspaper"></i><span>Education News</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Institution Data</div>
+      <div class="sidebar-section-header">Institution Data</div>
       <div class="admin-sidebar-item" data-panel="higherinstitutions"><i class="fas fa-university"></i><span>Higher Institutions</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Student Welfare</div>
+      <div class="sidebar-section-header">Student Welfare</div>
       <div class="admin-sidebar-item" data-panel="health"><i class="fas fa-heartbeat"></i><span>Health Records</span></div>
       <div class="admin-sidebar-item" data-panel="transport"><i class="fas fa-bus"></i><span>Transport</span></div>
       <div class="admin-sidebar-item" data-panel="mealplanner"><i class="fas fa-utensils"></i><span>Meal Planner</span></div>
       <div class="admin-sidebar-item" data-panel="conferences"><i class="fas fa-handshake"></i><span>PT Conferences</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Commerce</div>
+      <div class="sidebar-section-header">Commerce</div>
       <div class="admin-sidebar-item" data-panel="schoolstore"><i class="fas fa-shopping-bag"></i><span>School Store</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Support</div>
+      <div class="sidebar-section-header">Support</div>
       <div class="admin-sidebar-item" data-panel="support"><i class="fas fa-headset"></i><span>Support Tickets</span></div>
       <div class="sidebar-divider"></div>
-      <div style="padding:8px 16px;font-size:11px;text-transform:uppercase;color:var(--text-light);letter-spacing:1px;">Communication</div>
+      <div class="sidebar-section-header">Communication</div>
       <div class="admin-sidebar-item" data-panel="chat"><i class="fas fa-comments"></i><span>Portal Chat</span></div>
     </div>
     <div class="admin-content">
@@ -305,7 +305,7 @@ if (navigator.serviceWorker) {
           <h2 data-i18n="students">Student Management</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-export btn-sm" onclick="exportTableToCSV('studentsTable','students')"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="showBulkImportModal('students')"><i class="fas fa-upload"></i> Bulk Import</button>
+            <button class="btn btn-sm btn-info" onclick="showBulkImportModal('students')"><i class="fas fa-upload"></i> Bulk Import</button>
             <button class="btn btn-primary btn-sm" onclick="showAddStudentModal()"><i class="fas fa-plus"></i> Add Student</button>
           </div>
         </div>
@@ -326,7 +326,7 @@ if (navigator.serviceWorker) {
           <h2 data-i18n="teachers">Teacher Management</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-export btn-sm" onclick="exportTableToCSV('teachersTable','teachers')"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="showBulkImportModal('teachers')"><i class="fas fa-upload"></i> Bulk Import</button>
+            <button class="btn btn-sm btn-info" onclick="showBulkImportModal('teachers')"><i class="fas fa-upload"></i> Bulk Import</button>
             <button class="btn btn-primary btn-sm" onclick="showAddTeacherModal()"><i class="fas fa-plus"></i> Add Teacher</button>
           </div>
         </div>
@@ -436,7 +436,7 @@ if (navigator.serviceWorker) {
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-export btn-sm" onclick="exportScoreGridCSV()"><i class="fas fa-download"></i> CSV</button>
             <button class="btn btn-export btn-sm" onclick="exportScoreGridXLSX()"><i class="fas fa-file-excel"></i> Excel</button>
-            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="document.getElementById('scoreGridFileInput').click()"><i class="fas fa-upload"></i> Import</button>
+            <button class="btn btn-sm btn-info" onclick="document.getElementById('scoreGridFileInput').click()"><i class="fas fa-upload"></i> Import</button>
             <input type="file" id="scoreGridFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importScoreGridFile(this)">
             <button class="btn btn-sm btn-outline" onclick="addScoreGridRow()"><i class="fas fa-plus"></i> Add Row</button>
             <button class="btn btn-sm btn-success" onclick="saveScoreGrid()"><i class="fas fa-save"></i> Save Grid</button>
@@ -697,7 +697,7 @@ if (navigator.serviceWorker) {
         <p class="subtitle">Create and manage entrance examination questions per program</p>
         <div class="card">
           <div class="search-bar" style="margin-bottom:12px;">
-            <select id="filterExamProgram" onchange="renderExamBank()" style="padding:8px;border-radius:6px;border:1px solid #e2e8f0;background:var(--card-bg);color:var(--text);"></select>
+            <select id="filterExamProgram" onchange="renderExamBank()" class="form-select"></select>
           </div>
           <div id="adminExamBank"></div>
         </div>
@@ -785,7 +785,7 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2>Customize Your School Portal</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="resetSchoolProfile()"><i class="fas fa-undo"></i> Reset to Defaults</button>
+            <button class="btn btn-sm btn-info" onclick="resetSchoolProfile()"><i class="fas fa-undo"></i> Reset to Defaults</button>
             <button class="btn btn-primary btn-sm" onclick="saveSchoolProfile()"><i class="fas fa-save"></i> Save Changes</button>
           </div>
         </div>
@@ -799,7 +799,7 @@ if (navigator.serviceWorker) {
           <h2><i class="fas fa-globe"></i> Website Builder</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-sm btn-success" onclick="saveWebsiteConfig()"><i class="fas fa-save"></i> Save Website</button>
-            <button class="btn btn-sm" style="background:var(--info);color:white;" onclick="previewWebsite()"><i class="fas fa-eye"></i> Preview</button>
+            <button class="btn btn-sm btn-info" onclick="previewWebsite()"><i class="fas fa-eye"></i> Preview</button>
           </div>
         </div>
         <p class="subtitle">Build and customize your school's public website. Manage branding, content sections, announcements, gallery &amp; contact form.</p>
