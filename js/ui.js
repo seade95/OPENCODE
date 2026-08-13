@@ -171,11 +171,17 @@ function goHome() {
   if (activeTenant) {
     var tenants = [];
     try { tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]'); } catch(e) {}
+    // Try matching by ID first, then by slug
     var t = tenants.find(function(x) { return x.id === activeTenant; });
+    if (!t) t = tenants.find(function(x) { return x.slug === activeTenant; });
     if (t && t.slug) {
-      window.location.href = '/?school=' + encodeURIComponent(t.slug);
+      window.location.href = 'index.html?school=' + encodeURIComponent(t.slug);
       return;
     }
+    // Fallback: activeTenant itself might be a slug
+    window.location.href = 'index.html?school=' + encodeURIComponent(activeTenant);
+    return;
+  }
   }
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');
@@ -495,14 +501,21 @@ function switchTeacherPanel(panel) {
   document.querySelectorAll('#teacherPage .admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var tp = document.getElementById('teacher-' + panel);
   if (tp) tp.classList.add('active');
-  // Scroll ALL containers to top
-  window.scrollTo(0, 0);
+  // Force scroll ALL containers to top immediately (bypass smooth scroll)
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
   var teacherPage = document.getElementById('teacherPage');
   if (teacherPage) teacherPage.scrollTop = 0;
   var teacherContent = teacherPage ? teacherPage.querySelector('.admin-content') : null;
   if (teacherContent) teacherContent.scrollTop = 0;
+  // Re-scroll after render (in case render causes reflow)
+  requestAnimationFrame(function() {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (teacherContent) teacherContent.scrollTop = 0;
+  });
   document.querySelectorAll('#teacherPage .admin-sidebar-item').forEach(function(i) { i.classList.remove('active'); });
   var sp = document.querySelector('#teacherPage .admin-sidebar-item[data-teacher-panel="' + panel + '"]');
   if (sp) sp.classList.add('active');
@@ -533,14 +546,21 @@ function switchAdminPanel(panel) {
   document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var ap = document.getElementById('admin-' + panel);
   if (ap) ap.classList.add('active');
-  // Scroll ALL containers to top
-  window.scrollTo(0, 0);
+  // Force scroll ALL containers to top immediately (bypass smooth scroll)
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   document.documentElement.scrollTop = 0;
   document.body.scrollTop = 0;
   var adminPage = document.getElementById('adminPage');
   if (adminPage) adminPage.scrollTop = 0;
   var adminContent = adminPage ? adminPage.querySelector('.admin-content') : null;
   if (adminContent) adminContent.scrollTop = 0;
+  // Re-scroll after render (in case render causes reflow)
+  requestAnimationFrame(function() {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (adminContent) adminContent.scrollTop = 0;
+  });
   switch(panel) {
     case 'dashboard': if (typeof renderDashboard === 'function') renderDashboard(); break;
     case 'students': if (typeof renderStudents === 'function') renderStudents(); break;
