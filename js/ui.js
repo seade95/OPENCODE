@@ -182,7 +182,6 @@ function goHome() {
     window.location.href = 'index.html?school=' + encodeURIComponent(activeTenant);
     return;
   }
-  }
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');
   if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }
