@@ -2068,6 +2068,127 @@ html { transition: background-color 0.3s ease, color 0.3s ease; }
 [data-theme="dark"] .search-bar input::placeholder { color: var(--text-light); }
 [data-theme="dark"] select { background: #4a5568; color: var(--text); border-color: #4a5568; }
 
+/* ─── Dark mode: missing overrides ─── */
+[data-theme="dark"] { --border: #4a5568; }
+
+/* Validation states */
+[data-theme="dark"] .field-invalid { background: #3b1a1a; border-color: #fc8181; }
+[data-theme="dark"] .field-valid { background: #1a3b2a; border-color: #68d391; }
+
+/* Status badges */
+[data-theme="dark"] .badge-paid, [data-theme="dark"] .badge-present { background: #1c4532; color: #9ae6b4; }
+[data-theme="dark"] .badge-pending, [data-theme="dark"] .badge-absent { background: #4a2020; color: #feb2b2; }
+[data-theme="dark"] .badge-partial { background: #4a3b0a; color: #fefcbf; }
+[data-theme="dark"] .badge-excused { background: #1a365d; color: #bee3f8; }
+
+/* Attendance */
+[data-theme="dark"] .attendance-item.present { background: #1c4532; color: #9ae6b4; border-color: #38a169; }
+[data-theme="dark"] .attendance-item.absent { background: #4a2020; color: #feb2b2; border-color: #e53e3e; }
+[data-theme="dark"] .attendance-item.excused { background: #1a365d; color: #bee3f8; border-color: #4299e1; }
+
+/* Timetable */
+[data-theme="dark"] .timetable-cell.tt-empty:hover { background: #4a5568; color: #90cdf4; }
+
+/* Messaging */
+[data-theme="dark"] .msg-list { background: #4a5568; }
+[data-theme="dark"] .msg-item:hover { background: #4a5568; }
+
+/* Library */
+[data-theme="dark"] .lib-card { border-color: #4a5568; }
+[data-theme="dark"] .lib-availability.available { background: #1c4532; color: #9ae6b4; }
+[data-theme="dark"] .lib-availability.low { background: #4a3b0a; color: #fefcbf; }
+[data-theme="dark"] .lib-availability.unavailable { background: #4a2020; color: #feb2b2; }
+[data-theme="dark"] .lib-cover { background: #2d3748; }
+
+/* Forum */
+[data-theme="dark"] .forum-grid { background: #4a5568; }
+[data-theme="dark"] .forum-reply { background: #2d3748; }
+
+/* Behavior */
+[data-theme="dark"] .beh-positive { background: #1c4532; color: #9ae6b4; }
+[data-theme="dark"] .beh-negative { background: #4a2020; color: #feb2b2; }
+[data-theme="dark"] .beh-neutral { background: #1a365d; color: #bee3f8; }
+
+/* Notifications */
+[data-theme="dark"] .notif-dropdown { background: var(--card-bg); border-color: #4a5568; }
+[data-theme="dark"] .notif-item { border-bottom-color: #4a5568; }
+
+/* Bulk import */
+[data-theme="dark"] .import-zone { border-color: #4a5568; }
+
+/* HR */
+[data-theme="dark"] .leave-card { border-color: #4a5568; }
+[data-theme="dark"] .sidebar-divider { background: #4a5568; }
+
+/* Admission */
+[data-theme="dark"] .adm-program-card { border-color: #4a5568; }
+
+/* Exam / CBT */
+[data-theme="dark"] .exam-sidebar { border-color: #4a5568; }
+[data-theme="dark"] .exam-question-count .qnum { border-color: #4a5568; }
+[data-theme="dark"] .exam-question-count .qnum.answered { background: #1c4532; color: #9ae6b4; }
+[data-theme="dark"] .exam-question-count .qnum.warning { background: #4a2020; color: #feb2b2; }
+[data-theme="dark"] .exam-question .q-option { border-color: #4a5568; }
+[data-theme="dark"] .exam-question .q-option:hover { background: #4a5568; border-color: var(--primary); }
+[data-theme="dark"] .exam-question .q-option .letter { background: #4a5568; }
+[data-theme="dark"] .proctor-alert { background: #4a2020; color: #feb2b2; border: 1px solid #c53030; }
+
+/* Report card */
+[data-theme="dark"] .rc-table th, [data-theme="dark"] .rc-table td { border-color: #4a5568; }
+[data-theme="dark"] .rc-info div { background: #2d3748; }
+[data-theme="dark"] .rc-gpa { background: #1a365d; }
+[data-theme="dark"] .rc-footer { border-top-color: #4a5568; }
+
+/* Calendar */
+[data-theme="dark"] .cal-day.today { background: #1a365d; }
+[data-theme="dark"] .cal-day.drag-over { background: #4a5568 !important; }
+[data-theme="dark"] .cal-week-period.break-row > div { background: #4a3b0a !important; }
+[data-theme="dark"] .cal-week-period.break-row > div:first-child { color: #fefcbf; }
+
+/* Health */
+[data-theme="dark"] .health-allergy { background: #4a2020; color: #feb2b2; border-color: #c53030; }
+[data-theme="dark"] .health-condition { background: #4a3b0a; color: #fefcbf; border-color: #d69e2e; }
+
+/* Conferences */
+[data-theme="dark"] .conf-slot.booked { background: #4a2020; border-color: #c53030; }
+
+/* FAQ */
+[data-theme="dark"] .faq-question:hover { background: #4a5568; }
+
+/* Footer accreditations */
+[data-theme="dark"] .footer-accreditations span { background: #4a5568; }
+
+/* Super Admin */
+[data-theme="dark"] .sa-main-header { background: var(--card-bg); border-bottom-color: #4a5568; }
+[data-theme="dark"] .sa-section { background: var(--card-bg); }
+[data-theme="dark"] .sa-stat-card { background: var(--card-bg); }
+[data-theme="dark"] .sa-bank-card { background: #2d3748; border-color: #4a5568; }
+[data-theme="dark"] .sa-plan-card { background: var(--card-bg); border-color: #4a5568; }
+[data-theme="dark"] .sa-plan-status.disabled { background: #4a5568; }
+[data-theme="dark"] .sa-bar-track { background: #4a5568; }
+[data-theme="dark"] .sa-log-item { border-bottom-color: #4a5568; }
+
+/* Website Builder */
+[data-theme="dark"] .website-builder-layout .form-input { background: #4a5568; border-color: #4a5568; color: var(--text); }
+
+/* CBT */
+[data-theme="dark"] .cbt-timer-overlay { background: var(--bg); color: var(--text); }
+[data-theme="dark"] .cbt-timer-sidebar { border-color: #4a5568; }
+[data-theme="dark"] .cbt-tab-switch { background: #4a3b0a; color: #fefcbf; }
+[data-theme="dark"] .cbt-result-summary.passed { background: linear-gradient(135deg,#1c4532,#276749); }
+[data-theme="dark"] .cbt-result-summary.failed { background: linear-gradient(135deg,#4a2020,#742a2a); }
+
+/* Gradebook */
+[data-theme="dark"] .gradebook-grid { background: #4a5568; }
+[data-theme="dark"] .gradebook-cell input { border-color: #4a5568; }
+
+/* K-12 */
+[data-theme="dark"] .stream-select { border-color: #4a5568; background: #4a5568; color: var(--text); }
+[data-theme="dark"] .utme-input { border-color: #4a5568; background: #4a5568; color: var(--text); }
+
+/* Grid row */
+[data-theme="dark"] .grid-row:hover td { background: #4a5568; }
+
 /* ===== LOADING SPINNER ===== */
 .loading-overlay {
   display: none;
