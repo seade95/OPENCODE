@@ -2596,6 +2596,12 @@ body.tenant-loaded #navSchoolName { color: var(--accent); }
 .sp-item-actions { display:flex;align-items:center;padding-bottom:4px; }
 .sp-item-actions .btn { padding:6px 10px;font-size:12px; }
 
+/* ─── Global focus-visible ─── */
+:focus-visible { outline:2px solid var(--primary,#1a3a5c); outline-offset:2px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline:2px solid var(--primary,#1a3a5c); outline-offset:1px; }
+button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c); outline-offset:2px; }
+[data-theme="dark"] :focus-visible { outline-color:var(--primary,#a78bfa); }
+
 /* Dark mode overrides */
 [data-theme="dark"] .profile-section-header { background:var(--card-header-bg,#2d3748); }
 [data-theme="dark"] .sp-item { background:var(--bg-subtle,#2d3748); }

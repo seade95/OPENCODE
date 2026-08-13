@@ -370,7 +370,6 @@ function showAdminPortal() {
   }
 
   if (typeof switchAdminPanel === 'function') switchAdminPanel('dashboard');
-  if (typeof renderAll === 'function') renderAll();
   if (typeof renderSubscriptionBanner === 'function') renderSubscriptionBanner();
   if (typeof updateNotifBadge === 'function') updateNotifBadge();
   // Show setup wizard if school is not yet configured
@@ -519,7 +518,7 @@ function switchTeacherPanel(panel) {
     case 'handwritingocr': if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('tchHandwritingOCR'); break;
     case 'teacherexams': if (typeof renderTeacherUpload === 'function') renderTeacherUpload('tchTeacherExams'); break;
     case 'tchconferences': if (typeof renderTeacherConferencesView === 'function') renderTeacherConferencesView(); break;
-    case 'ai-learning': renderTeacherAILearning(); break;
+    case 'ai-learning': if (typeof renderTeacherAILearning === 'function') renderTeacherAILearning(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();
 }
