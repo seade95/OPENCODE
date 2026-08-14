@@ -76,8 +76,8 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh;
   <div class="card">
     <h2><i class="fas fa-external-link-alt" style="color:#2563eb"></i> Quick Links</h2>
     <div class="links-grid">
-      <a href="admin.html" class="link-card"><i class="fas fa-cog"></i><span>Admin Panel</span></a>
-      <a href="login.html" class="link-card"><i class="fas fa-sign-in-alt"></i><span>Login Page</span></a>
+      <a id="sdAdminLink" href="admin.html" class="link-card"><i class="fas fa-cog"></i><span>Admin Panel</span></a>
+      <a id="sdLoginLink" href="login.html" class="link-card"><i class="fas fa-sign-in-alt"></i><span>Login Page</span></a>
       <a id="sdHomeLink" href="javascript:;" onclick="var s=(function(){try{return location.search.match(/school=([^&]+)/)[1]}catch(e){return null}})();window.location.href=s?'school-portal.html?school='+encodeURIComponent(s):'index.html'" class="link-card"><i class="fas fa-home"></i><span>Home</span></a>
     </div>
   </div>
@@ -139,15 +139,20 @@ function doLogout() {
     return;
   }
 
-  // Fix Home link to point to school profile if slug is available
+  // Fix Home/Admin/Login links to point to school profile if slug is available
   (function(){try{
     var at = localStorage.getItem('activeTenant');
     var tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
     var t = at ? tenants.find(function(x){return x.id===at}) : null;
     if (!t) t = tenants.find(function(x){return x.name===school.name});
     if (t && t.slug) {
+      var qs = '?school=' + encodeURIComponent(t.slug);
       var hl = document.getElementById('sdHomeLink');
-      if (hl) hl.href = '/?school=' + encodeURIComponent(t.slug);
+      if (hl) hl.href = 'school-portal.html' + qs;
+      var al = document.getElementById('sdAdminLink');
+      if (al) al.href = 'admin.html' + qs;
+      var ll = document.getElementById('sdLoginLink');
+      if (ll) ll.href = 'login.html' + qs;
     }
   }catch(e){}})();
 

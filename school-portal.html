@@ -282,11 +282,11 @@ try {
 function redirectToPortal(slug, portal) {
   localStorage.setItem('activeTenant', slugToTenantId(slug));
   if (portal === 'admission') {
-    window.location.href = '/login/admission.html?school=' + encodeURIComponent(slug);
+    window.location.href = 'login/admission.html?school=' + encodeURIComponent(slug);
   } else if (portal === 'admin') {
-    window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
+    window.location.href = 'admin.html?school=' + encodeURIComponent(slug);
   } else {
-    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
+    window.location.href = 'index.html?school=' + encodeURIComponent(slug) + '&portal=' + portal;
   }
 }
 
@@ -302,15 +302,15 @@ function setActiveTenant(id) {
   try { localStorage.setItem('activeTenant', id); localStorage.setItem('activeTenantKey', 'schoolData_' + id); } catch(e) {}
 }
 
-function showEduverseLogin() { window.location.href = '/login'; }
-function showSchoolSelector() { window.location.href = '/schools'; }
-function showApplySchool() { window.location.href = '/pricing'; }
+function showEduverseLogin() { window.location.href = 'login.html'; }
+function showSchoolSelector() { window.location.href = 'directory.html'; }
+function showApplySchool() { window.location.href = 'pricing.html'; }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-function showTeacherLogin() { window.location.href = '/?role=teacher'; }
+function showTeacherLogin() { window.location.href = 'index.html?role=teacher'; }
 function showStudentLogin() { window.location.href = '/?role=student'; }
-function showAdmissionPortal() { window.location.href = '/login/admission.html?school=' + encodeURIComponent(window.slug || getSlug()); }
-function showParentLogin() { window.location.href = '/?role=parent'; }
-function showAlumniPortal() { window.location.href = '/?role=alumni'; }
+function showAdmissionPortal() { window.location.href = 'login/admission.html?school=' + encodeURIComponent(window.slug || getSlug()); }
+function showParentLogin() { window.location.href = 'index.html?role=parent'; }
+function showAlumniPortal() { window.location.href = 'index.html?role=alumni'; }
 function subscribeNewsletter(input) { if (input && input.value) { alert('Subscribed! Thank you.'); input.value = ''; } }
 
 var TENANT_KEY = 'eduverse_tenants';
@@ -675,7 +675,7 @@ function routePortal(portal, slug, tenant) {
 window.addEventListener('load', function() {
   try { init(); } catch(e) {
     var _slug = window.slug || getSlug();
-    var _homeHref = _slug ? '/?school=' + encodeURIComponent(_slug) : '/';
+    var _homeHref = _slug ? 'index.html?school=' + encodeURIComponent(_slug) : 'index.html';
     document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-exclamation-triangle"></i><h2>Something went wrong</h2><p>' + esc(e.message) + '</p><a href="' + _homeHref + '" class="btn btn-primary">Go Home</a></div>';
   }
 });

@@ -942,7 +942,7 @@ try {
 <script src="js/app.js"></script>
 <script>
 // Fix Back to Home links to point to school profile if active
-(function(){try{var at=localStorage.getItem('activeTenant');if(at){var ts=JSON.parse(localStorage.getItem('eduverse_tenants')||'[]'),t=ts.find(function(x){return x.id===at});if(!t)t=ts.find(function(x){return x.slug===at});var slug=t&&t.slug?at:at;var els=document.querySelectorAll('[id^=adminBackToHome]');els.forEach(function(el){el.href='index.html?school='+encodeURIComponent(slug)})}}catch(e){}})();
+(function(){try{var at=localStorage.getItem('activeTenant');if(at){var ts=JSON.parse(localStorage.getItem('eduverse_tenants')||'[]'),t=ts.find(function(x){return x.id===at});if(!t)t=ts.find(function(x){return x.slug===at});var slug=t&&t.slug?t.slug:at;var els=document.querySelectorAll('[id^=adminBackToHome]');els.forEach(function(el){el.href='index.html?school='+encodeURIComponent(slug)})}}catch(e){}})();
 
 // Override goHome for standalone admin page
 function goHome() {
