@@ -15,7 +15,8 @@ function renderPersonalizedLearning(studentId) {
   if (!container) {
     container = document.createElement('div');
     container.id = 'personalizedLearningView';
-    document.getElementById('saContent') || document.body.appendChild(container);
+    var host = document.getElementById('saContent') || document.getElementById('stu-ai-learning') || document.getElementById('teacherAILearningView');
+    if (host) { host.appendChild(container); } else { return; }
   }
 
   // Analyze performance across subjects
