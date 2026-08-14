@@ -581,6 +581,70 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
   .sa-recent-item{flex-direction:column;align-items:flex-start;gap:2px}
   .sa-recent-meta{white-space:normal}
 }
+
+/* ===== Dark Mode ===== */
+[data-theme="dark"] body{background:#0f172a;color:#e2e8f0}
+[data-theme="dark"] .login-card{background:#1e293b}
+[data-theme="dark"] .login-card p{color:#94a3b8}
+[data-theme="dark"] .form-group label{color:#cbd5e1}
+[data-theme="dark"] .form-group input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .btn-outline{border-color:#475569;color:#94a3b8}
+[data-theme="dark"] .btn-outline:hover{border-color:var(--sa-blue);color:var(--sa-blue)}
+[data-theme="dark"] .error-box{background:#4a2020;color:#feb2b2}
+[data-theme="dark"] .footer-link{color:#94a3b8}
+[data-theme="dark"] .modal{background:#1e293b}
+[data-theme="dark"] .modal-close{color:#94a3b8}
+[data-theme="dark"] .modal-close:hover{color:#e2e8f0}
+[data-theme="dark"] .cred-box{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .sa-dashboard{background:#0f172a}
+[data-theme="dark"] .sa-main{background:#0f172a}
+[data-theme="dark"] .sa-main-header{background:#1e293b;border-bottom-color:#334155}
+[data-theme="dark"] .sa-main-header h2{color:#e2e8f0}
+[data-theme="dark"] .sa-content{color:#e2e8f0}
+[data-theme="dark"] .sa-stat-card{background:#1e293b;border:1px solid #334155}
+[data-theme="dark"] .sa-section{background:#1e293b;border:1px solid #334155}
+[data-theme="dark"] .sa-section h3{color:#e2e8f0}
+[data-theme="dark"] .sa-card{background:#1e293b;border:1px solid #334155}
+[data-theme="dark"] .sa-log-msg{color:#e2e8f0}
+[data-theme="dark"] .sa-content .table th,.sa-content table th{background:#1e293b;color:#94a3b8;border-bottom-color:#334155}
+[data-theme="dark"] .sa-content .table td,.sa-content table td{color:#e2e8f0;border-bottom-color:#334155}
+[data-theme="dark"] .sa-content .table tbody tr:nth-child(even) td{background:#1e293b}
+[data-theme="dark"] .sa-content .table tbody tr:hover td{background:#334155!important}
+[data-theme="dark"] .sa-input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .form-row input,.form-row select,.form-row textarea{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .sa-plan-card{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .sa-plan-status.disabled{background:#334155;color:#94a3b8}
+[data-theme="dark"] .sa-bank-info{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .sa-bank-row{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .sa-ticket{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .sa-ticket-header{background:#0f172a;border-bottom-color:#334155}
+[data-theme="dark"] .sa-ticket-text{color:#e2e8f0}
+[data-theme="dark"] .sa-ticket-reply textarea{background:#0f172a;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .sa-feature-card{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .sa-feature-card--on{background:#1c4532;border-color:#276749}
+[data-theme="dark"] .sa-feature-card--off{background:#0f172a}
+[data-theme="dark"] .sa-danger-zone{background:#4a2020;border-color:#c53030}
+[data-theme="dark"] .sa-bar-track{background:#334155}
+[data-theme="dark"] .sa-recent-item:hover{background:#1e293b}
+[data-theme="dark"] .sa-empty-state{color:#94a3b8}
+[data-theme="dark"] .sa-sub-row{background:#1e293b;border:1px solid #334155}
+[data-theme="dark"] .sa-school-card{background:#1e293b;border:1px solid #334155}
+[data-theme="dark"] .sa-code-inline{background:#334155;color:#e2e8f0}
+[data-theme="dark"] .sa-plan-select{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .toggle-slider{background:#475569}
+[data-theme="dark"] .toast-success{background:#1c4532;color:#9ae6b4;border-left-color:#38a169}
+[data-theme="dark"] .toast-error{background:#4a2020;color:#feb2b2;border-left-color:#e53e3e}
+[data-theme="dark"] .badge-pending{background:#4a3b0a;color:#fefcbf}
+[data-theme="dark"] .badge-approved{background:#1c4532;color:#9ae6b4}
+[data-theme="dark"] .badge-rejected{background:#4a2020;color:#feb2b2}
+[data-theme="dark"] .badge-paid{background:#1c4532;color:#9ae6b4}
+[data-theme="dark"] .badge-grade{background:#4a3b0a;color:#fefcbf}
+[data-theme="dark"] .badge-absent{background:#4a2020;color:#feb2b2}
+[data-theme="dark"] .sa-error-box{background:#4a2020;color:#feb2b2}
+[data-theme="dark"] .sa-success-box{background:#1c4532;color:#9ae6b4}
+[data-theme="dark"] .sa-success-box strong{color:#68d391}
+[data-theme="dark"] .sa-newsletter-table td,[data-theme="dark"] .sa-newsletter-table th{border-bottom-color:#334155}
+[data-theme="dark"] .sa-newsletter-table th{color:#94a3b8}
 </style>
 </head>
 <body>
@@ -589,7 +653,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
 <div class="toast-container" id="toastContainer"></div>
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <button class="modal-close" onclick="closeModal()" aria-label="Close modal">&times;</button>
     <div id="modalBody"></div>
   </div>
 </div>
@@ -644,15 +708,7 @@ function handleLogin() {
     });
 }
 
-// --- Override: close SA dashboard also signs out ---
-function closeSaDashboard() {
-  var overlay = document.getElementById('modalOverlay');
-  if (overlay) {
-    overlay.classList.remove('active');
-    overlay.style.overflowY = '';
-  }
-  firebase.auth().signOut();
-}
+// closeSaDashboard is defined in js/superadmin.js with Firebase sign-out
 
 // --- Init: show loading, then react to auth state ---
 document.getElementById('root').innerHTML = '<div class="login-page"><div class="login-card"><p style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Loading...</p></div></div>';

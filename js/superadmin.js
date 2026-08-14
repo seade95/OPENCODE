@@ -103,6 +103,7 @@ function closeSaDashboard() {
     overlay.classList.remove('active');
     overlay.style.overflowY = '';
   }
+  try { if (typeof firebase !== 'undefined' && firebase.auth) firebase.auth().signOut(); } catch(e) {}
 }
 
 function switchSaTab(tab) {
@@ -285,8 +286,8 @@ function renderSaSchools(container) {
         var statusBadgeClass = t.status === 'active' ? 'badge-paid' : (t.status === 'pending' ? 'badge-grade' : 'badge-absent');
         var statusActions = (t.status === 'pending')
           ? '<button class="btn btn-sm btn-success" onclick="saApproveSchool(\'' + t.id + '\')" title="Approve"><i class="fas fa-check"></i> Approve</button>'
-          : '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
+          : '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status" aria-label="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password" aria-label="Reset Password"><i class="fas fa-key"></i></button>';
         return '<tr><td><strong>' + esc(t.name) + '</strong></td><td><code class="sa-code-inline">' + esc(t.slug || '—') + '</code></td><td>' + esc(t.email) + '</td>'
           + '<td><span class="badge badge-grade">' + esc(t.tier) + '</span></td>'
           + '<td><select class="sa-plan-select" onchange="saAssignPlan(\'' + t.id + '\',this.value)">' + _saPlanOptions(t.plan) + '</select></td>'
@@ -296,13 +297,13 @@ function renderSaSchools(container) {
           + '</td>'
           + '<td><span class="badge ' + statusBadgeClass + '">' + esc(t.status) + '</span></td>'
           + '<td><div class="sa-row-actions">'
-          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open Dashboard"><i class="fas fa-external-link-alt"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'admin\')" title="Admin Portal"><i class="fas fa-user-shield"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'teacher\')" title="Teacher Portal"><i class="fas fa-chalkboard-teacher"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'student\')" title="Student Portal"><i class="fas fa-user-graduate"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'parent\')" title="Parent Portal"><i class="fas fa-users"></i></button>'
+          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open Dashboard" aria-label="Open Dashboard"><i class="fas fa-external-link-alt"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'admin\')" title="Admin Portal" aria-label="Admin Portal"><i class="fas fa-user-shield"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'teacher\')" title="Teacher Portal" aria-label="Teacher Portal"><i class="fas fa-chalkboard-teacher"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'student\')" title="Student Portal" aria-label="Student Portal"><i class="fas fa-user-graduate"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'parent\')" title="Parent Portal" aria-label="Parent Portal"><i class="fas fa-users"></i></button>'
           + statusActions
-          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>'
+          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>'
           + '</div></td></tr>';
       }).join('') + '</tbody></table></div>';
   }
@@ -695,7 +696,7 @@ function renderBankList(banks) {
       + '<input type="text" value="' + esc(b.accountName || '') + '" placeholder="Account name" style="flex:1;min-width:140px;" class="sa-input" onchange="updateSaBank(' + i + ',\'accountName\',this.value)">'
       + '<input type="text" value="' + esc(b.accountNumber || '') + '" placeholder="Account number" style="flex:1;min-width:120px;" class="sa-input" onchange="updateSaBank(' + i + ',\'accountNumber\',this.value)">'
       + '<select onchange="updateSaBank(' + i + ',\'currency\',this.value)" class="sa-input" style="width:80px;flex:none;"><option value="NGN"' + (b.currency==='NGN'?' selected':'') + '>NGN</option><option value="USD"' + (b.currency==='USD'?' selected':'') + '>USD</option><option value="GBP"' + (b.currency==='GBP'?' selected':'') + '>GBP</option><option value="EUR"' + (b.currency==='EUR'?' selected':'') + '>EUR</option></select>'
-      + '<button class="btn btn-sm btn-danger-outline" onclick="saRemoveBank(' + i + ')" title="Remove"><i class="fas fa-times"></i></button>'
+      + '<button class="btn btn-sm btn-danger-outline" onclick="saRemoveBank(' + i + ')" title="Remove" aria-label="Remove"><i class="fas fa-times"></i></button>'
       + '</div>';
   }).join('') + '</div>';
 }
@@ -779,7 +780,7 @@ function renderSaSubscriptions(container) {
           + '<div class="sa-plan-features">' + esc(p.features || '') + '</div>'
           + '<div class="sa-plan-actions"><button class="btn btn-sm btn-outline" onclick="saEditPlan(' + i + ')"><i class="fas fa-edit"></i> Edit</button>'
           + '<button class="btn btn-sm btn-outline" onclick="saTogglePlan(' + i + ')"><i class="fas ' + (active ? 'fa-pause' : 'fa-play') + '"></i> ' + (active ? 'Disable' : 'Enable') + '</button>'
-          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeletePlan(' + i + ')"><i class="fas fa-trash"></i></button></div></div>';
+          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeletePlan(' + i + ')" aria-label="Delete plan"><i class="fas fa-trash"></i></button></div></div>';
       }).join('') + '</div>';
   }
 

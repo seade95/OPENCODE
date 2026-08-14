@@ -456,6 +456,9 @@ function createSuperAdminAccount() {
   showSuperAdminDashboard();
 }
 
+// showSuperAdminDashboard is defined in superadmin.js (full SA dashboard with sidebar)
+// This is a fallback for when superadmin.js is not loaded
+if (typeof showSuperAdminDashboard === 'undefined') {
 function showSuperAdminDashboard() {
   const admin = getSuperAdmin();
   if (!admin) { showSuperAdminLogin(); return; }
@@ -518,6 +521,7 @@ function showSuperAdminDashboard() {
     overlay.style.overflowY = 'auto';
   }
 }
+} // end if (typeof showSuperAdminDashboard === 'undefined')
 
 function showOnboardSchool() {
   const overlay = document.getElementById('modalOverlay');
