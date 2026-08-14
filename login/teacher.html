@@ -135,11 +135,11 @@
       Don't have access? Contact your school administrator.
     </p>
 
-    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
+    <a href="../index.html" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    (function(){var m=location.search.match(/[?&]school=([^&]*)/);if(m){var el=document.getElementById('backToHomeLink');if(el)el.href='../?school='+encodeURIComponent(m[1]);}})();
+    (function(){var m=location.search.match(/[?&]school=([^&]*)/);if(m){var el=document.getElementById('backToHomeLink');if(el)el.href='../index.html?school='+encodeURIComponent(m[1]);}})();
 
     document.getElementById('teacherLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -148,7 +148,8 @@
       console.log('Teacher login:', { teacherId, password });
       localStorage.setItem('eduverse_role', 'teacher');
       localStorage.setItem('eduverse_user', teacherId);
-      window.location.href = '../?role=teacher&portal=dashboard';
+      var qs = location.search || '';
+      window.location.href = '../index.html' + qs + (qs ? '&' : '?') + 'role=teacher&portal=dashboard';
     });
   </script>
 </body>

@@ -132,10 +132,10 @@
     </form>
 
     <p class="help-text">
-      Don't have an application? <a href="../" id="applyForAdmissionLink">Apply for admission</a>
+      Don't have an application? <a href="../index.html" id="applyForAdmissionLink">Apply for admission</a>
     </p>
 
-    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
+    <a href="../index.html" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
@@ -147,10 +147,10 @@
     var schoolSlug = getQs('school') || getQs('slug') || '';
     var applyLink = document.getElementById('applyForAdmissionLink');
     if (applyLink) {
-      applyLink.href = schoolSlug ? '../?school=' + encodeURIComponent(schoolSlug) + '&role=admission' : '../?role=admission';
+      applyLink.href = schoolSlug ? '../index.html?school=' + encodeURIComponent(schoolSlug) + '&role=admission' : '../index.html?role=admission';
     }
     var homeLink = document.getElementById('backToHomeLink');
-    if (homeLink && schoolSlug) homeLink.href = '../?school=' + encodeURIComponent(schoolSlug);
+    if (homeLink && schoolSlug) homeLink.href = '../index.html?school=' + encodeURIComponent(schoolSlug);
 
     document.getElementById('admissionLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -159,7 +159,7 @@
       console.log('Admission login:', { applicationId, password });
       localStorage.setItem('eduverse_role', 'admission');
       localStorage.setItem('eduverse_user', applicationId);
-      var dest = schoolSlug ? '../?school=' + encodeURIComponent(schoolSlug) + '&role=admission&portal=dashboard' : '../?role=admission&portal=dashboard';
+      var dest = schoolSlug ? '../index.html?school=' + encodeURIComponent(schoolSlug) + '&role=admission&portal=dashboard' : '../index.html?role=admission&portal=dashboard';
       window.location.href = dest;
     });
   </script>

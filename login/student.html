@@ -170,11 +170,11 @@
       Don't have access? Contact your school administrator.
     </p>
 
-    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
+    <a href="../index.html" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    (function(){var m=location.search.match(/[?&]school=([^&]*)/);if(m){var el=document.getElementById('backToHomeLink');if(el)el.href='../?school='+encodeURIComponent(m[1]);}})();
+    (function(){var m=location.search.match(/[?&]school=([^&]*)/);if(m){var el=document.getElementById('backToHomeLink');if(el)el.href='../index.html?school='+encodeURIComponent(m[1]);}})();
 
     document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -186,7 +186,8 @@
       if (typeof window.ensureFirebaseUser === 'function' && info.email) {
         window.ensureFirebaseUser(info.email, password, info.name, 'student', getSchoolId(), studentId).catch(function() {});
       }
-      window.location.href = '../?role=student&portal=dashboard';
+      var qs = location.search || '';
+      window.location.href = '../index.html' + qs + (qs ? '&' : '?') + 'role=student&portal=dashboard';
     });
   </script>
 </body>

@@ -135,11 +135,11 @@
       Need access? <a href="../apply.html">Apply for a school account</a>
     </p>
 
-    <a href="../" id="backToHomeLink" class="back-link">← Back to Home</a>
+    <a href="../index.html" id="backToHomeLink" class="back-link">← Back to Home</a>
   </div>
 
   <script>
-    (function(){var m=location.search.match(/[?&]school=([^&]*)/);var slug=m?m[1]:'';var el=document.getElementById('backToHomeLink');if(el&&slug)el.href='../?school='+encodeURIComponent(slug);
+    (function(){var m=location.search.match(/[?&]school=([^&]*)/);var slug=m?m[1]:'';var el=document.getElementById('backToHomeLink');if(el&&slug)el.href='../index.html?school='+encodeURIComponent(slug);
 
     document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -148,7 +148,8 @@
       console.log('Admin login:', { email, password });
       localStorage.setItem('eduverse_role', 'admin');
       localStorage.setItem('eduverse_user', email);
-      var dest = slug ? '../?school=' + encodeURIComponent(slug) + '&role=admin&portal=dashboard' : '../?role=admin&portal=dashboard';
+      var qs = location.search || '';
+      var dest = slug ? '../index.html?school=' + encodeURIComponent(slug) + '&role=admin&portal=dashboard' : '../index.html' + qs + (qs ? '&' : '?') + 'role=admin&portal=dashboard';
       window.location.href = dest;
     });
   </script>
