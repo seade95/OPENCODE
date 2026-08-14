@@ -78,7 +78,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;min-height:100vh;
     <div class="links-grid">
       <a href="admin.html" class="link-card"><i class="fas fa-cog"></i><span>Admin Panel</span></a>
       <a href="login.html" class="link-card"><i class="fas fa-sign-in-alt"></i><span>Login Page</span></a>
-      <a id="sdHomeLink" href="index.html" class="link-card"><i class="fas fa-home"></i><span>Home</span></a>
+      <a id="sdHomeLink" href="javascript:;" onclick="var s=(function(){try{return location.search.match(/school=([^&]+)/)[1]}catch(e){return null}})();window.location.href=s?'school-portal.html?school='+encodeURIComponent(s):'index.html'" class="link-card"><i class="fas fa-home"></i><span>Home</span></a>
     </div>
   </div>
 

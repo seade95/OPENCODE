@@ -118,7 +118,7 @@ if (navigator.serviceWorker) {
     </div>
     <button class="btn btn-primary btn-block" onclick="adminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
     <p class="admin-login-footer">Need access? <a href="apply.html">Apply for a school account</a></p>
-    <p class="admin-login-footer"><a id="adminBackToHome" href="index.html"><i class="fas fa-home"></i> Back to Home</a></p>
+    <p class="admin-login-footer"><a id="adminBackToHome" href="javascript:;" onclick="goHome()"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 
@@ -148,7 +148,7 @@ if (navigator.serviceWorker) {
     </div>
     <button class="btn btn-success btn-block" onclick="adminSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
     <p class="admin-login-footer">Already have an account? <a href="javascript:;" onclick="showAdminLogin()">Sign In</a></p>
-    <p class="admin-login-footer"><a id="adminBackToHome2" href="index.html"><i class="fas fa-home"></i> Back to Home</a></p>
+    <p class="admin-login-footer"><a id="adminBackToHome2" href="javascript:;" onclick="goHome()"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 </div>
@@ -942,7 +942,7 @@ try {
 <script src="js/app.js"></script>
 <script>
 // Fix Back to Home links to point to school profile if active
-(function(){try{var at=localStorage.getItem('activeTenant');if(at){var ts=JSON.parse(localStorage.getItem('eduverse_tenants')||'[]'),t=ts.find(function(x){return x.id===at});if(t&&t.slug){var els=document.querySelectorAll('[id^=adminBackToHome]');els.forEach(function(el){el.href='/?school='+encodeURIComponent(t.slug)})}}}catch(e){}})();
+(function(){try{var at=localStorage.getItem('activeTenant');if(at){var ts=JSON.parse(localStorage.getItem('eduverse_tenants')||'[]'),t=ts.find(function(x){return x.id===at});if(!t)t=ts.find(function(x){return x.slug===at});var slug=t&&t.slug?at:at;var els=document.querySelectorAll('[id^=adminBackToHome]');els.forEach(function(el){el.href='index.html?school='+encodeURIComponent(slug)})}}catch(e){}})();
 
 // Override goHome for standalone admin page
 function goHome() {

@@ -134,7 +134,7 @@
 <div id="announcementBar" style="display:none;" class="sp-announce-bar"></div>
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
-  <a class="nav-logo" href="/"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
+  <a class="nav-logo" href="javascript:;" onclick="goHome()"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
   <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
   <div class="nav-menu" id="navMenu">
@@ -191,8 +191,8 @@
     <div class="footer-widget">
       <h5>Quick Links</h5>
       <ul>
-        <li><a href="/pricing">Pricing &amp; Plans</a></li>
-        <li><a href="/schools">School Directory</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
         <li><a href="#portals">Portals</a></li>
         <li><a href="#courses">Subjects</a></li>
         <li><a href="#news">Announcements</a></li>
@@ -230,10 +230,10 @@
   <div class="footer-bottom">
     <p>&copy; 2026 EDUVERSE, SCHOOL MANAGEMENT PLATFORM. All rights reserved.</p>
     <div class="sp-ft-legal">
-      <a href="/privacy-policy">Privacy Policy</a>
-      <a href="/terms-of-service">Terms of Service</a>
-      <a href="/cookie-policy">Cookie Policy</a>
-      <a href="/gdpr-compliance">GDPR Compliance</a>
+      <a href="javascript:;">Privacy Policy</a>
+      <a href="javascript:;">Terms of Service</a>
+      <a href="javascript:;">Cookie Policy</a>
+      <a href="javascript:;">GDPR Compliance</a>
     </div>
   </div>
 </footer>
@@ -248,6 +248,11 @@ function toggleNav() {
     if (backdrop) backdrop.classList.toggle('active');
     if (icon) icon.className = menu.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
   }
+}
+function goHome() {
+  var slug = window.slug || (function(){ try { var m = location.search.match(/school=([^&]+)/); return m ? decodeURIComponent(m[1]) : null; } catch(e) { return null; } })();
+  if (slug) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(slug); return; }
+  window.location.href = 'index.html';
 }
 function toggleNavDropdown(el) {
   if (el) el.classList.toggle('open');
@@ -608,8 +613,8 @@ function init() {
   var slug = window.slug;
   if (!slug) {
     document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-map-signs"></i><h2>School Not Found</h2>'
-      + '<p>No school specified in the URL. Visit the <a href="/schools">School Directory</a> to find a school.</p>'
-      + '<a href="/" class="sp-error-btn">Back to Home</a></div>';
+      + '<p>No school specified in the URL. Visit the <a href="directory.html">School Directory</a> to find a school.</p>'
+      + '<a href="index.html" class="sp-error-btn">Back to Home</a></div>';
     return;
   }
 
@@ -621,7 +626,7 @@ function init() {
   if (!tenant) {
     document.getElementById('app').innerHTML = '<div class="sp-error-state"><i class="fas fa-school"></i><h2>School Not Found</h2>'
       + '<p>We couldn\'t find a school with the slug "' + esc(slug) + '". It may not exist or may have been removed.</p>'
-      + '<a href="/schools" class="sp-error-btn"><i class="fas fa-school"></i> Browse Schools</a></div>';
+      + '<a href="directory.html" class="sp-error-btn"><i class="fas fa-school"></i> Browse Schools</a></div>';
     document.title = 'School Not Found - EduVerse';
     return;
   }

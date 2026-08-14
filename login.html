@@ -302,7 +302,7 @@ function showError(msg) {
     // Always redirect back arrow to school profile when school param is present
     var backLink = document.getElementById('loginBackLink');
     if (backLink) backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Home';
-    if (backLink) backLink.href = '/?school=' + encodeURIComponent(schoolParam);
+    if (backLink) backLink.href = 'index.html?school=' + encodeURIComponent(schoolParam);
   }
 
 })();
