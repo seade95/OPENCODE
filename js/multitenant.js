@@ -870,8 +870,18 @@ function resolveSchoolFromUrl() {
       if (tenant) return id;
     }
 
-    // 3. Query param:  ?tenant=SCHOOL_ID
+    // 3. Query param:  ?school=SLUG  (used by goHome, redirectToPortal, etc.)
     var params = new URLSearchParams(window.location.search);
+    var schoolSlug = params.get('school');
+    if (schoolSlug) {
+      var tenants3 = getTenants();
+      var tenantBySlug = tenants3.find(function(t) { return t.slug === schoolSlug; });
+      if (tenantBySlug) return tenantBySlug.id;
+      // Fallback: maybe the value is already an ID
+      if (tenants3.find(function(t) { return t.id === schoolSlug; })) return schoolSlug;
+    }
+
+    // 4. Query param:  ?tenant=SCHOOL_ID
     var tid = params.get('tenant');
     if (tid) {
       var tenants2 = getTenants();
