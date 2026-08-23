@@ -134,7 +134,7 @@
 <div id="announcementBar" style="display:none;" class="sp-announce-bar"></div>
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
-  <a class="nav-logo" href="javascript:;" onclick="goHome()"><img class="school-logo-img" src="/icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
+  <a class="nav-logo" href="javascript:;" onclick="goHome()"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
   <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
   <div class="nav-menu" id="navMenu">
@@ -303,11 +303,11 @@ function setActiveTenant(id) {
 function showSchoolSelector() { window.location.href = 'directory.html'; }
 function showApplySchool() { window.location.href = 'pricing.html'; }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-function showTeacherLogin() { window.location.href = 'index.html?role=teacher'; }
-function showStudentLogin() { window.location.href = '/?role=student'; }
+function showTeacherLogin() { window.location.href = 'index.html?school=' + encodeURIComponent(slug) + '&role=teacher'; }
+function showStudentLogin() { window.location.href = 'index.html?school=' + encodeURIComponent(slug) + '&role=student'; }
 function showAdmissionPortal() { window.location.href = 'login/admission.html?school=' + encodeURIComponent(window.slug || getSlug()); }
-function showParentLogin() { window.location.href = 'index.html?role=parent'; }
-function showAlumniPortal() { window.location.href = 'index.html?role=alumni'; }
+function showParentLogin() { window.location.href = 'index.html?school=' + encodeURIComponent(slug) + '&role=parent'; }
+function showAlumniPortal() { window.location.href = 'index.html?school=' + encodeURIComponent(slug) + '&role=alumni'; }
 function subscribeNewsletter(input) { if (input && input.value) { alert('Subscribed! Thank you.'); input.value = ''; } }
 
 var TENANT_KEY = 'eduverse_tenants';
@@ -466,7 +466,7 @@ function renderPortal(slug, tenant, data) {
     + '<div class="service-card sp-card-parent" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-users"></i></div>'
     + '<div class="info-box"><h4>Parent Portal</h4><p>Monitor your child\'s academic progress, attendance, fees, and activities.</p></div></div>'
-    + '<div class="service-card sp-card-admission" onclick="window.location.href=\'/login/admission.html?school=' + qSlug + '\'">'
+    + '<div class="service-card sp-card-admission" onclick="window.location.href=\'login/admission.html?school=' + qSlug + '\'">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-graduation-cap"></i></div>'
     + '<div class="info-box"><h4>Admission Portal</h4><p>Apply for admission, explore programs, and track your application status.</p></div></div>'
     + '<div class="service-card sp-card-cbt" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')">'

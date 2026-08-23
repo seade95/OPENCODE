@@ -806,6 +806,12 @@ function finishSetup() {
   saveSetupStep();
   closeModal();
   try { localStorage.setItem('activeTenant', _setupTenantId); } catch(e) {}
+  // Redirect to admin with school slug
+  try {
+    var tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+    var t = tenants.find(function(x) { return x.id === _setupTenantId; });
+    if (t && t.slug) { window.location.href = 'admin.html?school=' + encodeURIComponent(t.slug); return; }
+  } catch(e) {}
   window.location.href = 'admin.html';
 }
 

@@ -372,9 +372,9 @@ function saOpenPortal(slug, portal) {
   closeSaDashboard();
   localStorage.setItem('activeTenant', slug);
   if (portal === 'admin') {
-    window.location.href = '/admin.html?school=' + encodeURIComponent(slug);
+    window.location.href = 'admin.html?school=' + encodeURIComponent(slug);
   } else {
-    window.location.href = '/?school=' + encodeURIComponent(slug) + '&portal=' + portal;
+    window.location.href = 'index.html?school=' + encodeURIComponent(slug) + '&portal=' + portal;
   }
 }
 

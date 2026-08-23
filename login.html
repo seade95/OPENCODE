@@ -139,9 +139,9 @@ function doLogin(e) {
       var user = { id: idVal, name: (profile ? profile.name : idVal), email: idVal, username: idVal, password: pwVal };
       setLSession(roleId, user, schoolParam || null);
       if (schoolParam) {
-        window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
+        window.location.href = 'index.html?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
       } else {
-        window.location.href = '/?login=' + roleId;
+        window.location.href = 'index.html?login=' + roleId;
       }
     }).catch(function(authErr) {
       doLocalLogin(roleId, idVal, pwVal);
@@ -173,7 +173,7 @@ function doLocalLogin(roleId, idVal, pwVal) {
       }
       var target;
       if (schoolParam) {
-        target = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
+        target = 'index.html?school=' + encodeURIComponent(schoolParam) + '&portal=' + roleId;
       } else if (roleId === 'admin') {
         try {
           var _schools = JSON.parse(localStorage.getItem('eduverse_schools')) || [];
@@ -181,13 +181,13 @@ function doLocalLogin(roleId, idVal, pwVal) {
           if (_match) {
             var _s = { version: 1, type: 'admin', user: { email: user.email, name: user.name }, timestamp: Date.now(), loginTime: Date.now(), schoolId: _match.id };
             localStorage.setItem('eduverse_session', JSON.stringify(_s));
-            target = '/school-dashboard.html';
+            target = 'school-dashboard.html';
           } else {
-            target = '/?login=' + roleId;
+            target = 'index.html?login=' + roleId;
           }
-        } catch(e) { target = '/?login=' + roleId; }
+        } catch(e) { target = 'index.html?login=' + roleId; }
       } else {
-        target = '/?login=' + roleId;
+        target = 'index.html?login=' + roleId;
       }
       window.location.href = target;
     } else {
@@ -200,7 +200,7 @@ function doLocalLogin(roleId, idVal, pwVal) {
 
 function showForcePasswordChange(user, idVal, oldPass) {
   var card = document.querySelector('.login-card');
-  card.innerHTML = '<div class="logo"><a href="/" style="text-decoration:none;color:inherit;"><img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display=\'none\'"><span>EduVerse</span></a></div>'
+  card.innerHTML = '<div class="logo"><a href="index.html" style="text-decoration:none;color:inherit;"><img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display=\'none\'"><span>EduVerse</span></a></div>'
     + '<h1>Change Password</h1>'
     + '<p class="subtitle">This is your first login. Please set a new password.</p>'
     + '<div class="error" id="pwChangeError"></div>'
@@ -250,9 +250,9 @@ function doForcePasswordChange(adminId, idVal, oldPass) {
     } catch(e) {}
   }
   if (schoolParam) {
-    window.location.href = '/?school=' + encodeURIComponent(schoolParam) + '&portal=admin';
+    window.location.href = 'index.html?school=' + encodeURIComponent(schoolParam) + '&portal=admin';
   } else {
-    window.location.href = '/?login=admin';
+    window.location.href = 'index.html?login=admin';
   }
 }
 
@@ -274,11 +274,11 @@ function showError(msg) {
   if (existing && existing.version === 1 && existing.type) {
     var target;
     if (existing.schoolId) {
-      target = '/school-dashboard.html';
+      target = 'school-dashboard.html';
     } else if (schoolParam) {
-      target = '/?school=' + encodeURIComponent(schoolParam) + '&portal=' + existing.type;
+      target = 'index.html?school=' + encodeURIComponent(schoolParam) + '&portal=' + existing.type;
     } else {
-      target = '/?login=' + existing.type;
+      target = 'index.html?login=' + existing.type;
     }
     window.location.href = target;
     return;
@@ -312,7 +312,7 @@ function showError(msg) {
 
 <div class="login-card">
   <div class="logo">
-    <a href="/" style="text-decoration:none;color:inherit;">
+    <a href="index.html" style="text-decoration:none;color:inherit;">
     <img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display='none'">
     <span>EduVerse</span>
     </a>
@@ -341,7 +341,7 @@ function showError(msg) {
   </form>
 
   <div class="back-link">
-    <a id="loginBackLink" href="/"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+    <a id="loginBackLink" href="index.html"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
   </div>
 </div>
 

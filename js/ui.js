@@ -201,7 +201,7 @@ function showSchoolSelector() {
     <p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">Choose a school to access its portal.</p>
     <div class="school-selector-grid">
       ${tenants.map(t => `
-        <div class="school-card" onclick="window.location.href='/school/' + encodeURIComponent('${t.slug || t.id}')" style="${activeTenant === t.id ? 'border-color:var(--primary);background:#ebf8ff;' : ''}">
+        <div class="school-card" onclick="window.location.href='school-portal.html?school=' + encodeURIComponent('${t.slug || t.id}')" style="${activeTenant === t.id ? 'border-color:var(--primary);background:#ebf8ff;' : ''}">
           ${t.logo ? `<img src="${htmlEscape(t.logo)}" class="school-logo" onerror="this.style.display='none'">` : '<div style="width:64px;height:64px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;">' + (t.name ? t.name.charAt(0) : 'S') + '</div>'}
           <div class="school-name">${htmlEscape(t.name || 'Unknown School')}</div>
           <div class="school-tier">${htmlEscape(t.tier || 'N/A')} &middot; ${htmlEscape(t.status || 'active')}</div>
