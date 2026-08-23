@@ -149,8 +149,6 @@
         </div>
       </li>
       <li><a href="javascript:;" class="nav-btn nav-btn-admin" onclick="redirectToPortal(slug, 'admin')"><i class="fas fa-user-shield"></i> Admin</a></li>
-      <li class="nav-divider" role="separator"></li>
-      <li><a href="javascript:;" class="nav-btn nav-btn-primary" onclick="showEduverseLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
       <li><a href="javascript:;" class="nav-link nav-link-icon" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
     </ul>
   </div>
@@ -302,7 +300,6 @@ function setActiveTenant(id) {
   try { localStorage.setItem('activeTenant', id); localStorage.setItem('activeTenantKey', 'schoolData_' + id); } catch(e) {}
 }
 
-function showEduverseLogin() { window.location.href = 'login.html'; }
 function showSchoolSelector() { window.location.href = 'directory.html'; }
 function showApplySchool() { window.location.href = 'pricing.html'; }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
