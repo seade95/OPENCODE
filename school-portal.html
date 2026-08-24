@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<base href="/">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>School Portal — EduVerse</title>
 <meta name="description" content="School information portal. View school details, announcements, subjects, and more.">
@@ -375,13 +374,6 @@ function getPortalType() {
   var parts = path.split('/');
   if (parts.length >= 4 && parts[1] === 'school') return parts[3];
   return null;
-}
-
-function setActiveTenant(tenantId) {
-  try {
-    localStorage.setItem('activeTenant', tenantId);
-    localStorage.setItem('activeTenantKey', 'schoolData_' + tenantId);
-  } catch(e) {}
 }
 
 var SUBJECT_CATEGORIES = {

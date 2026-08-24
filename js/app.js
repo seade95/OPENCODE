@@ -45,10 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
           } catch(e) {}
         }
         // Skip if hostname is a known platform hosting domain (not a school subdomain setup)
-        if (!skip && hostname.indexOf('netlify.app') !== -1) skip = true;
-        if (!skip && hostname.indexOf('vercel.app') !== -1) skip = true;
-        if (!skip && hostname.indexOf('github.io') !== -1) skip = true;
-        if (!skip && hostname.indexOf('pages.dev') !== -1) skip = true;
+        if (!skip && window.location.hostname.indexOf('netlify.app') !== -1) skip = true;
+        if (!skip && window.location.hostname.indexOf('vercel.app') !== -1) skip = true;
+        if (!skip && window.location.hostname.indexOf('github.io') !== -1) skip = true;
+        if (!skip && window.location.hostname.indexOf('pages.dev') !== -1) skip = true;
         if (sub && !skip) {
           _detectedUnknownSchool = sub;
         }

@@ -219,6 +219,7 @@ function showSchoolSelector() {
 }
 
 let currentAdmin = window.currentAdmin || null;
+let currentParent = null;
 
 function showAdminLogin() {
   if (currentAdmin) { showAdminPortal(); return; }

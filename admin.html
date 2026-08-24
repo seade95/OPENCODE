@@ -8,7 +8,7 @@
 // Check if logged in
 const session = localStorage.getItem('eduverse_session');
 if (!session) {
-  window.location.replace('/login.html');
+  window.location.replace('login.html');
 } else {
   const user = JSON.parse(session);
   // Check session expiry (supports both loginTime and timestamp fields)
@@ -16,7 +16,7 @@ if (!session) {
   const hours = loginTime ? (new Date() - new Date(loginTime)) / (1000 * 60 * 60) : 0;
   if (hours > 24) {
     localStorage.removeItem('eduverse_session');
-    window.location.replace('/login.html');
+    window.location.replace('login.html');
   }
 }
 </script>
