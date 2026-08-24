@@ -257,9 +257,7 @@ function adminLogin() {
     try {
       var _schoolId = null;
       try { _schoolId = localStorage.getItem('activeTenant'); } catch(e) {}
-      window.ensureFirebaseUser(email, pass, admin.name, 'admin', _schoolId, admin.id).catch(function(_err) {
-        console.warn('Firebase auth provisioning skipped (non-blocking):', _err.code || _err.message);
-      });
+      window.ensureFirebaseUser(email, pass, admin.name, 'admin', _schoolId, admin.id).catch(function(_err) {});
     } catch(_e) {}
   }
   if (typeof resetSessionActivity === 'function') resetSessionActivity();
@@ -328,9 +326,7 @@ function adminSignup() {
   data.admins.push(admin);
   saveData();
   if (typeof window.ensureFirebaseUser === 'function') {
-    window.ensureFirebaseUser(email, pass, name, 'admin', null, admin.id).catch(function(_err) {
-      console.warn('Firebase auth provisioning skipped (non-blocking):', _err.code || _err.message);
-    });
+    window.ensureFirebaseUser(email, pass, name, 'admin', null, admin.id).catch(function(_err) {});
   }
   hideError(errEl);
   nameEl.value = '';
@@ -626,7 +622,6 @@ function switchAdminPanel(panel) {
     case 'edunews': if (typeof renderEducationNews === 'function') renderEducationNews(); break;
     case 'schoolstore': if (typeof renderSchoolStore === 'function') renderSchoolStore(); break;
     case 'support': if (typeof renderSupportPanel === 'function') renderSupportPanel(); break;
-    case 'higherinstitutions': break;
     case 'cbt': if (typeof renderCBTAdmin === 'function') renderCBTAdmin(); break;
   }
   if (typeof applyTranslations === 'function') applyTranslations();

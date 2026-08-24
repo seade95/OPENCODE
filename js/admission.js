@@ -1042,7 +1042,7 @@ function startProctorCaptures() {
       canvas.getContext('2d').drawImage(video, 0, 0);
       examState.snapshots.push(canvas.toDataURL('image/jpeg', 0.5));
       if (examState.snapshots.length > 20) examState.snapshots.shift();
-    } catch(e) { if (typeof console !== 'undefined') console.warn('Proctor capture failed:', e); }
+    } catch(e) {}
   }, 15000);
 }
 

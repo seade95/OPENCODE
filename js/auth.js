@@ -58,9 +58,7 @@
         try {
           var schoolId = null;
           try { schoolId = localStorage.getItem('activeTenant'); } catch(e) {}
-          window.ensureFirebaseUser(email, password, admin.name, role || 'admin', schoolId, admin.id).catch(function(err) {
-            console.warn('Firebase auth provisioning skipped (non-blocking):', err.code || err.message);
-          });
+          window.ensureFirebaseUser(email, password, admin.name, role || 'admin', schoolId, admin.id).catch(function(err) {});
         } catch(e) {}
       }
       return true;
