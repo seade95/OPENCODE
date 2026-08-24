@@ -316,7 +316,7 @@ function saApproveSchool(id) {
   if (!t) return;
   t.status = 'active';
   saveTenants(tenants);
-  logActivity('Approved school registration: ' + t.name);
+  saLogActivity('Approved school registration: ' + t.name);
   renderSaSchools(document.getElementById('saContent'));
   toast('School "' + t.name + '" approved and activated!');
 }
@@ -336,7 +336,7 @@ function saResetSchoolPassword(id) {
       // Update admin in data.admins array if present
       if (d.admins && d.admins.length) { d.admins[0].password = newPass; }
       localStorage.setItem(key, JSON.stringify(d));
-      logActivity('Password reset for school: ' + t.name);
+      saLogActivity('Password reset for school: ' + t.name);
       toast('Password for "' + t.name + '" has been reset successfully!');
     } else {
       toast('No data found for this school.');
@@ -350,7 +350,7 @@ function saToggleTenant(id) {
   if (!t) return;
   t.status = t.status === 'active' ? 'suspended' : 'active';
   saveTenants(tenants);
-  logActivity((t.status === 'active' ? 'Activated' : 'Suspended') + ' school: ' + t.name);
+  saLogActivity((t.status === 'active' ? 'Activated' : 'Suspended') + ' school: ' + t.name);
   renderSaTab('schools');
   toast('School "' + t.name + '" ' + (t.status === 'active' ? 'activated' : 'suspended'));
 }
@@ -363,7 +363,7 @@ function saDeleteTenant(id) {
   var dataKey = getTenantDataKey(id);
   localStorage.removeItem(dataKey);
   saveTenants(tenants.filter(function(x) { return x.id !== id; }));
-  logActivity('Deleted school: ' + t.name);
+  saLogActivity('Deleted school: ' + t.name);
   renderSaTab('schools');
   toast('School "' + t.name + '" deleted');
 }
@@ -404,7 +404,7 @@ function saTogglePremium(tenantId) {
       d.subscription.status = 'active';
       delete d.subscription.endDate;
       localStorage.setItem(key, JSON.stringify(d));
-      logActivity('Revoked Premium Access for: ' + t.name);
+      saLogActivity('Revoked Premium Access for: ' + t.name);
       toast('Premium Access revoked for ' + t.name);
     } else {
       d.subscription.plan = 'premium';
@@ -419,7 +419,7 @@ function saTogglePremium(tenantId) {
       d.subscription.lastPaymentRef = 'SA_OVERRIDE_' + Date.now();
       d.subscription.planName = 'Premium (SA Override)';
       localStorage.setItem(key, JSON.stringify(d));
-      logActivity('Granted Premium Access to: ' + t.name);
+      saLogActivity('Granted Premium Access to: ' + t.name);
       toast('Premium Access granted to ' + t.name + '! All features unlocked.');
     }
   } catch(e) { toast('Error: ' + e.message, 'error'); }
@@ -463,7 +463,7 @@ function saAssignPlan(tenantId, planName) {
       localStorage.setItem(key, JSON.stringify(d));
     }
   } catch(e) {}
-  logActivity('Changed plan for ' + t.name + ' to ' + planName);
+  saLogActivity('Changed plan for ' + t.name + ' to ' + planName);
   toast('Plan for "' + t.name + '" updated to ' + planName);
 }
 
@@ -754,7 +754,7 @@ function saSavePlatform() {
   if (typeof renderChatButtons === 'function') renderChatButtons();
   if (typeof renderLandingPageSections === 'function') renderLandingPageSections();
 
-  logActivity('Platform settings updated');
+  saLogActivity('Platform settings updated');
   toast('Platform settings saved!');
 }
 
@@ -812,7 +812,7 @@ function saAddPlan() {
   cfg.subscriptionPlans.push({ id: 'plan_' + Date.now(), name: 'New Plan', interval: 'monthly', amount: 10000, active: true, features: '' });
   savePlatformConfig(cfg);
   renderSaTab('subscriptions');
-  logActivity('Added new subscription plan');
+  saLogActivity('Added new subscription plan');
 }
 
 function saEditPlan(index) {
@@ -851,7 +851,7 @@ function saSaveEditPlan(index) {
   savePlatformConfig(cfg);
   closeModal();
   renderSaTab('subscriptions');
-  logActivity('Updated plan: ' + name);
+  saLogActivity('Updated plan: ' + name);
   toast('Plan updated!');
 }
 
@@ -862,7 +862,7 @@ function saTogglePlan(index) {
   p.active = p.active === false ? true : false;
   savePlatformConfig(cfg);
   renderSaTab('subscriptions');
-  logActivity((p.active ? 'Enabled' : 'Disabled') + ' plan: ' + p.name);
+  saLogActivity((p.active ? 'Enabled' : 'Disabled') + ' plan: ' + p.name);
 }
 
 function saDeletePlan(index) {
@@ -873,7 +873,7 @@ function saDeletePlan(index) {
   cfg.subscriptionPlans.splice(index, 1);
   savePlatformConfig(cfg);
   renderSaTab('subscriptions');
-  logActivity('Deleted plan: ' + p.name);
+  saLogActivity('Deleted plan: ' + p.name);
   toast('Plan deleted');
 }
 
@@ -936,7 +936,7 @@ function saSetMaintenance(val) {
   if (!cfg.settings) cfg.settings = {};
   cfg.settings.maintenanceMode = val;
   savePlatformConfig(cfg);
-  logActivity(val ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
+  saLogActivity(val ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
   toast(val ? 'Maintenance mode enabled' : 'Maintenance mode disabled');
 }
 
@@ -952,7 +952,7 @@ function saSetRegistration(val) {
   if (!cfg.settings) cfg.settings = {};
   cfg.settings.allowSchoolRegistration = val;
   savePlatformConfig(cfg);
-  logActivity(val ? 'School registration opened' : 'School registration closed');
+  saLogActivity(val ? 'School registration opened' : 'School registration closed');
 }
 
 function saClearAllData() {
@@ -965,7 +965,7 @@ function saClearAllData() {
     }
   }
   keys.forEach(function(k) { localStorage.removeItem(k); });
-  logActivity('All school data cleared');
+  saLogActivity('All school data cleared');
   toast('All school data cleared. ' + keys.length + ' stores removed.');
   renderSaTab('system');
 }
@@ -985,7 +985,7 @@ function getActivityLog() {
   } catch(e) { return []; }
 }
 
-function logActivity(msg) {
+function saLogActivity(msg) {
   var log = getActivityLog();
   log.unshift({ time: new Date().toLocaleString(), msg: msg });
   if (log.length > 100) log.length = 100;
@@ -1186,7 +1186,7 @@ function saSendBroadcast() {
   if (cfg.broadcastHistory.length > 50) cfg.broadcastHistory.length = 50;
   savePlatformConfig(cfg);
 
-  logActivity('Broadcast sent: "' + subject + '" to ' + delivered + ' schools');
+  saLogActivity('Broadcast sent: "' + subject + '" to ' + delivered + ' schools');
 
   var result = document.getElementById('saBroadcastResult');
   if (result) {
@@ -1258,7 +1258,7 @@ function saExportAll() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 
-  logActivity('Full backup exported');
+  saLogActivity('Full backup exported');
   toast('Backup downloaded!');
 }
 
@@ -1298,7 +1298,7 @@ function saImportBackup() {
       });
 
       if (result) result.innerHTML = '<span style="color:var(--sa-green);"><i class="fas fa-check-circle"></i> Restored ' + data.tenants.length + ' schools and ' + restored + ' school data stores.</span>';
-      logActivity('Full backup restored: ' + data.tenants.length + ' schools');
+      saLogActivity('Full backup restored: ' + data.tenants.length + ' schools');
       toast('Backup restored successfully!');
       switchSaTab('overview');
     } catch(err) {
@@ -1481,7 +1481,7 @@ function saRecordPayment() {
     }
   } catch(e) {}
 
-  logActivity('Payment recorded: ' + formatAmount(amount) + ' for school ' + schoolId);
+  saLogActivity('Payment recorded: ' + formatAmount(amount) + ' for school ' + schoolId);
   document.getElementById('saRevAmount').value = '';
   renderSaRevenue(document.getElementById('saContent'));
   toast('Payment recorded successfully!');
@@ -1559,7 +1559,7 @@ function saRespondTicket(schoolId, ticketId) {
       tk.response = reply;
       tk.respondedAt = new Date().toLocaleString();
       localStorage.setItem(key, JSON.stringify(d));
-      logActivity('Closed ticket: ' + tk.subject + ' from ' + schoolId);
+      saLogActivity('Closed ticket: ' + tk.subject + ' from ' + schoolId);
       toast('Ticket closed! School admin can view the response.');
       renderSaTickets(document.getElementById('saContent'));
     }
@@ -1648,7 +1648,7 @@ function saApplyFeatureFlags() {
     } catch(e) {}
   });
 
-  logActivity('Feature flags applied to ' + updated + ' schools');
+  saLogActivity('Feature flags applied to ' + updated + ' schools');
   var result = document.getElementById('saFeatureResult');
   if (result) result.innerHTML = '<span style="color:var(--sa-green);"><i class="fas fa-check-circle"></i> Flags applied to ' + updated + ' school(s)</span>';
   toast('Feature flags applied to ' + updated + ' schools!');
@@ -1659,7 +1659,7 @@ function saSetApproval(val) {
   if (!cfg.settings) cfg.settings = {};
   cfg.settings.requireApproval = val;
   savePlatformConfig(cfg);
-  logActivity(val ? 'School approval required' : 'School approval disabled');
+  saLogActivity(val ? 'School approval required' : 'School approval disabled');
   toast(val ? 'New schools will require approval' : 'Schools can register freely');
 }
 
@@ -1835,7 +1835,7 @@ function saPwConfirmReset(tenantId, role, userId) {
     localStorage.setItem(key, JSON.stringify(d));
 
     closeModal();
-    logActivity('Password reset: ' + user.name + ' (' + role + ') in tenant ' + tenantId);
+    saLogActivity('Password reset: ' + user.name + ' (' + role + ') in tenant ' + tenantId);
     toast('Password for <strong>' + esc(user.name) + '</strong> has been reset successfully!');
     saPwShowRole(tenantId, role);
   } catch(e) { toast('Error: ' + e.message, 'error'); }
@@ -1878,7 +1878,7 @@ function saPwConfirmCreateAdmin(tenantId) {
     d.admins.push({ id: nextId, name: name, email: email, password: pass, role: 'super_admin' });
     localStorage.setItem(key, JSON.stringify(d));
     closeModal();
-    logActivity('Created admin: ' + name + ' (' + email + ') in tenant ' + tenantId);
+    saLogActivity('Created admin: ' + name + ' (' + email + ') in tenant ' + tenantId);
     if (typeof window.ensureFirebaseUser === 'function') {
       window.ensureFirebaseUser(email, pass, name, 'admin', tenantId, nextId).catch(function(_err) {
         console.warn('Firebase auth provisioning skipped:', _err.code || _err.message);
@@ -1941,7 +1941,7 @@ function saPwConfirmEditUser(tenantId, role, userId) {
     localStorage.setItem(key, JSON.stringify(d));
 
     closeModal();
-    logActivity('Edited ' + role.slice(0, -1) + ': ' + name + ' in tenant ' + tenantId);
+    saLogActivity('Edited ' + role.slice(0, -1) + ': ' + name + ' in tenant ' + tenantId);
     toast('User <strong>' + esc(name) + '</strong> updated successfully!');
     saPwShowRole(tenantId, role);
   } catch(e) { toast('Error: ' + e.message, 'error'); }

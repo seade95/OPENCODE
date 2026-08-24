@@ -557,6 +557,6 @@ window.showUpgradeModal = showUpgradeModal;
 
 // Run expiry check on load
 setTimeout(subCheckExpiry, 500);
-setInterval(subCheckExpiry, 60000); // Check every minute
+window._subExpiryInterval = setInterval(subCheckExpiry, 60000);
 
 })();

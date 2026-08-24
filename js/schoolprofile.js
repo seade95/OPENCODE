@@ -257,6 +257,7 @@ function renderSchoolProfile() {
 }
 
 function esc(s) {
+  if (typeof htmlEscape === 'function') return htmlEscape(s);
   if (!s) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
@@ -1468,6 +1469,7 @@ function saveWizardStep(step) {
 
 // Show toast notification
 function showToast(msg) {
+  if (typeof toast === 'function') { toast(msg); return; }
   var t = document.createElement('div');
   t.style.cssText = 'position:fixed;bottom:20px;right:20px;background:var(--success,#2e7d32);color:white;padding:14px 24px;border-radius:8px;z-index:9999;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.2);animation:fadeIn 0.3s ease;';
   t.textContent = msg;

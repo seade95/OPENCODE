@@ -69,7 +69,7 @@ function clearSession(type) {
 }
 function setSession(type, user, tenantId) {
   var s = { version: SESSION_VERSION, type: type, user: null, timestamp: Date.now(), tenantId: tenantId || null };
-  s.user = { id: user.id, name: user.name, email: user.email || '', username: user.username || '', password: user.password || '' };
+  s.user = { id: user.id, name: user.name, email: user.email || '', username: user.username || '' };
   saveSession(s);
 }
 function syncSession() {

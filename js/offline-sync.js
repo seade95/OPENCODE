@@ -8,6 +8,7 @@
   var _backupInterval = 30000; // 30 seconds
   var _isSyncing = false;
   var _pendingChanges = false;
+  var _backupTimer = null;
   var _dataHash = '';
 
   // Compute a simple hash of data to detect changes
@@ -118,7 +119,7 @@
   });
 
   // Periodic auto-backup
-  setInterval(function() {
+  _backupTimer = setInterval(function() {
     saveBackupSnapshot();
   }, _backupInterval);
 

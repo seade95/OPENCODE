@@ -9,6 +9,7 @@
   var _overlay = null;
   var _flashOverlay = null;
   var _devtoolsOpen = false;
+  var _devtoolsInterval = null;
 
   function getLevel() {
     try {
@@ -28,6 +29,7 @@
   window.__setProtectionLevel = function(l) {
     l = Math.max(0, Math.min(3, Math.round(l)));
     saveLevel(l);
+    if (l === 0 && _devtoolsInterval) { clearInterval(_devtoolsInterval); _devtoolsInterval = null; }
     if (_overlay) _overlay.style.display = 'none';
     if (_flashOverlay) _flashOverlay.style.display = 'none';
     var w = document.querySelector('.sp-watermark');
@@ -117,7 +119,7 @@
     console.log('%c', devtools);
 
     var threshold = 160;
-    var interval = setInterval(function() {
+    _devtoolsInterval = setInterval(function() {
       if (window.outerWidth - window.innerWidth > threshold ||
           window.outerHeight - window.innerHeight > threshold) {
         if (!_devtoolsOpen) { _devtoolsOpen = true; showDevToolsWarning(); }

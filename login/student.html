@@ -8,16 +8,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="../js/firestore-adapter.js"></script>
+  <script src="../js/firebase-config.js"></script>
   <script>
-  var FIREBASE_CONFIG = {
-    apiKey: "AIzaSyClI13ldpl8UkwhQQvnB8OG0bKdk9YgdLE",
-    authDomain: "eduverse-508a7.firebaseapp.com",
-    projectId: "eduverse-508a7",
-    storageBucket: "eduverse-508a7.firebasestorage.app",
-    messagingSenderId: "500067704675",
-    appId: "1:500067704675:web:22e033dd77d39580dabd56",
-    measurementId: "G-M5DYNJHW44"
-  };
   function findStudentEmail(studentId) {
     try {
       var activeT = localStorage.getItem('activeTenant');
