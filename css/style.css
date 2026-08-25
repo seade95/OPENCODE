@@ -1460,6 +1460,8 @@ tr:hover td { background: #f7fafc; }
   height: 12px;
   border-radius: 50%;
   background: rgba(255,255,255,0.3);
+  border: none;
+  padding: 0;
   cursor: pointer;
   transition: var(--transition);
   border: 2px solid transparent;
@@ -2086,6 +2088,18 @@ html { transition: background-color 0.3s ease, color 0.3s ease; }
 [data-theme="dark"] .admin-demo-hint { background: #4a3b0a; color: #fefcbf; }
 [data-theme="dark"] .admin-error-box { background: #4a2020; color: #feb2b2; }
 [data-theme="dark"] .form-select { border-color: #4a5568; }
+
+/* Dark mode: additional component overrides */
+[data-theme="dark"] .ev-search-box { background: #4a5568; }
+[data-theme="dark"] .ev-school-item:hover { background: #4a5568; }
+[data-theme="dark"] .ev-school-item-icon { background: #2d3748; }
+[data-theme="dark"] .conf-slot.selected { background: #1a365d; color: #bee3f8; }
+[data-theme="dark"] .payment-method .method-btn { border-color: #4a5568; }
+[data-theme="dark"] .payment-method .method-btn.active { border-color: var(--primary); }
+[data-theme="dark"] .faq-answer { border-top-color: #4a5568; }
+[data-theme="dark"] .toggle-slider { background: #4a5568; }
+[data-theme="dark"] .adm-status-timeline .step { border-color: #4a5568; }
+[data-theme="dark"] .adm-status-timeline .step.completed { border-color: var(--primary); }
 
 /* ===== LOADING SPINNER ===== */
 .loading-overlay {
@@ -3039,3 +3053,13 @@ button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c)
 .form-select { padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--card-bg);color:var(--text); }
 .conn-dot { color:#22c55e;font-size:10px;margin:0 8px; }
 .btn-block { width:100%;justify-content:center; }
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
