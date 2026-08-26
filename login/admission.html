@@ -156,7 +156,6 @@
       e.preventDefault();
       const applicationId = document.getElementById('applicationId').value;
       const password = document.getElementById('password').value;
-      console.log('Admission login:', { applicationId, password });
       localStorage.setItem('eduverse_role', 'admission');
       localStorage.setItem('eduverse_user', applicationId);
       var dest = schoolSlug ? '../index.html?school=' + encodeURIComponent(schoolSlug) + '&role=admission&portal=dashboard' : '../index.html?role=admission&portal=dashboard';

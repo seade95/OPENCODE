@@ -145,7 +145,6 @@
       e.preventDefault();
       const teacherId = document.getElementById('teacherId').value;
       const password = document.getElementById('password').value;
-      console.log('Teacher login:', { teacherId, password });
       localStorage.setItem('eduverse_role', 'teacher');
       localStorage.setItem('eduverse_user', teacherId);
       var qs = location.search || '';

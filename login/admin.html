@@ -145,7 +145,6 @@
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      console.log('Admin login:', { email, password });
       localStorage.setItem('eduverse_role', 'admin');
       localStorage.setItem('eduverse_user', email);
       var qs = location.search || '';
