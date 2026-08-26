@@ -2158,7 +2158,7 @@ function printIDCard(id) {
   const printWin = window.open('', '_blank', 'width=400,height=600');
   printWin.document.write(`
     <!DOCTYPE html><html><head><title>ID Card</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
       body { display:flex;justify-content:center;align-items:center;min-height:100vh;background:#333;font-family:Arial,sans-serif; }
       .id-card { width:340px;background:white;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3); }
