@@ -85,7 +85,7 @@ if (navigator.serviceWorker) {
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <button class="modal-close" data-action="closeModal">&times;</button>
     <div id="modalBody"></div>
   </div>
 </div>
@@ -113,9 +113,9 @@ if (navigator.serviceWorker) {
       <label><i class="fas fa-lock"></i> Password</label>
       <input type="password" id="adminLoginPass" placeholder="Enter password" value="" oninput="validateField(this,'password')">
     </div>
-    <button class="btn btn-primary btn-block" onclick="adminLogin()"><i class="fas fa-arrow-right"></i> Sign In</button>
+    <button class="btn btn-primary btn-block" data-action="adminLogin"><i class="fas fa-arrow-right"></i> Sign In</button>
     <p class="admin-login-footer">Need access? <a href="apply.html">Apply for a school account</a></p>
-    <p class="admin-login-footer"><a id="adminBackToHome" href="javascript:;" onclick="goHome()"><i class="fas fa-home"></i> Back to Home</a></p>
+    <p class="admin-login-footer"><a id="adminBackToHome" href="javascript:;" data-action="goHome"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 
@@ -143,9 +143,9 @@ if (navigator.serviceWorker) {
       <label><i class="fas fa-lock"></i> Password</label>
       <input type="password" id="adminSignupPass" placeholder="Min 6 characters" oninput="validateField(this,'password')">
     </div>
-    <button class="btn btn-success btn-block" onclick="adminSignup()"><i class="fas fa-user-plus"></i> Create Account</button>
-    <p class="admin-login-footer">Already have an account? <a href="javascript:;" onclick="showAdminLogin()">Sign In</a></p>
-    <p class="admin-login-footer"><a id="adminBackToHome2" href="javascript:;" onclick="goHome()"><i class="fas fa-home"></i> Back to Home</a></p>
+    <button class="btn btn-success btn-block" data-action="adminSignup"><i class="fas fa-user-plus"></i> Create Account</button>
+    <p class="admin-login-footer">Already have an account? <a href="javascript:;" data-action="showAdminLogin">Sign In</a></p>
+    <p class="admin-login-footer"><a id="adminBackToHome2" href="javascript:;" data-action="goHome"><i class="fas fa-home"></i> Back to Home</a></p>
   </div>
 </div>
 </div>
@@ -159,7 +159,7 @@ if (navigator.serviceWorker) {
     </div>
     <div class="portal-header-right">
       <div id="langSelector" style="margin-right:8px;"></div>
-      <div id="adminTermBadge" class="admin-term-badge" onclick="showTermSwitcherModal()" title="Click to switch term">
+      <div id="adminTermBadge" class="admin-term-badge" data-action="showTermSwitcherModal" title="Click to switch term">
         <i class="fas fa-calendar-alt"></i>
         <span id="adminTermBadgeText"></span>
         <i class="fas fa-chevron-down" style="font-size:8px;"></i>
@@ -169,7 +169,7 @@ if (navigator.serviceWorker) {
         <span id="adminInstBadgeText"></span>
       </div>
       <span><i class="fas fa-user-shield"></i> Administrator</span>
-      <div class="notif-bell" onclick="toggleNotifDropdown('')" style="position:relative;cursor:pointer;margin:0 8px;">
+      <div class="notif-bell" data-action="toggleNotifDropdown" data-args="" style="position:relative;cursor:pointer;margin:0 8px;">
         <i class="fas fa-bell" style="font-size:16px;color:var(--text-light);"></i>
         <span class="notif-count" id="notifCount" style="display:none;">0</span>
         <div class="notif-dropdown" id="notifDropdown">
@@ -178,8 +178,8 @@ if (navigator.serviceWorker) {
         </div>
       </div>
       <span class="conn-status" id="connStatusAdmin" title="Connected"><i class="fas fa-circle conn-dot"></i></span>
-      <button class="portal-back-btn" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="adminLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div class="admin-layout">
@@ -290,7 +290,7 @@ if (navigator.serviceWorker) {
             <span style="font-size:11px;color:var(--text-light);"><i class="fas fa-sync-alt"></i> <span id="dashNewsDate">updating...</span></span>
           </div>
           <div id="dashNewsWidget"><div class="loading-overlay active" style="display:flex;position:relative;min-height:100px;"><div class="loading-spinner"></div></div></div>
-          <div style="margin-top:10px;text-align:right;"><button class="btn btn-sm btn-link" onclick="switchAdminPanel('edunews')"><i class="fas fa-arrow-right"></i> View all news</button></div>
+          <div style="margin-top:10px;text-align:right;"><button class="btn btn-sm btn-link" data-action="switchAdminPanel" data-args="edunews"><i class="fas fa-arrow-right"></i> View all news</button></div>
         </div>
       </div>
       <!-- Students Panel -->
@@ -298,9 +298,9 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2 data-i18n="students">Student Management</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-export btn-sm" onclick="exportTableToCSV('studentsTable','students')"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-sm btn-info" onclick="showBulkImportModal('students')"><i class="fas fa-upload"></i> Bulk Import</button>
-            <button class="btn btn-primary btn-sm" onclick="showAddStudentModal()"><i class="fas fa-plus"></i> Add Student</button>
+            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="studentsTable,students"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-sm btn-info" data-action="showBulkImportModal" data-args="students"><i class="fas fa-upload"></i> Bulk Import</button>
+            <button class="btn btn-primary btn-sm" data-action="showAddStudentModal"><i class="fas fa-plus"></i> Add Student</button>
           </div>
         </div>
         <p class="subtitle">Manage all enrolled students</p>
@@ -319,9 +319,9 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2 data-i18n="teachers">Teacher Management</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-export btn-sm" onclick="exportTableToCSV('teachersTable','teachers')"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-sm btn-info" onclick="showBulkImportModal('teachers')"><i class="fas fa-upload"></i> Bulk Import</button>
-            <button class="btn btn-primary btn-sm" onclick="showAddTeacherModal()"><i class="fas fa-plus"></i> Add Teacher</button>
+            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="teachersTable,teachers"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-sm btn-info" data-action="showBulkImportModal" data-args="teachers"><i class="fas fa-upload"></i> Bulk Import</button>
+            <button class="btn btn-primary btn-sm" data-action="showAddTeacherModal"><i class="fas fa-plus"></i> Add Teacher</button>
           </div>
         </div>
         <p class="subtitle">Manage teachers and assign them to classes</p>
@@ -340,8 +340,8 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2 data-i18n="fees">School Fees Management</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-export btn-sm" onclick="exportTableToCSV('feesTable','fees')"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-primary btn-sm" onclick="showAddFeeModal()"><i class="fas fa-plus"></i> Record Payment</button>
+            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="feesTable,fees"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-primary btn-sm" data-action="showAddFeeModal"><i class="fas fa-plus"></i> Record Payment</button>
           </div>
         </div>
         <p class="subtitle">Track and manage fee payments</p>
@@ -367,8 +367,8 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2 data-i18n="results">Exam Results</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-export btn-sm" onclick="exportTableToCSV('resultsTable','results')"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-primary btn-sm" onclick="showAddResultModal()"><i class="fas fa-plus"></i> Add Result</button>
+            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="resultsTable,results"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-primary btn-sm" data-action="showAddResultModal"><i class="fas fa-plus"></i> Add Result</button>
           </div>
         </div>
         <p class="subtitle">Record and manage examination results</p>
@@ -386,7 +386,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-cat">
         <div class="card-header">
           <h2 data-i18n="cat">Continuous Assessment Tests</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddCatModal()"><i class="fas fa-plus"></i> Add CAT Score</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddCatModal"><i class="fas fa-plus"></i> Add CAT Score</button>
         </div>
         <p class="subtitle">Track ongoing assessment scores</p>
         <div class="search-bar">
@@ -403,7 +403,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-activities">
         <div class="card-header">
           <h2 data-i18n="activities">Extracurricular Activities</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddActivityModal()"><i class="fas fa-plus"></i> Add Activity</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddActivityModal"><i class="fas fa-plus"></i> Add Activity</button>
         </div>
         <p class="subtitle">Manage clubs, sports, and programs</p>
         <div class="card">
@@ -428,12 +428,12 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2><i class="fas fa-table"></i> Interactive Score Grid</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-export btn-sm" onclick="exportScoreGridCSV()"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-export btn-sm" onclick="exportScoreGridXLSX()"><i class="fas fa-file-excel"></i> Excel</button>
-            <button class="btn btn-sm btn-info" onclick="document.getElementById('scoreGridFileInput').click()"><i class="fas fa-upload"></i> Import</button>
+            <button class="btn btn-export btn-sm" data-action="exportScoreGridCSV"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-export btn-sm" data-action="exportScoreGridXLSX"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn btn-sm btn-info" data-action="triggerScoreGridFileInput"><i class="fas fa-upload"></i> Import</button>
             <input type="file" id="scoreGridFileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="importScoreGridFile(this)">
-            <button class="btn btn-sm btn-outline" onclick="addScoreGridRow()"><i class="fas fa-plus"></i> Add Row</button>
-            <button class="btn btn-sm btn-success" onclick="saveScoreGrid()"><i class="fas fa-save"></i> Save Grid</button>
+            <button class="btn btn-sm btn-outline" data-action="addScoreGridRow"><i class="fas fa-plus"></i> Add Row</button>
+            <button class="btn btn-sm btn-success" data-action="saveScoreGrid"><i class="fas fa-save"></i> Save Grid</button>
           </div>
         </div>
         <p class="subtitle">Click cells to edit scores. CA1 + CA2 + Exam → Total → Grade auto-calculated.</p>
@@ -444,7 +444,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-promotion">
         <div class="card-header">
           <h2><i class="fas fa-arrow-up"></i> Cumulative Promotion List — End of Third Term</h2>
-          <button class="btn btn-export btn-sm" onclick="exportTableToCSV('promotionTable','promotion_list')"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="promotionTable,promotion_list"><i class="fas fa-download"></i> CSV</button>
         </div>
         <p class="subtitle">Students ranked by cumulative average across all terms. Promoted (≥50), Probation (40-49), Repeat (&lt;40)</p>
         <div class="card"><div id="promotionListView"></div></div>
@@ -454,10 +454,10 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2 data-i18n="timetable">Timetable Generator</h2>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-outline tt-tab active" data-tttab="grid" onclick="switchTimetableTab('grid')"><i class="fas fa-table"></i> Grid</button>
-            <button class="btn btn-sm btn-outline tt-tab" data-tttab="settings" onclick="switchTimetableTab('settings')"><i class="fas fa-cog"></i> Settings</button>
-            <button class="btn btn-sm btn-outline tt-tab" data-tttab="rooms" onclick="switchTimetableTab('rooms')"><i class="fas fa-door-open"></i> Rooms</button>
-            <button class="btn btn-sm btn-outline tt-tab" data-tttab="subjects" onclick="switchTimetableTab('subjects')"><i class="fas fa-chalkboard-teacher"></i> Teacher Subjects</button>
+            <button class="btn btn-sm btn-outline tt-tab active" data-tttab="grid" data-action="switchTimetableTab" data-args="grid"><i class="fas fa-table"></i> Grid</button>
+            <button class="btn btn-sm btn-outline tt-tab" data-tttab="settings" data-action="switchTimetableTab" data-args="settings"><i class="fas fa-cog"></i> Settings</button>
+            <button class="btn btn-sm btn-outline tt-tab" data-tttab="rooms" data-action="switchTimetableTab" data-args="rooms"><i class="fas fa-door-open"></i> Rooms</button>
+            <button class="btn btn-sm btn-outline tt-tab" data-tttab="subjects" data-action="switchTimetableTab" data-args="subjects"><i class="fas fa-chalkboard-teacher"></i> Teacher Subjects</button>
           </div>
         </div>
         <p class="subtitle">Manage class schedules, rooms, teacher assignments, and auto generate timetables</p>
@@ -479,7 +479,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-exams">
         <div class="card-header">
           <h2 data-i18n="exams">Exam Schedule</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddExamModal()"><i class="fas fa-plus"></i> Schedule Exam</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddExamModal"><i class="fas fa-plus"></i> Schedule Exam</button>
         </div>
         <p class="subtitle">Plan and manage examination timetables</p>
         <div class="card">
@@ -493,7 +493,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-messages">
         <div class="card-header">
           <h2 data-i18n="messages">Messages</h2>
-          <button class="btn btn-primary btn-sm" onclick="showComposeMessage()"><i class="fas fa-paper-plane"></i> Compose</button>
+          <button class="btn btn-primary btn-sm" data-action="showComposeMessage"><i class="fas fa-paper-plane"></i> Compose</button>
         </div>
         <p class="subtitle">Send and receive messages</p>
         <div class="card">
@@ -504,7 +504,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-attendance">
         <div class="card-header">
           <h2 data-i18n="attendance">Attendance Records</h2>
-          <button class="btn btn-primary btn-sm" onclick="showTakeAttendanceModal()"><i class="fas fa-calendar-check"></i> Take Attendance</button>
+          <button class="btn btn-primary btn-sm" data-action="showTakeAttendanceModal"><i class="fas fa-calendar-check"></i> Take Attendance</button>
         </div>
         <p class="subtitle">Track daily student attendance</p>
         <div class="search-bar">
@@ -522,7 +522,7 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2 data-i18n="library">Library Management</h2>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-export btn-sm" onclick="printSection('libraryView','Library Catalog')"><i class="fas fa-print"></i> Print</button>
+            <button class="btn btn-export btn-sm" data-action="printSection" data-args="libraryView,Library Catalog"><i class="fas fa-print"></i> Print</button>
           </div>
         </div>
         <p class="subtitle">Manage books, borrowing, and returns</p>
@@ -532,7 +532,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-lessonnotes">
         <div class="card-header">
           <h2>Lesson Plans / Notes</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddLessonNoteModal()"><i class="fas fa-plus"></i> Add Lesson Note</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddLessonNoteModal"><i class="fas fa-plus"></i> Add Lesson Note</button>
         </div>
         <p class="subtitle">All teacher lesson notes and weekly plans</p>
         <div class="card"><div class="search-bar"><input type="text" id="adminLsnSearch" placeholder="Search lesson notes..." oninput="renderLessonNotes('adminLessonNotes')"></div><div id="adminLessonNotes"></div></div>
@@ -541,7 +541,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-behavior">
         <div class="card-header">
           <h2>Behavior & Discipline Log</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddBehaviorModal()"><i class="fas fa-plus"></i> Record Behavior</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddBehaviorModal"><i class="fas fa-plus"></i> Record Behavior</button>
         </div>
         <p class="subtitle">Track student incidents and commendations</p>
         <div class="card"><div class="search-bar"><input type="text" id="adminBehSearch" placeholder="Search by student..." oninput="renderBehaviorLog('adminBehaviorLog')"></div><div id="adminBehaviorLog"></div></div>
@@ -551,7 +551,7 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2>Staff HR Management</h2>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-export btn-sm" onclick="printSection('hrView','Staff HR Report')"><i class="fas fa-print"></i> Print</button>
+            <button class="btn btn-export btn-sm" data-action="printSection" data-args="hrView,Staff HR Report"><i class="fas fa-print"></i> Print</button>
           </div>
         </div>
         <p class="subtitle">Staff attendance, leave, and payroll management</p>
@@ -578,7 +578,7 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2>Payment Transactions</h2>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-export btn-sm" onclick="exportTableToCSV('paymentsTable','payments')"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="paymentsTable,payments"><i class="fas fa-download"></i> CSV</button>
           </div>
         </div>
         <p class="subtitle">Online fee payment records</p>
@@ -593,7 +593,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-analytics">
         <div class="card-header">
           <h2>Analytics Dashboard</h2>
-          <button class="btn btn-export btn-sm" onclick="printSection('analyticsView','School Analytics')"><i class="fas fa-print"></i> Print</button>
+          <button class="btn btn-export btn-sm" data-action="printSection" data-args="analyticsView,School Analytics"><i class="fas fa-print"></i> Print</button>
         </div>
         <p class="subtitle">Performance trends, attendance patterns, fee collection rates</p>
         <div class="card"><div id="analyticsView"></div></div>
@@ -602,7 +602,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-reportbuilder">
         <div class="card-header">
           <h2><i class="fas fa-object-group"></i> Custom Report Builder</h2>
-          <button class="btn btn-primary btn-sm" onclick="showCreateReportModal()"><i class="fas fa-plus"></i> Create Report</button>
+          <button class="btn btn-primary btn-sm" data-action="showCreateReportModal"><i class="fas fa-plus"></i> Create Report</button>
         </div>
         <p class="subtitle">Design custom reports by selecting data sources, fields, chart types, and filters. Drag and drop to arrange columns.</p>
         <div class="card"><div id="reportBuilderView"></div></div>
@@ -627,7 +627,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-eschool">
         <div class="card-header">
           <h2><i class="fas fa-video"></i> E School — Virtual Classrooms</h2>
-          <button class="btn btn-export btn-sm" onclick="exportTableToCSV('eschoolTable','virtual_classes')"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="eschoolTable,virtual_classes"><i class="fas fa-download"></i> CSV</button>
         </div>
         <p class="subtitle">Schedule and manage live virtual classes via Zoom or Google Meet. Links visible to all users.</p>
         <div class="card"><div id="eschoolAdminView"></div></div>
@@ -652,7 +652,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-terms">
         <div class="card-header">
           <h2>Academic Terms</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddTermModal()"><i class="fas fa-plus"></i> New Term</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddTermModal"><i class="fas fa-plus"></i> New Term</button>
         </div>
         <p class="subtitle">Manage academic year terms and activate/deactivate</p>
         <div class="card">
@@ -666,7 +666,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-programs">
         <div class="card-header">
           <h2>Admission Programs</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddProgramModal()"><i class="fas fa-plus"></i> Add Program</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddProgramModal"><i class="fas fa-plus"></i> Add Program</button>
         </div>
         <p class="subtitle">Manage programs, courses and admission requirements</p>
         <div class="card"><div id="adminPrograms"></div></div>
@@ -676,7 +676,7 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2>Admission Applications</h2>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-export btn-sm" onclick="exportTableToCSV('applicationsTable','applications')"><i class="fas fa-download"></i> CSV</button>
+            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="applicationsTable,applications"><i class="fas fa-download"></i> CSV</button>
           </div>
         </div>
         <p class="subtitle">Review, approve, and manage incoming applications</p>
@@ -686,7 +686,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-exambank">
         <div class="card-header">
           <h2>Entrance Exam Questions</h2>
-          <button class="btn btn-primary btn-sm" onclick="showAddQuestionModal()"><i class="fas fa-plus"></i> Add Question</button>
+          <button class="btn btn-primary btn-sm" data-action="showAddQuestionModal"><i class="fas fa-plus"></i> Add Question</button>
         </div>
         <p class="subtitle">Create and manage entrance examination questions per program</p>
         <div class="card">
@@ -700,7 +700,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-examresults">
         <div class="card-header">
           <h2>Entrance Exam Results</h2>
-          <button class="btn btn-export btn-sm" onclick="exportTableToCSV('examResultsTable','examResults')"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="examResultsTable,examResults"><i class="fas fa-download"></i> CSV</button>
         </div>
         <p class="subtitle">View all applicant exam scores and pass/fail status</p>
         <div class="card"><div id="adminExamResults"></div></div>
@@ -745,7 +745,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-activitygames">
         <div class="card-header">
           <h2><i class="fas fa-gamepad"></i> Activity Games — Leaderboard & Scores</h2>
-          <button class="btn btn-export btn-sm" onclick="exportActivityGameCSV()"><i class="fas fa-download"></i> CSV</button>
+          <button class="btn btn-export btn-sm" data-action="exportActivityGameCSV"><i class="fas fa-download"></i> CSV</button>
         </div>
         <p class="subtitle">View student scores across Spelling Bee, Math Sprint, Quiz Bowl, Word Scramble, and Typing Test simulations</p>
         <div class="card"><div id="adminActivityGamesView"></div></div>
@@ -766,7 +766,7 @@ if (navigator.serviceWorker) {
       <div class="admin-panel" id="admin-transcript">
         <div class="card-header">
           <h2><i class="fas fa-scroll"></i> Academic Transcript Generator</h2>
-          <button class="btn btn-success btn-sm" onclick="printTranscript()"><i class="fas fa-print"></i> Print</button>
+          <button class="btn btn-success btn-sm" data-action="printTranscript"><i class="fas fa-print"></i> Print</button>
         </div>
         <p class="subtitle">Generate cumulative academic transcripts across all terms for any student. Works for all school categories (Basic, Secondary, etc.)</p>
         <div class="card"><div id="transcriptView"></div></div>
@@ -779,8 +779,8 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2>Customize Your School Portal</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-info" onclick="resetSchoolProfile()"><i class="fas fa-undo"></i> Reset to Defaults</button>
-            <button class="btn btn-primary btn-sm" onclick="saveSchoolProfile()"><i class="fas fa-save"></i> Save Changes</button>
+            <button class="btn btn-sm btn-info" data-action="resetSchoolProfile"><i class="fas fa-undo"></i> Reset to Defaults</button>
+            <button class="btn btn-primary btn-sm" data-action="saveSchoolProfile"><i class="fas fa-save"></i> Save Changes</button>
           </div>
         </div>
         <p class="subtitle">Edit what visitors see on your school's portal — like customizing your Facebook profile</p>
@@ -792,8 +792,8 @@ if (navigator.serviceWorker) {
         <div class="card-header">
           <h2><i class="fas fa-globe"></i> Website Builder</h2>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-sm btn-success" onclick="saveWebsiteConfig()"><i class="fas fa-save"></i> Save Website</button>
-            <button class="btn btn-sm btn-info" onclick="previewWebsite()"><i class="fas fa-eye"></i> Preview</button>
+            <button class="btn btn-sm btn-success" data-action="saveWebsiteConfig"><i class="fas fa-save"></i> Save Website</button>
+            <button class="btn btn-sm btn-info" data-action="previewWebsite"><i class="fas fa-eye"></i> Preview</button>
           </div>
         </div>
         <p class="subtitle">Build and customize your school's public website. Manage branding, content sections, announcements, gallery &amp; contact form.</p>
@@ -884,6 +884,7 @@ if (navigator.serviceWorker) {
 <script src="js/data.js"></script>
 <script src="js/schoolprofile.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/events.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/teacher.js"></script>
 <script src="js/student.js"></script>
@@ -1129,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
+<div class="calc-float"><button class="calc-float-btn" data-action="openCalculator" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <!-- Floating Chat Buttons -->
 <div class="chat-float" id="chatFloat">
   <a class="chat-btn chat-whatsapp" id="chatWhatsappBtn" href="javascript:;" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>

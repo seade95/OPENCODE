@@ -115,15 +115,15 @@
 <!-- Modal Overlay -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <button class="modal-close" data-action="closeModal">&times;</button>
     <div id="modalBody"></div>
   </div>
 </div>
 <!-- ==================== LANDING PAGE ==================== -->
 <div id="landing-page">
 <!-- Scroll Buttons -->
-<button class="scroll-btn scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
-<button class="scroll-btn scroll-bottom" id="scrollBottomBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" aria-label="Scroll to bottom"><i class="fas fa-chevron-down"></i></button>
+<button class="scroll-btn scroll-top" id="scrollTopBtn" data-action="scrollToTop" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
+<button class="scroll-btn scroll-bottom" id="scrollBottomBtn" data-action="scrollToBottom" aria-label="Scroll to bottom"><i class="fas fa-chevron-down"></i></button>
 <!-- Floating Chat Buttons -->
 <div class="chat-float" id="chatFloat">
   <a class="chat-btn chat-whatsapp" id="chatWhatsappBtn" href="javascript:;" target="_blank" rel="noopener" aria-label="Chat on WhatsApp" title="Chat on WhatsApp"><i class="fab fa-whatsapp"></i></a>
@@ -133,12 +133,12 @@
 <div id="announcementBar" style="display:none;" class="sp-announce-bar"></div>
 <!-- Navbar -->
 <nav class="navbar" id="navbar">
-  <a class="nav-logo" href="javascript:;" onclick="goHome()"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
-  <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+  <a class="nav-logo" href="javascript:;" data-action="goHome"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">School Portal</span></a>
+  <button class="nav-toggle" data-action="toggleNav" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
+  <div class="nav-backdrop" id="navBackdrop" data-action="toggleNav"></div>
   <div class="nav-menu" id="navMenu">
     <ul class="nav-links" id="navLinks">
-      <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
+      <li class="nav-dropdown" data-action="toggleNavDropdown">
         <a href="javascript:;" class="nav-link">Features <i class="fas fa-chevron-down nav-dropdown-arrow"></i></a>
         <div class="nav-dropdown-menu">
           <a href="#portals"><i class="fas fa-door-open"></i> Portals</a>
@@ -147,8 +147,8 @@
           <a href="#news"><i class="fas fa-calendar-alt"></i> Announcements</a>
         </div>
       </li>
-      <li><a href="javascript:;" class="nav-btn nav-btn-admin" onclick="redirectToPortal(slug, 'admin')"><i class="fas fa-user-shield"></i> Admin</a></li>
-      <li><a href="javascript:;" class="nav-link nav-link-icon" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-admin" data-action="redirectToAdminPortal"><i class="fas fa-user-shield"></i> Admin</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-action="toggleDarkMode" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
     </ul>
   </div>
 </nav>
@@ -193,20 +193,20 @@
         <li><a href="#portals">Portals</a></li>
         <li><a href="#courses">Subjects</a></li>
         <li><a href="#news">Announcements</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admin')">Admin Portal</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'teacher')">Teacher Portal</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'student')">Student Portal</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admission')">Admission Portal</a></li>
+        <li><a href="javascript:;" data-action="redirectToAdminPortal">Admin Portal</a></li>
+        <li><a href="javascript:;" data-action="redirectToTeacherPortal">Teacher Portal</a></li>
+        <li><a href="javascript:;" data-action="redirectToStudentPortal">Student Portal</a></li>
+        <li><a href="javascript:;" data-action="redirectToAdmissionPortal">Admission Portal</a></li>
       </ul>
     </div>
     <div class="footer-widget">
       <h5>Portals</h5>
       <ul>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'admin')"><i class="fas fa-angle-right"></i> Administration</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'teacher')"><i class="fas fa-angle-right"></i> Teachers</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'student')"><i class="fas fa-angle-right"></i> Students</a></li>
-        <li><a href="javascript:;" onclick="redirectToPortal(window.slug || getSlug(), 'parent')"><i class="fas fa-angle-right"></i> Parents</a></li>
-        <li><a href="#" onclick="showAlumniPortal();return false"><i class="fas fa-angle-right"></i> Alumni</a></li>
+        <li><a href="javascript:;" data-action="redirectToAdminPortal"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="javascript:;" data-action="redirectToTeacherPortal"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="javascript:;" data-action="redirectToStudentPortal"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="javascript:;" data-action="redirectToParentPortal"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="#" data-action="showAlumniPortal"><i class="fas fa-angle-right"></i> Alumni</a></li>
       </ul>
     </div>
     <div class="footer-widget">
@@ -251,8 +251,8 @@ function goHome() {
   if (slug) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(slug); return; }
   window.location.href = 'index.html';
 }
-function toggleNavDropdown(el) {
-  if (el) el.classList.toggle('open');
+function toggleNavDropdown() {
+  if (this) this.classList.toggle('open');
 }
 function toggleDarkMode() {
   var html = document.documentElement;
@@ -446,22 +446,22 @@ function renderPortal(slug, tenant, data) {
   html += '<section class="section-area" id="portals">'
     + '<div class="section-title"><h2>Choose Your <span>Portal</span></h2><p>Select the portal that matches your role to get started</p></div>'
     + '<div class="services-grid">'
-    + '<div class="service-card sp-card-admin" onclick="redirectToPortal(\'' + qSlug + '\', \'admin\')">'
+    + '<div class="service-card sp-card-admin" data-action="redirectToPortal" data-args="' + qSlug + ',admin">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-user-shield"></i></div>'
     + '<div class="info-box"><h4>Admin Portal</h4><p>Full access to manage students, teachers, fees, results, and attendance.</p></div></div>'
-    + '<div class="service-card sp-card-teacher" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')">'
+    + '<div class="service-card sp-card-teacher" data-action="redirectToPortal" data-args="' + qSlug + ',teacher">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-chalkboard-teacher"></i></div>'
     + '<div class="info-box"><h4>Teacher Portal</h4><p>Manage your class, upload assignments, track student progress and attendance.</p></div></div>'
-    + '<div class="service-card sp-card-student" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')">'
+    + '<div class="service-card sp-card-student" data-action="redirectToPortal" data-args="' + qSlug + ',student">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-user-graduate"></i></div>'
     + '<div class="info-box"><h4>Student Portal</h4><p>View your results, assignments, fee status, attendance, and activities.</p></div></div>'
-    + '<div class="service-card sp-card-parent" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')">'
+    + '<div class="service-card sp-card-parent" data-action="redirectToPortal" data-args="' + qSlug + ',parent">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-users"></i></div>'
     + '<div class="info-box"><h4>Parent Portal</h4><p>Monitor your child\'s academic progress, attendance, fees, and activities.</p></div></div>'
-    + '<div class="service-card sp-card-admission" onclick="window.location.href=\'login/admission.html?school=' + qSlug + '\'">'
+    + '<div class="service-card sp-card-admission" data-action="openAdmissionPortal">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-graduation-cap"></i></div>'
     + '<div class="info-box"><h4>Admission Portal</h4><p>Apply for admission, explore programs, and track your application status.</p></div></div>'
-    + '<div class="service-card sp-card-cbt" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')">'
+    + '<div class="service-card sp-card-cbt" data-action="redirectToPortal" data-args="' + qSlug + ',cbt">'
     + '<div class="img-box sp-card-icon-wrap"><i class="fas fa-laptop-code"></i></div>'
     + '<div class="info-box"><h4>CBT Portal</h4><p>Take computer-based tests and exams online with real-time grading and results.</p></div></div>'
     + '</div></section>';
@@ -576,9 +576,9 @@ function renderPortal(slug, tenant, data) {
     if (cbt.registrationOpen) {
       html += '<div class="sp-cbt-reg">'
         + '<h4>' + esc(cbt.registrationText || 'Register for CBT Exams') + '</h4>'
-        + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+        + '<a href="javascript:;" data-action="redirectToPortal" data-args="' + qSlug + ',cbt" class="btn btn-primary"><i class="fas fa-pen"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
     } else if (cbt.ctaText) {
-      html += '<div class="sp-text-center"><a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'cbt\')" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
+      html += '<div class="sp-text-center"><a href="javascript:;" data-action="redirectToPortal" data-args="' + qSlug + ',cbt" class="btn btn-primary"><i class="fas fa-laptop-code"></i> ' + esc(cbt.ctaText || 'Take a CBT Exam') + '</a></div>';
     }
     html += '</section>';
   }
@@ -589,9 +589,9 @@ function renderPortal(slug, tenant, data) {
     + '<h2>Ready to Get Started?</h2>'
     + '<p>Access your portal or learn more about ' + esc(name) + '</p>'
     + '<div class="sp-cta-actions">'
-    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'student\')" class="btn sp-cta-btn-light"><i class="fas fa-user-graduate"></i> Student Login</a>'
-    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'parent\')" class="btn sp-cta-btn-outline"><i class="fas fa-users"></i> Parent Login</a>'
-    + '<a href="javascript:;" onclick="redirectToPortal(\'' + qSlug + '\', \'teacher\')" class="btn sp-cta-btn-outline"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
+    + '<a href="javascript:;" data-action="redirectToPortal" data-args="' + qSlug + ',student" class="btn sp-cta-btn-light"><i class="fas fa-user-graduate"></i> Student Login</a>'
+    + '<a href="javascript:;" data-action="redirectToPortal" data-args="' + qSlug + ',parent" class="btn sp-cta-btn-outline"><i class="fas fa-users"></i> Parent Login</a>'
+    + '<a href="javascript:;" data-action="redirectToPortal" data-args="' + qSlug + ',teacher" class="btn sp-cta-btn-outline"><i class="fas fa-chalkboard-teacher"></i> Staff Login</a>'
     + '</div></div></section>';
 
   document.getElementById('app').innerHTML = html;
@@ -669,5 +669,6 @@ window.addEventListener('load', function() {
   }
 });
 </script>
+<script src="js/events.js"></script>
 </body>
 </html>

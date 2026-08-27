@@ -83,7 +83,7 @@
 <!-- Modal Overlay -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modalContent">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <button class="modal-close" data-action="closeModal">&times;</button>
     <div id="modalBody"></div>
   </div>
 </div>
@@ -92,8 +92,8 @@
 <div id="landing-page">
 
 <!-- Scroll Buttons -->
-<button class="scroll-btn scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
-<button class="scroll-btn scroll-bottom" id="scrollBottomBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" aria-label="Scroll to bottom"><i class="fas fa-chevron-down"></i></button>
+<button class="scroll-btn scroll-top" id="scrollTopBtn" data-action="scrollToTop" aria-label="Scroll to top"><i class="fas fa-chevron-up"></i></button>
+<button class="scroll-btn scroll-bottom" id="scrollBottomBtn" data-action="scrollToBottom" aria-label="Scroll to bottom"><i class="fas fa-chevron-down"></i></button>
 
 <!-- Floating Chat Buttons -->
 <div class="chat-float" id="chatFloat">
@@ -107,11 +107,11 @@
 <!-- Top Bar -->
 <nav class="navbar" id="navbar">
   <a class="nav-logo" href="#"><img class="school-logo-img" src="icons/icon.svg" alt="EDUVERSE" onerror="this.style.display='none';this.nextElementSibling.style.display=''"> <span id="navSchoolName">EDUVERSE</span></a>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
-  <div class="nav-backdrop" id="navBackdrop" onclick="toggleNav()"></div>
+  <button class="nav-toggle" data-action="toggleNav" aria-label="Toggle navigation menu"><i class="fas fa-bars" id="navToggleIcon"></i></button>
+  <div class="nav-backdrop" id="navBackdrop" data-action="toggleNav"></div>
   <div class="nav-menu" id="navMenu">
     <ul class="nav-links" id="navLinks">
-      <li class="nav-dropdown" onclick="toggleNavDropdown(this)">
+      <li class="nav-dropdown" data-action="toggleNavDropdown">
         <a href="javascript:;" class="nav-link">Features <i class="fas fa-chevron-down nav-dropdown-arrow"></i></a>
         <div class="nav-dropdown-menu">
           <a href="#services"><i class="fas fa-cogs"></i> Services</a>
@@ -122,16 +122,16 @@
       </li>
       <li><a href="pricing.html" class="nav-link">Pricing</a></li>
       <li><a href="directory.html" class="nav-link">Schools</a></li>
-      <li><a href="javascript:;" class="nav-link nav-link-accent" onclick="showApplySchool()"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-accent" data-action="showApplySchool"><i class="fas fa-pen"></i> Apply as School</a></li>
       <li class="nav-divider" role="separator"></li>
       <li><a href="admin.html" class="nav-btn nav-btn-admin"><i class="fas fa-user-shield"></i> Admin</a></li>
-      <li><a href="javascript:;" class="nav-btn nav-btn-school" onclick="showSchoolSelector()"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-school" data-action="showSchoolSelector"><i class="fas fa-school"></i> <span id="navSchoolIndicator">School</span></a></li>
       <li class="nav-divider" role="separator"></li>
-      <li><a href="javascript:;" class="nav-btn nav-btn-primary" onclick="showEduverseLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
-      <li><a href="javascript:;" class="nav-btn nav-btn-secondary" onclick="showEduverseSignup()" id="navJoinBtn"><i class="fas fa-user-plus"></i> Join EduVerse</a></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-primary" data-action="showEduverseLogin"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-btn nav-btn-secondary" data-action="showEduverseSignup" id="navJoinBtn"><i class="fas fa-user-plus"></i> Join EduVerse</a></li>
       <li class="nav-divider" role="separator"></li>
       <li><a href="superadmin.html" class="nav-link nav-link-subtle" id="superAdminCog" title="Super Admin"><i class="fas fa-user-cog"></i></a></li>
-      <li><a href="javascript:;" class="nav-link nav-link-icon" onclick="toggleDarkMode()" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-action="toggleDarkMode" title="Toggle Dark Mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
     </ul>
   </div>
 </nav>
@@ -145,9 +145,9 @@
         <h1 id="heroTitle0">Shape Your <span>Future</span> With Us</h1>
         <p id="heroSubtitle0">Empowering students with world class education, innovative learning, and a supportive community that nurtures growth and excellence.</p>
         <div class="slide-actions">
-          <a href="javascript:;" class="btn btn-accent" onclick="showEduverseSignup()"><i class="fas fa-rocket"></i> Get Started Free</a>
-          <a href="javascript:;" class="btn btn-outline" onclick="showEduverseLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</a>
-          <a href="javascript:;" class="btn btn-outline" style="border-color:var(--accent);color:var(--accent);" onclick="launchDemo()"><i class="fas fa-play-circle"></i> Try Demo</a>
+          <a href="javascript:;" class="btn btn-accent" data-action="showEduverseSignup"><i class="fas fa-rocket"></i> Get Started Free</a>
+          <a href="javascript:;" class="btn btn-outline" data-action="showEduverseLogin"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+          <a href="javascript:;" class="btn btn-outline" style="border-color:var(--accent);color:var(--accent);" data-action="launchDemo"><i class="fas fa-play-circle"></i> Try Demo</a>
         </div>
       </div>
     </div>
@@ -157,8 +157,8 @@
         <h2 id="heroTitle1">Your School, <span>Your Way</span></h2>
         <p id="heroSubtitle1">Create your school profile, manage students and teachers, track fees and results — all from one unified platform.</p>
         <div class="slide-actions">
-          <a href="javascript:;" class="btn btn-primary" onclick="showEduverseSignup()"><i class="fas fa-plus-circle"></i> Create Your School</a>
-          <a href="javascript:;" class="btn btn-outline" onclick="showEduverseLogin()"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+          <a href="javascript:;" class="btn btn-primary" data-action="showEduverseSignup"><i class="fas fa-plus-circle"></i> Create Your School</a>
+          <a href="javascript:;" class="btn btn-outline" data-action="showEduverseLogin"><i class="fas fa-sign-in-alt"></i> Sign In</a>
         </div>
       </div>
     </div>
@@ -168,18 +168,18 @@
         <h2 id="heroTitle2">K-12, Admissions, <span>&amp; More</span></h2>
         <p id="heroSubtitle2">Full academic management from ECCDE to SSS, entrance exams, ID cards, analytics, and system tools — everything your school needs.</p>
         <div class="slide-actions">
-          <a href="javascript:;" class="btn btn-primary" onclick="showEduverseSignup()" id="heroJoinBtn"><i class="fas fa-graduation-cap"></i> Join EduVerse</a>
+          <a href="javascript:;" class="btn btn-primary" data-action="showEduverseSignup" id="heroJoinBtn"><i class="fas fa-graduation-cap"></i> Join EduVerse</a>
           <a href="admin.html" class="btn btn-outline"><i class="fas fa-cogs"></i> Administration</a>
         </div>
       </div>
     </div>
   </div>
-  <button class="slider-arrow prev" onclick="slidePrev()"><i class="fas fa-chevron-left"></i></button>
-  <button class="slider-arrow next" onclick="slideNext()"><i class="fas fa-chevron-right"></i></button>
+  <button class="slider-arrow prev" data-action="slidePrev"><i class="fas fa-chevron-left"></i></button>
+  <button class="slider-arrow next" data-action="slideNext"><i class="fas fa-chevron-right"></i></button>
   <div class="slider-dots" id="sliderDots">
-    <button class="slider-dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
-    <button class="slider-dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
-    <button class="slider-dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
+    <button class="slider-dot active" data-action="goToSlide" data-args="0" aria-label="Slide 1"></button>
+    <button class="slider-dot" data-action="goToSlide" data-args="1" aria-label="Slide 2"></button>
+    <button class="slider-dot" data-action="goToSlide" data-args="2" aria-label="Slide 3"></button>
   </div>
 </section>
 
@@ -392,7 +392,7 @@
   </div>
   <div style="text-align:center;margin-top:32px;">
     <p style="color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:12px;">Want your school on this list?</p>
-    <a href="javascript:;" class="btn btn-accent" onclick="showApplySchool()"><i class="fas fa-pen"></i> Apply Now</a>
+    <a href="javascript:;" class="btn btn-accent" data-action="showApplySchool"><i class="fas fa-pen"></i> Apply Now</a>
   </div>
 </section>
 
@@ -402,7 +402,7 @@
     <h2 style="color:white;font-size:28px;margin:0 0 8px;">Ready to Transform Your School?</h2>
     <p style="opacity:0.85;font-size:15px;margin:0 0 24px;">See our plans or book a personalized demo with our team.</p>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-      <a href="javascript:;" class="btn" style="background:white;color:#2563eb;font-weight:700;" onclick="showApplySchool()"><i class="fas fa-pen"></i> Apply as School</a>
+      <a href="javascript:;" class="btn" style="background:white;color:#2563eb;font-weight:700;" data-action="showApplySchool"><i class="fas fa-pen"></i> Apply as School</a>
       <a href="pricing.html" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-tag"></i> View Pricing</a>
       <a href="directory.html" class="btn" style="border:2px solid rgba(255,255,255,0.5);color:white;"><i class="fas fa-school"></i> School Directory</a>
     </div>
@@ -583,19 +583,19 @@
         <li><a href="#features">Our Services</a></li>
         <li><a href="#events">Upcoming Events</a></li>
         <li><a href="admin.html">Admin Portal</a></li>
-        <li><a href="#" onclick="showTeacherLogin();return false">Teacher Portal</a></li>
-        <li><a href="#" onclick="showStudentLogin();return false">Student Portal</a></li>
-        <li><a href="#" onclick="showAdmissionPortal();return false">Admission Portal</a></li>
+        <li><a href="#" data-action="showTeacherLogin">Teacher Portal</a></li>
+        <li><a href="#" data-action="showStudentLogin">Student Portal</a></li>
+        <li><a href="#" data-action="showAdmissionPortal">Admission Portal</a></li>
       </ul>
     </div>
     <div class="footer-widget">
       <h5>Portals</h5>
       <ul>
         <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
-        <li><a href="#" onclick="showTeacherLogin();return false"><i class="fas fa-angle-right"></i> Teachers</a></li>
-        <li><a href="#" onclick="showStudentLogin();return false"><i class="fas fa-angle-right"></i> Students</a></li>
-        <li><a href="#" onclick="showParentLogin();return false"><i class="fas fa-angle-right"></i> Parents</a></li>
-        <li><a href="#" onclick="showAlumniPortal();return false"><i class="fas fa-angle-right"></i> Alumni</a></li>
+        <li><a href="#" data-action="showTeacherLogin"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="#" data-action="showStudentLogin"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="#" data-action="showParentLogin"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="#" data-action="showAlumniPortal"><i class="fas fa-angle-right"></i> Alumni</a></li>
       </ul>
     </div>
     <div class="footer-widget">
@@ -636,7 +636,7 @@
     <div class="portal-header-right">
       <span id="admBadge" style="font-size:13px;color:var(--text-light);margin-right:12px;"></span>
       <span class="conn-status" id="connStatusAdm" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin-right:8px;"></i></span>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div class="student-layout" id="admissionPageContent">
@@ -654,7 +654,7 @@
     </div>
     <div class="portal-header-right">
       <span class="conn-status" id="connStatusStuLogin" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin-right:8px;"></i></span>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div style="max-width:440px;margin:80px auto;padding:0 20px;">
@@ -675,7 +675,7 @@
         <input type="text" id="loginName" placeholder="Full name or password" list="studentNameList" oninput="validateField(this,'required')">
         <datalist id="studentNameList"></datalist>
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="studentLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Access Portal</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" data-action="studentLogin" data-i18n="login"><i class="fas fa-arrow-right"></i> Access Portal</button>
       <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-light);">Use your Student ID to log in and view your records.</p>
     </div>
   </div>
@@ -691,7 +691,7 @@
     <div class="portal-header-right">
       <div id="stuLangSelector" style="margin-right:8px;"></div>
       <span id="studentNameDisplay"><i class="fas fa-user-graduate"></i> Student</span>
-      <div class="notif-bell" onclick="toggleNotifDropdown('Stu')" style="position:relative;cursor:pointer;margin:0 8px;">
+      <div class="notif-bell" data-action="toggleNotifDropdown" data-args="Stu" style="position:relative;cursor:pointer;margin:0 8px;">
         <i class="fas fa-bell" style="font-size:16px;color:var(--text-light);"></i>
         <span class="notif-count" id="notifCountStu" style="display:none;">0</span>
         <div class="notif-dropdown" id="notifDropdownStu">
@@ -700,8 +700,8 @@
         </div>
       </div>
       <span class="conn-status" id="connStatusStu" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin:0 8px;"></i></span>
-      <button class="portal-back-btn" onclick="studentLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="studentLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div class="student-layout">
@@ -937,7 +937,7 @@
     </div>
     <div class="portal-header-right">
       <span class="conn-status" id="connStatusTchLogin" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin-right:8px;"></i></span>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div style="max-width:440px;margin:80px auto;padding:0 20px;">
@@ -957,7 +957,7 @@
         <label><i class="fas fa-lock"></i> Password</label>
         <input type="password" id="teacherLoginPass" placeholder="Enter your password" oninput="validateField(this,'password')">
       </div>
-      <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="teacherLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
+      <button class="btn btn-success" style="width:100%;justify-content:center;" data-action="teacherLogin" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
     </div>
   </div>
 </div>
@@ -976,7 +976,7 @@
         <span id="tchTermBadgeText"></span>
       </div>
       <span id="teacherNameDisplay"><i class="fas fa-chalkboard-teacher"></i> Teacher</span>
-      <div class="notif-bell" onclick="toggleNotifDropdown('Tch')" style="position:relative;cursor:pointer;margin:0 8px;">
+      <div class="notif-bell" data-action="toggleNotifDropdown" data-args="Tch" style="position:relative;cursor:pointer;margin:0 8px;">
         <i class="fas fa-bell" style="font-size:16px;color:var(--text-light);"></i>
         <span class="notif-count" id="notifCountTch" style="display:none;">0</span>
         <div class="notif-dropdown" id="notifDropdownTch">
@@ -985,8 +985,8 @@
         </div>
       </div>
       <span class="conn-status" id="connStatusTch" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin:0 8px;"></i></span>
-      <button class="portal-back-btn" onclick="teacherLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="teacherLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div class="admin-layout">
@@ -1038,7 +1038,7 @@
       <div class="admin-panel" id="teacher-assignments">
         <div class="card-header">
           <h2 data-i18n="assignments">My Assignments</h2>
-          <button class="btn btn-success btn-sm" onclick="showAddAssignmentModal()"><i class="fas fa-plus"></i> Upload Assignment</button>
+          <button class="btn btn-success btn-sm" data-action="showAddAssignmentModal"><i class="fas fa-plus"></i> Upload Assignment</button>
         </div>
         <p class="subtitle">Create and manage assignments for your class</p>
         <div id="teacherAssignmentsDefault">
@@ -1098,7 +1098,7 @@
       <div class="admin-panel" id="teacher-lessonnotes">
         <div class="card-header">
           <h2>My Lesson Plans</h2>
-          <button class="btn btn-success btn-sm" onclick="showAddLessonNoteModal()"><i class="fas fa-plus"></i> Add Lesson Note</button>
+          <button class="btn btn-success btn-sm" data-action="showAddLessonNoteModal"><i class="fas fa-plus"></i> Add Lesson Note</button>
         </div>
         <p class="subtitle">Create and manage weekly lesson plans</p>
         <div class="card"><div id="tchLessonNotes"></div></div>
@@ -1108,7 +1108,7 @@
       <div class="admin-panel" id="teacher-behavior">
         <div class="card-header">
           <h2>Behavior Log</h2>
-          <button class="btn btn-success btn-sm" onclick="showAddBehaviorModal()"><i class="fas fa-plus"></i> Record Behavior</button>
+          <button class="btn btn-success btn-sm" data-action="showAddBehaviorModal"><i class="fas fa-plus"></i> Record Behavior</button>
         </div>
         <p class="subtitle">Track student behavior in your class</p>
         <div class="card"><div id="tchBehaviorLog"></div></div>
@@ -1125,7 +1125,7 @@
       <div class="admin-panel" id="teacher-filerepo">
         <div class="card-header">
           <h2>File Repository</h2>
-          <button class="btn btn-success btn-sm" onclick="showUploadFileModal()"><i class="fas fa-upload"></i> Upload</button>
+          <button class="btn btn-success btn-sm" data-action="showUploadFileModal"><i class="fas fa-upload"></i> Upload</button>
         </div>
         <p class="subtitle">Upload and manage learning materials</p>
         <div class="card"><div id="tchFileRepo"></div></div>
@@ -1192,7 +1192,7 @@
     </div>
     <div class="portal-header-right">
       <span class="conn-status" id="connStatusParentLogin" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin-right:8px;"></i></span>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div style="max-width:440px;margin:80px auto;padding:0 20px;">
@@ -1211,7 +1211,7 @@
         <input type="password" id="parentLoginPass" placeholder="Enter your password" oninput="validateField(this,'password')">
       </div>
       <div id="parentDemoHint" style="display:none;background:#fefcbf;color:#744210;padding:10px;border-radius:6px;margin-bottom:16px;font-size:13px;"><i class="fas fa-info-circle"></i> Demo mode — credentials auto filled below. Click "Sign In" to enter.</div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="parentLogin()" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" data-action="parentLogin" data-i18n="login"><i class="fas fa-arrow-right"></i> Sign In</button>
     </div>
   </div>
 </div>
@@ -1226,7 +1226,7 @@
     <div class="portal-header-right">
       <div id="parentLangSelector" style="margin-right:8px;"></div>
       <span id="parentNameDisplay"><i class="fas fa-users"></i> Parent</span>
-      <div class="notif-bell" onclick="toggleNotifDropdown('Par')" style="position:relative;cursor:pointer;margin:0 8px;">
+      <div class="notif-bell" data-action="toggleNotifDropdown" data-args="Par" style="position:relative;cursor:pointer;margin:0 8px;">
         <i class="fas fa-bell" style="font-size:16px;color:var(--text-light);"></i>
         <span class="notif-count" id="notifCountPar" style="display:none;">0</span>
         <div class="notif-dropdown" id="notifDropdownPar">
@@ -1235,8 +1235,8 @@
         </div>
       </div>
       <span class="conn-status" id="connStatusParent" title="Connected"><i class="fas fa-circle" style="color:#22c55e;font-size:10px;margin:0 8px;"></i></span>
-      <button class="portal-back-btn" onclick="parentLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-      <button class="portal-back-btn" onclick="goHome()"><i class="fas fa-home"></i> Home</button>
+      <button class="portal-back-btn" data-action="parentLogout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <button class="portal-back-btn" data-action="goHome"><i class="fas fa-home"></i> Home</button>
     </div>
   </div>
   <div class="student-layout">
@@ -1272,21 +1272,21 @@
     <div class="ev-search-box"><i class="fas fa-search"></i><input type="text" id="evGlobalSearch" placeholder="Search EduVerse..." onkeydown="if(event.key==='Enter')handleGlobalSearch()"></div>
   </div>
   <div class="ev-topbar-center">
-    <a href="javascript:;" class="ev-nav-icon active" data-section="home" onclick="showEduverseHome()" title="Home"><i class="fas fa-home"></i></a>
-    <a href="javascript:;" class="ev-nav-icon" data-section="schools" onclick="showSchoolSelector()" title="Schools"><i class="fas fa-school"></i></a>
-    <a href="javascript:;" class="ev-nav-icon" data-section="notifications" onclick="showEduverseHome()" title="Notifications"><i class="fas fa-bell"></i></a>
+    <a href="javascript:;" class="ev-nav-icon active" data-section="home" data-action="showEduverseHome" title="Home"><i class="fas fa-home"></i></a>
+    <a href="javascript:;" class="ev-nav-icon" data-section="schools" data-action="showSchoolSelector" title="Schools"><i class="fas fa-school"></i></a>
+    <a href="javascript:;" class="ev-nav-icon" data-section="notifications" data-action="showEduverseHome" title="Notifications"><i class="fas fa-bell"></i></a>
   </div>
   <div class="ev-topbar-right">
-    <div class="ev-user-menu" onclick="document.getElementById('evUserDropdown').classList.toggle('show')">
+    <div class="ev-user-menu" data-action="toggleUserDropdown">
       <img id="evUserAvatar" src="images/avatars/student1.jpg" alt="User avatar" class="ev-avatar">
       <span id="evUserName" class="ev-username">User</span>
       <i class="fas fa-caret-down"></i>
       <div id="evUserDropdown" class="ev-dropdown">
-        <a href="javascript:;" onclick="showEduverseHome()"><i class="fas fa-user"></i> My Profile</a>
-        <a href="javascript:;" onclick="showOnboardSchool()"><i class="fas fa-plus-circle"></i> Create School</a>
+        <a href="javascript:;" data-action="showEduverseHome"><i class="fas fa-user"></i> My Profile</a>
+        <a href="javascript:;" data-action="showOnboardSchool"><i class="fas fa-plus-circle"></i> Create School</a>
         <a href="superadmin.html"><i class="fas fa-user-shield"></i> Super Admin</a>
         <div class="ev-dropdown-divider"></div>
-        <a href="javascript:;" onclick="eduverseLogout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="javascript:;" data-action="eduverseLogout"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </div>
     </div>
   </div>
@@ -1299,7 +1299,7 @@
     <div class="ev-left-panel">
       <div class="ev-left-header">
         <h4><i class="fas fa-school"></i> My Schools</h4>
-        <button class="btn btn-sm btn-primary" onclick="showOnboardSchool()" title="Create School"><i class="fas fa-plus"></i></button>
+        <button class="btn btn-sm btn-primary" data-action="showOnboardSchool" title="Create School"><i class="fas fa-plus"></i></button>
       </div>
       <div id="evSchoolsList" class="ev-schools-list"></div>
     </div>
@@ -1314,8 +1314,8 @@
     <div class="ev-right-panel">
       <div class="ev-right-card">
         <h4><i class="fas fa-fire"></i> Quick Links</h4>
-        <a href="javascript:;" onclick="showEduverseHome()" class="ev-quick-link"><i class="fas fa-rss"></i> News Feed</a>
-        <a href="javascript:;" onclick="handleQuickAdminLink()" class="ev-quick-link"><i class="fas fa-user-shield"></i> Admin Panel</a>
+        <a href="javascript:;" data-action="showEduverseHome" class="ev-quick-link"><i class="fas fa-rss"></i> News Feed</a>
+        <a href="javascript:;" data-action="handleQuickAdminLink" class="ev-quick-link"><i class="fas fa-user-shield"></i> Admin Panel</a>
       </div>
       <div class="ev-right-card">
         <div id="evUserMenuName" style="font-weight:600;font-size:14px;"></div>
@@ -1351,6 +1351,7 @@ try {
 <script src="js/firestore-adapter.js"></script>
 <script src="js/schoolprofile.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/events.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/teacher.js"></script>
 <script src="js/student.js"></script>
@@ -1398,7 +1399,7 @@ try {
   else window.addEventListener('load', initLandingGallery);
 })();
 </script>
-<div class="calc-float"><button class="calc-float-btn" onclick="openCalculator()" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
+<div class="calc-float"><button class="calc-float-btn" data-action="openCalculator" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <script>
 // Auto-route /login?role=X, /?login=role, and /?school=slug&portal=type on page load
 (function() {
@@ -1456,9 +1457,9 @@ window.addEventListener('load', function() {
   <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
     <p style="margin:0;flex:1;min-width:200px;"><i class="fas fa-cookie-bite" style="color:#fbbf24;margin-right:8px;"></i> We use cookies to enhance your experience. By continuing, you agree to our <a href="cookie-policy.html" style="color:#60a5fa;text-decoration:underline;">Cookie Policy</a>.</p>
     <div style="display:flex;gap:8px;flex-shrink:0;">
-      <button class="btn btn-sm btn-outline" onclick="showCookiePreferences()" style="border-color:#475569;color:#cbd5e1;">Customize</button>
-      <button class="btn btn-sm btn-outline" onclick="declineCookies()" style="border-color:#475569;color:#cbd5e1;">Decline</button>
-      <button class="btn btn-sm btn-primary" onclick="acceptCookies()" style="background:#2563eb;">Accept All</button>
+      <button class="btn btn-sm btn-outline" data-action="showCookiePreferences" style="border-color:#475569;color:#cbd5e1;">Customize</button>
+      <button class="btn btn-sm btn-outline" data-action="declineCookies" style="border-color:#475569;color:#cbd5e1;">Decline</button>
+      <button class="btn btn-sm btn-primary" data-action="acceptCookies" style="background:#2563eb;">Accept All</button>
     </div>
   </div>
 </div>
@@ -1480,8 +1481,8 @@ window.addEventListener('load', function() {
       </label>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0;">
-      <button class="btn btn-sm btn-outline" onclick="closeCookieModal()" style="border-color:#e2e8f0;color:#64748b;">Cancel</button>
-      <button class="btn btn-sm btn-primary" onclick="saveCookiePreferences()" style="background:#2563eb;">Save Preferences</button>
+      <button class="btn btn-sm btn-outline" data-action="closeCookieModal" style="border-color:#e2e8f0;color:#64748b;">Cancel</button>
+      <button class="btn btn-sm btn-primary" data-action="saveCookiePreferences" style="background:#2563eb;">Save Preferences</button>
     </div>
   </div>
 </div>

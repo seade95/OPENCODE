@@ -200,7 +200,7 @@ function showForcePasswordChange(user, idVal, oldPass) {
     + '<div class="form-group"><label>New Password</label><input type="password" id="newPw1" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password"></div>'
     + '<div class="form-group"><label>Confirm New Password</label><input type="password" id="newPw2" placeholder="Repeat password" required minlength="6" autocomplete="new-password"></div>'
     + '<button type="submit" class="login-btn" id="pwChangeBtn">Update Password</button></form>'
-    + '<div class="back-link"><a href="javascript:;" onclick="window.location.reload()"><i class="fas fa-arrow-left"></i> Back to Login</a></div>';
+    + '<div class="back-link">    <a href="javascript:;" data-action="reloadPage"><i class="fas fa-arrow-left"></i> Back to Login</a></div>';
 }
 
 function doForcePasswordChange(adminId, idVal, oldPass) {
@@ -327,7 +327,7 @@ function showError(msg) {
     </div>
     <div class="form-row">
       <label><input type="checkbox" id="rememberMe" checked> Remember me</label>
-      <a href="javascript:;" onclick="alert('Contact your school admin to reset your password.')">Forgot password?</a>
+      <a href="javascript:;" data-action="alertForgotPassword">Forgot password?</a>
     </div>
     <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
   </form>
@@ -375,6 +375,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   window.location.href = isSchoolAdmin ? 'school-dashboard.html' : 'admin.html';
 });
 </script>
+<script src="js/events.js"></script>
 
 </body>
 </html>

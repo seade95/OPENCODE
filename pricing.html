@@ -124,7 +124,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
 <div class="pricing-wrap">
   <div class="billing-toggle">
     <span id="billingMonthlyLabel">Monthly</span>
-    <div class="toggle-track" id="billingToggle" onclick="toggleBilling()">
+    <div class="toggle-track" id="billingToggle" data-action="toggleBilling">
       <div class="toggle-knob"></div>
     </div>
     <span id="billingYearlyLabel">Annual <span class="badge">Save 20%</span></span>
@@ -146,7 +146,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
         <li class="na"><i class="fas fa-times"></i> Custom domain</li>
         <li class="na"><i class="fas fa-times"></i> Bulk SMS / email</li>
       </ul>
-      <a href="javascript:;" onclick="localStorage.setItem('signup_plan','free');window.location.href='index.html'" class="btn btn-outline">Get Started Free</a>
+      <a href="javascript:;" data-action="signupFree" class="btn btn-outline">Get Started Free</a>
     </div>
 
     <div class="pricing-card featured">
@@ -165,7 +165,7 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
         <li><i class="fas fa-check"></i> Custom domain</li>
         <li><i class="fas fa-check"></i> Priority support</li>
       </ul>
-      <a href="javascript:;" onclick="localStorage.setItem('signup_plan','pro');window.location.href='index.html'" class="btn btn-primary">Start 14-Day Trial</a>
+      <a href="javascript:;" data-action="signupPro" class="btn btn-primary">Start 14-Day Trial</a>
     </div>
 
     <div class="pricing-card">
@@ -220,28 +220,28 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
 
 <div class="faq-section">
   <h2>Frequently Asked Questions</h2>
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Can I switch plans later? <i class="fas fa-chevron-down"></i></div>
+  <div class="faq-item" data-action="toggleFaq">
+    <div class="faq-q">Can I switch plans later? <i class="fas fa-chevron-down"></i></div>
     <div class="faq-a">Yes. Upgrade anytime for immediate access to new features. Downgrade at next billing cycle.</div>
   </div>
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Is there a free trial for paid plans? <i class="fas fa-chevron-down"></i></div>
+  <div class="faq-item" data-action="toggleFaq">
+    <div class="faq-q">Is there a free trial for paid plans? <i class="fas fa-chevron-down"></i></div>
     <div class="faq-a">The Professional plan includes a 14 day free trial. No credit card required. Cancel before the trial ends and you won't be charged.</div>
   </div>
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <i class="fas fa-chevron-down"></i></div>
+  <div class="faq-item" data-action="toggleFaq">
+    <div class="faq-q">What payment methods do you accept? <i class="fas fa-chevron-down"></i></div>
     <div class="faq-a">We accept card payments via Paystack (NGN) and Stripe (USD). Bank transfers available for annual plans.</div>
   </div>
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Can I export my data if I leave? <i class="fas fa-chevron-down"></i></div>
+  <div class="faq-item" data-action="toggleFaq">
+    <div class="faq-q">Can I export my data if I leave? <i class="fas fa-chevron-down"></i></div>
     <div class="faq-a">Absolutely. Export all your data (CSV/PDF) at any time. Your data belongs to you.</div>
   </div>
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">Do you offer discounts for non-profits? <i class="fas fa-chevron-down"></i></div>
+  <div class="faq-item" data-action="toggleFaq">
+    <div class="faq-q">Do you offer discounts for non-profits? <i class="fas fa-chevron-down"></i></div>
     <div class="faq-a">Yes. We offer a 30% discount for registered non-profit educational institutions. Contact us for details.</div>
   </div>
-  <div class="faq-item">
-    <div class="faq-q" onclick="toggleFaq(this)">How does the annual billing work? <i class="fas fa-chevron-down"></i></div>
+  <div class="faq-item" data-action="toggleFaq">
+    <div class="faq-q">How does the annual billing work? <i class="fas fa-chevron-down"></i></div>
     <div class="faq-a">Annual billing gives you a 20% discount compared to monthly. You pay once for the full year at the reduced rate.</div>
   </div>
 </div>
@@ -265,10 +265,11 @@ function toggleBilling() {
 }
 function toggleFaq(el) {
   el.classList.toggle('open');
-  var a = el.nextElementSibling;
+  var a = el.querySelector('.faq-a');
   if (a) a.classList.toggle('open');
 }
 </script>
+<script src="js/events.js"></script>
 <footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
   <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
     <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>

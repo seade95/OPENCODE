@@ -111,7 +111,7 @@ function renderDirectory() {
     var typeLabel = s.type === 'primary' ? 'Primary' : s.type === 'secondary' ? 'Secondary' : 'Primary & Secondary';
     var typeClass = s.type === 'primary' ? 'primary' : s.type === 'secondary' ? 'secondary' : '';
     var portalLink = s.slug ? '/school/' + encodeURIComponent(s.slug) : '';
-    var clickHandler = portalLink ? ' onclick="window.location.href=\'' + portalLink + '\'" style="cursor:pointer;"' : '';
+    var clickHandler = portalLink ? ' data-action="navigateToUrl" data-args="' + portalLink + '" style="cursor:pointer;"' : '';
     html += '<div class="dir-card"' + clickHandler + '>';
     html += '<div class="school-icon"><i class="fas ' + (s.icon || 'fa-school') + '"></i></div>';
     html += '<h3>' + htmlEscape(s.name) + '</h3>';
@@ -132,6 +132,7 @@ function htmlEscape(str) {
 
 renderDirectory();
 </script>
+<script src="js/events.js"></script>
 <footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
   <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
     <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>

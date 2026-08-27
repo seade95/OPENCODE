@@ -164,6 +164,14 @@ function toggleNav() {
 function toggleNavDropdown(el) {
   el.classList.toggle('open');
 }
+function toggleUserDropdown() {
+  var dd = document.getElementById('evUserDropdown');
+  if (dd) dd.classList.toggle('show');
+}
+function triggerScoreGridFileInput() {
+  var inp = document.getElementById('scoreGridFileInput');
+  if (inp) inp.click();
+}
 
 function goHome() {
   clearSession();
@@ -992,6 +1000,94 @@ function exportTableToCSV(tableId, filename) {
   link.click();
   URL.revokeObjectURL(link.href);
   toast('Exported ' + filename + '.csv');
+}
+
+// ===== DATA-ACTION WRAPPER FUNCTIONS =====
+// These wrap complex expressions previously in inline onclick handlers
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToBottom() {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function scrollPageToBottom() {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function redirectToAdminPortal() {
+  var s = window.slug || (function() { try { var m = location.search.match(/school=([^&]+)/); return m ? decodeURIComponent(m[1]) : null; } catch(e) { return null; } })();
+  redirectToPortal(s || getSlug(), 'admin');
+}
+
+function redirectToTeacherPortal() {
+  var s = window.slug || getSlug();
+  redirectToPortal(s, 'teacher');
+}
+
+function redirectToStudentPortal() {
+  var s = window.slug || getSlug();
+  redirectToPortal(s, 'student');
+}
+
+function redirectToParentPortal() {
+  var s = window.slug || getSlug();
+  redirectToPortal(s, 'parent');
+}
+
+function redirectToAdmissionPortal() {
+  var s = window.slug || getSlug();
+  window.location.href = 'login/admission.html?school=' + encodeURIComponent(s);
+}
+
+function redirectToCBTPortal() {
+  var s = window.slug || getSlug();
+  redirectToPortal(s, 'cbt');
+}
+
+function openAdmissionPortal() {
+  window.location.href = 'login/admission.html?school=' + encodeURIComponent(window.slug || getSlug());
+}
+
+function alertForgotPassword() {
+  alert('Contact your school admin to reset your password.');
+}
+
+function reloadPage() {
+  window.location.reload();
+}
+
+function navigateToUrl(url) {
+  if (url) window.location.href = url;
+}
+
+function goHomeFromDashboard() {
+  var s = (function() { try { return location.search.match(/school=([^&]+)/)[1]; } catch(e) { return null; } })();
+  window.location.href = s ? 'school-portal.html?school=' + encodeURIComponent(s) : 'index.html';
+}
+
+function toggleAllFaqs() {
+  document.querySelectorAll('.faq-q').forEach(function(el) {
+    el.classList.toggle('open');
+    var a = el.nextElementSibling;
+    if (a) a.classList.toggle('open');
+  });
+}
+
+function signupFree() {
+  localStorage.setItem('signup_plan', 'free');
+  window.location.href = 'index.html';
+}
+
+function signupPro() {
+  localStorage.setItem('signup_plan', 'pro');
+  window.location.href = 'index.html';
+}
+
+function doSaLogin() {
+  handleLogin();
 }
 
 // Export live getters for current student/teacher
