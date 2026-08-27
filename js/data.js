@@ -280,7 +280,7 @@ function getDefaultData() {
     schoolTier: 'full_k12',
     examRegistrations: [],
     schoolProfile: {
-      schoolName: 'Demo International School',
+      schoolName: 'EduVerse',
       logoUrl: '',
       services: [
         { icon: 'fa-graduation-cap', title: 'Academic Excellence', description: 'Rigorous curriculum aligned with national standards, delivered by qualified educators.' },
@@ -321,15 +321,15 @@ function getDefaultData() {
         { title: 'Prize Giving Day', date: '2027-07-15', description: 'Award ceremony recognizing outstanding student achievements.' }
       ],
       testimonials: [
-        { name: 'Mrs. Adebayo', text: 'Demo International School has transformed my child\'s academic performance. The teachers are dedicated and the facilities are excellent.', role: 'Parent' },
+        { name: 'Mrs. Adebayo', text: 'EduVerse has transformed my child\'s academic performance. The teachers are dedicated and the facilities are excellent.', role: 'Parent' },
         { name: 'Chisom Eze', text: 'I love the science labs and the debate club! The teachers make learning fun and interesting every day.', role: 'Student — SSS 2' },
         { name: 'Mr. Emeka Nwachukwu', text: 'Teaching here is a privilege. The school provides all the resources we need to deliver quality education.', role: 'Mathematics Teacher' },
         { name: 'Mrs. Grace Okafor', text: 'My daughter has grown in confidence and academic ability since joining. The holistic approach to education is outstanding.', role: 'Parent' },
         { name: 'Daniel Ibrahim', text: 'The career guidance program helped me choose my path. I\'m now pursuing my dream course at university.', role: 'Alumnus — Class of 2024' }
       ],
-      heroTitle: 'Demo International School — Excellence in Education',
+      heroTitle: 'EduVerse — Excellence in Education',
       heroSubtitle: 'Empowering the next generation of leaders with world-class education, innovative learning methods, and a supportive community.',
-      aboutText: 'Founded in 1995, Demo International School is a premier educational institution committed to nurturing academic excellence, character development, and lifelong learning. We provide a comprehensive K-12 curriculum that prepares students for success in a rapidly changing world. Our dedicated faculty, modern facilities, and student-centered approach create an environment where every learner can thrive and reach their full potential.',
+      aboutText: 'Founded in 1995, EduVerse is a premier educational institution committed to nurturing academic excellence, character development, and lifelong learning. We provide a comprehensive K-12 curriculum that prepares students for success in a rapidly changing world. Our dedicated faculty, modern facilities, and student-centered approach create an environment where every learner can thrive and reach their full potential.',
       contactEmail: 'eduversemgt@gmail.com',
       contactPhone: '+2347069332955',
       whatsappNumber: '+2347069332955',

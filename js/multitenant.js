@@ -320,7 +320,7 @@ function initDemoTenant() {
   if (existing) return existing;
 
   var tenant = createTenant({
-    name: 'Demo International School',
+    name: 'EduVerse',
     slug: 'demo-international',
     email: 'demo@demo.com',
     phone: '+2347069332955',
@@ -335,8 +335,8 @@ function initDemoTenant() {
 
   var schoolData = getTenantSchoolData(tenant.id);
   if (schoolData) {
-    schoolData.schoolProfile.schoolName = 'Demo International School';
-    schoolData.schoolName = 'Demo International School';
+    schoolData.schoolProfile.schoolName = 'EduVerse';
+    schoolData.schoolName = 'EduVerse';
     schoolData.schoolMotto = 'Excellence in Education — Try It Free!';
     localStorage.setItem(getTenantDataKey(tenant.id), JSON.stringify(schoolData));
   }
@@ -357,7 +357,7 @@ function initDemoTenant() {
       });
       social.feed.unshift({
         id: 'FED_DEMO', schoolId: DEMO_TENANT_ID, type: 'school_created',
-        message: 'Demo International School was created — explore all features!',
+        message: 'EduVerse was created — explore all features!',
         userId: 'USR_DEMO', userName: 'Demo User',
         createdAt: new Date().toISOString()
       });

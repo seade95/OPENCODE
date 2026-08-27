@@ -1229,7 +1229,7 @@ var SETUP_WIZARD_KEY = '_setupWizardDone';
 function needsSetupWizard() {
   if (localStorage.getItem(SETUP_WIZARD_KEY)) return false;
   var prof = getSchoolProfile();
-  return !prof.schoolName || prof.schoolName === 'Demo International School' || !prof.schoolMotto || prof.facilities.length === 0;
+  return !prof.schoolName || prof.schoolName === 'EduVerse' || !prof.schoolMotto || prof.facilities.length === 0;
 }
 
 function dismissSetupWizard() {
@@ -1315,7 +1315,7 @@ function setupStep1HTML(prof) {
   return '<p style="color:var(--text-light);margin-bottom:16px;">Tell us about your school. This information will appear on your school\'s public landing page and portals.</p>' +
     '<div style="display:flex;flex-direction:column;gap:12px;">' +
     '<label style="font-weight:500;font-size:13px;">School Name <span style="color:var(--danger);">*</span></label>' +
-    '<input id="wizSchoolName" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="e.g., Demo International School" value="' + esc(prof.schoolName || '') + '">' +
+    '<input id="wizSchoolName" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="e.g., EduVerse" value="' + esc(prof.schoolName || '') + '">' +
     '<label style="font-weight:500;font-size:13px;">School Motto</label>' +
     '<input id="wizSchoolMotto" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;" placeholder="e.g., Excellence, Character, Service" value="' + esc(prof.schoolMotto || '') + '">' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">' +
