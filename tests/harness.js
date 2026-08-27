@@ -101,7 +101,9 @@ const EXPORT_KEY = '__ediverse';
 function loadProjectFiles() {
   const baseDir = path.join(__dirname, '..', 'js');
   const files = ['data.js', 'ui.js', 'admin.js', 'teacher.js', 'student.js',
-    'features.js', 'features2.js', 'k12.js', 'admission.js', 'system.js', 'multitenant.js', 'eduverse.js', 'app.js'];
+    'features/timetable.js', 'features/hostel.js', 'features/calendar.js', 'features/website.js',
+    'features/cbt.js', 'features/scoregrid.js', 'features/aitools.js', 'features/misc-features.js',
+    'features2.js', 'k12.js', 'admission.js', 'system.js', 'multitenant.js', 'eduverse.js', 'app.js'];
 
   const combined = files.map(f => fs.readFileSync(path.join(baseDir, f), 'utf8')).join('\n');
 
