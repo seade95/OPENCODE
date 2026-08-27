@@ -1,4 +1,4 @@
-const CACHE = 'eduverse-v5';
+const CACHE = 'eduverse-v6';
 const OFFLINE_URL = '/offline.html';
 
 const SHELL = [
@@ -13,6 +13,7 @@ const SHELL = [
   '/icons/icon.svg',
   '/icons/icon-512.svg',
   '/css/style.css',
+  '/js/auth.js',
   '/js/namespace.js',
   '/js/data.js',
   '/js/ui.js',
@@ -36,6 +37,8 @@ const SHELL = [
   '/js/teacher-upload.js',
   '/js/subscription.js',
   '/js/screen-protection.js',
+  '/js/firebase-config.js',
+  '/js/firestore-adapter.js',
   '/js/superadmin.js',
   '/js/data-sync.js',
   '/js/subdomain-middleware.js',

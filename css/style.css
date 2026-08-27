@@ -3063,3 +3063,48 @@ button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c)
     scroll-behavior: auto !important;
   }
 }
+
+/* ─── Landing page CTA strip ─── */
+.cta-strip { background:linear-gradient(135deg,#2563eb,#1e40af);padding:48px 20px;text-align:center;color:white; }
+.cta-strip-inner { max-width:800px;margin:0 auto; }
+.cta-strip h2 { color:white;font-size:28px;margin:0 0 8px; }
+.cta-strip p { opacity:0.85;font-size:15px;margin:0 0 24px; }
+.cta-strip-actions { display:flex;gap:10px;justify-content:center;flex-wrap:wrap; }
+.cta-strip .btn-white { background:white;color:#2563eb;font-weight:700; }
+.cta-strip .btn-ghost { border:2px solid rgba(255,255,255,0.5);color:white; }
+
+/* ─── Why EduVerse section ─── */
+.why-eduverse { padding:60px 40px;background:linear-gradient(135deg,#f7fafc 0%,#edf2f7 100%); }
+.why-eduverse-grid { display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1000px;margin:0 auto; }
+.why-list { list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px; }
+.why-list li { display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text); }
+.why-list li i { margin-top:3px;flex-shrink:0; }
+.why-list li i.fa-check { color:#38a169; }
+.why-list li i.fa-times { color:#e53e3e; }
+.why-pros h3 { font-size:18px;margin-bottom:16px;color:#22543d; }
+.why-cons h3 { font-size:18px;margin-bottom:16px;color:#9b2c2c; }
+
+/* ─── "What Other Systems Lack" cards ─── */
+.gaps-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1100px;margin:0 auto; }
+.gap-card { border-radius:12px;padding:20px; }
+.gap-card h4 { font-weight:700;margin:0 0 6px; }
+.gap-card p { font-size:13px;color:var(--text-light);margin:0; }
+.gap-card i { font-size:28px;margin-bottom:8px; }
+.gap-card-amber { background:#fffbeb;border-left:4px solid #d97706; }
+.gap-card-amber i { color:#d97706; }
+.gap-card-purple { background:#e9d8fd;border-left:4px solid #805ad5; }
+.gap-card-purple i { color:#805ad5; }
+.gap-card-green { background:#c6f6d5;border-left:4px solid #38a169; }
+.gap-card-green i { color:#38a169; }
+.gap-card-blue { background:#dbeafe;border-left:4px solid #3182ce; }
+.gap-card-blue i { color:#3182ce; }
+.gap-card-red { background:#fed7d7;border-left:4px solid #e53e3e; }
+.gap-card-red i { color:#e53e3e; }
+.gap-card-yellow { background:#fefcbf;border-left:4px solid #d69e2e; }
+.gap-card-yellow i { color:#d69e2e; }
+.gap-card-gray { background:#e2e8f0;border-left:4px solid #4a5568; }
+.gap-card-gray i { color:#4a5568; }
+.gap-card-orange { background:#fffaF0;border-left:4px solid #dd6b20; }
+.gap-card-orange i { color:#dd6b20; }
+.gap-card-lime { background:#f0fff4;border-left:4px solid #2f855a; }
+.gap-card-lime i { color:#2f855a; }

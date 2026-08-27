@@ -87,11 +87,6 @@
   to = "/school-portal.html"
   status = 200
 
-[[redirects]]
-  from = "/migrate"
-  to = "/migrate.html"
-  status = 200
-
 # SPA catch-all — serve index.html for unmatched routes
 [[redirects]]
   from = "/*"
