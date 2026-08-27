@@ -1091,5 +1091,5 @@ function doSaLogin() {
 }
 
 // Export live getters for current student/teacher
-Object.defineProperty(window, '__currentStudent', { get: function() { return currentStudent; } });
-Object.defineProperty(window, '__currentTeacher', { get: function() { return currentTeacher; } });
+Object.defineProperty(window, '__currentStudent', { get: function() { return currentStudent; }, configurable: true });
+Object.defineProperty(window, '__currentTeacher', { get: function() { return currentTeacher; }, configurable: true });

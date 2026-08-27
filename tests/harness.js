@@ -9,7 +9,7 @@ function createElement(tag) {
   return {
     tagName: tag.toUpperCase(),
     style: {},
-    classList: { add: () => {}, remove: () => {}, contains: () => false },
+    classList: { add: () => {}, remove: () => {}, contains: () => false, toggle: () => {} },
     addEventListener: mockAddEventListener,
     appendChild: () => {},
     setAttribute: () => {},
@@ -32,7 +32,7 @@ global.document = {
   createElement,
   createElementNS: () => createElement('div'),
   createTextNode: () => ({}),
-  body: { appendChild: () => {}, addEventListener: mockAddEventListener, style: {} },
+  body: { appendChild: () => {}, addEventListener: mockAddEventListener, style: {}, classList: { add: () => {}, remove: () => {}, contains: () => false, toggle: () => {} } },
   documentElement: { style: {} },
   head: { appendChild: () => {}, querySelector: () => null },
   addEventListener: mockAddEventListener,
@@ -103,7 +103,10 @@ function loadProjectFiles() {
   const files = ['data.js', 'ui.js', 'admin.js', 'teacher.js', 'student.js',
     'features/timetable.js', 'features/hostel.js', 'features/calendar.js', 'features/website.js',
     'features/cbt.js', 'features/scoregrid.js', 'features/aitools.js', 'features/misc-features.js',
-    'features2.js', 'k12.js', 'admission.js', 'system.js', 'multitenant.js', 'eduverse.js', 'app.js'];
+    'features2.js', 'k12.js', 'admission.js', 'system.js', 'multitenant.js', 'eduverse.js',
+    'namespace.js', 'superadmin.js', 'alumni.js', 'schoolprofile.js', 'report-builder.js',
+    'payment-gateway.js', 'exam-simulation.js', 'activity-games.js', 'subscription.js',
+    'feature-upgrades.js', 'handwriting-ocr.js', 'teacher-upload.js', 'screen-protection.js', 'app.js'];
 
   const combined = files.map(f => fs.readFileSync(path.join(baseDir, f), 'utf8')).join('\n');
 
@@ -124,13 +127,21 @@ function loadProjectFiles() {
       eduverseUser, eduverseSignup, eduverseLogin, eduverseLogout,
       getMySchools, getMembershipForSchool, createSchoolPage,
       addFeedEntry, migrateLegacyUsers,
+      getPlatformConfig, savePlatformConfig, getDefaultPlatformConfig, formatAmount,
+      getSchoolProfile, spUpdate,
+      REPORT_SOURCES, computeReportData,
+      getGatewayConfig, getGatewayProvider, isGatewayActive, generatePaymentRef,
+      getDefaultSimQuestions,
+      ACTIVITY_GAMES, GAME_CONTENT,
+      _isPremium: window._isPremium, _isFree: window._isFree,
+      EduVerse: window.EduVerse,
     };
   `;
 
   try {
     // Clean up previous definitions that might conflict
     try { delete global.window.__data; } catch(e) {}
-    new Function(combined + exportCode)();
+    new Function(combined + exportCode + '\ndata = loadData();')();
   } catch (e) {
     console.error('Error loading combined JS:', e.message);
   }

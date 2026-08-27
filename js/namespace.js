@@ -3,6 +3,7 @@
 // Individual function names remain global for data-action compatibility.
 
 window.EduVerse = window.EduVerse || {};
+var EduVerse = window.EduVerse;
 
 // ===== Session State =====
 // Centralized session management (replaces scattered currentAdmin/currentTeacher/etc.)

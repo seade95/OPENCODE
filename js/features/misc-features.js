@@ -348,7 +348,7 @@ function parentLogout() {
   var plg = document.getElementById('parentLoginPage'); if (plg) plg.classList.add('active');
 }
 
-var currentParent = null;
+currentParent = null;
 
 function renderParentPortal() {
   if (!currentParent) return;

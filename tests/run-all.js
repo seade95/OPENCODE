@@ -21,6 +21,16 @@ try {
   console.error('Integration tests failed to run:', e.message);
 }
 
+console.log('\n');
+
+// ===== FEATURE TESTS =====
+console.log('--- FEATURE TESTS ---');
+try {
+  require('./feature-tests.js');
+} catch (e) {
+  console.error('Feature tests failed to run:', e.message);
+}
+
 console.log('\n========================================');
 console.log('  All test suites completed');
 console.log('========================================');

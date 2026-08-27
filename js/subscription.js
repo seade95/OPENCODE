@@ -5,6 +5,7 @@
 
 // ===== DEFAULTS =====
 function ensureDefaults() {
+  if (!data) return;
   if (!data.subscriptionPlans) {
     data.subscriptionPlans = [
       { id: 'sp_monthly', name: 'Monthly', interval: 'monthly', amount: 5000, currency: 'NGN', description: 'Billed every month — full access', active: true },
@@ -18,6 +19,7 @@ function ensureDefaults() {
 
 // ===== SUBSCRIPTION BANNER =====
 function renderSubscriptionBanner() {
+  if (!data) return;
   var sub = data.subscription || {};
   var els = document.querySelectorAll('.sub-banner');
   var html = '';
@@ -43,7 +45,7 @@ function renderSubscriptionBanner() {
 // ===== ADMIN SETTINGS PANEL =====
 function renderSubscriptionSettings() {
   var container = document.getElementById('adminSubscription');
-  if (!container) return;
+  if (!container || !data) return;
   ensureDefaults();
   var sub = data.subscription;
   var plans = data.subscriptionPlans || [];
@@ -134,6 +136,7 @@ function subSelectPlan(id) {
 
 // ===== PROCESS PAYMENT =====
 function subProcessPayment() {
+  if (!data) return;
   var sub = data.subscription;
   var plans = data.subscriptionPlans || [];
   var plan = null;
@@ -217,6 +220,7 @@ function subToggleAutoRenew(forceVal) {
 // ===== CHECK APPROACHING EXPIRY =====
 var _subRenewNotified = {};
 function _checkAutoRenew() {
+  if (!data) return;
   var sub = data.subscription;
   if (!sub || sub.plan === 'free' || !sub.endDate) return;
   var now = new Date();
@@ -250,6 +254,7 @@ function _checkAutoRenew() {
 
 // ===== REFRESH STATUS =====
 function subRefreshStatus() {
+  if (!data) return;
   ensureDefaults();
   // Recalculate expiry
   if (data.subscription.endDate && new Date(data.subscription.endDate) < new Date() && data.subscription.plan !== 'free') {
@@ -342,6 +347,7 @@ function subDeletePlan(id) {
 
 // ===== EXPIRY CHECK =====
 function subCheckExpiry() {
+  if (!data) return;
   ensureDefaults();
   var sub = data.subscription;
   if (!sub || sub.plan === 'free' || !sub.endDate) return;
@@ -496,6 +502,7 @@ if (typeof _origSwitchTeacher === 'function') {
 var _origRenderBanner = renderSubscriptionBanner;
 renderSubscriptionBanner = function() {
   _origRenderBanner();
+  if (!data) return;
   var els = document.querySelectorAll('.sub-banner');
   var sub = data.subscription || {};
   if (sub.plan === 'free') {
@@ -515,6 +522,7 @@ renderSubscriptionBanner = function() {
 
 // ===== INIT GUARDS =====
 function _initFeatureGating() {
+  if (!data) return;
   ensureDefaults();
   _guardAdminSidebar();
   _guardTeacherSidebar();
