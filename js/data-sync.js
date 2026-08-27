@@ -93,15 +93,12 @@
     _reloadData();
   });
 
-  // ===== Patch data-write functions to broadcast =====
+  // ===== Hook into data-write functions via hook system =====
 
-  // Patch saveData
-  var _origSaveData = window.saveData;
-  if (typeof _origSaveData === 'function') {
-    window.saveData = function() {
-      _origSaveData.apply(this, arguments);
+  if (window.dataHooks) {
+    window.dataHooks.addSaveHook(function() {
       _broadcast('data_changed');
-    };
+    });
   }
 
   // Patch saveTenants

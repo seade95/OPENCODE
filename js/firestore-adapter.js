@@ -92,7 +92,7 @@
           }
           localStorage.setItem('_dataVersion_' + schoolId, String(remoteVer));
           if (typeof toast === 'function') toast('Data synced from cloud', 'info');
-          if (typeof renderAll === 'function') renderAll();
+          if (typeof renderActivePanel === 'function') renderActivePanel();
         }
       }
     }, function(err) {
@@ -155,9 +155,6 @@
     if (!IS_ADMIN_PAGE && !IS_SUPERADMIN_PAGE) subscribeSchoolData();
     subscribeTenants();
     subscribePlatformConfig();
-    // Flush pending writes before page closes
-    window.addEventListener('beforeunload', function() { if (_pendingWrite) flushWrite(); });
-    window.addEventListener('pagehide', function() { if (_pendingWrite) flushWrite(); });
   } else {
     retryInit();
   }
@@ -166,7 +163,6 @@
   if (typeof _origLoadData === 'function') {
     window.loadData = function() {
       var result = _origLoadData();
-      // If result has no real data (empty/default), try the other key
       if (result && (!result.students || result.students.length === 0 || result.students[0] && result.students[0].id && result.students[0].id.indexOf('STU') === 0)) {
         try {
           var activeT = localStorage.getItem('activeTenant');
@@ -187,10 +183,9 @@
     };
   }
 
-  var _origSaveData = window.saveData;
-  if (typeof _origSaveData === 'function') {
-    window.saveData = function() {
-      _origSaveData();
+  // Hook into saveData for Firestore sync (replaces monkey-patch pattern)
+  if (window.dataHooks) {
+    window.dataHooks.addSaveHook(function() {
       _dataVersion = Date.now();
       try {
         var schoolId = getSchoolDocId();
@@ -202,7 +197,7 @@
         }
       } catch(e) {}
       debounceWrite();
-    };
+    });
   }
 
   var _origGetTenants = window.getTenants;

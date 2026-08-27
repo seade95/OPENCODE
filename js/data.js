@@ -1,6 +1,17 @@
 ﻿// EDUVERSE - Data Layer
 // Handles localStorage persistence, default data seeding, and data access utilities
 
+// ===== SAVE HOOKS =====
+// Other modules register via data.addSaveHook(fn) instead of monkey-patching window.saveData
+var _dataHooks = { save: [], load: [] };
+var _dataHookAPI = {
+  addSaveHook: function(fn) { if (typeof fn === 'function') _dataHooks.save.push(fn); },
+  removeSaveHook: function(fn) { _dataHooks.save = _dataHooks.save.filter(function(h) { return h !== fn; }); },
+  addLoadHook: function(fn) { if (typeof fn === 'function') _dataHooks.load.push(fn); },
+  removeLoadHook: function(fn) { _dataHooks.load = _dataHooks.load.filter(function(h) { return h !== fn; }); }
+};
+window.dataHooks = _dataHookAPI;
+
 // ===== APP VERSION (bump to force cache refresh) =====
 var APP_VERSION = '2026.06.19.1';
 (function() {
@@ -656,6 +667,10 @@ function saveData() {
     var t = localStorage.getItem('activeTenant');
     if (t) localStorage.setItem('schoolData', serialized);
   } catch(e) {}
+  // Run registered save hooks (offline backup, Firestore sync, etc.)
+  for (var i = 0; i < _dataHooks.save.length; i++) {
+    try { _dataHooks.save[i](data); } catch(e) {}
+  }
 }
 
 function __saveCurrentData() {

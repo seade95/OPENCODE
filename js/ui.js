@@ -494,6 +494,7 @@ document.querySelectorAll('.admin-sidebar-item[data-teacher-panel]').forEach(ite
 });
 
 function switchTeacherPanel(panel) {
+  currentTeacherPanel = panel;
   document.querySelectorAll('#teacherPage .admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var tp = document.getElementById('teacher-' + panel);
   if (tp) tp.classList.add('active');
@@ -539,6 +540,7 @@ function switchTeacherPanel(panel) {
 }
 
 function switchAdminPanel(panel) {
+  currentAdminPanel = panel;
   document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var ap = document.getElementById('admin-' + panel);
   if (ap) ap.classList.add('active');
@@ -627,74 +629,95 @@ function switchAdminPanel(panel) {
   if (typeof applyTranslations === 'function') applyTranslations();
 }
 
-// ===== RENDER ALL =====
-function renderAll() {
-  if (typeof renderDashboard === 'function') renderDashboard();
-  if (typeof renderStudents === 'function') renderStudents();
-  if (typeof renderTeachers === 'function') renderTeachers();
-  if (typeof renderFees === 'function') renderFees();
-  if (typeof renderResults === 'function') renderResults();
-  if (typeof renderCAT === 'function') renderCAT();
-  if (typeof renderActivities === 'function') renderActivities();
-  if (typeof renderAttendance === 'function') renderAttendance();
-  if (typeof switchTimetableTab === 'function') switchTimetableTab('grid');
-  if (typeof renderHostel === 'function') renderHostel();
-  if (typeof renderGradebookAdmin === 'function') renderGradebookAdmin();
-  if (typeof renderExamsAdmin === 'function') renderExamsAdmin();
-  if (typeof renderMessages === 'function') renderMessages('adminMessages', 'Admin');
-  if (typeof renderLibrary === 'function') renderLibrary();
-  if (typeof renderLessonNotes === 'function') renderLessonNotes('adminLessonNotes');
-  if (typeof renderBehaviorLog === 'function') renderBehaviorLog('adminBehaviorLog');
-  if (typeof renderStaffHR === 'function') renderStaffHR();
-  if (typeof renderForum === 'function') renderForum('adminForum');
-  if (typeof renderFileRepo === 'function') renderFileRepo('adminFileRepo');
-  if (typeof renderPayments === 'function') renderPayments();
-  if (typeof renderAnalytics === 'function') renderAnalytics();
-  if (typeof renderReportBuilder === 'function') renderReportBuilder();
-  if (typeof renderIDCards === 'function') renderIDCards('adminIDCards');
-  if (typeof renderTerms === 'function') renderTerms();
-  if (typeof updateTermBadge === 'function') updateTermBadge();
-  // Update institution type badge
-  var instBadge = document.getElementById('adminInstBadgeText');
-  if (instBadge) {
-    var map = { eccde: 'Nursery', primary: 'Basic', secondary: 'Secondary', full_k12: 'K-12', tertiary: 'Tertiary' };
-    instBadge.textContent = map[data.schoolTier] || data.schoolTier || 'Not set';
+// ===== RENDER ACTIVE PANEL ONLY =====
+var currentAdminPanel = 'dashboard';
+var currentTeacherPanel = 'dashboard';
+var currentStudentPanel = 'dashboard';
+var currentParentPanel = 'dashboard';
+
+function renderActivePanel() {
+  if (typeof currentAdmin !== 'undefined' && currentAdmin) {
+    var panel = currentAdminPanel;
+    switch(panel) {
+      case 'dashboard': if (typeof renderDashboard === 'function') renderDashboard(); break;
+      case 'students': if (typeof renderStudents === 'function') renderStudents(); break;
+      case 'teachers': if (typeof renderTeachers === 'function') renderTeachers(); break;
+      case 'fees': if (typeof renderFees === 'function') renderFees(); break;
+      case 'results': if (typeof renderResults === 'function') renderResults(); break;
+      case 'cat': if (typeof renderCAT === 'function') renderCAT(); break;
+      case 'activities': if (typeof renderActivities === 'function') renderActivities(); break;
+      case 'attendance': if (typeof renderAttendance === 'function') renderAttendance(); break;
+      case 'timetable': if (typeof switchTimetableTab === 'function') switchTimetableTab('grid'); break;
+      case 'hostel': if (typeof renderHostel === 'function') renderHostel(); break;
+      case 'gradebook': if (typeof renderGradebookAdmin === 'function') renderGradebookAdmin(); break;
+      case 'scoregrid': if (typeof renderScoreGrid === 'function') renderScoreGrid(); break;
+      case 'promotion': if (typeof renderPromotionList === 'function') renderPromotionList(); break;
+      case 'exams': if (typeof renderExamsAdmin === 'function') renderExamsAdmin(); break;
+      case 'messages': if (typeof renderMessages === 'function') renderMessages('adminMessages', 'Admin'); break;
+      case 'library': if (typeof renderLibrary === 'function') renderLibrary(); break;
+      case 'lessonnotes': if (typeof renderLessonNotes === 'function') renderLessonNotes('adminLessonNotes'); break;
+      case 'behavior': if (typeof renderBehaviorLog === 'function') renderBehaviorLog('adminBehaviorLog'); break;
+      case 'hr': if (typeof renderStaffHR === 'function') renderStaffHR(); break;
+      case 'forum': if (typeof renderForum === 'function') renderForum('adminForum'); break;
+      case 'filerepo': if (typeof renderFileRepo === 'function') renderFileRepo('adminFileRepo'); break;
+      case 'payments': if (typeof renderPayments === 'function') renderPayments(); break;
+      case 'analytics': if (typeof renderAnalytics === 'function') renderAnalytics(); break;
+      case 'reportbuilder': if (typeof renderReportBuilder === 'function') renderReportBuilder(); break;
+      case 'predictive': if (typeof renderPredictiveAnalytics === 'function') renderPredictiveAnalytics(); break;
+      case 'aitools': if (typeof renderAITools === 'function') renderAITools(); break;
+      case 'eschool': if (typeof renderESchoolAdmin === 'function') renderESchoolAdmin(); break;
+      case 'academiccalendar': if (typeof renderAcademicCalendar === 'function') renderAcademicCalendar(); break;
+      case 'idcards': if (typeof renderIDCards === 'function') renderIDCards('adminIDCards'); break;
+      case 'terms': if (typeof renderTerms === 'function') renderTerms(); break;
+      case 'chat': if (typeof renderPortalChat === 'function') renderPortalChat(); break;
+      case 'programs': if (typeof renderPrograms === 'function') renderPrograms(); break;
+      case 'applications': if (typeof renderApplications === 'function') renderApplications(); break;
+      case 'exambank': if (typeof renderExamBank === 'function') renderExamBank(); break;
+      case 'examresults': if (typeof renderExamResults === 'function') renderExamResults(); break;
+      case 'schoolsetup': if (typeof renderSchoolSetup === 'function') renderSchoolSetup(); break;
+      case 'subjects': if (typeof renderSubjectManagement === 'function') renderSubjectManagement(); break;
+      case 'streams': if (typeof renderStreamManagement === 'function') renderStreamManagement(); break;
+      case 'class': if (typeof renderClassManagement === 'function') renderClassManagement(); break;
+      case 'exammodules': if (typeof renderExamModules === 'function') renderExamModules(); break;
+      case 'utmemock': if (typeof renderUTMEMock === 'function') renderUTMEMock(); break;
+      case 'gallery': if (typeof renderGalleryAdmin === 'function') renderGalleryAdmin(); break;
+      case 'transcript': if (typeof renderTranscriptGenerator === 'function') renderTranscriptGenerator(); break;
+      case 'reportcards': if (typeof renderReportCardsAdmin === 'function') renderReportCardsAdmin(); break;
+      case 'schoolprofile': if (typeof renderSchoolProfile === 'function') renderSchoolProfile(); break;
+      case 'website': if (typeof renderWebsiteBuilder === 'function') renderWebsiteBuilder(); break;
+      case 'paymentgateway': if (typeof renderPaymentGatewaySettings === 'function') renderPaymentGatewaySettings(); if (typeof renderPaymentTransactionLog === 'function') renderPaymentTransactionLog(); break;
+      case 'notifications': if (typeof renderNotificationComposer === 'function') renderNotificationComposer(); break;
+      case 'simquestions': if (typeof renderSimQuestionBank === 'function') renderSimQuestionBank(); break;
+      case 'simattempts': if (typeof renderSimAttempts === 'function') renderSimAttempts(); break;
+      case 'activitygames': if (typeof renderAdminActivityGames === 'function') renderAdminActivityGames(); break;
+      case 'alumni': if (typeof renderAlumni === 'function') renderAlumni(); break;
+      case 'system': if (typeof renderSystemPanel === 'function') renderSystemPanel(); break;
+      case 'handwritingocr': if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('adminHandwritingOCR'); break;
+      case 'teacherexams': if (typeof renderAdminTeacherExams === 'function') renderAdminTeacherExams('adminTeacherExams'); break;
+      case 'subscription': if (typeof renderSubscriptionSettings === 'function') renderSubscriptionSettings(); break;
+      case 'health': if (typeof renderHealthRecords === 'function') renderHealthRecords(); break;
+      case 'transport': if (typeof renderTransport === 'function') renderTransport(); break;
+      case 'conferences': if (typeof renderConferences === 'function') renderConferences(); break;
+      case 'mealplanner': if (typeof renderMealPlanner === 'function') renderMealPlanner(); break;
+      case 'broadcast': if (typeof renderBroadcast === 'function') renderBroadcast(); break;
+      case 'edunews': if (typeof renderEducationNews === 'function') renderEducationNews(); break;
+      case 'schoolstore': if (typeof renderSchoolStore === 'function') renderSchoolStore(); break;
+      case 'support': if (typeof renderSupportPanel === 'function') renderSupportPanel(); break;
+      case 'cbt': if (typeof renderCBTAdmin === 'function') renderCBTAdmin(); break;
+    }
+    if (typeof applyTranslations === 'function') applyTranslations();
+  } else if (typeof currentTeacher !== 'undefined' && currentTeacher) {
+    switchTeacherPanel(currentTeacherPanel);
+  } else if (typeof currentStudent !== 'undefined' && currentStudent) {
+    if (typeof renderStudentPortal === 'function') renderStudentPortal();
+  } else if (typeof currentParent !== 'undefined' && currentParent) {
+    if (typeof renderParentPortal === 'function') renderParentPortal();
   }
-  if (typeof renderPrograms === 'function') renderPrograms();
-  if (typeof renderApplications === 'function') renderApplications();
-  if (typeof renderExamBank === 'function') renderExamBank();
-  if (typeof renderExamResults === 'function') renderExamResults();
-  if (typeof renderSchoolSetup === 'function') renderSchoolSetup();
-  if (typeof renderSubjectManagement === 'function') renderSubjectManagement();
-  if (typeof renderStreamManagement === 'function') renderStreamManagement();
-  if (typeof renderExamModules === 'function') renderExamModules();
-  if (typeof renderUTMEMock === 'function') renderUTMEMock();
-  if (typeof renderReportCardsAdmin === 'function') renderReportCardsAdmin();
-  if (typeof renderSystemPanel === 'function') renderSystemPanel();
-  if (typeof renderNotificationComposer === 'function') renderNotificationComposer();
-  if (typeof renderSchoolProfile === 'function') renderSchoolProfile();
-  if (typeof renderPaymentGatewaySettings === 'function') renderPaymentGatewaySettings();
-  if (typeof renderPaymentTransactionLog === 'function') renderPaymentTransactionLog();
-  if (typeof renderGalleryAdmin === 'function') renderGalleryAdmin();
-  if (typeof renderPredictiveAnalytics === 'function') renderPredictiveAnalytics();
-  if (typeof renderAITools === 'function') renderAITools();
-  if (typeof renderSimQuestionBank === 'function') renderSimQuestionBank();
-  if (typeof renderSimAttempts === 'function') renderSimAttempts();
-  if (typeof renderAdminActivityGames === 'function') renderAdminActivityGames();
-  if (typeof renderAlumni === 'function') renderAlumni();
-  if (typeof renderPromotionList === 'function') renderPromotionList();
-  if (typeof renderESchoolAdmin === 'function') renderESchoolAdmin();
-  if (typeof renderAcademicCalendar === 'function') renderAcademicCalendar();
-  if (typeof renderTranscriptGenerator === 'function') renderTranscriptGenerator();
-  if (typeof renderHandwritingOCR === 'function') renderHandwritingOCR('adminHandwritingOCR');
-  if (typeof renderAdminTeacherExams === 'function') renderAdminTeacherExams('adminTeacherExams');
-  if (typeof renderSubscriptionSettings === 'function') renderSubscriptionSettings();
-  if (typeof renderHealthRecords === 'function') renderHealthRecords();
-  if (typeof renderTransport === 'function') renderTransport();
-  if (typeof renderConferences === 'function') renderConferences();
-  if (typeof applyTranslations === 'function') applyTranslations();
-  if (typeof _checkAutoTermTransition === 'function') _checkAutoTermTransition();
-  if (typeof renderChatButtons === 'function') renderChatButtons();
+}
+
+// ===== RENDER ALL (full refresh — use sparingly) =====
+function renderAll() {
+  renderActivePanel();
 }
 
 function logActivity(msg) {

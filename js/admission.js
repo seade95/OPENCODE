@@ -1638,7 +1638,6 @@ function viewApplicationDetail(id) {
 }
 
 // ===== ADMIN: EXAM BANK =====
-var letters = ['A', 'B', 'C', 'D'];
 
 function renderExamBank() {
   var container = document.getElementById('adminExamBank');

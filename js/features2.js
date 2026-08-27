@@ -1880,7 +1880,7 @@ function switchLanguage(code) {
   initLanguageSelector('stuLangSelector');
   initLanguageSelector('parentLangSelector');
   // Re-render current portal first (generates content with data-i18n attributes)
-  if (typeof currentAdmin !== 'undefined' && currentAdmin && typeof renderAll === 'function') renderAll();
+  if (typeof currentAdmin !== 'undefined' && currentAdmin && typeof renderActivePanel === 'function') renderActivePanel();
   else if (typeof currentTeacher !== 'undefined' && currentTeacher && typeof renderTeacherPortal === 'function') renderTeacherPortal();
   else if (typeof currentStudent !== 'undefined' && currentStudent && typeof renderStudentPortal === 'function') renderStudentPortal();
   else if (typeof currentParent !== 'undefined' && currentParent && typeof renderParentPortal === 'function') renderParentPortal();
