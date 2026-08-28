@@ -54,7 +54,7 @@ function seedFresh() {
     currentTerm: 'Term 2 2026', currentLanguage: 'en', schoolTier: 'full_k12',
     activityLog: [],
     translations: {
-      en: { siteTitle: 'EDUVERSE', dashboard: 'Dashboard', login: 'Login', logout: 'Logout', students: 'Students' },
+      en: { siteTitle: 'EduVerse', dashboard: 'Dashboard', login: 'Login', logout: 'Logout', students: 'Students' },
       fr: {}, yo: {}, ha: {}, ig: {},
     },
   };

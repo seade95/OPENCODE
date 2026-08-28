@@ -1,4 +1,4 @@
-// EDUVERSE - Global Namespace
+// EduVerse - Global Namespace
 // Provides EduVerse.* namespaced globals for session state, config, and utilities.
 // Individual function names remain global for data-action compatibility.
 

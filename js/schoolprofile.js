@@ -104,7 +104,7 @@ function renderSchoolProfile() {
     + '<div class="form-row"><label>Curriculum</label><input type="text" value="' + esc(prof.curriculumLabel || '') + '" placeholder="e.g. Nigerian Curriculum" oninput="spUpdate(\'curriculumLabel\',this.value)"></div>'
     + '<div class="form-row"><label>Operating Hours</label><input type="text" value="' + esc(prof.operatingHours || '') + '" placeholder="e.g. Mon-Fri 8am-3pm" oninput="spUpdate(\'operatingHours\',this.value)"></div>'
     + '<div class="form-row"><label>Term Names (comma separated)</label><input type="text" value="' + esc((prof.termNames || ['Term 1','Term 2','Term 3']).join(', ')) + '" oninput="spUpdate(\'termNames\',this.value.split(\', \').map(function(s){return s.trim()}))"></div>'
-    + '<div class="form-row"><label>Watermark Text (ID cards, certificates)</label><input type="text" value="' + esc(prof.watermarkText || '') + '" placeholder="e.g. EDUVERSE" oninput="spUpdate(\'watermarkText\',this.value)"></div>'
+    + '<div class="form-row"><label>Watermark Text (ID cards, certificates)</label><input type="text" value="' + esc(prof.watermarkText || '') + '" placeholder="e.g. EduVerse" oninput="spUpdate(\'watermarkText\',this.value)"></div>'
     + '</div></div>'
 
     // Branding & Appearance
@@ -560,7 +560,7 @@ function renderLandingPageSections() {
   // One-time migration: replace old branding strings in profile data
   var needsSave = false;
   function migrateBranding(obj) {
-    if (typeof obj === 'string' && obj.includes('OMOLOLA')) { needsSave = true; return obj.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM').replace(/OMOLOLA/gi, 'EDUVERSE'); }
+    if (typeof obj === 'string' && obj.includes('OMOLOLA')) { needsSave = true; return obj.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse'); }
     if (Array.isArray(obj)) { for (var i = 0; i < obj.length; i++) obj[i] = migrateBranding(obj[i]); return obj; }
     if (obj && typeof obj === 'object') { for (var k in obj) obj[k] = migrateBranding(obj[k]); return obj; }
     return obj;
@@ -587,7 +587,7 @@ function renderLandingPageSections() {
       }
     } catch(e) {}
   }
-  if (!schoolName) schoolName = 'EDUVERSE';
+  if (!schoolName) schoolName = 'EduVerse';
 
   // Nav school name
   var navName = document.getElementById('navSchoolName');
@@ -604,7 +604,7 @@ function renderLandingPageSections() {
     }
   });
 
-  // Hide EDUVERSE platform & super admin buttons on school profiles
+  // Hide EduVerse platform & super admin buttons on school profiles
   ['navJoinBtn', 'heroJoinBtn', 'superAdminCog'].forEach(function(id) {
     var b = document.getElementById(id);
     if (b) b.style.display = 'none';
@@ -734,7 +734,7 @@ function renderLandingPageSections() {
 
   // Footer about & contact
   var footerAbout = document.getElementById('footerAboutText');
-  if (footerAbout) footerAbout.textContent = prof.aboutText || 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM is committed to providing quality education that nurtures academic excellence, character development, and lifelong learning skills in every student.';
+  if (footerAbout) footerAbout.textContent = prof.aboutText || 'EduVerse Institute of Technology & Management is committed to providing quality education that nurtures academic excellence, character development, and lifelong learning skills in every student.';
   var footerContact = document.getElementById('footerContact');
   if (footerContact) {
     footerContact.innerHTML = '<strong><i class="fa fa-map-marker"></i></strong> ' + esc(prof.contactAddress || '') + '<br>'
@@ -745,8 +745,8 @@ function renderLandingPageSections() {
   // Section titles
   if (schoolName) {
     document.querySelectorAll('.section-title p').forEach(function(p) {
-      if (p.textContent.includes('EDUVERSE')) {
-        p.textContent = p.textContent.replace(/EDUVERSE/g, schoolName);
+      if (p.textContent.includes('EduVerse')) {
+        p.textContent = p.textContent.replace(/EduVerse/g, schoolName);
       }
     });
   }
@@ -777,14 +777,14 @@ function renderHeroSlides() {
     { el: document.getElementById('heroSlide1'), title: document.getElementById('heroTitle1'), sub: document.getElementById('heroSubtitle1'), badge: document.getElementById('heroBadge1'), img: (prof.heroImages && prof.heroImages[1]) || 'images/hero/slide2.jpg' },
     { el: document.getElementById('heroSlide2'), title: document.getElementById('heroTitle2'), sub: document.getElementById('heroSubtitle2'), badge: document.getElementById('heroBadge2'), img: (prof.heroImages && prof.heroImages[2]) || 'images/hero/slide3.jpg' }
   ];
-  var names = (prof.schoolName || 'EDUVERSE').split(' ');
+  var names = (prof.schoolName || 'EduVerse').split(' ');
   slides.forEach(function(s, i) {
     if (!s.el) return;
     if (s.img) s.el.style.backgroundImage = 'linear-gradient(135deg, rgba(15,36,64,0.35), rgba(26,58,92,0.25)), url(\'' + s.img + '\')';
     if (i === 0) {
       if (s.title) s.title.innerHTML = (prof.heroTitle || 'Shape Your Future') + ' <span>' + (names[0] || 'With Us') + '</span>';
       if (s.sub) s.sub.textContent = prof.heroSubtitle || 'Empowering students with world-class education.';
-      if (s.badge) s.badge.innerHTML = '<i class="fas fa-star"></i> ' + (prof.schoolName || 'EDUVERSE');
+      if (s.badge) s.badge.innerHTML = '<i class="fas fa-star"></i> ' + (prof.schoolName || 'EduVerse');
     } else if (i === 1) {
       if (s.title) s.title.innerHTML = (names.length > 1 ? names.slice(1).join(' ') : 'Your School') + ', <span>Your Way</span>';
       if (s.sub) s.sub.textContent = 'Manage students, teachers, fees, and results — all from one unified platform.';
@@ -848,7 +848,7 @@ function renderSchoolInfo() {
   if (logoImg && prof.logoUrl) logoImg.src = prof.logoUrl;
   // School name in branding
   var nameEls = document.querySelectorAll('.school-name-display');
-  nameEls.forEach(function(el) { el.textContent = prof.schoolName || 'EDUVERSE'; });
+  nameEls.forEach(function(el) { el.textContent = prof.schoolName || 'EduVerse'; });
 }
 
 // ===== Render Branding (font, border-radius, favicon, custom CSS) =====
@@ -1010,7 +1010,7 @@ function renderFooterDetails() {
   var footerBottom = document.querySelector('.footer-bottom p');
   if (footerBottom) {
     var year = new Date().getFullYear();
-    var name = prof.schoolName || 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM';
+    var name = prof.schoolName || 'EduVerse Institute of Technology & Management';
     footerBottom.innerHTML = '&copy; ' + year + ' ' + esc(name) + ' ' + (prof.foundingYear ? ' (Est. ' + prof.foundingYear + ')' : '') + '. All rights reserved.';
   }
   // Map embed
@@ -1099,7 +1099,7 @@ function renderCBTSection() {
   sec.style.display = '';
   var features = cbt.features || [];
   var exams = cbt.upcomingExams || [];
-  var schoolName = prof.schoolName || 'EDUVERSE';
+  var schoolName = prof.schoolName || 'EduVerse';
   var slug = '';
   try {
     var activeTenant = localStorage.getItem('activeTenant');
@@ -1219,7 +1219,7 @@ function subscribeNewsletter(input) {
   showToast('Subscribed successfully! Check your inbox.');
   // Notify admin via mailto
   var subj = encodeURIComponent('New Newsletter Subscriber');
-  var body = encodeURIComponent('New subscriber: ' + email + '\nTotal subscribers: ' + subs.length + '\n\nSent from EDUVERSE platform.');
+  var body = encodeURIComponent('New subscriber: ' + email + '\nTotal subscribers: ' + subs.length + '\n\nSent from EduVerse platform.');
   window.open('mailto:' + NOTIFY_EMAIL + '?subject=' + subj + '&body=' + body, '_blank');
 }
 

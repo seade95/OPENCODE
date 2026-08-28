@@ -136,7 +136,7 @@ testGroup('Data Layer - Defaults', () => {
   assert(typeof defaults.translations.yo === 'object', 'YO translations exist');
   assert(typeof defaults.translations.ha === 'object', 'HA translations exist');
   assert(typeof defaults.translations.ig === 'object', 'IG translations exist');
-  assert(defaults.translations.en.siteTitle === 'EDUVERSE', 'EN siteTitle correct');
+  assert(defaults.translations.en.siteTitle === 'EduVerse', 'EN siteTitle correct');
 });
 
 testGroup('Data Layer - Migration', () => {

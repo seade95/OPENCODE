@@ -1,4 +1,4 @@
-// EDUVERSE - cbt module
+// EduVerse - cbt module
 // Extracted from features.js
 
 // ===== CBT EXAM SYSTEM (Admin) =====

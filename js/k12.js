@@ -1,4 +1,4 @@
-// EDUVERSE - K-12 Tiered Academic Schema Module
+// EduVerse - K-12 Tiered Academic Schema Module
 // Comprehensive Nigerian K-12 system: Creche to SSS 3, national exams, GPA tracking
 
 // ===== 1. K-12 CONFIGURATION =====
@@ -907,8 +907,8 @@ function printStudentReportCard() {
 function k12GenerateReportCardHTML(studentId, term) {
   const student = getStudent(studentId);
   if (!student) return '<p class="empty-state">Student not found</p>';
-  var schoolName = (data && data.schoolName) ? data.schoolName : 'EDUVERSE';
-  var schoolMotto = (data && data.schoolMotto) ? data.schoolMotto : 'EDUVERSE';
+  var schoolName = (data && data.schoolName) ? data.schoolName : 'EduVerse';
+  var schoolMotto = (data && data.schoolMotto) ? data.schoolMotto : 'EduVerse';
   var schoolLogoUrl = '';
   try { if (data && data.schoolProfile && data.schoolProfile.logoUrl) schoolLogoUrl = data.schoolProfile.logoUrl; } catch(e) {}
   const tier = getClassTier(student.class);

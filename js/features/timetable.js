@@ -1,4 +1,4 @@
-// EDUVERSE - Timetable Module
+// EduVerse - Timetable Module
 // Extracted from features.js
 
 // ===== TIMETABLE GENERATOR =====

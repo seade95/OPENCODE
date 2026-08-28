@@ -1,4 +1,4 @@
-// EDUVERSE - Teacher Portal Module
+// EduVerse - Teacher Portal Module
 // Dashboard, assignments, class roster management
 
 function renderTeacherPortal() {

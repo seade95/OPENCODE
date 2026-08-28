@@ -1,4 +1,4 @@
-// EDUVERSE - calendar module
+// EduVerse - calendar module
 // Extracted from features.js
 
 // ===== ACADEMIC CALENDAR =====

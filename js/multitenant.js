@@ -74,7 +74,7 @@ function getTenants() {
     for (var i = 0; i < t.length; i++) {
       // One-time migration: clean old OMOLOLA branding from tenant names
       if (t[i].name && t[i].name.includes('OMOLOLA')) {
-        t[i].name = t[i].name.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EDUVERSE - SCHOOL MANAGEMENT PLATFORM').replace(/OMOLOLA/gi, 'EDUVERSE');
+        t[i].name = t[i].name.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse');
         changed = true;
       }
       // One-time migration: auto-generate slug for existing tenants
@@ -535,7 +535,7 @@ function showOnboardSchool() {
     <div id="onboardError" style="display:none;background:#fed7d7;color:#c53030;padding:10px;border-radius:6px;margin-bottom:12px;"></div>
 
     <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="onbSchoolName" placeholder="e.g. EDUVERSE" oninput="onbUpdateSlug()"></div>
+      <div class="form-group" style="grid-column:1/-1;"><label>School Name *</label><input type="text" id="onbSchoolName" placeholder="e.g. EduVerse" oninput="onbUpdateSlug()"></div>
       <div class="form-group"><label>URL Slug *</label>
         <div style="display:flex;gap:6px;align-items:center;">
           <input type="text" id="onbSchoolSlug" placeholder="my-school" oninput="validateField(this,'name')" style="font-family:monospace;font-size:13px;">

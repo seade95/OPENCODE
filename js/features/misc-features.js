@@ -1,4 +1,4 @@
-// EDUVERSE - misc features module
+// EduVerse - misc features module
 // Extracted from features.js
 
 // ===== GRADEBOOK =====

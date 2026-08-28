@@ -1,4 +1,4 @@
-// EDUVERSE - website module
+// EduVerse - website module
 // Extracted from features.js
 
 // ===== WEBSITE BUILDER & CMS LANDING PAGE =====

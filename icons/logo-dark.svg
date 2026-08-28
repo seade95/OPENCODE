@@ -1,6 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
-  <rect x="2" y="4" width="32" height="32" rx="6" fill="#3b82f6"/>
-  <path d="M18 10l-12 6 12 6 12-6-12-6z" fill="#fff" opacity="0.9"/>
-  <path d="M6 18v8c0 4 5.4 7 12 7s12-3 12-7v-8" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.7"/>
-  <text x="42" y="26" font-family="Inter,system-ui,sans-serif" font-size="18" font-weight="700" fill="#1e293b" letter-spacing="1">EduVerse</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" fill="none">
+  <!-- M Mark -->
+  <rect x="20" y="40" width="24" height="104" rx="12" fill="#e2e8f0"/>
+  <circle cx="32" cy="32" r="8" fill="#f5a623"/>
+  <rect x="60" y="24" width="24" height="120" rx="12" fill="#a78bfa"/>
+  <rect x="100" y="48" width="24" height="96" rx="12" fill="#67e8f9"/>
+  <circle cx="112" cy="156" r="8" fill="#e2e8f0"/>
+  <path d="M32 148 Q 72 180 112 148" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+  <!-- EduVerse -->
+  <text x="150" y="100" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="72" fill="#ffffff" letter-spacing="2">EduVerse</text>
+  <!-- INSTITUTE OF TECHNOLOGY & MANAGEMENT -->
+  <text x="150" y="140" font-family="Arial, Helvetica, sans-serif" font-weight="600" font-size="28">
+    <tspan fill="#f87171">INSTITUTE</tspan>
+    <tspan fill="#ffffff"> OF </tspan>
+    <tspan fill="#4ade80">TECHNOLOGY</tspan>
+    <tspan fill="#ffffff"> &amp; MANAGEMENT</tspan>
+  </text>
+  <!-- Orange underline -->
+  <rect x="150" y="150" width="160" height="6" rx="3" fill="#f5a623"/>
 </svg>

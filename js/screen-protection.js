@@ -1,4 +1,4 @@
-// EDUVERSE - Flexible Screen Protection
+// EduVerse - Flexible Screen Protection
 // Configurable protection levels: off(0), mild(1), moderate(2), strict(3)
 
 (function() {
@@ -171,7 +171,7 @@
       var s = JSON.parse(localStorage.getItem('eduverse_session'));
       if (s && s.user) session = s.user.name || s.user.email || s.user.id;
     } catch(e) {}
-    wm.textContent = 'EDUVERSE ' + (session ? '| ' + session + ' ' : '') + '| ' + new Date().toLocaleDateString();
+    wm.textContent = 'EduVerse ' + (session ? '| ' + session + ' ' : '') + '| ' + new Date().toLocaleDateString();
     document.body.appendChild(wm);
   }
 

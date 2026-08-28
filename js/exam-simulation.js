@@ -1,4 +1,4 @@
-// EDUVERSE - Exam Simulation System
+// EduVerse - Exam Simulation System
 // Interactive timed exams for Nigerian 9-3-4 system: Common Entrance, BECE, WASSCE, NECO, CBT
 
 // ===== SEED QUESTION BANK — Nigerian Curriculum =====

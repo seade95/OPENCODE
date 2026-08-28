@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <rect width="512" height="512" rx="80" fill="#2563eb"/>
-  <path d="M256 100l-180 90 40 20v80c0 50 60 90 140 90s140-40 140-90v-80l40-20-180-90z" fill="#fff" opacity="0.95"/>
-  <path d="M256 120l-140 70 140 70 140-70-140-70z" fill="#1e40af"/>
-  <path d="M216 320v-80l40-20 40 20v80" fill="none" stroke="#2563eb" stroke-width="6" stroke-linecap="round"/>
-  <circle cx="256" cy="340" r="50" fill="#fbbf24" opacity="0.2"/>
-  <circle cx="256" cy="340" r="30" fill="#fbbf24" opacity="0.3"/>
-  <circle cx="256" cy="340" r="12" fill="#f59e0b"/>
-  <rect x="180" y="390" width="152" height="16" rx="4" fill="#fff" opacity="0.2"/>
-  <rect x="190" y="406" width="132" height="8" rx="3" fill="#fff" opacity="0.15"/>
+  <!-- M Mark -->
+  <rect x="80" y="160" width="60" height="260" rx="30" fill="#2d3748"/>
+  <circle cx="110" cy="140" r="16" fill="#f5a623"/>
+  <rect x="180" y="120" width="60" height="300" rx="30" fill="#7c3aed"/>
+  <rect x="280" y="180" width="60" height="240" rx="30" fill="#06b6d4"/>
+  <circle cx="310" cy="440" r="16" fill="#1a202c"/>
+  <!-- Dotted arc connecting left and right bars -->
+  <path d="M110 420 Q 200 500 310 420" stroke="#7c3aed" stroke-width="3" stroke-dasharray="6 6" fill="none"/>
 </svg>

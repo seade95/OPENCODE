@@ -1,4 +1,4 @@
-# EDUVERSE - Netlify Redirects
+# EduVerse - Netlify Redirects
 # Serves index.html for all SPA routes
 
 /superadmin    /superadmin.html   200

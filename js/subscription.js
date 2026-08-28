@@ -1,4 +1,4 @@
-// EDUVERSE - Premium Subscription Module
+// EduVerse - Premium Subscription Module
 // Admin manages subscription plans; all portals show status banner
 
 (function() {

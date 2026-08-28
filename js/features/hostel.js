@@ -1,4 +1,4 @@
-// EDUVERSE - hostel module
+// EduVerse - hostel module
 // Extracted from features.js
 
 // ===== HOSTEL/DORMITORY MANAGEMENT =====

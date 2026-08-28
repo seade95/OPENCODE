@@ -1,4 +1,4 @@
-// EDUVERSE - Offline Sync & Auto-Backup Module
+// EduVerse - Offline Sync & Auto-Backup Module
 // Monitors connectivity, maintains local backups, and syncs when online
 
 (function() {

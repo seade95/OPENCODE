@@ -513,7 +513,7 @@ testGroup('Superadmin Platform Config', () => {
   // Test getDefaultPlatformConfig
   var defaults = EV.getDefaultPlatformConfig();
   assert(typeof defaults === 'object', 'default platform config is object');
-  assertEq(defaults.platformName, 'EDUVERSE', 'default platform name');
+  assertEq(defaults.platformName, 'EduVerse', 'default platform name');
   assertEq(defaults.currency, 'NGN', 'default currency');
   assert(Array.isArray(defaults.subscriptionPlans), 'has subscription plans');
   assert(defaults.subscriptionPlans.length >= 3, 'has at least 3 default plans');

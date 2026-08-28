@@ -15,7 +15,7 @@ const ADMIN_HTML = 'file://' + path.resolve(__dirname, '..', 'admin.html');
 test.describe('Landing Page', () => {
   test('should load and display school name', async ({ page }) => {
     await page.goto(INDEX_HTML);
-    await expect(page.locator('text=EDUVERSE')).toBeVisible();
+    await expect(page.locator('text=EduVerse')).toBeVisible();
   });
 
   test('should show hero slider and navigate slides', async ({ page }) => {

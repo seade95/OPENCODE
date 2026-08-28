@@ -1,4 +1,4 @@
-// EDUVERSE - Admission & Exam Center
+// EduVerse - Admission & Exam Center
 // Manages program listings, applications, entrance exams (with proctor), and results
 
 // ===== STATE =====
@@ -836,7 +836,7 @@ function renderAdmissionPage() {
   content.innerHTML = `
     <div class="adm-hero">
       <h1>Admissions Open for 2026/2027 Session</h1>
-      <p>Explore our programs, submit your application, take the entrance exam, and begin your journey at ${htmlEscape((data && data.schoolName) ? data.schoolName : 'EDUVERSE')}</p>
+      <p>Explore our programs, submit your application, take the entrance exam, and begin your journey at ${htmlEscape((data && data.schoolName) ? data.schoolName : 'EduVerse')}</p>
     </div>
     <div style="margin-bottom:24px;display:flex;gap:12px;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="showAdmissionHome()"><i class="fas fa-list"></i> View Programs</button>
@@ -971,7 +971,7 @@ function showApplicationStatus(appId) {
       </div>
       <div style="text-align:center;margin-top:20px;">
         ${passScore !== null ? `<p style="margin-bottom:8px;">Entrance Exam Score: <strong>${passScore}%</strong> (${app.examPassed ? 'PASSED' : 'FAILED'})</p>` : ''}
-        ${app.examPassed === true ? `<div class="acceptance-letter" style="margin-top:16px;"><h2><i class="fas fa-certificate"></i> Congratulations!</h2><div class="letter-body"><p>Dear ${htmlEscape(app.firstName)} ${htmlEscape(app.lastName)},</p><p>We are delighted to inform you that you have been accepted into <strong>${htmlEscape(program?.name || '')}</strong> at <strong>EDUVERSE</strong> for the 2026/2027 academic session.</p><p>Please proceed to the school admin office with this confirmation and your original documents for further processing.</p><p>Welcome to EDUVERSE!</p><div class="signature">— Admissions Office<br>EDUVERSE</div></div></div>` : ''}
+        ${app.examPassed === true ? `<div class="acceptance-letter" style="margin-top:16px;"><h2><i class="fas fa-certificate"></i> Congratulations!</h2><div class="letter-body"><p>Dear ${htmlEscape(app.firstName)} ${htmlEscape(app.lastName)},</p><p>We are delighted to inform you that you have been accepted into <strong>${htmlEscape(program?.name || '')}</strong> at <strong>EduVerse Institute of Technology & Management</strong> for the 2026/2027 academic session.</p><p>Please proceed to the school admin office with this confirmation and your original documents for further processing.</p><p>Welcome to EduVerse!</p><div class="signature">— Admissions Office<br>EduVerse Institute of Technology & Management</div></div></div>` : ''}
         ${app.examPassed === false ? `<p style="color:var(--danger);">Unfortunately, you did not meet the minimum pass mark for your chosen program. You may re-apply next session.</p>` : ''}
         ${!app.examCompleted && app.examScheduled ? `<button class="btn btn-primary" onclick="startEntranceExam('${app.id}')"><i class="fas fa-play"></i> Take Entrance Exam</button>` : ''}
         ${!app.examScheduled && app.status !== 'rejected' ? `<p style="font-size:13px;color:var(--text-light);">Your application is being reviewed. You will be notified when your exam is scheduled.</p>` : ''}

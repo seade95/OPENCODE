@@ -1,4 +1,4 @@
-// EDUVERSE - UI Layer
+// EduVerse - UI Layer
 // Toast notifications, modal dialogs, navigation, sidebar controls
 
 function toast(msg, type) {

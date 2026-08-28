@@ -1,4 +1,4 @@
-// EDUVERSE - Alumni Management Module
+// EduVerse - Alumni Management Module
 // Directory, Reunion Coordination, Donation Tracking
 
 // ===== STATE =====

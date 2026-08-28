@@ -1,4 +1,4 @@
-// EDUVERSE - Teacher Word Document Upload & Admin Review Module
+// EduVerse - Teacher Word Document Upload & Admin Review Module
 
 window._tuFilter = window._tuFilter || 'all';
 

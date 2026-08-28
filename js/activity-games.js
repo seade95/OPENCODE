@@ -1,4 +1,4 @@
-// EDUVERSE - Activity Games Module
+// EduVerse - Activity Games Module
 // Interactive extracurricular simulations: Spelling Bee, Math Sprint, Quiz Bowl, Word Scramble, Typing Test
 
 // ===== GAME DEFINITIONS =====

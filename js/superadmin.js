@@ -25,7 +25,7 @@ function getDefaultPlatformConfig() {
     contactEmail: '',
     bankAccounts: [],
     currency: 'NGN',
-    platformName: 'EDUVERSE',
+    platformName: 'EduVerse',
     subscriptionPlans: [
       { id: 'plan_free', name: 'Free', interval: 'free', amount: 0, active: true, features: 'Basic school management, up to 50 students' },
       { id: 'plan_basic', name: 'Basic', interval: 'monthly', amount: 5000, active: true, features: 'Up to 200 students, all modules' },
@@ -656,7 +656,7 @@ function renderSaPlatform(container) {
 
     // Contact Section
     + '<div class="sa-section"><h3><i class="fas fa-phone-alt"></i> Platform Contact</h3>'
-    + '<div class="form-row"><label>Platform Name</label><input type="text" id="saPlatformName" value="' + esc(cfg.platformName || 'EDUVERSE') + '" oninput="updateSaConfig(\'platformName\',this.value)"></div>'
+    + '<div class="form-row"><label>Platform Name</label><input type="text" id="saPlatformName" value="' + esc(cfg.platformName || 'EduVerse') + '" oninput="updateSaConfig(\'platformName\',this.value)"></div>'
     + '<div class="form-row"><label>WhatsApp Number</label><input type="text" id="saWhatsApp" value="' + esc(cfg.whatsappNumber || '') + '" placeholder="e.g. +2348012345678" oninput="updateSaConfig(\'whatsappNumber\',this.value)"><p class="field-hint">Shows as floating WhatsApp button on the landing page</p></div>'
     + '<div class="form-row"><label>Contact Email</label><input type="email" id="saContactEmail" value="' + esc(cfg.contactEmail || '') + '" placeholder="super@eduverse.com" oninput="updateSaConfig(\'contactEmail\',this.value)"><p class="field-hint">Shows as floating email button on the landing page</p></div>'
     + '<div class="form-row"><label>Currency</label><select onchange="updateSaConfig(\'currency\',this.value)"><option value="NGN"' + (cfg.currency==='NGN'?' selected':'') + '>NGN (₦)</option><option value="USD"' + (cfg.currency==='USD'?' selected':'') + '>USD ($)</option><option value="GBP"' + (cfg.currency==='GBP'?' selected':'') + '>GBP (£)</option><option value="EUR"' + (cfg.currency==='EUR'?' selected':'') + '>EUR (€)</option></select></div>'
@@ -677,7 +677,7 @@ function renderSaPlatform(container) {
     + '</div>'
     + '<div class="form-row"><label>Username</label><input type="text" id="saSmtpUser" value="' + esc((cfg.smtpConfig||{}).user || '') + '" placeholder="your@email.com" onchange="updateSaSmtp(\'user\',this.value)"></div>'
     + '<div class="form-row"><label>Password</label><input type="password" id="saSmtpPass" value="' + esc((cfg.smtpConfig||{}).pass || '') + '" placeholder="App password" onchange="updateSaSmtp(\'pass\',this.value)"></div>'
-    + '<div class="form-row"><label>From Name</label><input type="text" id="saSmtpFromName" value="' + esc((cfg.smtpConfig||{}).fromName || cfg.platformName || 'EDUVERSE') + '" onchange="updateSaSmtp(\'fromName\',this.value)"></div>'
+    + '<div class="form-row"><label>From Name</label><input type="text" id="saSmtpFromName" value="' + esc((cfg.smtpConfig||{}).fromName || cfg.platformName || 'EduVerse') + '" onchange="updateSaSmtp(\'fromName\',this.value)"></div>'
     + '<div class="form-row"><label>From Email</label><input type="email" id="saSmtpFromEmail" value="' + esc((cfg.smtpConfig||{}).fromEmail || cfg.contactEmail || '') + '" onchange="updateSaSmtp(\'fromEmail\',this.value)"></div>'
     + '</div>'
 

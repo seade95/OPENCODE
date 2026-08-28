@@ -1,4 +1,4 @@
-// EDUVERSE - Enhanced Features Module
+// EduVerse - Enhanced Features Module
 // Features: Print, Bulk Import, Term Switch, Notifications, Sort/Paginate,
 // Library, Lessons, Behavior, HR, Forum, File Repo, Analytics, Payments, i18n, ID Cards
 
@@ -6,7 +6,7 @@
 function printSection(elementId, title) {
   let content = document.getElementById(elementId);
   if (!content) { toast('Content not found', 'error'); return; }
-  var schoolName = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EDUVERSE';
+  var schoolName = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EduVerse';
   var printFrame = document.createElement('iframe');
   printFrame.style.cssText = 'position:absolute;width:0;height:0;border:0;';
   document.body.appendChild(printFrame);
@@ -1972,12 +1972,12 @@ function applyTranslations() {
 
   // 9. Update document title
   if (t.siteTitle) {
-    document.title = t.siteTitle + ' - SCHOOL MANAGEMENT PLATFORM';
+    document.title = t.siteTitle + ' - Institute of Technology & Management';
     document.querySelectorAll('.footer-top-bar .logo').forEach(function(el) {
-      var siteTitle = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EDUVERSE';
+      var siteTitle = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EduVerse';
       var logoUrl = '';
       try { if (data && data.schoolProfile && data.schoolProfile.logoUrl) logoUrl = data.schoolProfile.logoUrl; } catch(e) {}
-      if (el.textContent.trim().startsWith(siteTitle) || el.textContent.trim().startsWith('EDUVERSE')) {
+      if (el.textContent.trim().startsWith(siteTitle) || el.textContent.trim().startsWith('EduVerse')) {
         if (logoUrl) {
           el.innerHTML = '<img class="school-logo-img" src="' + htmlEscape(logoUrl) + '" alt="' + htmlEscape(siteTitle) + '" style="height:36px;border-radius:4px;"> ' + htmlEscape(t.siteTitle);
         } else {
@@ -1994,8 +1994,8 @@ function renderIDCards(containerId, filterType) {
   if (!container) return;
   let cards = data.idCards || [];
   if (filterType) cards = cards.filter(c => c.type === filterType || (c.type === undefined && filterType === 'student')); // fallback for old-schema student cards
-  var schoolName = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EDUVERSE';
-  var schoolMotto = (typeof data !== 'undefined' && data && data.schoolMotto) ? data.schoolMotto : 'EDUVERSE';
+  var schoolName = (typeof data !== 'undefined' && data && data.schoolName) ? data.schoolName : 'EduVerse';
+  var schoolMotto = (typeof data !== 'undefined' && data && data.schoolMotto) ? data.schoolMotto : 'EduVerse';
   container.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
       <span style="font-size:14px;color:var(--text-light);">${cards.length} cards issued</span>
@@ -2150,8 +2150,8 @@ function printIDCard(id) {
   const person = card.type === 'teacher' ? getTeacher(card.personId) : getStudent(card.personId || card.studentId);
   const name = person?.name || 'Unknown';
   const idNum = person?.id || card.personId;
-  var schoolName = (data && data.schoolName) ? data.schoolName : 'EDUVERSE';
-  var schoolMotto = (data && data.schoolMotto) ? data.schoolMotto : 'EDUVERSE';
+  var schoolName = (data && data.schoolName) ? data.schoolName : 'EduVerse';
+  var schoolMotto = (data && data.schoolMotto) ? data.schoolMotto : 'EduVerse';
   const photoHtml = card.photoUrl
     ? `<img src="${card.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
     : `${name.charAt(0).toUpperCase()}`;

@@ -1,4 +1,4 @@
-// EDUVERSE - Custom Report Builder
+// EduVerse - Custom Report Builder
 // Drag-and-drop report designer for school-specific analytics
 // Supports Table, Bar Chart, Pie Chart, Summary Cards
 

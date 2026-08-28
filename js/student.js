@@ -1,4 +1,4 @@
-// EDUVERSE - Student Portal Module
+// EduVerse - Student Portal Module
 // Results, CAT, Assignments, Fees, Activities, Attendance viewing
 
 function renderStudentPortal() {

@@ -1,4 +1,4 @@
-// EDUVERSE - Admin Portal Module
+// EduVerse - Admin Portal Module
 // Student, Teacher, Fees, Results, CAT, Activities, Attendance management
 
 function renderDashboard() {

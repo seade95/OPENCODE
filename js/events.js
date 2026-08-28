@@ -1,4 +1,4 @@
-// EDUVERSE - Event Delegation System
+// EduVerse - Event Delegation System
 // Centralizes click handling via data-action attributes
 // Replaces inline onclick handlers for better maintainability
 

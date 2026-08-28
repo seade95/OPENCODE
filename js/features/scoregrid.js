@@ -1,4 +1,4 @@
-// EDUVERSE - scoregrid module
+// EduVerse - scoregrid module
 // Extracted from features.js
 
 // ===== INTERACTIVE SCORE GRID =====

@@ -1,4 +1,4 @@
-// EDUVERSE - System Module
+// EduVerse - System Module
 // Backup/Restore, Global Search, Session Management, Confirm Dialogs, Data Repair
 
 // ===== 1. DATA BACKUP & RESTORE =====
@@ -21,7 +21,7 @@ function showDataBackup() {
 }
 
 function exportAllData() {
-  var schoolName = (data && data.schoolName) ? data.schoolName : 'EDUVERSE';
+  var schoolName = (data && data.schoolName) ? data.schoolName : 'EduVerse';
   var backup = {
     version: '2.0',
     exportedAt: new Date().toISOString(),

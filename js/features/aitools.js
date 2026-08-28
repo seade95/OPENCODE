@@ -1,4 +1,4 @@
-// EDUVERSE - aitools module
+// EduVerse - aitools module
 // Extracted from features.js
 
 // ===== AI TOOLS — LESSON GENERATOR & SMART FEEDBACK =====
