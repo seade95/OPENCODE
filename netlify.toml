@@ -38,11 +38,6 @@
   status = 200
 
 [[redirects]]
-  from = "/apply"
-  to = "/apply.html"
-  status = 200
-
-[[redirects]]
   from = "/pricing"
   to = "/pricing.html"
   status = 200

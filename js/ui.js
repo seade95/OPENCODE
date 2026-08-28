@@ -226,8 +226,7 @@ function showSchoolSelector() {
   if (overlay) overlay.classList.add('active');
 }
 
-let currentAdmin = window.currentAdmin || null;
-let currentParent = null;
+
 
 function showAdminLogin() {
   if (currentAdmin) { showAdminPortal(); return; }
@@ -432,8 +431,7 @@ function studentLogout() {
   if (slp) slp.classList.add('active');
 }
 
-let currentStudent = null;
-let currentTeacher = null;
+
 
 function showTeacherLogin() {
   var lp = document.getElementById('landing-page');

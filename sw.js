@@ -18,6 +18,7 @@ const SHELL = [
   '/js/data.js',
   '/js/ui.js',
   '/js/events.js',
+  '/js/app.js',
   '/js/admin.js',
   '/js/teacher.js',
   '/js/student.js',
