@@ -1,4 +1,4 @@
-const CACHE = 'eduverse-v6';
+const CACHE = 'eduverse-v7';
 const OFFLINE_URL = '/offline.html';
 
 const SHELL = [
@@ -12,6 +12,7 @@ const SHELL = [
   '/manifest.json',
   '/icons/icon.svg',
   '/icons/icon-512.svg',
+  '/images/favicon.svg',
   '/css/style.css',
   '/js/auth.js',
   '/js/namespace.js',

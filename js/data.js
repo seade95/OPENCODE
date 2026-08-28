@@ -651,7 +651,9 @@ function loadData() {
       }
       parsed = _cleanBranding(parsed);
       if (typeof parsed.schoolName === 'string' && parsed.schoolName.indexOf('OMOLOLA') !== -1) { _needsSave = true; parsed.schoolName = parsed.schoolName.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse'); }
+      if (typeof parsed.schoolName === 'string' && parsed.schoolName.indexOf('Demo International School') !== -1) { _needsSave = true; parsed.schoolName = parsed.schoolName.replace(/Demo International School/g, 'EduVerse'); }
       if (typeof parsed.schoolMotto === 'string' && parsed.schoolMotto.indexOf('OMOLOLA') !== -1) { _needsSave = true; parsed.schoolMotto = parsed.schoolMotto.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse'); }
+      if (typeof parsed.schoolMotto === 'string' && parsed.schoolMotto.indexOf('Demo International School') !== -1) { _needsSave = true; parsed.schoolMotto = parsed.schoolMotto.replace(/Demo International School/g, 'EduVerse'); }
       if (_needsSave) { localStorage.setItem(getDataKey(), JSON.stringify(parsed)); }
       return parsed;
     }

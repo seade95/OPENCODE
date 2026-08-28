@@ -561,16 +561,17 @@ function renderLandingPageSections() {
   var needsSave = false;
   function migrateBranding(obj) {
     if (typeof obj === 'string' && obj.includes('OMOLOLA')) { needsSave = true; return obj.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse'); }
+    if (typeof obj === 'string' && obj.includes('Demo International School')) { needsSave = true; return obj.replace(/Demo International School/g, 'EduVerse'); }
     if (Array.isArray(obj)) { for (var i = 0; i < obj.length; i++) obj[i] = migrateBranding(obj[i]); return obj; }
     if (obj && typeof obj === 'object') { for (var k in obj) obj[k] = migrateBranding(obj[k]); return obj; }
     return obj;
   }
   // Clean schoolProfile, schoolName, and schoolMotto
   prof = migrateBranding(prof);
-  if (data.schoolName && typeof data.schoolName === 'string' && data.schoolName.includes('OMOLOLA')) {
+  if (data.schoolName && typeof data.schoolName === 'string' && (data.schoolName.includes('OMOLOLA') || data.schoolName.includes('Demo International School'))) {
     data.schoolName = migrateBranding(data.schoolName); needsSave = true;
   }
-  if (data.schoolMotto && typeof data.schoolMotto === 'string' && data.schoolMotto.includes('OMOLOLA')) {
+  if (data.schoolMotto && typeof data.schoolMotto === 'string' && (data.schoolMotto.includes('OMOLOLA') || data.schoolMotto.includes('Demo International School'))) {
     data.schoolMotto = migrateBranding(data.schoolMotto); needsSave = true;
   }
   if (needsSave) { data.schoolProfile = prof; saveData(); }
