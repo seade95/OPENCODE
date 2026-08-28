@@ -105,6 +105,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var tenants = getTenants();
         var tenant = tenants.find(function(t) { return t.id === activeTenant; });
         if (tenant) {
+          // Migrate old branding in tenant name
+          if (tenant.name && (tenant.name.includes('Demo International School') || tenant.name.includes('OMOLOLA'))) {
+            tenant.name = tenant.name.replace(/Demo International School/g, 'EduVerse').replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse');
+            try { localStorage.setItem('eduverse_tenants', JSON.stringify(tenants)); } catch(e) {}
+          }
           var el = document.getElementById('navSchoolName');
           if (el) el.textContent = tenant.name;
           var ind = document.getElementById('navSchoolIndicator');

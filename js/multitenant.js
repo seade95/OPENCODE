@@ -321,7 +321,7 @@ function initDemoTenant() {
 
   var tenant = createTenant({
     name: 'EduVerse',
-    slug: 'demo-international',
+    slug: 'eduverse-demo',
     email: 'demo@demo.com',
     phone: '+2347069332955',
     motto: 'Excellence in Education — Try It Free!',
