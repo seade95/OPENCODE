@@ -1467,61 +1467,129 @@ function renderSaRevenue(container) {
 
   var combinedRevenue = totalSubscriptionRevenue + agg.feesCollected.totalAmount;
 
-  var html = '<div class="sa-stats-grid">'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon sa-stat-icon--green"><i class="fas fa-money-bill-wave"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(combinedRevenue) + '</div><div class="sa-stat-label">Combined Revenue</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon sa-stat-icon--blue"><i class="fas fa-users"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(agg.feesCollected.totalAmount) + '</div><div class="sa-stat-label">School Fee Collections</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon sa-stat-icon--amber"><i class="fas fa-credit-card"></i></div><div><div class="sa-stat-value">' + sym + formatAmount(totalSubscriptionRevenue) + '</div><div class="sa-stat-label">Subscription Payments</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon sa-stat-icon--pink"><i class="fas fa-receipt"></i></div><div><div class="sa-stat-value">' + agg.feesCollected.total + ' txns</div><div class="sa-stat-label">Fee Transactions</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon sa-stat-icon--blue"><i class="fas fa-school"></i></div><div><div class="sa-stat-value">' + Object.keys(paidSchools).length + '</div><div class="sa-stat-label">Paying Schools (Sub)</div></div></div>'
-    + '<div class="sa-stat-card"><div class="sa-stat-icon sa-stat-icon--indigo"><i class="fas fa-receipt"></i></div><div><div class="sa-stat-value">' + records.length + '</div><div class="sa-stat-label">Subscription Transactions</div></div></div>'
-    + '</div>';
+  // Plan breakdown chips
+  var planChips = '';
+  var planNames = Object.keys(planRevenue);
+  if (planNames.length) {
+    planChips = '<div class="sa-plan-breakdown">'
+      + planNames.map(function(p) {
+        return '<div class="sa-plan-chip">'
+          + '<div class="sa-plan-chip-name">' + esc(p) + '</div>'
+          + '<div class="sa-plan-chip-amount">' + sym + formatAmount(planRevenue[p]) + '</div>'
+          + '<div class="sa-plan-chip-count">from payments</div>'
+          + '</div>';
+      }).join('') + '</div>';
+  }
 
-  // Fee collections by school (from actual student fees)
-  html += '<div class="sa-section"><h3><i class="fas fa-file-invoice-dollar"></i> Fee Collections by School</h3>';
+  var html = ''
+    // Hero banner
+    + '<div class="sa-revenue-hero">'
+    + '<h3><i class="fas fa-chart-line"></i> Revenue & Payments</h3>'
+    + '<p>Track subscription payments, school fee collections, and overall platform revenue at a glance.</p>'
+    + '</div>'
+
+    // Stats grid
+    + '<div class="sa-revenue-stats">'
+    + '<div class="sa-revenue-stat sa-revenue-stat--combined">'
+    + '<div class="sa-revenue-stat-header"><div class="sa-revenue-stat-icon sa-revenue-stat-icon--green"><i class="fas fa-coins"></i></div><div class="sa-revenue-stat-label">Combined Revenue</div></div>'
+    + '<div class="sa-revenue-stat-value">' + sym + formatAmount(combinedRevenue) + '</div>'
+    + '</div>'
+    + '<div class="sa-revenue-stat sa-revenue-stat--fees">'
+    + '<div class="sa-revenue-stat-header"><div class="sa-revenue-stat-icon sa-revenue-stat-icon--blue"><i class="fas fa-graduation-cap"></i></div><div class="sa-revenue-stat-label">School Fees</div></div>'
+    + '<div class="sa-revenue-stat-value">' + sym + formatAmount(agg.feesCollected.totalAmount) + '</div>'
+    + '</div>'
+    + '<div class="sa-revenue-stat sa-revenue-stat--subs">'
+    + '<div class="sa-revenue-stat-header"><div class="sa-revenue-stat-icon sa-revenue-stat-icon--amber"><i class="fas fa-credit-card"></i></div><div class="sa-revenue-stat-label">Subscriptions</div></div>'
+    + '<div class="sa-revenue-stat-value">' + sym + formatAmount(totalSubscriptionRevenue) + '</div>'
+    + '</div>'
+    + '<div class="sa-revenue-stat sa-revenue-stat--txns">'
+    + '<div class="sa-revenue-stat-header"><div class="sa-revenue-stat-icon sa-revenue-stat-icon--pink"><i class="fas fa-receipt"></i></div><div class="sa-revenue-stat-label">Fee Transactions</div></div>'
+    + '<div class="sa-revenue-stat-value">' + agg.feesCollected.total + '</div>'
+    + '</div>'
+    + '<div class="sa-revenue-stat sa-revenue-stat--schools">'
+    + '<div class="sa-revenue-stat-header"><div class="sa-revenue-stat-icon sa-revenue-stat-icon--indigo"><i class="fas fa-school"></i></div><div class="sa-revenue-stat-label">Paying Schools</div></div>'
+    + '<div class="sa-revenue-stat-value">' + Object.keys(paidSchools).length + '</div>'
+    + '</div>'
+    + '<div class="sa-revenue-stat sa-revenue-stat--records">'
+    + '<div class="sa-revenue-stat-header"><div class="sa-revenue-stat-icon sa-revenue-stat-icon--cyan"><i class="fas fa-file-invoice"></i></div><div class="sa-revenue-stat-label">Sub. Records</div></div>'
+    + '<div class="sa-revenue-stat-value">' + records.length + '</div>'
+    + '</div>'
+    + '</div>'
+
+    // Fee collections table
+    + '<div class="sa-revenue-card" style="margin-bottom:20px">'
+    + '<div class="sa-revenue-card-header">'
+    + '<div class="sa-revenue-card-icon" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#059669"><i class="fas fa-file-invoice-dollar"></i></div>'
+    + '<div><div class="sa-revenue-card-title">Fee Collections by School</div><div class="sa-revenue-card-subtitle">Breakdown of collected school fees per institution</div></div>'
+    + '</div>'
+    + '<div class="sa-revenue-card-body" style="padding-top:0">';
   if (!agg.schools.length) {
-    html += '<div class="sa-empty-state"><i class="fas fa-database"></i><p>No school data loaded.</p></div>';
+    html += '<div class="sa-empty-state" style="padding:32px 8px"><i class="fas fa-database"></i><p>No school data loaded.</p></div>';
   } else {
-    html += '<div class="sa-table-wrap"><table class="table">'
-      + '<thead><tr><th>School</th><th>Fee Records</th><th>Paid Transactions</th><th>Total Collected</th><th>Avg per Fee</th></tr></thead><tbody>'
+    html += '<table class="sa-revenue-table">'
+      + '<thead><tr><th>School</th><th>Fee Records</th><th>Paid</th><th>Collected</th><th>Avg / Fee</th></tr></thead><tbody>'
       + agg.schools.slice().sort(function(a, b) { return b.feeCollectedAmount - a.feeCollectedAmount; }).map(function(s) {
         var avg = s.feeCollectedCount ? (s.feeCollectedAmount / s.feeCollectedCount) : 0;
         return '<tr><td><strong>' + esc(s.name) + '</strong></td>'
           + '<td>' + s.feeCount + '</td>'
           + '<td>' + s.feeCollectedCount + '</td>'
-          + '<td><strong>' + sym + formatAmount(s.feeCollectedAmount) + '</strong></td>'
+          + '<td class="sa-revenue-amount">' + sym + formatAmount(s.feeCollectedAmount) + '</td>'
           + '<td>' + sym + formatAmount(avg) + '</td></tr>';
-      }).join('') + '</tbody></table></div>';
+      }).join('') + '</tbody></table>';
   }
-  html += '</div>';
+  html += '</div></div>'
 
-  // Record a subscription payment
-  html += '<div class="sa-section"><h3><i class="fas fa-plus-circle"></i> Record a Subscription Payment</h3>'
+    // Bottom cards: Record Payment + History
+    + '<div class="sa-revenue-cards">'
+
+    // Record payment card
+    + '<div class="sa-revenue-card">'
+    + '<div class="sa-revenue-card-header">'
+    + '<div class="sa-revenue-card-icon sa-revenue-card-icon--form"><i class="fas fa-plus-circle"></i></div>'
+    + '<div><div class="sa-revenue-card-title">Record Payment</div><div class="sa-revenue-card-subtitle">Log a new subscription payment</div></div>'
+    + '</div>'
+    + '<div class="sa-revenue-card-body">'
     + '<div id="saRevError" class="sa-error-box"></div>'
-    + '<div class="sa-grid-auto">'
-    + '<div class="form-group"><label>School</label><select id="saRevSchool"><option value="">-- Select --</option>'
+    + '<div class="sa-revenue-form">'
+    + '<div class="form-group"><label>School</label><select id="saRevSchool"><option value="">-- Select School --</option>'
     + tenants.map(function(t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('')
     + '</select></div>'
     + '<div class="form-group"><label>Plan</label><select id="saRevPlan"><option value="basic">Basic</option><option value="standard">Standard</option><option value="premium">Premium</option><option value="enterprise">Enterprise</option></select></div>'
-    + '<div class="form-group"><label>Amount (' + cfg.currency + ')</label><input type="number" id="saRevAmount" min="0" step="0.01"></div>'
-    + '<div class="form-group"><label>Payment Method</label><select id="saRevMethod"><option value="bank_transfer">Bank Transfer</option><option value="online">Online Gateway</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></div>'
-    + '</div>'
-    + '<button class="btn btn-primary sa-mt-8" onclick="saRecordPayment()"><i class="fas fa-check"></i> Record Payment</button>'
-    + '</div>';
+    + '<div class="form-group"><label>Amount (' + cfg.currency + ')</label><input type="number" id="saRevAmount" min="0" step="0.01" placeholder="0.00"></div>'
+    + '<div class="form-group"><label>Method</label><select id="saRevMethod"><option value="bank_transfer">Bank Transfer</option><option value="online">Online Gateway</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></div>'
+    + '<button class="btn btn-primary" onclick="saRecordPayment()"><i class="fas fa-check"></i> Record Payment</button>'
+    + '</div></div></div>'
 
-  // Subscription payment history
-  html += '<div class="sa-section"><h3><i class="fas fa-list"></i> Subscription Payment History (' + records.length + ')</h3>';
+    // Payment history card
+    + '<div class="sa-revenue-card">'
+    + '<div class="sa-revenue-card-header">'
+    + '<div class="sa-revenue-card-icon sa-revenue-card-icon--history"><i class="fas fa-history"></i></div>'
+    + '<div><div class="sa-revenue-card-title">Payment History</div><div class="sa-revenue-card-subtitle">' + records.length + ' transaction' + (records.length !== 1 ? 's' : '') + ' recorded</div></div>'
+    + '</div>'
+    + '<div class="sa-revenue-card-body" style="max-height:400px;overflow-y:auto;padding-top:0">';
   if (!records.length) {
-    html += '<div class="sa-empty-state"><i class="fas fa-receipt"></i><p>No subscription payments recorded yet.</p></div>';
+    html += '<div class="sa-empty-state" style="padding:32px 8px"><i class="fas fa-receipt"></i><p>No payments recorded yet.</p></div>';
   } else {
-    html += '<div class="sa-table-wrap"><table class="table">'
+    html += '<table class="sa-revenue-table">'
       + '<thead><tr><th>Date</th><th>School</th><th>Plan</th><th>Amount</th><th>Method</th><th>Ref</th></tr></thead><tbody>'
       + records.slice().reverse().map(function(r) {
         var t = tenants.find(function(x) { return x.id === r.schoolId; });
-        return '<tr><td>' + esc(r.date || '') + '</td><td>' + esc(t ? t.name : 'Unknown') + '</td><td>' + esc(r.plan || '') + '</td>'
-          + '<td><strong>' + sym + formatAmount(r.amount) + '</strong></td><td>' + esc(r.method || '') + '</td><td class="sa-text-small">' + esc(r.ref || '') + '</td></tr>';
-      }).join('') + '</tbody></table></div>';
+        var methodClass = '';
+        if (r.method === 'bank_transfer') methodClass = 'sa-revenue-method--bank';
+        else if (r.method === 'online') methodClass = 'sa-revenue-method--online';
+        else if (r.method === 'cash') methodClass = 'sa-revenue-method--cash';
+        else if (r.method === 'cheque') methodClass = 'sa-revenue-method--cheque';
+        return '<tr><td>' + esc(r.date || '') + '</td><td><strong>' + esc(t ? t.name : 'Unknown') + '</strong></td><td><span class="sa-badge sa-badge--green">' + esc(r.plan || '') + '</span></td>'
+          + '<td class="sa-revenue-amount">' + sym + formatAmount(r.amount) + '</td>'
+          + '<td><span class="sa-revenue-method ' + methodClass + '">' + esc(r.method || '') + '</span></td>'
+          + '<td><span class="sa-revenue-ref">' + esc(r.ref || '') + '</span></td></tr>';
+      }).join('') + '</tbody></table>';
   }
-  html += '</div>';
+  html += '</div></div>'
+
+    + '</div>' // end revenue-cards
+
+    + planChips;
 
   container.innerHTML = html;
 }
