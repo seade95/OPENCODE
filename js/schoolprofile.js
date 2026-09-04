@@ -610,9 +610,13 @@ function renderLandingPageSections() {
     });
   }
 
-  // Hide EduVerse platform & super admin buttons only on school profiles (not on main homepage)
+  // Always hide super admin cog from public view
+  var sac = document.getElementById('superAdminCog');
+  if (sac) sac.style.display = 'none';
+
+  // On school profiles: also hide platform join buttons
   if (hasActiveTenant) {
-    ['navJoinBtn', 'heroJoinBtn', 'superAdminCog'].forEach(function(id) {
+    ['navJoinBtn', 'heroJoinBtn'].forEach(function(id) {
       var b = document.getElementById(id);
       if (b) b.style.display = 'none';
     });
