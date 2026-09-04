@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <!-- M Mark -->
-  <rect x="80" y="160" width="60" height="260" rx="30" fill="#2d3748"/>
-  <circle cx="110" cy="140" r="16" fill="#f5a623"/>
-  <rect x="180" y="120" width="60" height="300" rx="30" fill="#7c3aed"/>
-  <rect x="280" y="180" width="60" height="240" rx="30" fill="#06b6d4"/>
-  <circle cx="310" cy="440" r="16" fill="#1a202c"/>
+  <rect x="80" y="160" width="60" height="260" rx="30" fill="#6366f1"/>
+  <circle cx="110" cy="140" r="16" fill="#f59e0b"/>
+  <rect x="180" y="120" width="60" height="300" rx="30" fill="#8b5cf6"/>
+  <rect x="280" y="180" width="60" height="240" rx="30" fill="#22d3ee"/>
+  <circle cx="310" cy="440" r="16" fill="#e2e8f0"/>
   <!-- Dotted arc connecting left and right bars -->
-  <path d="M110 420 Q 200 500 310 420" stroke="#7c3aed" stroke-width="3" stroke-dasharray="6 6" fill="none"/>
+  <path d="M110 420 Q 200 500 310 420" stroke="#a78bfa" stroke-width="3" stroke-dasharray="6 6" fill="none"/>
 </svg>

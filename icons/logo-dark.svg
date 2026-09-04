@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" fill="none">
   <!-- M Mark -->
-  <rect x="20" y="40" width="24" height="104" rx="12" fill="#e2e8f0"/>
-  <circle cx="32" cy="32" r="8" fill="#f5a623"/>
-  <rect x="60" y="24" width="24" height="120" rx="12" fill="#a78bfa"/>
+  <rect x="20" y="40" width="24" height="104" rx="12" fill="#a5b4fc"/>
+  <circle cx="32" cy="32" r="8" fill="#fbbf24"/>
+  <rect x="60" y="24" width="24" height="120" rx="12" fill="#c4b5fd"/>
   <rect x="100" y="48" width="24" height="96" rx="12" fill="#67e8f9"/>
   <circle cx="112" cy="156" r="8" fill="#e2e8f0"/>
-  <path d="M32 148 Q 72 180 112 148" stroke="#a78bfa" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+  <path d="M32 148 Q 72 180 112 148" stroke="#c4b5fd" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
   <!-- EduVerse -->
   <text x="150" y="100" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="72" fill="#ffffff" letter-spacing="2">EduVerse</text>
   <!-- INSTITUTE OF TECHNOLOGY & MANAGEMENT -->
@@ -16,5 +16,5 @@
     <tspan fill="#ffffff"> &amp; MANAGEMENT</tspan>
   </text>
   <!-- Orange underline -->
-  <rect x="150" y="150" width="160" height="6" rx="3" fill="#f5a623"/>
+  <rect x="150" y="150" width="160" height="6" rx="3" fill="#fbbf24"/>
 </svg>
