@@ -87,13 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  if (typeof initLanguageSelector === 'function') {
-    ['langSelector','tchLangSelector','stuLangSelector','parentLangSelector'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) initLanguageSelector(id);
-    });
-  }
-
   if (typeof applyTranslations === 'function') applyTranslations();
   if (typeof initSessionMonitor === 'function') initSessionMonitor();
 
