@@ -269,41 +269,53 @@ function renderSaOverview(container) {
 function renderSaSchools(container) {
   var tenants = getTenants();
   var pendingCount = tenants.filter(function(t) { return t.status === 'pending'; }).length;
+  var activeCount = tenants.filter(function(t) { return t.status === 'active'; }).length;
+  var premiumCount = tenants.filter(function(t) { return _saCheckPremium(t.id); }).length;
 
-  var html = '<div class="sa-section-header">'
-    + '<p class="sa-subtitle" style="margin:0;">' + tenants.length + ' school(s) registered'
-    + (pendingCount ? ' (<strong class="sa-badge sa-badge--amber">' + pendingCount + ' pending</strong>)' : '')
-    + '</p>'
-    + '<button class="btn btn-primary btn-sm" onclick="closeSaDashboard();showOnboardSchool()"><i class="fas fa-plus"></i> Add School</button></div>';
+  var html = ''
+    // Hero
+    + '<div class="sa-schools-hero">'
+    + '<h3><i class="fas fa-school"></i> Schools Management</h3>'
+    + '<p>View, approve, and manage all registered schools on the platform.</p>'
+    + '<button class="btn btn-primary" onclick="closeSaDashboard();showOnboardSchool()"><i class="fas fa-plus"></i> Add School</button>'
+    + '</div>'
+
+    // Stats
+    + '<div class="sa-schools-stats">'
+    + '<div class="sa-schools-stat"><div class="sa-schools-stat-value">' + tenants.length + '</div><div class="sa-schools-stat-label">Total Schools</div></div>'
+    + '<div class="sa-schools-stat"><div class="sa-schools-stat-value">' + activeCount + '</div><div class="sa-schools-stat-label">Active</div></div>'
+    + '<div class="sa-schools-stat"><div class="sa-schools-stat-value">' + pendingCount + '</div><div class="sa-schools-stat-label">Pending</div></div>'
+    + '<div class="sa-schools-stat"><div class="sa-schools-stat-value">' + premiumCount + '</div><div class="sa-schools-stat-label">Premium</div></div>'
+    + '</div>';
 
   if (!tenants.length) {
-    html += '<div class="empty-state"><i class="fas fa-school"></i><p>No schools registered yet.</p></div>';
+    html += '<div class="sa-empty-state" style="padding:48px 20px"><i class="fas fa-school" style="font-size:48px;margin-bottom:16px;opacity:.3"></i><p style="font-size:16px;margin-bottom:8px">No schools registered yet</p><p style="font-size:13px;color:var(--sa-text-light)">Click "Add School" above to register the first school</p></div>';
   } else {
-    html += '<div class="sa-table-wrap"><table class="table">'
+    html += '<div style="overflow-x:auto"><table class="sa-schools-table">'
       + '<thead><tr><th>School</th><th>Slug</th><th>Email</th><th>Tier</th><th>Plan</th><th>Premium</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
       + tenants.map(function(t) {
         var isPremium = _saCheckPremium(t.id);
-        var statusBadgeClass = t.status === 'active' ? 'badge-paid' : (t.status === 'pending' ? 'badge-grade' : 'badge-absent');
+        var statusClass = t.status === 'active' ? 'sa-badge--green' : (t.status === 'pending' ? 'sa-badge--amber' : 'sa-badge--red');
         var statusActions = (t.status === 'pending')
           ? '<button class="btn btn-sm btn-success" onclick="saApproveSchool(\'' + t.id + '\')" title="Approve"><i class="fas fa-check"></i> Approve</button>'
-          : '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status" aria-label="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password" aria-label="Reset Password"><i class="fas fa-key"></i></button>';
-        return '<tr><td><strong>' + esc(t.name) + '</strong></td><td><code class="sa-code-inline">' + esc(t.slug || '—') + '</code></td><td>' + esc(t.email) + '</td>'
-          + '<td><span class="badge badge-grade">' + esc(t.tier) + '</span></td>'
+          : '<button class="btn btn-sm btn-outline" onclick="saToggleTenant(\'' + t.id + '\')" title="Toggle status"><i class="fas ' + (t.status === 'active' ? 'fa-pause' : 'fa-play') + '"></i></button>'
+            + '<button class="btn btn-sm btn-outline" onclick="saResetSchoolPassword(\'' + t.id + '\')" title="Reset Password"><i class="fas fa-key"></i></button>';
+        return '<tr><td><strong>' + esc(t.name) + '</strong></td><td><code style="font-size:12px;background:#f1f5f9;padding:2px 8px;border-radius:4px">' + esc(t.slug || ' &#8212;') + '</code></td><td>' + esc(t.email) + '</td>'
+          + '<td><span class="sa-badge sa-badge--amber">' + esc(t.tier) + '</span></td>'
           + '<td><select class="sa-plan-select" onchange="saAssignPlan(\'' + t.id + '\',this.value)">' + _saPlanOptions(t.plan) + '</select></td>'
           + '<td>' + (isPremium
-            ? '<span class="sa-badge sa-badge--green" style="cursor:pointer;" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to revoke"><i class="fas fa-crown"></i> Active</span>'
-            : '<span class="sa-badge sa-badge--gray" style="cursor:pointer;" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to grant"><i class="fas fa-lock"></i> Free</span>')
+            ? '<span class="sa-badge sa-badge--green" style="cursor:pointer" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to revoke"><i class="fas fa-crown"></i> Active</span>'
+            : '<span class="sa-badge sa-badge--gray" style="cursor:pointer" onclick="saTogglePremium(\'' + t.id + '\')" title="Click to grant"><i class="fas fa-lock"></i> Free</span>')
           + '</td>'
-          + '<td><span class="badge ' + statusBadgeClass + '">' + esc(t.status) + '</span></td>'
+          + '<td><span class="sa-badge ' + statusClass + '">' + esc(t.status) + '</span></td>'
           + '<td><div class="sa-row-actions">'
-          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open Dashboard" aria-label="Open Dashboard"><i class="fas fa-external-link-alt"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'admin\')" title="Admin Portal" aria-label="Admin Portal"><i class="fas fa-user-shield"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'teacher\')" title="Teacher Portal" aria-label="Teacher Portal"><i class="fas fa-chalkboard-teacher"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'student\')" title="Student Portal" aria-label="Student Portal"><i class="fas fa-user-graduate"></i></button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'parent\')" title="Parent Portal" aria-label="Parent Portal"><i class="fas fa-users"></i></button>'
+          + '<button class="btn btn-sm btn-primary" onclick="switchTenant(\'' + t.id + '\')" title="Open Dashboard"><i class="fas fa-external-link-alt"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'admin\')" title="Admin Portal"><i class="fas fa-user-shield"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'teacher\')" title="Teacher Portal"><i class="fas fa-chalkboard-teacher"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'student\')" title="Student Portal"><i class="fas fa-user-graduate"></i></button>'
+          + '<button class="btn btn-sm btn-outline" onclick="saOpenPortal(\'' + (t.slug || t.id) + '\',\'parent\')" title="Parent Portal"><i class="fas fa-users"></i></button>'
           + statusActions
-          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete" aria-label="Delete"><i class="fas fa-trash"></i></button>'
+          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeleteTenant(\'' + t.id + '\')" title="Delete"><i class="fas fa-trash"></i></button>'
           + '</div></td></tr>';
       }).join('') + '</tbody></table></div>';
   }
@@ -652,38 +664,59 @@ function saConfirmReject(appId) {
 function renderSaPlatform(container) {
   var cfg = getPlatformConfig();
   var banks = cfg.bankAccounts || [];
-  var html = '<div class="sa-settings-form">'
-
-    // Contact Section
-    + '<div class="sa-section"><h3><i class="fas fa-phone-alt"></i> Platform Contact</h3>'
-    + '<div class="form-row"><label>Platform Name</label><input type="text" id="saPlatformName" value="' + esc(cfg.platformName || 'EduVerse') + '" oninput="updateSaConfig(\'platformName\',this.value)"></div>'
-    + '<div class="form-row"><label>WhatsApp Number</label><input type="text" id="saWhatsApp" value="' + esc(cfg.whatsappNumber || '') + '" placeholder="e.g. +2348012345678" oninput="updateSaConfig(\'whatsappNumber\',this.value)"><p class="field-hint">Shows as floating WhatsApp button on the landing page</p></div>'
-    + '<div class="form-row"><label>Contact Email</label><input type="email" id="saContactEmail" value="' + esc(cfg.contactEmail || '') + '" placeholder="super@eduverse.com" oninput="updateSaConfig(\'contactEmail\',this.value)"><p class="field-hint">Shows as floating email button on the landing page</p></div>'
-    + '<div class="form-row"><label>Currency</label><select onchange="updateSaConfig(\'currency\',this.value)"><option value="NGN"' + (cfg.currency==='NGN'?' selected':'') + '>NGN (₦)</option><option value="USD"' + (cfg.currency==='USD'?' selected':'') + '>USD ($)</option><option value="GBP"' + (cfg.currency==='GBP'?' selected':'') + '>GBP (£)</option><option value="EUR"' + (cfg.currency==='EUR'?' selected':'') + '>EUR (€)</option></select></div>'
+  var html = ''
+    // Hero
+    + '<div class="sa-platform-hero">'
+    + '<h3><i class="fas fa-cogs"></i> Platform Settings</h3>'
+    + '<p>Configure platform contact details, payment accounts, and email settings.</p>'
     + '</div>'
+
+    + '<div class="sa-platform-grid">'
+
+    // Contact section
+    + '<div class="sa-platform-section">'
+    + '<div class="sa-platform-section-header">'
+    + '<div class="sa-platform-section-icon sa-platform-section-icon--contact"><i class="fas fa-phone-alt"></i></div>'
+    + '<div class="sa-platform-section-title">Platform Contact</div>'
+    + '</div>'
+    + '<div class="sa-platform-form">'
+    + '<div><label>Platform Name</label><input type="text" id="saPlatformName" value="' + esc(cfg.platformName || 'EduVerse') + '" oninput="updateSaConfig(\'platformName\',this.value)"></div>'
+    + '<div><label>WhatsApp Number</label><input type="text" id="saWhatsApp" value="' + esc(cfg.whatsappNumber || '') + '" placeholder="e.g. +2348012345678" oninput="updateSaConfig(\'whatsappNumber\',this.value)"><p class="field-hint">Shows as floating WhatsApp button on the landing page</p></div>'
+    + '<div><label>Contact Email</label><input type="email" id="saContactEmail" value="' + esc(cfg.contactEmail || '') + '" placeholder="super@eduverse.com" oninput="updateSaConfig(\'contactEmail\',this.value)"><p class="field-hint">Shows as floating email button on the landing page</p></div>'
+    + '<div><label>Currency</label><select onchange="updateSaConfig(\'currency\',this.value)"><option value="NGN"' + (cfg.currency === 'NGN' ? ' selected' : '') + '>NGN (&#8358;)</option><option value="USD"' + (cfg.currency === 'USD' ? ' selected' : '') + '>USD ($)</option><option value="GBP"' + (cfg.currency === 'GBP' ? ' selected' : '') + '>GBP (&#163;)</option><option value="EUR"' + (cfg.currency === 'EUR' ? ' selected' : '') + '>EUR (&#8364;)</option></select></div>'
+    + '</div></div>'
 
     // Bank Accounts
-    + '<div class="sa-section"><h3><i class="fas fa-university"></i> Bank Accounts <span class="sa-text-small" style="font-weight:400;">(for subscription payments)</span></h3>'
+    + '<div class="sa-platform-section">'
+    + '<div class="sa-platform-section-header">'
+    + '<div class="sa-platform-section-icon sa-platform-section-icon--bank"><i class="fas fa-university"></i></div>'
+    + '<div class="sa-platform-section-title">Bank Accounts</div>'
+    + '</div>'
     + '<div id="saBankList">' + renderBankList(banks) + '</div>'
-    + '<button class="btn btn-sm btn-primary sa-mt-8" onclick="saAddBank()"><i class="fas fa-plus"></i> Add Bank Account</button>'
+    + '<button class="btn btn-sm btn-primary" style="margin-top:12px" onclick="saAddBank()"><i class="fas fa-plus"></i> Add Bank Account</button>'
     + '</div>'
 
-    // SMTP / Email
-    + '<div class="sa-section"><h3><i class="fas fa-envelope-open-text"></i> Email (SMTP) Configuration <span class="sa-text-small" style="font-weight:400;">— for broadcasts &amp; password resets</span></h3>'
-    + '<div class="form-row"><label>SMTP Host</label><input type="text" id="saSmtpHost" value="' + esc((cfg.smtpConfig||{}).host || '') + '" placeholder="smtp.gmail.com" onchange="updateSaSmtp(\'host\',this.value)"></div>'
-    + '<div class="sa-grid-2">'
-    + '<div class="form-row"><label>Port</label><input type="number" id="saSmtpPort" value="' + ((cfg.smtpConfig||{}).port || 587) + '" onchange="updateSaSmtp(\'port\',parseInt(this.value)||587)"></div>'
-    + '<div class="form-row"><label>Secure (TLS)</label><select id="saSmtpSecure" onchange="updateSaSmtp(\'secure\',this.value===\'true\')"><option value="true"' + ((cfg.smtpConfig||{}).secure ? ' selected':'') + '>Yes</option><option value="false"' + (!(cfg.smtpConfig||{}).secure ? ' selected':'') + '>No</option></select></div>'
+    // SMTP
+    + '<div class="sa-platform-section" style="grid-column:1/-1">'
+    + '<div class="sa-platform-section-header">'
+    + '<div class="sa-platform-section-icon sa-platform-section-icon--smtp"><i class="fas fa-envelope-open-text"></i></div>'
+    + '<div class="sa-platform-section-title">Email (SMTP) Configuration</div>'
     + '</div>'
-    + '<div class="form-row"><label>Username</label><input type="text" id="saSmtpUser" value="' + esc((cfg.smtpConfig||{}).user || '') + '" placeholder="your@email.com" onchange="updateSaSmtp(\'user\',this.value)"></div>'
-    + '<div class="form-row"><label>Password</label><input type="password" id="saSmtpPass" value="' + esc((cfg.smtpConfig||{}).pass || '') + '" placeholder="App password" onchange="updateSaSmtp(\'pass\',this.value)"></div>'
-    + '<div class="form-row"><label>From Name</label><input type="text" id="saSmtpFromName" value="' + esc((cfg.smtpConfig||{}).fromName || cfg.platformName || 'EduVerse') + '" onchange="updateSaSmtp(\'fromName\',this.value)"></div>'
-    + '<div class="form-row"><label>From Email</label><input type="email" id="saSmtpFromEmail" value="' + esc((cfg.smtpConfig||{}).fromEmail || cfg.contactEmail || '') + '" onchange="updateSaSmtp(\'fromEmail\',this.value)"></div>'
-    + '</div>'
+    + '<p style="font-size:12px;color:var(--sa-text-light);margin:0 0 16px">For broadcasts &amp; password resets</p>'
+    + '<div class="sa-platform-form">'
+    + '<div><label>SMTP Host</label><input type="text" id="saSmtpHost" value="' + esc((cfg.smtpConfig || {}).host || '') + '" placeholder="smtp.gmail.com" onchange="updateSaSmtp(\'host\',this.value)"></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><label>Port</label><input type="number" id="saSmtpPort" value="' + ((cfg.smtpConfig || {}).port || 587) + '" onchange="updateSaSmtp(\'port\',parseInt(this.value)||587)"></div>'
+    + '<div><label>Secure (TLS)</label><select id="saSmtpSecure" onchange="updateSaSmtp(\'secure\',this.value===\'true\')"><option value="true"' + ((cfg.smtpConfig || {}).secure ? ' selected' : '') + '>Yes</option><option value="false"' + (!(cfg.smtpConfig || {}).secure ? ' selected' : '') + '>No</option></select></div></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><label>Username</label><input type="text" id="saSmtpUser" value="' + esc((cfg.smtpConfig || {}).user || '') + '" placeholder="your@email.com" onchange="updateSaSmtp(\'user\',this.value)"></div>'
+    + '<div><label>Password</label><input type="password" id="saSmtpPass" value="' + esc((cfg.smtpConfig || {}).pass || '') + '" placeholder="App password" onchange="updateSaSmtp(\'pass\',this.value)"></div></div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div><label>From Name</label><input type="text" id="saSmtpFromName" value="' + esc((cfg.smtpConfig || {}).fromName || cfg.platformName || 'EduVerse') + '" onchange="updateSaSmtp(\'fromName\',this.value)"></div>'
+    + '<div><label>From Email</label><input type="email" id="saSmtpFromEmail" value="' + esc((cfg.smtpConfig || {}).fromEmail || cfg.contactEmail || '') + '" onchange="updateSaSmtp(\'fromEmail\',this.value)"></div></div>'
+    + '</div></div>'
+
+    + '</div>' // end grid
 
     // Save button
-    + '<div class="sa-mt-24" style="text-align:right;"><button class="btn btn-success" onclick="saSavePlatform()"><i class="fas fa-save"></i> Save Platform Settings</button></div>'
-    + '</div>';
+    + '<div class="sa-platform-save"><button class="btn btn-success" onclick="saSavePlatform()"><i class="fas fa-save"></i> Save Platform Settings</button></div>';
 
   container.innerHTML = html;
 }
@@ -762,38 +795,52 @@ function saSavePlatform() {
 function renderSaSubscriptions(container) {
   var cfg = getPlatformConfig();
   var plans = cfg.subscriptionPlans || [];
+  var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
 
-  var html = '<div class="sa-section-header">'
-    + '<p class="sa-subtitle" style="margin:0;">' + plans.length + ' plan(s) configured</p>'
-    + '<button class="btn btn-primary btn-sm" onclick="saAddPlan()"><i class="fas fa-plus"></i> Add Plan</button></div>';
+  var html = ''
+    // Hero
+    + '<div class="sa-sub-hero">'
+    + '<h3><i class="fas fa-credit-card"></i> Subscription Plans</h3>'
+    + '<p>Create and manage subscription plans that schools can purchase to unlock premium features.</p>'
+    + '<button class="btn btn-primary" onclick="saAddPlan()"><i class="fas fa-plus"></i> Add New Plan</button>'
+    + '</div>';
 
   if (!plans.length) {
-    html += '<div class="sa-empty-state"><i class="fas fa-credit-card"></i><p>No subscription plans yet.</p></div>';
+    html += '<div class="sa-empty-state" style="padding:48px 20px"><i class="fas fa-credit-card" style="font-size:48px;margin-bottom:16px;opacity:.3"></i><p style="font-size:16px;margin-bottom:8px">No subscription plans yet</p><p style="font-size:13px;color:var(--sa-text-light)">Click "Add New Plan" above to create your first plan</p></div>';
   } else {
-    html += '<div class="sa-plans-grid">'
-      + plans.map(function(p, i) {
-        var active = p.active !== false;
-        var sym = cfg.currency === 'NGN' ? '&#8358;' : (cfg.currency === 'USD' ? '&#36;' : (cfg.currency === 'GBP' ? '&#163;' : '&#8364;'));
-        return '<div class="sa-plan-card' + (!active ? ' inactive' : '') + '">'
-          + '<div class="sa-plan-header"><h4>' + esc(p.name) + '</h4><span class="sa-plan-status ' + (active ? 'active' : 'disabled') + '">' + (active ? 'Active' : 'Disabled') + '</span></div>'
-          + '<div class="sa-plan-amount">' + (p.interval === 'free' ? 'Free' : sym + formatAmount(p.amount || 0) + ' <span class="sa-plan-interval">/ ' + p.interval + '</span>') + '</div>'
-          + '<div class="sa-plan-features">' + esc(p.features || '') + '</div>'
-          + '<div class="sa-plan-actions"><button class="btn btn-sm btn-outline" onclick="saEditPlan(' + i + ')"><i class="fas fa-edit"></i> Edit</button>'
-          + '<button class="btn btn-sm btn-outline" onclick="saTogglePlan(' + i + ')"><i class="fas ' + (active ? 'fa-pause' : 'fa-play') + '"></i> ' + (active ? 'Disable' : 'Enable') + '</button>'
-          + '<button class="btn btn-sm btn-danger-outline" onclick="saDeletePlan(' + i + ')" aria-label="Delete plan"><i class="fas fa-trash"></i></button></div></div>';
-      }).join('') + '</div>';
+    html += '<div class="sa-plans-grid-v2">';
+    plans.forEach(function(p, i) {
+      var active = p.active !== false;
+      html += '<div class="sa-plan-card-v2' + (!active ? ' inactive' : '') + '">'
+        + '<div class="sa-plan-card-v2-header">'
+        + '<div class="sa-plan-card-v2-name">' + esc(p.name) + '</div>'
+        + '<span class="sa-plan-card-v2-badge ' + (active ? 'sa-plan-card-v2-badge--active' : 'sa-plan-card-v2-badge--disabled') + '">' + (active ? 'Active' : 'Disabled') + '</span>'
+        + '</div>'
+        + '<div class="sa-plan-card-v2-body">'
+        + '<div class="sa-plan-card-v2-price">' + (p.interval === 'free' ? 'Free' : sym + formatAmount(p.amount || 0) + ' <span class="sa-plan-card-v2-interval">/ ' + p.interval + '</span>') + '</div>'
+        + '<div class="sa-plan-card-v2-features">' + esc(p.features || 'No features listed') + '</div>'
+        + '</div>'
+        + '<div class="sa-plan-card-v2-actions">'
+        + '<button class="btn btn-sm btn-primary" onclick="saEditPlan(' + i + ')"><i class="fas fa-edit"></i> Edit</button>'
+        + '<button class="btn btn-sm ' + (active ? 'btn-outline' : 'btn-success') + '" onclick="saTogglePlan(' + i + ')"><i class="fas ' + (active ? 'fa-pause' : 'fa-play') + '"></i> ' + (active ? 'Disable' : 'Enable') + '</button>'
+        + '<button class="btn btn-sm btn-danger-outline" onclick="saDeletePlan(' + i + ')"><i class="fas fa-trash"></i></button>'
+        + '</div></div>';
+    });
+    html += '</div>';
   }
 
-  // Show bank accounts info for payment
+  // Bank accounts info
   var banks = cfg.bankAccounts || [];
   if (banks.length) {
-    html += '<div class="sa-section sa-mt-24"><h3><i class="fas fa-university"></i> Payment Instructions</h3>'
-      + '<p class="sa-subtitle">Subscribers will be asked to pay into any of these accounts:</p>'
-      + '<div class="sa-sub-row" style="display:grid;gap:8px;padding:0;box-shadow:none;">' + banks.map(function(b) {
-        return '<div class="sa-sub-row">'
+    html += '<div class="sa-platform-section"><div class="sa-platform-section-header">'
+      + '<div class="sa-platform-section-icon sa-platform-section-icon--bank"><i class="fas fa-university"></i></div>'
+      + '<div class="sa-platform-section-title">Payment Instructions</div>'
+      + '</div><p style="font-size:13px;color:var(--sa-text-light);margin:0 0 16px">Subscribers will be asked to pay into any of these accounts:</p>'
+      + '<div style="display:grid;gap:10px">' + banks.map(function(b) {
+        return '<div style="display:flex;gap:20px;flex-wrap:wrap;padding:12px 16px;background:#f8fafc;border-radius:8px;border:1px solid var(--sa-border);font-size:13px">'
           + '<span><strong>Bank:</strong> ' + esc(b.bankName) + '</span>'
           + '<span><strong>Name:</strong> ' + esc(b.accountName) + '</span>'
-          + '<span><strong>Number:</strong> ' + esc(b.accountNumber) + '</span>'
+          + '<span><strong>No:</strong> ' + esc(b.accountNumber) + '</span>'
           + '<span><strong>Currency:</strong> ' + esc(b.currency || 'NGN') + '</span></div>';
       }).join('') + '</div></div>';
   }
@@ -1166,20 +1213,35 @@ function renderSaAnalytics(container) {
 
 // ===== 6. Broadcast Tab =====
 function renderSaBroadcast(container) {
-  var html = '<div class="sa-settings-form">'
-    + '<div class="sa-section"><h3><i class="fas fa-bullhorn"></i> Broadcast to All Schools</h3>'
-    + '<p class="sa-subtitle">Send an announcement or notification to every school on the platform. The message will appear in their admin dashboard.</p>'
-    + '<div id="saBroadcastError" class="sa-error-box"></div>'
-    + '<div class="form-group"><label>Subject</label><input type="text" id="saBroadcastSubject" placeholder="e.g. Platform Maintenance Notice"></div>'
-    + '<div class="form-group"><label>Message</label><textarea rows="6" id="saBroadcastMsg" placeholder="Type your message to all schools..."></textarea></div>'
-    + '<div class="form-group"><label>Priority</label><select id="saBroadcastPriority"><option value="info">Info</option><option value="warning">Warning</option><option value="urgent">Urgent</option></select></div>'
-    + '<button class="btn btn-primary" onclick="saSendBroadcast()"><i class="fas fa-paper-plane"></i> Send to All Schools</button>'
-    + '<p id="saBroadcastResult" class="sa-text-small sa-mt-12"></p>'
+  var html = ''
+    // Hero
+    + '<div class="sa-broadcast-hero">'
+    + '<h3><i class="fas fa-bullhorn"></i> Broadcast Message</h3>'
+    + '<p>Send announcements, maintenance notices, and updates to all schools on the platform.</p>'
     + '</div>'
 
-    // Broadcast history
-    + '<div class="sa-section"><h3><i class="fas fa-history"></i> Broadcast History</h3>'
-    + '<div id="saBroadcastHistory">' + renderBroadcastHistory() + '</div></div>'
+    // Compose card
+    + '<div class="sa-platform-section" style="margin-bottom:20px">'
+    + '<div class="sa-platform-section-header">'
+    + '<div class="sa-platform-section-icon" style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed"><i class="fas fa-paper-plane"></i></div>'
+    + '<div class="sa-platform-section-title">Compose Message</div>'
+    + '</div>'
+    + '<div class="sa-broadcast-form">'
+    + '<div id="saBroadcastError" class="sa-error-box"></div>'
+    + '<div><label>Subject</label><input type="text" id="saBroadcastSubject" placeholder="e.g. Platform Maintenance Notice"></div>'
+    + '<div><label>Message</label><textarea rows="5" id="saBroadcastMsg" placeholder="Type your message to all schools..."></textarea></div>'
+    + '<div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap"><div style="flex:1;min-width:150px"><label>Priority</label><select id="saBroadcastPriority"><option value="info">Info</option><option value="warning">Warning</option><option value="urgent">Urgent</option></select></div>'
+    + '<button class="btn btn-primary" onclick="saSendBroadcast()" style="height:42px"><i class="fas fa-paper-plane"></i> Send to All Schools</button></div>'
+    + '<p id="saBroadcastResult" class="sa-text-small" style="margin-top:4px"></p>'
+    + '</div></div>'
+
+    // History
+    + '<div class="sa-platform-section">'
+    + '<div class="sa-platform-section-header">'
+    + '<div class="sa-platform-section-icon sa-platform-section-icon--bank"><i class="fas fa-history"></i></div>'
+    + '<div class="sa-platform-section-title">Broadcast History</div>'
+    + '</div>'
+    + '<div id="saBroadcastHistory">' + renderBroadcastHistory() + '</div>'
     + '</div>';
 
   container.innerHTML = html;
@@ -1188,13 +1250,18 @@ function renderSaBroadcast(container) {
 function renderBroadcastHistory() {
   var history = getBroadcastHistory();
   if (!history.length) return '<div class="sa-empty-state"><i class="fas fa-history"></i><p>No broadcasts sent yet.</p></div>';
-  var colors = { info: '#3b82f6', warning: '#f59e0b', urgent: '#ef4444' };
   return '<div>' + history.map(function(b) {
-    return '<div class="sa-mb-8" style="padding:12px;border-left:4px solid ' + (colors[b.priority] || '#3b82f6') + ';background:#f8fafc;border-radius:6px;">'
-      + '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
-      + '<strong>' + esc(b.subject) + '</strong>'
-      + '<span class="sa-text-small">' + new Date(b.sentAt).toLocaleString() + '</span></div>'
-      + '<p class="sa-subtitle" style="margin:0;">' + esc(b.message) + '</p></div>';
+    var delivered = b.deliveredTo || 0;
+    return '<div class="sa-broadcast-history-item sa-broadcast-history-item--' + (b.priority || 'info') + '">'
+      + '<div class="sa-broadcast-history-header">'
+      + '<span class="sa-broadcast-history-subject">' + esc(b.subject) + '</span>'
+      + '<span class="sa-broadcast-history-date">' + new Date(b.sentAt).toLocaleString() + '</span>'
+      + '</div>'
+      + '<p class="sa-broadcast-history-msg">' + esc(b.message) + '</p>'
+      + '<div class="sa-broadcast-history-meta">'
+      + '<span><i class="fas fa-school"></i> ' + delivered + ' school' + (delivered !== 1 ? 's' : '') + '</span>'
+      + '<span><i class="fas fa-flag"></i> ' + (b.priority || 'info') + '</span>'
+      + '</div></div>';
   }).join('') + '</div>';
 }
 
@@ -1862,16 +1929,28 @@ function exportNewsletterCsv() {
 // ===== Password Reset Tab =====
 function renderSaPasswordReset(container) {
   var tenants = getTenants();
-  var html = '<div class="sa-section"><h3><i class="fas fa-key"></i> Password Reset</h3>'
-    + '<p class="sa-subtitle">Select a school and user role to view and reset passwords.</p>'
-    + '<div class="form-row"><label>Select School</label><select id="saPwSchool" onchange="saPwLoadSchool(this.value)" class="sa-input" style="min-width:250px;">'
-    + '<option value="">— Choose a school —</option>';
+  var html = ''
+    // Hero
+    + '<div class="sa-pw-hero">'
+    + '<h3><i class="fas fa-key"></i> Password Reset</h3>'
+    + '<p>Select a school and user role to view and reset passwords for any user account.</p>'
+    + '</div>'
+
+    // School selector
+    + '<div class="sa-platform-section">'
+    + '<div class="sa-platform-section-header">'
+    + '<div class="sa-platform-section-icon" style="background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626"><i class="fas fa-school"></i></div>'
+    + '<div class="sa-platform-section-title">Select School</div>'
+    + '</div>'
+    + '<select id="saPwSchool" onchange="saPwLoadSchool(this.value)" style="width:100%;padding:12px 16px;border:2px solid var(--sa-border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--sa-white);cursor:pointer">'
+    + '<option value="">&#8212; Choose a school &#8212;</option>';
   tenants.forEach(function(t) {
     html += '<option value="' + esc(t.id) + '">' + esc(t.name) + '</option>';
   });
-  html += '</select></div>'
-    + '<div id="saPwSchoolData"></div>'
+  html += '</select>'
+    + '<div id="saPwSchoolData" style="margin-top:20px"></div>'
     + '</div>';
+
   container.innerHTML = html;
 }
 
@@ -1882,18 +1961,18 @@ function saPwLoadSchool(tenantId) {
   try {
     var key = getTenantDataKey(tenantId);
     var raw = localStorage.getItem(key);
-    if (!raw) { target.innerHTML = '<p class="empty-state"><i class="fas fa-exclamation-circle"></i><p>No data found for this school.</p></p>'; return; }
+    if (!raw) { target.innerHTML = '<div class="sa-empty-state" style="padding:32px"><i class="fas fa-exclamation-circle"></i><p>No data found for this school.</p></div>'; return; }
     var d = JSON.parse(raw);
     var roles = [
-      { id: 'admins', label: 'Admin', icon: 'user-shield' },
-      { id: 'teachers', label: 'Teacher', icon: 'chalkboard-teacher' },
-      { id: 'students', label: 'Student', icon: 'user-graduate' },
-      { id: 'parents', label: 'Parent', icon: 'users' }
+      { id: 'admins', label: 'Admins', icon: 'user-shield' },
+      { id: 'teachers', label: 'Teachers', icon: 'chalkboard-teacher' },
+      { id: 'students', label: 'Students', icon: 'user-graduate' },
+      { id: 'parents', label: 'Parents', icon: 'users' }
     ];
     var html = '<div class="sa-pw-role-tabs">';
-    roles.forEach(function(r) {
+    roles.forEach(function(r, idx) {
       var count = (d[r.id] || []).length;
-      html += '<button class="btn btn-sm btn-outline" data-pw-role="' + r.id + '" onclick="saPwShowRole(\'' + tenantId + '\',\'' + r.id + '\')"><i class="fas fa-' + r.icon + '"></i> ' + r.label + ' <span class="sa-badge sa-badge--gray">' + count + '</span></button>';
+      html += '<button class="sa-pw-role-tab' + (idx === 0 ? ' active' : '') + '" data-pw-role="' + r.id + '" onclick="saPwShowRole(\'' + tenantId + '\',\'' + r.id + '\')"><i class="fas fa-' + r.icon + '"></i> ' + r.label + ' <span style="opacity:.7">' + count + '</span></button>';
     });
     html += '</div><div id="saPwRoleData"></div>';
     target.innerHTML = html;
@@ -1909,20 +1988,20 @@ function saPwShowRole(tenantId, role) {
     var d = JSON.parse(raw);
     var users = d[role] || [];
 
-    document.querySelectorAll('.sa-pw-role-tabs .btn').forEach(function(b) {
-      b.className = 'btn btn-sm ' + (b.dataset.pwRole === role ? 'btn-primary' : 'btn-outline');
+    document.querySelectorAll('.sa-pw-role-tab').forEach(function(b) {
+      b.className = 'sa-pw-role-tab' + (b.dataset.pwRole === role ? ' active' : '');
     });
 
-    var html = '<div class="sa-table-wrap"><table class="table">'
-      + '<thead><tr><th>ID</th><th>Name</th><th>Email / Contact</th><th>Username</th><th>Current Password</th><th>Actions</th></tr></thead><tbody>';
+    var html = '<table class="sa-pw-table">'
+      + '<thead><tr><th>ID</th><th>Name</th><th>Email / Contact</th><th>Username</th><th>Password</th><th>Actions</th></tr></thead><tbody>';
     if (users.length) {
-      users.forEach(function(u, idx) {
+      users.forEach(function(u) {
         html += '<tr><td><strong>' + esc(u.id) + '</strong></td>'
           + '<td>' + esc(u.name) + '</td>'
-          + '<td>' + esc(u.email || u.contact || '—') + '</td>'
-          + '<td>' + esc(u.username || '—') + '</td>'
-          + '<td><code style="font-size:12px;background:#f1f5f9;padding:2px 6px;border-radius:4px;">' + esc(u.password || '—') + '</code></td>'
-          + '<td><div style="display:flex;gap:4px;">'
+          + '<td>' + esc(u.email || u.contact || ' &#8212;') + '</td>'
+          + '<td>' + esc(u.username || ' &#8212;') + '</td>'
+          + '<td><span class="sa-pw-password">' + esc(u.password || ' &#8212;') + '</span></td>'
+          + '<td><div style="display:flex;gap:6px">'
           + '<button class="btn btn-sm btn-primary" onclick="saPwResetUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(u.id) + '\')"><i class="fas fa-key"></i> Reset</button>'
           + '<button class="btn btn-sm btn-outline" onclick="saPwEditUser(\'' + tenantId + '\',\'' + role + '\',\'' + esc(u.id) + '\')"><i class="fas fa-edit"></i> Edit</button>'
           + '</div></td></tr>';
@@ -1930,14 +2009,14 @@ function saPwShowRole(tenantId, role) {
     } else {
       var emptyMsg = 'No ' + role + ' found.';
       if (role === 'admins') {
-        html += '<tr><td colspan="6" class="empty-state" style="padding:30px;text-align:center;color:#718096;">'
+        html += '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--sa-text-light)">'
           + emptyMsg + '<br><br><button class="btn btn-primary" onclick="saPwCreateAdmin(\'' + tenantId + '\')"><i class="fas fa-user-shield"></i> Create Admin</button>'
           + '</td></tr>';
       } else {
-        html += '<tr><td colspan="6" class="empty-state" style="padding:30px;text-align:center;color:#718096;">' + emptyMsg + '</td></tr>';
+        html += '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--sa-text-light)">' + emptyMsg + '</td></tr>';
       }
     }
-    html += '</tbody></table></div>';
+    html += '</tbody></table>';
     document.getElementById('saPwRoleData').innerHTML = html;
   } catch(e) { toast('Error: ' + e.message, 'error'); }
 }
