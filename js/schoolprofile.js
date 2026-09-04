@@ -553,11 +553,7 @@ function removeCustomDomain(index) {
 function renderLandingPageSections() {
   var prof = getSchoolProfile();
 
-  renderHeroSlides();
-  renderSocialLinks();
-  applyTheme();
-
-  // One-time migration: replace old branding strings in profile data
+  // One-time migration: replace old branding strings in profile data (MUST run before renders)
   var needsSave = false;
   function migrateBranding(obj) {
     if (typeof obj === 'string' && obj.includes('OMOLOLA')) { needsSave = true; return obj.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse'); }
@@ -575,6 +571,11 @@ function renderLandingPageSections() {
     data.schoolMotto = migrateBranding(data.schoolMotto); needsSave = true;
   }
   if (needsSave) { data.schoolProfile = prof; saveData(); }
+
+  // Now render with migrated data
+  renderHeroSlides();
+  renderSocialLinks();
+  applyTheme();
 
   // Use tenant name as fallback for school name
   var schoolName = prof.schoolName || '';

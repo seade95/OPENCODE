@@ -645,6 +645,7 @@ function loadData() {
       var _needsSave = false;
       function _cleanBranding(v) {
         if (typeof v === 'string' && v.indexOf('OMOLOLA') !== -1) { _needsSave = true; return v.replace(/OMOLOLA\s*INTERNATIONAL\s*SCHOOLS?/gi, 'EduVerse Institute of Technology & Management').replace(/OMOLOLA/gi, 'EduVerse'); }
+        if (typeof v === 'string' && v.indexOf('Demo International School') !== -1) { _needsSave = true; return v.replace(/Demo International School/g, 'EduVerse'); }
         if (Array.isArray(v)) { for (var _i = 0; _i < v.length; _i++) v[_i] = _cleanBranding(v[_i]); return v; }
         if (v && typeof v === 'object') { for (var _k in v) { try { v[_k] = _cleanBranding(v[_k]); } catch(e) {} } return v; }
         return v;
