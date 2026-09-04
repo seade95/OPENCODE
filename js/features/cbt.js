@@ -11,42 +11,85 @@ function renderCBTAdmin() {
   var totalQuestions = exams.reduce(function(acc, e) { return acc + (e.questions || []).length; }, 0);
   var totalAttempts = results.length;
   var passRate = totalAttempts ? Math.round(results.filter(function(r) { return r.passed; }).length / totalAttempts * 100) : 0;
-  var html = '<div class="card-header"><h2><i class="fas fa-laptop-code"></i> CBT Exam Manager</h2><button class="btn btn-primary" onclick="showAddCBTExamModal()"><i class="fas fa-plus"></i> Create Exam</button></div>';
-  html += '<div class="cbt-stats">';
-  html += '<div class="cbt-stat-card"><h3>' + totalExams + '</h3><p>Total Exams</p></div>';
-  html += '<div class="cbt-stat-card"><h3>' + totalQuestions + '</h3><p>Questions</p></div>';
-  html += '<div class="cbt-stat-card"><h3>' + totalAttempts + '</h3><p>Attempts</p></div>';
-  html += '<div class="cbt-stat-card"><h3>' + passRate + '%</h3><p>Pass Rate</p></div>';
-  html += '</div>';
+
+  var html = ''
+    // Hero banner
+    + '<div class="cbt-hero">'
+    + '<h2><i class="fas fa-laptop-code"></i> CBT Exam Manager</h2>'
+    + '<p>Create, manage, and track computer-based tests. Add questions, set durations, and monitor student performance.</p>'
+    + '<button class="btn btn-primary" onclick="showAddCBTExamModal()"><i class="fas fa-plus"></i> Create New Exam</button>'
+    + '</div>'
+
+    // Stats grid
+    + '<div class="cbt-stat-grid">'
+    + '<div class="cbt-stat-item cbt-stat-item--exams"><div class="cbt-stat-value">' + totalExams + '</div><div class="cbt-stat-label">Total Exams</div></div>'
+    + '<div class="cbt-stat-item cbt-stat-item--questions"><div class="cbt-stat-value">' + totalQuestions + '</div><div class="cbt-stat-label">Questions</div></div>'
+    + '<div class="cbt-stat-item cbt-stat-item--attempts"><div class="cbt-stat-value">' + totalAttempts + '</div><div class="cbt-stat-label">Attempts</div></div>'
+    + '<div class="cbt-stat-item cbt-stat-item--passrate"><div class="cbt-stat-value">' + passRate + '%</div><div class="cbt-stat-label">Pass Rate</div></div>'
+    + '</div>';
+
   if (!exams.length) {
-    html += '<div class="empty-state"><i class="fas fa-file"></i><p>No CBT exams created yet. Click "Create Exam" to get started.</p></div>';
+    html += '<div class="empty-state" style="padding:48px 20px"><i class="fas fa-file-alt" style="font-size:48px;margin-bottom:16px;opacity:.3"></i><p style="font-size:16px;margin-bottom:8px">No exams created yet</p><p style="font-size:13px;color:var(--text-light)">Click "Create New Exam" above to get started</p></div>';
     container.innerHTML = html;
     return;
   }
-  html += '<div class="cbt-exam-grid">';
+
+  // Exam cards
+  html += '<div class="cbt-exam-grid-v2">';
   exams.forEach(function(exam) {
     var qCount = (exam.questions || []).length;
     var attCount = results.filter(function(r) { return r.examId === exam.id; }).length;
     var avgScore = attCount ? Math.round(results.filter(function(r) { return r.examId === exam.id; }).reduce(function(s, r) { return s + r.percentage; }, 0) / attCount) : 0;
-    html += '<div class="cbt-exam-card">';
-    html += '<h4>' + htmlEscape(exam.title) + '</h4>';
-    html += '<p>' + htmlEscape(exam.description || '') + '</p>';
-    html += '<p><strong>Duration:</strong> ' + (exam.duration || 0) + ' min &middot; <strong>Pass:</strong> ' + (exam.passScore || 50) + '% &middot; <strong>Q:</strong> ' + qCount + '</p>';
-    html += '<p><strong>Attempts:</strong> ' + attCount + ' &middot; <strong>Avg Score:</strong> ' + avgScore + '%</p>';
-    html += '<div class="cbt-exam-actions">';
-    html += '<button class="btn btn-sm btn-primary" onclick="showAddCBTQuestionModal(\'' + exam.id + '\')"><i class="fas fa-plus"></i> Questions</button>';
-    html += '<button class="btn btn-sm btn-secondary" onclick="showEditCBTExamModal(\'' + exam.id + '\')"><i class="fas fa-edit"></i> Edit</button>';
-    html += '<button class="btn btn-sm btn-danger" onclick="deleteCBTExam(\'' + exam.id + '\')"><i class="fas fa-trash"></i></button>';
-    html += '</div>';
-    html += '<div class="cbt-question-list">';
-    (exam.questions || []).forEach(function(q, qi) {
-      html += '<div class="cbt-question-item"><div class="cbt-question-text"><span class="cbt-question-number">' + (qi + 1) + '</span> ' + htmlEscape(q.question) + '</div>';
-      html += '<div class="cbt-question-options">' + (q.options || []).map(function(o, oi) { return (oi === q.answer ? '<strong>' : '') + htmlEscape(o) + (oi === q.answer ? ' <i class="fas fa-check" style="color:var(--success)"></i></strong>' : ''); }).join(' &middot; ') + '</div>';
-      html += '<div class="cbt-question-actions"><button class="btn btn-xs btn-secondary" onclick="showEditCBTQuestionModal(\'' + exam.id + '\',' + qi + ')"><i class="fas fa-edit"></i></button> <button class="btn btn-xs btn-danger" onclick="deleteCBTQuestion(\'' + exam.id + '\',' + qi + ')"><i class="fas fa-trash"></i></button></div></div>';
-    });
-    html += '</div></div>';
+
+    html += '<div class="cbt-exam-card-v2">'
+
+      // Card header
+      + '<div class="cbt-exam-card-v2-header">'
+      + '<div class="cbt-exam-card-v2-title">' + htmlEscape(exam.title) + '</div>'
+      + '<div class="cbt-exam-card-v2-desc">' + htmlEscape(exam.description || 'No description') + '</div>'
+      + '</div>'
+
+      // Card body
+      + '<div class="cbt-exam-card-v2-body">'
+      + '<div class="cbt-exam-meta">'
+      + '<div class="cbt-exam-meta-item"><i class="fas fa-clock"></i> <strong>' + (exam.duration || 0) + ' min</strong></div>'
+      + '<div class="cbt-exam-meta-item"><i class="fas fa-check-circle"></i> Pass: <strong>' + (exam.passScore || 50) + '%</strong></div>'
+      + '<div class="cbt-exam-meta-item"><i class="fas fa-question-circle"></i> <strong>' + qCount + '</strong> Qs</div>'
+      + '</div>'
+      + '<div class="cbt-exam-stats-row">'
+      + '<div class="cbt-exam-stat"><div class="cbt-exam-stat-value">' + attCount + '</div><div class="cbt-exam-stat-label">Attempts</div></div>'
+      + '<div class="cbt-exam-stat"><div class="cbt-exam-stat-value">' + avgScore + '%</div><div class="cbt-exam-stat-label">Avg Score</div></div>'
+      + '</div>';
+
+    // Question list
+    if (qCount) {
+      html += '<div class="cbt-questions-v2">';
+      (exam.questions || []).forEach(function(q, qi) {
+        html += '<div class="cbt-question-v2">'
+          + '<div class="cbt-question-v2-num">' + (qi + 1) + '</div>'
+          + '<div style="flex:1"><div class="cbt-question-v2-text">' + htmlEscape(q.question) + '</div>'
+          + '<div class="cbt-question-v2-options">' + (q.options || []).map(function(o, oi) { return (oi === q.answer ? '<strong style="color:var(--success)"><i class="fas fa-check"></i> ' : '') + htmlEscape(o) + (oi === q.answer ? '</strong>' : ''); }).join(' &middot; ') + '</div></div>'
+          + '<div class="cbt-question-v2-actions">'
+          + '<button class="btn btn-sm btn-secondary" onclick="showEditCBTQuestionModal(\'' + exam.id + '\',' + qi + ')" title="Edit"><i class="fas fa-edit"></i></button>'
+          + '<button class="btn btn-sm btn-danger" onclick="deleteCBTQuestion(\'' + exam.id + '\',' + qi + ')" title="Delete"><i class="fas fa-trash"></i></button>'
+          + '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '</div>' // end card body
+
+      // Card actions
+      + '<div class="cbt-exam-card-v2-actions">'
+      + '<button class="btn btn-sm btn-primary" onclick="showAddCBTQuestionModal(\'' + exam.id + '\')"><i class="fas fa-plus"></i> Add Question</button>'
+      + '<button class="btn btn-sm btn-secondary" onclick="showEditCBTExamModal(\'' + exam.id + '\')"><i class="fas fa-edit"></i> Edit</button>'
+      + '<button class="btn btn-sm btn-danger" onclick="deleteCBTExam(\'' + exam.id + '\')"><i class="fas fa-trash"></i></button>'
+      + '</div>'
+
+      + '</div>'; // end exam card
   });
   html += '</div>';
+
   container.innerHTML = html;
 }
 

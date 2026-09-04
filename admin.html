@@ -336,27 +336,28 @@ if (navigator.serviceWorker) {
       </div>
       <!-- Fees Panel -->
       <div class="admin-panel" id="admin-fees">
-        <div class="card-header">
-          <h2 data-i18n="fees">School Fees Management</h2>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="feesTable,fees"><i class="fas fa-download"></i> CSV</button>
-            <button class="btn btn-primary btn-sm" data-action="showAddFeeModal"><i class="fas fa-plus"></i> Record Payment</button>
-          </div>
+        <div class="fee-hero">
+          <h2><i class="fas fa-file-invoice-dollar"></i> School Fees Management</h2>
+          <p>Track and manage fee payments across all students and classes</p>
         </div>
-        <p class="subtitle">Track and manage fee payments</p>
-        <div id="feeConfigContainer"></div>
-        <div class="search-bar">
-          <input type="text" id="feeSearch" placeholder="Search by student name..." oninput="renderFees()">
-          <select id="feeStatusFilter" onchange="renderFees()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-family:inherit;">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px;">
+          <button class="btn btn-primary btn-sm" data-action="showAddFeeModal"><i class="fas fa-plus"></i> Record Payment</button>
+          <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="feesTable,fees"><i class="fas fa-download"></i> Export CSV</button>
+          <div class="fee-search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="feeSearch" placeholder="Search by student name..." oninput="renderFees()">
+          </div>
+          <select id="feeStatusFilter" onchange="renderFees()" class="fee-filter">
             <option value="all">All Status</option>
             <option value="paid">Paid</option>
             <option value="pending">Pending</option>
             <option value="partial">Partial</option>
           </select>
         </div>
-        <div class="card">
+        <div id="feeConfigContainer"></div>
+        <div class="card" style="border-radius:12px;overflow:hidden">
           <div class="table-responsive">
-            <table><thead><tr><th>Student</th><th>Term</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody id="feesTable"></tbody></table>
+            <table class="fee-table-v2"><thead><tr><th>Student</th><th>Term</th><th>Amount</th><th>Paid</th><th>Balance</th><th>Status</th><th>Actions</th></tr></thead><tbody id="feesTable"></tbody></table>
           </div>
           <div id="feesEmpty" class="empty-state"><i class="fas fa-file-invoice-dollar"></i><p>No fee records</p></div>
         </div>
@@ -574,16 +575,16 @@ if (navigator.serviceWorker) {
       </div>
       <!-- Payments Panel -->
       <div class="admin-panel" id="admin-payments">
-        <div class="card-header">
-          <h2>Payment Transactions</h2>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="paymentsTable,payments"><i class="fas fa-download"></i> CSV</button>
-          </div>
+        <div class="payments-hero">
+          <h2><i class="fas fa-credit-card"></i> Payment Transactions</h2>
+          <p>Online fee payment records and transaction history</p>
         </div>
-        <p class="subtitle">Online fee payment records</p>
-        <div class="card">
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px;">
+          <button class="btn btn-export btn-sm" data-action="exportTableToCSV" data-args="paymentsTable,payments"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card" style="border-radius:12px;overflow:hidden">
           <div class="table-responsive">
-            <table><thead><tr><th>Student</th><th>Amount</th><th>Gateway</th><th>Method</th><th>Reference</th><th>Date</th><th>Status</th></tr></thead><tbody id="paymentsTable"></tbody></table>
+            <table class="fee-table-v2"><thead><tr><th>Student</th><th>Amount</th><th>Gateway</th><th>Method</th><th>Reference</th><th>Date</th><th>Status</th></tr></thead><tbody id="paymentsTable"></tbody></table>
           </div>
           <div id="paymentsEmpty" class="empty-state"><i class="fas fa-credit-card"></i><p>No transactions yet</p></div>
         </div>
