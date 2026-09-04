@@ -597,20 +597,26 @@ function renderLandingPageSections() {
 
   // School logo — update all .school-logo-img elements
   var logoUrl = getSchoolLogoUrl();
-  document.querySelectorAll('.school-logo-img').forEach(function(img) {
-    if (logoUrl) {
-      img.src = logoUrl;
-      img.style.display = '';
-    } else {
-      img.style.display = 'none';
-    }
-  });
+  var hasActiveTenant = false;
+  try { hasActiveTenant = !!localStorage.getItem('activeTenant'); } catch(e) {}
+  if (hasActiveTenant) {
+    document.querySelectorAll('.school-logo-img').forEach(function(img) {
+      if (logoUrl) {
+        img.src = logoUrl;
+        img.style.display = '';
+      } else {
+        img.style.display = 'none';
+      }
+    });
+  }
 
-  // Hide EduVerse platform & super admin buttons on school profiles
-  ['navJoinBtn', 'heroJoinBtn', 'superAdminCog'].forEach(function(id) {
-    var b = document.getElementById(id);
-    if (b) b.style.display = 'none';
-  });
+  // Hide EduVerse platform & super admin buttons only on school profiles (not on main homepage)
+  if (hasActiveTenant) {
+    ['navJoinBtn', 'heroJoinBtn', 'superAdminCog'].forEach(function(id) {
+      var b = document.getElementById(id);
+      if (b) b.style.display = 'none';
+    });
+  }
 
   // Update auth-gated elements on landing page
   if (typeof updateAuthGating === 'function') updateAuthGating();
