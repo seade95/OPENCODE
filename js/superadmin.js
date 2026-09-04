@@ -894,37 +894,92 @@ function renderSaSystem(container) {
   }
   var sizeKB = (totalSize / 1024).toFixed(1);
   var sizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+  var maxStorageMB = 10;
+  var usagePercent = Math.min((parseFloat(sizeMB) / maxStorageMB) * 100, 100);
+  var circumference = 2 * Math.PI * 52;
+  var dashoffset = circumference - (usagePercent / 100) * circumference;
 
-  var html = '<div class="sa-settings-form">'
+  var html = ''
 
-    // Maintenance
-    + '<div class="sa-section"><h3><i class="fas fa-tools"></i> Maintenance Mode</h3>'
-    + '<div class="form-row"><label>Enable Maintenance</label><label class="toggle-switch"><input type="checkbox" ' + (settings.maintenanceMode ? 'checked' : '') + ' onchange="saSetMaintenance(this.checked)"><span class="toggle-slider"></span></label></div>'
-    + '<div class="form-row"><label>Maintenance Message</label><textarea rows="2" id="saMaintenanceMsg" oninput="saSetMaintenanceMsg(this.value)">' + esc(settings.maintenanceMessage || '') + '</textarea></div>'
+    // System grid
+    + '<div class="sa-system-grid">'
+
+    // Maintenance card
+    + '<div class="sa-system-card">'
+    + '<div class="sa-system-card-header">'
+    + '<div class="sa-system-card-icon sa-system-card-icon--maintenance"><i class="fas fa-tools"></i></div>'
+    + '<div><div class="sa-system-card-title">Maintenance Mode</div><div class="sa-system-card-desc">Control platform availability</div></div>'
+    + '</div>'
+    + '<div class="sa-toggle-row">'
+    + '<div class="sa-toggle-info">'
+    + '<div class="sa-toggle-label">Enable Maintenance</div>'
+    + '<div class="sa-toggle-desc">Temporarily disable access for all schools</div>'
+    + '</div>'
+    + '<label class="toggle-switch"><input type="checkbox" ' + (settings.maintenanceMode ? 'checked' : '') + ' onchange="saSetMaintenance(this.checked)"><span class="toggle-slider"></span></label>'
+    + '</div>'
+    + '<div style="margin-top:16px">'
+    + '<label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--sa-text)">Maintenance Message</label>'
+    + '<textarea rows="3" id="saMaintenanceMsg" oninput="saSetMaintenanceMsg(this.value)" style="width:100%;padding:10px 14px;border:2px solid var(--sa-border);border-radius:10px;font-size:13px;font-family:inherit;resize:vertical;transition:border-color .2s;box-sizing:border-box">' + esc(settings.maintenanceMessage || '') + '</textarea>'
+    + '</div>'
     + '</div>'
 
-    // School Registration
-    + '<div class="sa-section"><h3><i class="fas fa-door-open"></i> School Registration</h3>'
-    + '<div class="form-row"><label>Allow New School Registration</label><label class="toggle-switch"><input type="checkbox" ' + (settings.allowSchoolRegistration !== false ? 'checked' : '') + ' onchange="saSetRegistration(this.checked)"><span class="toggle-slider"></span></label></div>'
+    // Registration card
+    + '<div class="sa-system-card">'
+    + '<div class="sa-system-card-header">'
+    + '<div class="sa-system-card-icon sa-system-card-icon--registration"><i class="fas fa-user-plus"></i></div>'
+    + '<div><div class="sa-system-card-title">School Registration</div><div class="sa-system-card-desc">Control new school signups</div></div>'
+    + '</div>'
+    + '<div class="sa-toggle-row">'
+    + '<div class="sa-toggle-info">'
+    + '<div class="sa-toggle-label">Allow New Registrations</div>'
+    + '<div class="sa-toggle-desc">Let new schools register on the platform</div>'
+    + '</div>'
+    + '<label class="toggle-switch"><input type="checkbox" ' + (settings.allowSchoolRegistration !== false ? 'checked' : '') + ' onchange="saSetRegistration(this.checked)"><span class="toggle-slider"></span></label>'
+    + '</div>'
+    + '<div style="margin-top:20px;padding:16px;background:#f8fafc;border-radius:10px;border:1px solid var(--sa-border)">'
+    + '<div style="font-size:13px;color:var(--sa-text-light);margin-bottom:8px">Quick Stats</div>'
+    + '<div style="display:flex;gap:24px">'
+    + '<div><div style="font-size:24px;font-weight:700;color:var(--sa-text)">' + tenants.length + '</div><div style="font-size:11px;color:var(--sa-text-light);text-transform:uppercase;letter-spacing:.5px">Schools</div></div>'
+    + '<div><div style="font-size:24px;font-weight:700;color:var(--sa-text)">' + (settings.maintenanceMode ? 'ON' : 'OFF') + '</div><div style="font-size:11px;color:var(--sa-text-light);text-transform:uppercase;letter-spacing:.5px">Status</div></div>'
+    + '</div>'
+    + '</div>'
     + '</div>'
 
-    // Storage Info
-    + '<div class="sa-section"><h3><i class="fas fa-database"></i> Storage</h3>'
-    + '<div class="sa-grid-auto">'
-    + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + sizeKB + ' KB</div><div class="sa-stat-label">Total localStorage (' + sizeMB + ' MB)</div></div>'
-    + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + storageItems + '</div><div class="sa-stat-label">LocalStorage Keys</div></div>'
-    + '<div class="sa-stat-card mini"><div class="sa-stat-value">' + tenants.length + '</div><div class="sa-stat-label">Schools</div></div>'
+    // Storage card
+    + '<div class="sa-system-card">'
+    + '<div class="sa-system-card-header">'
+    + '<div class="sa-system-card-icon sa-system-card-icon--storage"><i class="fas fa-database"></i></div>'
+    + '<div><div class="sa-system-card-title">Storage Usage</div><div class="sa-system-card-desc">localStorage consumption</div></div>'
+    + '</div>'
+    + '<div class="sa-storage-ring">'
+    + '<svg viewBox="0 0 120 120">'
+    + '<circle class="track" cx="60" cy="60" r="52"></circle>'
+    + '<circle class="fill" cx="60" cy="60" r="52" stroke-dasharray="' + circumference + '" stroke-dashoffset="' + dashoffset + '"></circle>'
+    + '</svg>'
+    + '<div class="sa-storage-center">'
+    + '<div class="sa-storage-center-value">' + usagePercent.toFixed(0) + '%</div>'
+    + '<div class="sa-storage-center-label">Used</div>'
+    + '</div>'
+    + '</div>'
+    + '<div class="sa-storage-stats">'
+    + '<div class="sa-storage-stat"><div class="sa-storage-stat-value">' + sizeKB + ' KB</div><div class="sa-storage-stat-label">Total Size</div></div>'
+    + '<div class="sa-storage-stat"><div class="sa-storage-stat-value">' + storageItems + '</div><div class="sa-storage-stat-label">Keys</div></div>'
     + '</div>'
     + '</div>'
 
-    // Danger Zone
-    + '<div class="sa-danger-zone"><h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>'
-    + '<p>These actions cannot be undone.</p>'
-    + '<div class="sa-actions-row">'
+    + '</div>' // end system-grid
+
+    // Danger zone
+    + '<div class="sa-danger-card" style="margin-top:20px">'
+    + '<div class="sa-danger-card-header">'
+    + '<div class="sa-danger-card-icon"><i class="fas fa-exclamation-triangle"></i></div>'
+    + '<div><div class="sa-danger-card-title">Danger Zone</div></div>'
+    + '</div>'
+    + '<div class="sa-danger-card-desc">These actions are irreversible and will permanently delete data. Please ensure you have a backup before proceeding.</div>'
+    + '<div class="sa-danger-actions">'
     + '<button class="btn btn-danger-outline" onclick="saClearAllData()"><i class="fas fa-trash-alt"></i> Clear All Data</button>'
     + '<button class="btn btn-danger-outline" onclick="saResetPlatform()"><i class="fas fa-undo"></i> Reset Platform Settings</button>'
-    + '</div></div>'
-
+    + '</div>'
     + '</div>';
 
   container.innerHTML = html;
@@ -1202,31 +1257,56 @@ function saSendBroadcast() {
 
 // ===== 7. Backup & Data Tab =====
 function renderSaBackup(container) {
-  var html = '<div class="sa-settings-form">'
+  var tenants = getTenants();
 
-    // Export All Data
-    + '<div class="sa-section"><h3><i class="fas fa-download"></i> Export All Data</h3>'
-    + '<p class="sa-subtitle">Download a complete backup of all schools, platform settings, and super admin account as a JSON file.</p>'
-    + '<button class="btn btn-primary" onclick="saExportAll()"><i class="fas fa-file-export"></i> Export Full Backup</button>'
+  var html = ''
+    // Hero banner
+    + '<div class="sa-backup-hero">'
+    + '<h3><i class="fas fa-shield-alt"></i> Backup & Data Management</h3>'
+    + '<p>Export, restore, and inspect your school data. Backups include all schools, platform settings, and admin accounts.</p>'
     + '</div>'
 
-    // Import / Restore
-    + '<div class="sa-section"><h3><i class="fas fa-upload"></i> Import / Restore</h3>'
-    + '<p class="sa-subtitle">Restore from a previously exported backup file. This will <strong>overwrite</strong> all current data.</p>'
-    + '<input type="file" accept=".json" id="saRestoreFile" class="sa-mb-12" style="display:block;">'
-    + '<button class="btn btn-danger-outline" onclick="saImportBackup()"><i class="fas fa-file-import"></i> Restore from File</button>'
-    + '<p id="saRestoreResult" class="sa-text-small sa-mt-8"></p>'
-    + '</div>'
+    // Action cards
+    + '<div class="sa-backup-cards">'
 
-    // School Data Inspector
-    + '<div class="sa-section"><h3><i class="fas fa-search"></i> School Data Inspector</h3>'
-    + '<p class="sa-subtitle">Browse the stored data for any school to verify contents.</p>'
-    + '<div class="form-group"><label>Select School</label><select id="saDataInspectorSchool" onchange="saInspectSchool()">'
+    // Export card
+    + '<div class="sa-backup-card">'
+    + '<div class="sa-backup-card-header">'
+    + '<div class="sa-backup-card-icon sa-backup-card-icon--export"><i class="fas fa-cloud-upload-alt"></i></div>'
+    + '<div><div class="sa-backup-card-title">Export Backup</div><div class="sa-backup-card-subtitle">Download all platform data</div></div>'
+    + '</div>'
+    + '<div class="sa-backup-card-body">'
+    + '<p>Create a complete JSON backup of all schools, platform settings, subscription plans, and super admin account.</p>'
+    + '<button class="btn btn-primary" onclick="saExportAll()"><i class="fas fa-download"></i> Export Full Backup</button>'
+    + '</div></div>'
+
+    // Import card
+    + '<div class="sa-backup-card">'
+    + '<div class="sa-backup-card-header">'
+    + '<div class="sa-backup-card-icon sa-backup-card-icon--import"><i class="fas fa-cloud-download-alt"></i></div>'
+    + '<div><div class="sa-backup-card-title">Restore Backup</div><div class="sa-backup-card-subtitle">Import from a backup file</div></div>'
+    + '</div>'
+    + '<div class="sa-backup-card-body">'
+    + '<p>Restore from a previously exported backup. This will <strong>overwrite</strong> all current data including schools and settings.</p>'
+    + '<input type="file" accept=".json" id="saRestoreFile" class="sa-backup-file-input" onchange="this.nextElementSibling.textContent=this.files[0]?this.files[0].name:\'Choose backup file...\';this.nextElementSibling.classList.remove(\'btn-outline\');this.nextElementSibling.classList.add(\'btn-primary\')">'
+    + '<button class="btn btn-outline" onclick="saImportBackup()"><i class="fas fa-upload"></i> Choose backup file...</button>'
+    + '<div id="saRestoreResult" class="sa-backup-result"></div>'
+    + '</div></div>'
+
+    // Inspector card
+    + '<div class="sa-backup-card">'
+    + '<div class="sa-backup-card-header">'
+    + '<div class="sa-backup-card-icon sa-backup-card-icon--inspect"><i class="fas fa-search"></i></div>'
+    + '<div><div class="sa-backup-card-title">Data Inspector</div><div class="sa-backup-card-subtitle">Browse school data</div></div>'
+    + '</div>'
+    + '<div class="sa-backup-card-body">'
+    + '<p>Select a school to inspect its stored data including students, teachers, classes, and more.</p>'
+    + '<select id="saDataInspectorSchool" class="sa-inspector-select" onchange="saInspectSchool()">'
     + '<option value="">-- Select a school --</option>'
-    + getTenants().map(function(t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('')
-    + '</select></div>'
+    + tenants.map(function(t) { return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('')
+    + '</select>'
     + '<div id="saDataInspectorResult"></div>'
-    + '</div>'
+    + '</div></div>'
 
     + '</div>';
 
@@ -1266,7 +1346,7 @@ function saImportBackup() {
   var fileInput = document.getElementById('saRestoreFile');
   var result = document.getElementById('saRestoreResult');
   if (!fileInput || !fileInput.files || !fileInput.files[0]) {
-    if (result) { result.innerHTML = '<span style="color:var(--sa-red);">Please select a backup file first.</span>'; }
+    if (result) { result.className = 'sa-backup-result error'; result.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please select a backup file first.'; }
     return;
   }
   if (!confirm('This will OVERWRITE all current schools and platform settings. Are you sure?')) return;
@@ -1277,7 +1357,7 @@ function saImportBackup() {
     try {
       var data = JSON.parse(e.target.result);
       if (!data.tenants || !data.platform) {
-        if (result) result.innerHTML = '<span style="color:var(--sa-red);">Invalid backup file format.</span>';
+        if (result) { result.className = 'sa-backup-result error'; result.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid backup file format.'; }
         return;
       }
 
@@ -1297,12 +1377,12 @@ function saImportBackup() {
         restored++;
       });
 
-      if (result) result.innerHTML = '<span style="color:var(--sa-green);"><i class="fas fa-check-circle"></i> Restored ' + data.tenants.length + ' schools and ' + restored + ' school data stores.</span>';
+      if (result) { result.className = 'sa-backup-result success'; result.innerHTML = '<i class="fas fa-check-circle"></i> Restored ' + data.tenants.length + ' schools and ' + restored + ' school data stores.'; }
       saLogActivity('Full backup restored: ' + data.tenants.length + ' schools');
       toast('Backup restored successfully!');
       switchSaTab('overview');
     } catch(err) {
-      if (result) result.innerHTML = '<span style="color:var(--sa-red);">Error: ' + err.message + '</span>';
+      if (result) { result.className = 'sa-backup-result error'; result.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: ' + err.message; }
     }
   };
   reader.readAsText(fileInput.files[0]);
@@ -1316,7 +1396,7 @@ function saInspectSchool() {
   if (!id) { result.innerHTML = ''; return; }
   try {
     var raw = localStorage.getItem(getTenantDataKey(id));
-    if (!raw) { result.innerHTML = '<p class="empty-state">No data found for this school.</p>'; return; }
+    if (!raw) { result.innerHTML = '<div class="sa-empty-state" style="padding:24px 8px;"><i class="fas fa-folder-open"></i><p>No data found for this school.</p></div>'; return; }
     var d = JSON.parse(raw);
     var counts = {
       students: (d.students || []).length,
@@ -1331,18 +1411,20 @@ function saInspectSchool() {
     };
     var storageSize = (raw.length / 1024).toFixed(1) + ' KB';
 
-    result.innerHTML = '<div class="sa-mt-12" style="background:#f8fafc;border-radius:8px;padding:16px;">'
-      + '<div class="sa-grid-auto--sm sa-mb-12">'
+    result.innerHTML = '<div class="sa-inspector-grid">'
       + Object.keys(counts).map(function(k) {
-        return '<div class="sa-school-card">'
-          + '<div class="sa-school-card-value">' + counts[k] + '</div>'
-          + '<div class="sa-school-card-label">' + k.charAt(0).toUpperCase() + k.slice(1) + '</div></div>';
+        return '<div class="sa-inspector-stat">'
+          + '<div class="sa-inspector-stat-value">' + counts[k] + '</div>'
+          + '<div class="sa-inspector-stat-label">' + k.charAt(0).toUpperCase() + k.slice(1) + '</div></div>';
       }).join('') + '</div>'
-      + '<div class="sa-text-small">Storage: <strong>' + storageSize + '</strong> | School Info: ' + esc(d.schoolName || 'N/A') + ' | Term: ' + esc(d.currentTerm || 'N/A') + '</div>'
-      + '<button class="btn btn-sm btn-outline sa-mt-8" onclick="saViewRawData(\'' + id + '\')"><i class="fas fa-code"></i> View Raw Data</button>'
-      + '</div>';
+      + '<div class="sa-inspector-meta">'
+      + '<span><strong>School:</strong> ' + esc(d.schoolName || 'N/A') + '</span>'
+      + '<span><strong>Term:</strong> ' + esc(d.currentTerm || 'N/A') + '</span>'
+      + '<span><strong>Storage:</strong> ' + storageSize + '</span>'
+      + '</div>'
+      + '<button class="btn btn-sm btn-outline sa-mt-12" onclick="saViewRawData(\'' + id + '\')"><i class="fas fa-code"></i> View Raw JSON</button>';
   } catch(e) {
-    result.innerHTML = '<p class="sa-text-small" style="color:var(--sa-red);">Error reading data: ' + e.message + '</p>';
+    result.innerHTML = '<div class="sa-backup-result error"><i class="fas fa-exclamation-circle"></i> Error reading data: ' + e.message + '</div>';
   }
 }
 
