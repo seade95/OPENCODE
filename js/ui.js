@@ -174,19 +174,17 @@ function triggerScoreGridFileInput() {
 }
 
 function goHome() {
-  clearSession();
-  // Clear active tenant and EduVerse auth to go to main homepage
+  try { if (typeof clearSession === 'function') clearSession(); } catch(e) {}
   try {
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
     localStorage.removeItem('eduverse_auth');
+    localStorage.removeItem('eduverse_session');
+    localStorage.removeItem('eduverseUser');
+    sessionStorage.removeItem('lastActivity');
+    localStorage.setItem('_eduverse_go_home', '1');
   } catch(e) {}
-  document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
-  const lp = document.getElementById('landing-page');
-  if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }
-  if (typeof updateLandingStats === 'function') updateLandingStats();
-  if (typeof cleanupExam === 'function') cleanupExam();
-  if (typeof cleanupSim === 'function') cleanupSim();
+  window.location.href = 'index.html';
 }
 
 function showSchoolSelector() {
@@ -1055,12 +1053,14 @@ function navigateToUrl(url) {
 function goHomeFromDashboard() {
   var s = (function() { try { return location.search.match(/school=([^&]+)/)[1]; } catch(e) { return null; } })();
   if (s) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(s); return; }
-  // No slug - go to main EduVerse homepage. Clear ALL auth state.
-  clearSession();
   try {
+    localStorage.removeItem('eduverse_session');
+    localStorage.removeItem('eduverse_auth');
+    localStorage.removeItem('eduverseUser');
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
-    localStorage.removeItem('eduverse_auth');
+    sessionStorage.removeItem('lastActivity');
+    localStorage.setItem('_eduverse_go_home', '1');
   } catch(e) {}
   window.location.href = 'index.html';
 }

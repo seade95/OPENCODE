@@ -1340,12 +1340,15 @@
 <!-- Set tenant context from URL immediately, BEFORE firestore-adapter.js subscribes -->
 <script>
 try {
-  var _schoolParam = new URLSearchParams(window.location.search).get('school');
-  if (_schoolParam) {
-    var _tenantsList = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
-    var _matchedTenant = _tenantsList.find(function(x) { return x.slug === _schoolParam; });
-    if (_matchedTenant) { localStorage.setItem('activeTenant', _matchedTenant.id); localStorage.setItem('activeTenantKey', 'schoolData_' + _matchedTenant.id); }
-    else { localStorage.setItem('activeTenant', _schoolParam); localStorage.setItem('activeTenantKey', 'schoolData_' + _schoolParam); }
+  if (localStorage.getItem('_eduverse_go_home') === '1') { /* skip tenant init on goHome */ }
+  else {
+    var _schoolParam = new URLSearchParams(window.location.search).get('school');
+    if (_schoolParam) {
+      var _tenantsList = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+      var _matchedTenant = _tenantsList.find(function(x) { return x.slug === _schoolParam; });
+      if (_matchedTenant) { localStorage.setItem('activeTenant', _matchedTenant.id); localStorage.setItem('activeTenantKey', 'schoolData_' + _matchedTenant.id); }
+      else { localStorage.setItem('activeTenant', _schoolParam); localStorage.setItem('activeTenantKey', 'schoolData_' + _schoolParam); }
+    }
   }
 } catch(e) {}
 </script>
@@ -1405,6 +1408,8 @@ try {
 // Auto-route /login?role=X, /?login=role, and /?school=slug&portal=type on page load
 (function() {
   try {
+    // Skip auto-route if returning from goHome
+    if (localStorage.getItem('_eduverse_go_home') === '1') return;
     var params = new URLSearchParams(window.location.search);
     var school = params.get('school');
     var portal = params.get('portal');

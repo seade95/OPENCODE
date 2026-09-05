@@ -11,6 +11,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   } catch(e) {}
 
+  // If goHome flag is set, clear it and ALL auth state — show landing page only
+  try {
+    if (localStorage.getItem('_eduverse_go_home') === '1') {
+      localStorage.removeItem('_eduverse_go_home');
+      localStorage.removeItem('eduverse_session');
+      localStorage.removeItem('eduverse_auth');
+      localStorage.removeItem('eduverseUser');
+      localStorage.removeItem('activeTenant');
+      localStorage.removeItem('activeTenantKey');
+      sessionStorage.removeItem('lastActivity');
+      if (typeof currentAdmin !== 'undefined') currentAdmin = null;
+      if (typeof currentStudent !== 'undefined') currentStudent = null;
+      if (typeof currentTeacher !== 'undefined') currentTeacher = null;
+      if (typeof currentParent !== 'undefined') currentParent = null;
+      if (typeof window.eduverseUser !== 'undefined') window.eduverseUser = null;
+      // Show landing page, skip everything else
+      var lp = document.getElementById('landing-page');
+      if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }
+      if (typeof initDarkMode === 'function') initDarkMode();
+      if (typeof updateLandingStats === 'function') updateLandingStats();
+      if (typeof renderLandingPageSections === 'function') { try { renderLandingPageSections(); } catch(e) {} }
+      // Do NOT call syncSession, resolveSchoolFromUrl, or auto-route
+      return;
+    }
+  } catch(e) {}
+
   data = loadData();
 
   // Route /superadmin path to the standalone super admin page
