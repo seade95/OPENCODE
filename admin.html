@@ -944,10 +944,11 @@ try {
 // Override goHome for standalone admin page
 function goHome() {
   if (typeof cleanupExam === 'function') cleanupExam();
-  // Clear active tenant to go to main EduVerse homepage
+  // Clear active tenant and EduVerse auth to go to main homepage
   try {
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
+    localStorage.removeItem('eduverse_auth');
   } catch(e) {}
   window.location.href = 'index.html';
 }

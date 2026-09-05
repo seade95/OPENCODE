@@ -175,10 +175,11 @@ function triggerScoreGridFileInput() {
 
 function goHome() {
   clearSession();
-  // Clear active tenant to go to main EduVerse homepage
+  // Clear active tenant and EduVerse auth to go to main homepage
   try {
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
+    localStorage.removeItem('eduverse_auth');
   } catch(e) {}
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');

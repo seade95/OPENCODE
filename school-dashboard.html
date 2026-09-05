@@ -192,6 +192,7 @@ function goHomeFromDashboard() {
   try {
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
+    localStorage.removeItem('eduverse_auth');
   } catch(e) {}
   window.location.href = 'index.html';
 }
