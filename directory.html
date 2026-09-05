@@ -4,72 +4,134 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>School Directory — EduVerse</title>
+<link rel="icon" type="image/svg+xml" href="images/favicon.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 <link rel="stylesheet" href="css/style.css">
 <style>
-body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
-.dir-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
-.dir-hero h1{font-size:36px;margin:0 0 8px;}
-.dir-hero p{font-size:16px;opacity:0.85;max-width:600px;margin:0 auto;}
-.dir-controls{max-width:1100px;margin:-24px auto 32px;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
-.dir-controls input,.dir-controls select{padding:12px 16px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;background:#fff;flex:1;min-width:200px;max-width:320px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
-.dir-controls input:focus,.dir-controls select:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
-.dir-grid{max-width:1100px;margin:0 auto 60px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
-.dir-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.05);transition:transform .2s,box-shadow .2s;cursor:pointer;border:1px solid #e2e8f0;}
-.dir-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
-.dir-card .school-icon{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;margin-bottom:12px;}
-.dir-card h3{font-size:16px;margin:0 0 4px;color:#1e293b;}
-.dir-card .loc{font-size:13px;color:#64748b;display:flex;align-items:center;gap:4px;margin-bottom:8px;}
-.dir-card .loc i{color:#2563eb;width:16px;}
-.dir-card .type{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#dbeafe;color:#2563eb;margin-right:4px;}
-.dir-card .type.primary{background:#dcfce7;color:#16a34a;}
-.dir-card .type.secondary{background:#fef9c3;color:#ca8a04;}
-.dir-empty{text-align:center;padding:60px 20px;color:#94a3b8;grid-column:1/-1;}
-.dir-empty i{font-size:48px;margin-bottom:12px;display:block;}
-.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
-.back-link:hover{color:#fff;}
-.dir-stats{text-align:center;font-size:14px;color:#64748b;margin-bottom:8px;}
-[data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
-[data-theme="dark"] .dir-card{background:#1e293b;border-color:#334155;}
-[data-theme="dark"] .dir-card h3{color:#e2e8f0;}
-[data-theme="dark"] .dir-card .loc{color:#94a3b8;}
-[data-theme="dark"] .dir-controls input,.dir-controls select{background:#1e293b;border-color:#334155;color:#e2e8f0;}
-@media(max-width:600px){.dir-hero h1{font-size:26px;}.dir-controls{flex-direction:column;align-items:stretch;}.dir-controls input,.dir-controls select{max-width:none;}}
+body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;color:#1e293b;margin:0;padding:0;min-height:100vh}
+
+.dir-hero{background:linear-gradient(135deg,#0f2440 0%,#1e3a5f 40%,#2563eb 100%);color:#fff;padding:80px 20px 70px;text-align:center;position:relative;overflow:hidden}
+.dir-hero::before{content:'';position:absolute;top:-50%;right:-15%;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.1) 0%,transparent 70%);border-radius:50%}
+.dir-hero::after{content:'';position:absolute;bottom:-40%;left:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);border-radius:50%}
+.dir-hero h1{font-size:40px;font-weight:800;margin:0 0 12px;position:relative;z-index:1}
+.dir-hero p{font-size:16px;opacity:.85;max-width:550px;margin:0 auto;position:relative;z-index:1;line-height:1.6}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,0.75);text-decoration:none;font-size:14px;font-weight:500;position:absolute;top:24px;left:24px;z-index:2;transition:color .2s}
+.back-link:hover{color:#fff}
+.dir-hero-logo{width:64px;height:64px;margin:0 auto 16px;background:rgba(255,255,255,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;z-index:1;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15)}
+
+.dir-stats-bar{max-width:1100px;margin:-30px auto 24px;padding:0 20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
+.dir-stat-pill{background:#fff;border-radius:24px;padding:10px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.1);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#1e293b}
+.dir-stat-pill i{font-size:14px}
+.dir-stat-pill--total{border-left:3px solid #2563eb}
+.dir-stat-pill--total i{color:#2563eb}
+.dir-stat-pill--result{border-left:3px solid #059669}
+.dir-stat-pill--result i{color:#059669}
+
+.dir-controls{max-width:1100px;margin:0 auto 28px;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.dir-search-wrap{position:relative;flex:1;min-width:240px;max-width:400px}
+.dir-search-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px}
+.dir-search-wrap input{width:100%;padding:12px 16px 12px 44px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:inherit;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all .2s;box-sizing:border-box}
+.dir-search-wrap input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,0.1)}
+.dir-filter-wrap{position:relative}
+.dir-filter-wrap select{padding:12px 40px 12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:inherit;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);cursor:pointer;appearance:none;-webkit-appearance:none;transition:all .2s}
+.dir-filter-wrap select:focus{outline:none;border-color:#2563eb}
+.dir-filter-wrap::after{content:'\f107';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none;font-size:13px}
+
+.dir-grid{max-width:1100px;margin:0 auto 60px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.dir-card{background:#fff;border-radius:16px;padding:0;box-shadow:0 2px 12px rgba(0,0,0,0.05);transition:all .3s;cursor:pointer;border:1px solid #e2e8f0;overflow:hidden}
+.dir-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.1);border-color:#bfdbfe}
+.dir-card-top{padding:24px 24px 16px;display:flex;gap:14px;align-items:flex-start}
+.dir-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;color:#fff}
+.dir-card-icon--blue{background:linear-gradient(135deg,#2563eb,#3b82f6)}
+.dir-card-icon--purple{background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
+.dir-card-icon--green{background:linear-gradient(135deg,#059669,#10b981)}
+.dir-card-icon--amber{background:linear-gradient(135deg,#d97706,#f59e0b)}
+.dir-card-icon--rose{background:linear-gradient(135deg,#e11d48,#f43f5e)}
+.dir-card-icon--cyan{background:linear-gradient(135deg,#0891b2,#06b6d4)}
+.dir-card-info{flex:1;min-width:0}
+.dir-card-name{font-size:17px;font-weight:700;color:#1e293b;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dir-card-location{font-size:13px;color:#64748b;display:flex;align-items:center;gap:6px;margin:0}
+.dir-card-location i{color:#2563eb;font-size:12px}
+.dir-card-body{padding:0 24px 16px}
+.dir-card-tags{display:flex;gap:6px;flex-wrap:wrap}
+.dir-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+.dir-tag--type{background:#dbeafe;color:#2563eb}
+.dir-tag--type.primary{background:#dcfce7;color:#16a34a}
+.dir-tag--type.secondary{background:#fef9c3;color:#ca8a04}
+.dir-tag--portal{background:#ede9fe;color:#7c3aed}
+.dir-card-footer{padding:14px 24px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.dir-card-footer-label{font-size:12px;color:#94a3b8}
+.dir-card-footer-btn{font-size:12px;font-weight:600;color:#2563eb;display:flex;align-items:center;gap:4px;text-decoration:none;transition:color .2s}
+.dir-card-footer-btn:hover{color:#1d4ed8}
+
+.dir-empty{text-align:center;padding:64px 20px;color:#94a3b8;grid-column:1/-1}
+.dir-empty i{font-size:52px;margin-bottom:16px;display:block;opacity:.4}
+.dir-empty p{font-size:16px;margin:0 0 8px;color:#64748b}
+.dir-empty span{font-size:13px}
+
+footer{background:#0f2440;color:rgba(255,255,255,0.5);padding:28px 20px;text-align:center;font-size:13px}
+footer a{color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s}
+footer a:hover{color:rgba(255,255,255,0.8)}
+
+@media(max-width:768px){
+  .dir-hero h1{font-size:28px}
+  .dir-hero p{font-size:14px}
+  .dir-grid{grid-template-columns:1fr}
+  .dir-controls{flex-direction:column;align-items:stretch}
+  .dir-search-wrap,.dir-filter-wrap{max-width:none}
+}
+[data-theme="dark"] body{background:#0f172a;color:#e2e8f0}
+[data-theme="dark"] .dir-card{background:#1e293b;border-color:#334155}
+[data-theme="dark"] .dir-card-name{color:#e2e8f0}
+[data-theme="dark"] .dir-card-location{color:#94a3b8}
+[data-theme="dark"] .dir-card-footer{background:#1a2332;border-top-color:#334155}
+[data-theme="dark"] .dir-search-wrap input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .dir-filter-wrap select{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .dir-stat-pill{background:#1e293b;color:#e2e8f0}
 </style>
 </head>
 <body>
 
 <section class="dir-hero">
   <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
-  <h1><i class="fas fa-school"></i> School Directory</h1>
-  <p>Discover schools using EduVerse to manage their academic operations.</p>
+  <div class="dir-hero-logo"><i class="fas fa-school"></i></div>
+  <h1>School Directory</h1>
+  <p>Discover schools using EduVerse to manage their academic operations. Browse, search, and connect with institutions near you.</p>
 </section>
 
-<div class="dir-stats" id="dirStats">Loading directory...</div>
+<div class="dir-stats-bar">
+  <div class="dir-stat-pill dir-stat-pill--total"><i class="fas fa-school"></i> <span id="dirTotalCount">0</span> Schools</div>
+  <div class="dir-stat-pill dir-stat-pill--result"><i class="fas fa-search"></i> <span id="dirResultCount">0</span> Showing</div>
+</div>
 
 <div class="dir-controls">
-  <input type="text" id="dirSearch" placeholder="Search by school name or location..." oninput="renderDirectory()">
-  <select id="dirFilter" onchange="renderDirectory()">
-    <option value="all">All Types</option>
-    <option value="primary">Primary</option>
-    <option value="secondary">Secondary</option>
-    <option value="both">Primary &amp; Secondary</option>
-  </select>
+  <div class="dir-search-wrap">
+    <i class="fas fa-search"></i>
+    <input type="text" id="dirSearch" placeholder="Search by school name or location..." oninput="renderDirectory()">
+  </div>
+  <div class="dir-filter-wrap">
+    <select id="dirFilter" onchange="renderDirectory()">
+      <option value="all">All Types</option>
+      <option value="primary">Primary</option>
+      <option value="secondary">Secondary</option>
+      <option value="both">Primary &amp; Secondary</option>
+    </select>
+  </div>
 </div>
 
 <div class="dir-grid" id="dirGrid">
-  <div class="dir-empty"><i class="fas fa-spinner fa-spin"></i> Loading schools...</div>
+  <div class="dir-empty"><i class="fas fa-spinner fa-spin"></i><p>Loading schools...</p></div>
 </div>
 
 <script>
 var DIRECTORY_SCHOOLS = [
-  { name:'Sunrise International Academy', loc:'Lagos, Nigeria', type:'both', icon:'fa-sun' },
-  { name:'Gracefield Schools', loc:'Abuja, Nigeria', type:'secondary', icon:'fa-star' },
-  { name:'Royal Oaks Academy', loc:'Port Harcourt, Nigeria', type:'primary', icon:'fa-crown' },
-  { name:'Summit College', loc:'Ibadan, Nigeria', type:'secondary', icon:'fa-mountain' },
-  { name:'Heritage Preparatory', loc:'Enugu, Nigeria', type:'primary', icon:'fa-tree' },
-  { name:'Excel Comprehensive', loc:'Kano, Nigeria', type:'both', icon:'fa-trophy' }
+  { name:'Sunrise International Academy', loc:'Lagos, Nigeria', type:'both', icon:'fa-sun', color:'blue' },
+  { name:'Gracefield Schools', loc:'Abuja, Nigeria', type:'secondary', icon:'fa-star', color:'purple' },
+  { name:'Royal Oaks Academy', loc:'Port Harcourt, Nigeria', type:'primary', icon:'fa-crown', color:'amber' },
+  { name:'Summit College', loc:'Ibadan, Nigeria', type:'secondary', icon:'fa-mountain', color:'green' },
+  { name:'Heritage Preparatory', loc:'Enugu, Nigeria', type:'primary', icon:'fa-tree', color:'rose' },
+  { name:'Excel Comprehensive', loc:'Kano, Nigeria', type:'both', icon:'fa-trophy', color:'cyan' }
 ];
 
 function getDemoSchools() {
@@ -80,7 +142,8 @@ function getDemoSchools() {
       for (var i = 0; i < tenants.length; i++) {
         var t = tenants[i];
         if (t && t.name) {
-          schools.push({ name: t.name, loc: t.location || t.address || 'Unknown', type: 'both', icon: 'fa-school', source: 'tenant', slug: t.slug || '' });
+          var colors = ['blue','purple','green','amber','rose','cyan'];
+          schools.push({ name: t.name, loc: t.location || t.address || 'Nigeria', type: 'both', icon: 'fa-school', color: colors[i % colors.length], source: 'tenant', slug: t.slug || '' });
         }
       }
     }
@@ -101,29 +164,40 @@ function renderDirectory() {
     var matchType = filter === 'all' || s.type === filter;
     return matchSearch && matchType;
   });
+
+  document.getElementById('dirTotalCount').textContent = all.length;
+  document.getElementById('dirResultCount').textContent = filtered.length;
+
   if (!filtered.length) {
-    grid.innerHTML = '<div class="dir-empty"><i class="fas fa-search"></i> No schools found matching your search.</div>';
-    document.getElementById('dirStats').textContent = '0 schools found';
+    grid.innerHTML = '<div class="dir-empty"><i class="fas fa-search"></i><p>No schools found</p><span>Try adjusting your search or filter criteria</span></div>';
     return;
   }
+
   var html = '';
   for (var i = 0; i < filtered.length; i++) {
     var s = filtered[i];
     var typeLabel = s.type === 'primary' ? 'Primary' : s.type === 'secondary' ? 'Secondary' : 'Primary & Secondary';
     var typeClass = s.type === 'primary' ? 'primary' : s.type === 'secondary' ? 'secondary' : '';
-    var portalLink = s.slug ? '/school/' + encodeURIComponent(s.slug) : '';
-    var clickHandler = portalLink ? ' data-action="navigateToUrl" data-args="' + portalLink + '" style="cursor:pointer;"' : '';
-    html += '<div class="dir-card"' + clickHandler + '>';
-    html += '<div class="school-icon"><i class="fas ' + (s.icon || 'fa-school') + '"></i></div>';
-    html += '<h3>' + htmlEscape(s.name) + '</h3>';
-    html += '<div class="loc"><i class="fas fa-map-marker-alt"></i> ' + htmlEscape(s.loc) + '</div>';
-    html += '<div><span class="type ' + typeClass + '">' + typeLabel + '</span>'
-      + (portalLink ? '<span class="type" style="background:#e0e7ff;color:#4338ca;"><i class="fas fa-external-link-alt"></i> View Portal</span>' : '')
-      + '</div>';
-    html += '</div>';
+    var portalLink = s.slug ? 'index.html?school=' + encodeURIComponent(s.slug) : '';
+    var colorClass = s.color || 'blue';
+
+    html += '<div class="dir-card" onclick="' + (portalLink ? 'window.location.href=\'' + portalLink + '\'' : '') + '">'
+      + '<div class="dir-card-top">'
+      + '<div class="dir-card-icon dir-card-icon--' + colorClass + '"><i class="fas ' + (s.icon || 'fa-school') + '"></i></div>'
+      + '<div class="dir-card-info">'
+      + '<div class="dir-card-name">' + htmlEscape(s.name) + '</div>'
+      + '<div class="dir-card-location"><i class="fas fa-map-marker-alt"></i> ' + htmlEscape(s.loc) + '</div>'
+      + '</div></div>'
+      + '<div class="dir-card-body"><div class="dir-card-tags">'
+      + '<span class="dir-tag dir-tag--type ' + typeClass + '">' + typeLabel + '</span>'
+      + (portalLink ? '<span class="dir-tag dir-tag--portal"><i class="fas fa-external-link-alt"></i> Visit Portal</span>' : '')
+      + '</div></div>'
+      + '<div class="dir-card-footer">'
+      + '<span class="dir-card-footer-label">EduVerse School</span>'
+      + (portalLink ? '<a href="' + portalLink + '" class="dir-card-footer-btn" onclick="event.stopPropagation()">View School <i class="fas fa-arrow-right"></i></a>' : '<span class="dir-card-footer-btn" style="opacity:.5">No Portal</span>')
+      + '</div></div>';
   }
   grid.innerHTML = html;
-  document.getElementById('dirStats').textContent = filtered.length + ' school' + (filtered.length !== 1 ? 's' : '') + ' found';
 }
 
 function htmlEscape(str) {
@@ -134,15 +208,16 @@ function htmlEscape(str) {
 renderDirectory();
 </script>
 <script src="js/events.js"></script>
-<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
-  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
-    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>
-    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms</a>
-    <a href="cookie-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookies</a>
-    <a href="gdpr-compliance.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR</a>
-    <a href="pricing.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Pricing</a>
+<footer>
+  <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px">
+    <a href="privacy-policy.html">Privacy</a>
+    <a href="terms-of-service.html">Terms</a>
+    <a href="cookie-policy.html">Cookies</a>
+    <a href="gdpr-compliance.html">GDPR</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="directory.html">Directory</a>
   </div>
-  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
+  <p style="margin:0">&copy; 2026 EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
 </footer>
 </body>
 </html>
