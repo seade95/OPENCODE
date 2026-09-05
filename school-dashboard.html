@@ -184,6 +184,12 @@ function doLogout() {
   } catch(e) {}
 })();
 </script>
+<script>
+function goHomeFromDashboard() {
+  var s = (function() { try { return location.search.match(/school=([^&]+)/)[1]; } catch(e) { return null; } })();
+  window.location.href = s ? 'school-portal.html?school=' + encodeURIComponent(s) : 'index.html';
+}
+</script>
 <script src="js/events.js"></script>
 </body>
 </html>
