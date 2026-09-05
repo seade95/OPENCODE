@@ -175,21 +175,11 @@ function triggerScoreGridFileInput() {
 
 function goHome() {
   clearSession();
-  var activeTenant = (function() { try { return localStorage.getItem('activeTenant'); } catch(e) { return null; } })();
-  if (activeTenant) {
-    var tenants = [];
-    try { tenants = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]'); } catch(e) {}
-    // Try matching by ID first, then by slug
-    var t = tenants.find(function(x) { return x.id === activeTenant; });
-    if (!t) t = tenants.find(function(x) { return x.slug === activeTenant; });
-    if (t && t.slug) {
-      window.location.href = 'index.html?school=' + encodeURIComponent(t.slug);
-      return;
-    }
-    // Fallback: activeTenant itself might be a slug
-    window.location.href = 'index.html?school=' + encodeURIComponent(activeTenant);
-    return;
-  }
+  // Clear active tenant to go to main EduVerse homepage
+  try {
+    localStorage.removeItem('activeTenant');
+    localStorage.removeItem('activeTenantKey');
+  } catch(e) {}
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
   const lp = document.getElementById('landing-page');
   if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }
@@ -1063,7 +1053,13 @@ function navigateToUrl(url) {
 
 function goHomeFromDashboard() {
   var s = (function() { try { return location.search.match(/school=([^&]+)/)[1]; } catch(e) { return null; } })();
-  window.location.href = s ? 'school-portal.html?school=' + encodeURIComponent(s) : 'index.html';
+  if (s) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(s); return; }
+  // No slug - go to main EduVerse homepage
+  try {
+    localStorage.removeItem('activeTenant');
+    localStorage.removeItem('activeTenantKey');
+  } catch(e) {}
+  window.location.href = 'index.html';
 }
 
 function toggleAllFaqs() {
