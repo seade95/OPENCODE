@@ -188,11 +188,13 @@ function doLogout() {
 function goHomeFromDashboard() {
   var s = (function() { try { return location.search.match(/school=([^&]+)/)[1]; } catch(e) { return null; } })();
   if (s) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(s); return; }
-  // No slug - go to main EduVerse homepage
+  // No slug - go to main EduVerse homepage. Clear ALL auth state.
   try {
+    localStorage.removeItem('eduverse_session');
+    localStorage.removeItem('eduverse_auth');
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
-    localStorage.removeItem('eduverse_auth');
+    sessionStorage.removeItem('lastActivity');
   } catch(e) {}
   window.location.href = 'index.html';
 }

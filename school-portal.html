@@ -249,11 +249,13 @@ function toggleNav() {
 function goHome() {
   var slug = window.slug || (function(){ try { var m = location.search.match(/school=([^&]+)/); return m ? decodeURIComponent(m[1]) : null; } catch(e) { return null; } })();
   if (slug) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(slug); return; }
-  // No slug - go to main EduVerse homepage
+  // No slug - go to main EduVerse homepage. Clear ALL auth state.
   try {
+    localStorage.removeItem('eduverse_session');
+    localStorage.removeItem('eduverse_auth');
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
-    localStorage.removeItem('eduverse_auth');
+    sessionStorage.removeItem('lastActivity');
   } catch(e) {}
   window.location.href = 'index.html';
 }

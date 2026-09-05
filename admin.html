@@ -944,7 +944,8 @@ try {
 // Override goHome for standalone admin page
 function goHome() {
   if (typeof cleanupExam === 'function') cleanupExam();
-  // Clear active tenant and EduVerse auth to go to main homepage
+  // Clear ALL auth state: session, tenant, EduVerse backup
+  try { if (typeof clearSession === 'function') clearSession(); } catch(e) {}
   try {
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
