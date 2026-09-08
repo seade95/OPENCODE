@@ -1,4 +1,4 @@
-const CACHE = 'eduverse-v8';
+const CACHE = 'eduverse-v9';
 const OFFLINE_URL = '/offline.html';
 
 const SHELL = [
@@ -54,16 +54,11 @@ const SHELL = [
   '/js/features/scoregrid.js',
   '/js/features/aitools.js',
   '/js/features/misc-features.js',
-  '/js/app.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.woff2',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-brands-400.woff2',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap',
-  'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js',
-  'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js',
-  'https://js.paystack.co/v1/inline.js',
-  'https://checkout.flutterwave.com/v3.js'
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
 ];
 
 self.addEventListener('install', e => {

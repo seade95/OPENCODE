@@ -46,8 +46,6 @@
 <link rel="dns-prefetch" href="https://cdn.sheetjs.com">
 <!-- Preload critical assets -->
 <link rel="preload" href="css/style.css?v=20260730" as="style">
-<link rel="preload" href="icons/icon.svg" as="image">
-<link rel="preload" href="images/favicon.svg" as="image">
 <link rel="preload" href="images/hero/slide1.jpg" as="image" fetchpriority="high">
 <!-- Google Fonts — async, non-blocking -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
@@ -1327,11 +1325,11 @@
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 
-<script src="js/screen-protection.js"></script>
+<script defer src="js/screen-protection.js"></script>
 <script async src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script async src="https://js.paystack.co/v1/inline.js"></script>
 <script async src="https://checkout.flutterwave.com/v3.js"></script>
@@ -1352,94 +1350,47 @@ try {
   }
 } catch(e) {}
 </script>
-<script src="js/firestore-adapter.js"></script>
-<script src="js/schoolprofile.js"></script>
+<script defer src="js/firestore-adapter.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/events.js"></script>
-<script src="js/admin.js"></script>
-<script src="js/teacher.js"></script>
-<script src="js/student.js"></script>
-<script src="js/features/timetable.js"></script>
-<script src="js/features/hostel.js"></script>
-<script src="js/features/calendar.js"></script>
-<script src="js/features/website.js"></script>
-<script src="js/features/cbt.js"></script>
-<script src="js/features/scoregrid.js"></script>
-<script src="js/features/aitools.js"></script>
-<script src="js/features/misc-features.js"></script>
-<script src="js/features2.js"></script>
-<script src="js/payment-gateway.js"></script>
-<script src="js/k12.js"></script>
-<script src="js/admission.js"></script>
-<script src="js/system.js"></script>
-<script src="js/multitenant.js"></script>
-<script src="js/exam-simulation.js"></script>
-<script src="js/report-builder.js"></script>
-<script src="js/activity-games.js"></script>
-<script src="js/alumni.js"></script>
-<script src="js/eduverse.js"></script>
-<script src="js/superadmin.js"></script>
+<script defer src="js/admin.js"></script>
+<script defer src="js/teacher.js"></script>
+<script defer src="js/student.js"></script>
+<script defer src="js/features/timetable.js"></script>
+<script defer src="js/features/hostel.js"></script>
+<script defer src="js/features/calendar.js"></script>
+<script defer src="js/features/website.js"></script>
+<script defer src="js/features/cbt.js"></script>
+<script defer src="js/features/scoregrid.js"></script>
+<script defer src="js/features/aitools.js"></script>
+<script defer src="js/features/misc-features.js"></script>
+<script defer src="js/features2.js"></script>
+<script defer src="js/payment-gateway.js"></script>
+<script defer src="js/k12.js"></script>
+<script defer src="js/admission.js"></script>
+<script defer src="js/system.js"></script>
+<script defer src="js/multitenant.js"></script>
+<script defer src="js/exam-simulation.js"></script>
+<script defer src="js/report-builder.js"></script>
+<script defer src="js/activity-games.js"></script>
+<script defer src="js/alumni.js"></script>
+<script defer src="js/eduverse.js"></script>
+<script defer src="js/superadmin.js"></script>
 <script async src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="js/handwriting-ocr.js"></script>
+<script defer src="js/handwriting-ocr.js"></script>
 <script async src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
-<script src="js/teacher-upload.js"></script>
-<script src="js/subscription.js"></script>
-<script src="js/data-sync.js"></script>
-<script src="js/subdomain-middleware.js"></script>
-<script src="js/path-router.js"></script>
-<script src="js/feature-upgrades.js"></script>
+<script defer src="js/teacher-upload.js"></script>
+<script defer src="js/subscription.js"></script>
+<script defer src="js/data-sync.js"></script>
+<script defer src="js/subdomain-middleware.js"></script>
+<script defer src="js/path-router.js"></script>
+<script defer src="js/feature-upgrades.js"></script>
 <script src="js/app.js"></script>
 <script>
-// Initialize landing page gallery on load
-(function() {
-  function initLandingGallery() {
-    if (typeof data !== 'undefined' && data && data.gallery && data.gallery.length) {
-      var section = document.getElementById('gallerySection');
-      if (section) section.style.display = '';
-    }
-    if (typeof renderGalleryView === 'function') renderGalleryView('landingGalleryView');
-  }
-  if (document.readyState === 'complete') initLandingGallery();
-  else window.addEventListener('load', initLandingGallery);
-})();
 </script>
 <div class="calc-float"><button class="calc-float-btn" data-action="openCalculator" title="Scientific Calculator" aria-label="Scientific Calculator"><i class="fas fa-calculator"></i></button></div>
 <script>
-// Auto-route /login?role=X, /?login=role, and /?school=slug&portal=type on page load
-(function() {
-  try {
-    // Skip auto-route if returning from goHome
-    if (localStorage.getItem('_eduverse_go_home') === '1') return;
-    // Skip if session already exists — syncSession() in app.js handles navigation
-    if (typeof getSession === 'function' && getSession()) return;
-    var params = new URLSearchParams(window.location.search);
-    var school = params.get('school');
-    var portal = params.get('portal');
-    var role = params.get('role') || params.get('login');
-
-    // School-specific portal: set active tenant first
-    if (school && portal) {
-      if (typeof getTenants === 'function') {
-        var tenants = getTenants();
-        var tenant = tenants.find(function(t) { return t.slug === school; });
-        if (tenant) {
-          localStorage.setItem('activeTenant', tenant.id);
-          localStorage.setItem('activeTenantKey', 'schoolData_' + tenant.id);
-        }
-      }
-      role = portal;
-    }
-
-    if (role) {
-      if (role === 'teacher' && typeof showTeacherLogin === 'function') showTeacherLogin();
-      else if (role === 'parent' && typeof showParentLogin === 'function') showParentLogin();
-      else if (role === 'admin' && typeof showAdminLogin === 'function') showAdminLogin();
-      else if (role === 'admission' && typeof showAdmissionPortal === 'function') showAdmissionPortal();
-      else if (typeof showStudentLogin === 'function') showStudentLogin();
-    }
-  } catch(e) {}
-})();
-
+// Service Worker registration
 window.addEventListener('load', function() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(function(reg) {

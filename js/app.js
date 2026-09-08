@@ -198,6 +198,43 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   } catch(e) {}
 
+  // Auto-route /login?role=X, /?login=role, and /?school=slug&portal=type on page load
+  try {
+    if (localStorage.getItem('_eduverse_go_home') !== '1' && !(typeof getSession === 'function' && getSession())) {
+      var params = new URLSearchParams(window.location.search);
+      var school = params.get('school');
+      var portal = params.get('portal');
+      var role = params.get('role') || params.get('login');
+      if (school && portal) {
+        if (typeof getTenants === 'function') {
+          var tenants = getTenants();
+          var tenant = tenants.find(function(t) { return t.slug === school; });
+          if (tenant) {
+            localStorage.setItem('activeTenant', tenant.id);
+            localStorage.setItem('activeTenantKey', 'schoolData_' + tenant.id);
+          }
+        }
+        role = portal;
+      }
+      if (role) {
+        if (role === 'teacher' && typeof showTeacherLogin === 'function') showTeacherLogin();
+        else if (role === 'parent' && typeof showParentLogin === 'function') showParentLogin();
+        else if (role === 'admin' && typeof showAdminLogin === 'function') showAdminLogin();
+        else if (role === 'admission' && typeof showAdmissionPortal === 'function') showAdmissionPortal();
+        else if (typeof showStudentLogin === 'function') showStudentLogin();
+      }
+    }
+  } catch(e) {}
+
+  // Initialize landing page gallery
+  try {
+    if (typeof data !== 'undefined' && data && data.gallery && data.gallery.length) {
+      var section = document.getElementById('gallerySection');
+      if (section) section.style.display = '';
+    }
+    if (typeof renderGalleryView === 'function') renderGalleryView('landingGalleryView');
+  } catch(e) {}
+
   // Restore session — auto-navigates to the correct portal if logged in
   if (typeof syncSession === 'function') { try { syncSession(); } catch(e) {} }
 
