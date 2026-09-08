@@ -251,7 +251,6 @@ function goHome() {
   if (slug) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(slug); return; }
   try {
     localStorage.removeItem('eduverse_session');
-    localStorage.removeItem('eduverse_auth');
     localStorage.removeItem('eduverseUser');
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');

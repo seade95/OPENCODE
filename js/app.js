@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (localStorage.getItem('_eduverse_go_home') === '1') {
       localStorage.removeItem('_eduverse_go_home');
       localStorage.removeItem('eduverse_session');
-      localStorage.removeItem('eduverse_auth');
       localStorage.removeItem('eduverseUser');
       localStorage.removeItem('activeTenant');
       localStorage.removeItem('activeTenantKey');
@@ -146,9 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
       dd.classList.remove('show');
     }
   });
-
-  // ===== EduVerse platform init (silent session restore, no auto-navigation) =====
-  if (typeof initEduVerse === 'function') { try { initEduVerse(); } catch(e) {} }
 
   // Show "Unknown School" banner if accessed via unknown subdomain
   if (_detectedUnknownSchool) {

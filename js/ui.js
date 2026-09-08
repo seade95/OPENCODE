@@ -73,18 +73,6 @@ function setSession(type, user, tenantId) {
   saveSession(s);
 }
 function syncSession() {
-  // Bridge from window.currentAdmin (set by head inline via EduVerseAuth)
-  if (!currentAdmin && window.currentAdmin) currentAdmin = window.currentAdmin;
-  if (currentAdmin && typeof showAdminPortal === 'function') { try { showAdminPortal(); } catch(e) {} return; }
-  // Fallback: check eduverse_auth key directly
-  try {
-    var _aRaw = localStorage.getItem('eduverse_auth');
-    if (_aRaw && !currentAdmin) {
-      var _a = JSON.parse(_aRaw);
-      if (_a && _a.id) { currentAdmin = _a; }
-    }
-  } catch(e) {}
-  if (currentAdmin && typeof showAdminPortal === 'function') { try { showAdminPortal(); } catch(e) {} return; }
   var s = getSession();
   if (!s || !s.type) { clearSession(); return; }
   // Restore tenant context from session
@@ -97,7 +85,7 @@ function syncSession() {
   // Restore the correct current* variable from the persisted session
   if (s.type === 'admin') {
     if (!currentAdmin && data && data.admins) currentAdmin = data.admins.find(function(a) { return a.id === s.user.id; }) || null;
-    if (!currentAdmin && s.user) currentAdmin = s.user; // fallback to session snapshot
+    if (!currentAdmin && s.user) currentAdmin = s.user;
     if (currentAdmin && typeof showAdminPortal === 'function') showAdminPortal();
   } else if (s.type === 'student') {
     if (!currentStudent && data && data.students) currentStudent = data.students.find(function(st) { return st.id === s.user.id; }) || null;
@@ -178,7 +166,6 @@ function goHome() {
   try {
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');
-    localStorage.removeItem('eduverse_auth');
     localStorage.removeItem('eduverse_session');
     localStorage.removeItem('eduverseUser');
     sessionStorage.removeItem('lastActivity');
@@ -244,10 +231,6 @@ function adminLogin() {
   if (!admin) { showError(errEl, 'Invalid email or password'); return; }
   currentAdmin = admin;
   if (typeof setSession === 'function') setSession('admin', admin);
-  try { localStorage.setItem('eduverse_auth', JSON.stringify(admin)); } catch(e) {}
-  if (typeof EduVerseAuth !== 'undefined') {
-    try { localStorage.setItem('eduverse_session', JSON.stringify({ version: 1, type: 'admin', user: { id: admin.id, name: admin.name, email: admin.email }, loginTime: Date.now(), timestamp: Date.now() })); } catch(e) {}
-  }
   // Asynchronously ensure Firebase Auth user exists
   if (typeof window.ensureFirebaseUser === 'function') {
     try {
@@ -1055,7 +1038,6 @@ function goHomeFromDashboard() {
   if (s) { window.location.href = 'school-portal.html?school=' + encodeURIComponent(s); return; }
   try {
     localStorage.removeItem('eduverse_session');
-    localStorage.removeItem('eduverse_auth');
     localStorage.removeItem('eduverseUser');
     localStorage.removeItem('activeTenant');
     localStorage.removeItem('activeTenantKey');

@@ -1,7 +1,6 @@
 // EduVerse Auth Module — lightweight, self-contained session manager
 (function() {
   var AUTH_KEY = 'eduverse_session';
-  var AUTH_BACKUP = 'eduverse_auth';
   var SESSION_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
   var EduVerseAuth = {
@@ -51,9 +50,7 @@
         timestamp: Date.now()
       };
       try { localStorage.setItem(AUTH_KEY, JSON.stringify(session)); } catch(e) {}
-      try { localStorage.setItem(AUTH_BACKUP, JSON.stringify({ email: email, role: role || 'admin', loginTime: new Date().toISOString() })); } catch(e) {}
       window.currentAdmin = admin;
-      // Asynchronously ensure Firebase Auth user exists (fire-and-forget for migration)
       if (typeof window.ensureFirebaseUser === 'function') {
         try {
           var schoolId = null;
@@ -67,20 +64,7 @@
     isLoggedIn: function() {
       try {
         var s = localStorage.getItem(AUTH_KEY);
-        if (!s) {
-          var b = localStorage.getItem(AUTH_BACKUP);
-          if (b) {
-            try {
-              var bd = JSON.parse(b);
-              if (bd && bd.email) {
-                var session = { version: 1, type: 'admin', user: { email: bd.email }, loginTime: Date.parse(bd.loginTime) || Date.now(), timestamp: Date.now() };
-                localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-                return true;
-              }
-            } catch(e2) {}
-          }
-          return false;
-        }
+        if (!s) return false;
         var d = JSON.parse(s);
         if (!d || (!d.type && !d.role)) return false;
         var elapsed = Date.now() - (d.loginTime || d.timestamp || 0);
@@ -89,7 +73,6 @@
           return false;
         }
         if (!d.user) d.user = { email: d.email };
-        window.currentAdmin = d.user;
         return true;
       } catch(e) { return false; }
     },
@@ -101,14 +84,12 @@
         var d = JSON.parse(s);
         if (!d || (!d.type && !d.role)) return null;
         if (!d.user) d.user = { email: d.email };
-        window.currentAdmin = d.user;
         return d;
       } catch(e) { return null; }
     },
 
     logout: function() {
       try { localStorage.removeItem(AUTH_KEY); } catch(e) {}
-      try { localStorage.removeItem(AUTH_BACKUP); } catch(e) {}
       if (typeof window.firebaseSignOut === 'function') {
         try { window.firebaseSignOut().catch(function(){}); } catch(e) {}
       }

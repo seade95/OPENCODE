@@ -1410,6 +1410,8 @@ try {
   try {
     // Skip auto-route if returning from goHome
     if (localStorage.getItem('_eduverse_go_home') === '1') return;
+    // Skip if session already exists — syncSession() in app.js handles navigation
+    if (typeof getSession === 'function' && getSession()) return;
     var params = new URLSearchParams(window.location.search);
     var school = params.get('school');
     var portal = params.get('portal');
@@ -1425,15 +1427,15 @@ try {
           localStorage.setItem('activeTenantKey', 'schoolData_' + tenant.id);
         }
       }
-      role = portal; // treat portal param as the role (even if tenant not yet registered)
+      role = portal;
     }
 
     if (role) {
-      if (role === 'teacher' && typeof syncSession === 'function') { if (!getSession()) showTeacherLogin(); else syncSession(); }
-      else if (role === 'parent' && typeof syncSession === 'function') { if (!getSession()) showParentLogin(); else syncSession(); }
-      else if (role === 'admin' && typeof syncSession === 'function') { if (!getSession() && typeof showAdminLogin === 'function') showAdminLogin(); else syncSession(); }
+      if (role === 'teacher' && typeof showTeacherLogin === 'function') showTeacherLogin();
+      else if (role === 'parent' && typeof showParentLogin === 'function') showParentLogin();
+      else if (role === 'admin' && typeof showAdminLogin === 'function') showAdminLogin();
       else if (role === 'admission' && typeof showAdmissionPortal === 'function') showAdmissionPortal();
-      else if (typeof syncSession === 'function') { if (!getSession()) showStudentLogin(); else syncSession(); }
+      else if (typeof showStudentLogin === 'function') showStudentLogin();
     }
   } catch(e) {}
 })();
