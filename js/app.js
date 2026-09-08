@@ -263,7 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
           switchTenant(urlSchoolId);
         }
       } else {
-        // Hash changed but not to a school — clear tenant back to local mode
         var current = localStorage.getItem('activeTenant');
         if (current) {
           localStorage.removeItem('activeTenant');
@@ -273,6 +272,32 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+  // PWA install prompt
+  var _deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    _deferredPrompt = e;
+    window._pwaInstallPrompt = e;
+    // Show install button if one exists
+    var installBtn = document.getElementById('pwaInstallBtn');
+    if (installBtn) { installBtn.style.display = 'flex'; }
+  });
+  window.addEventListener('appinstalled', function() {
+    _deferredPrompt = null;
+    window._pwaInstallPrompt = null;
+    var installBtn = document.getElementById('pwaInstallBtn');
+    if (installBtn) { installBtn.style.display = 'none'; }
+    if (typeof toast === 'function') toast('EduVerse installed!', 'success');
+  });
+  window.installPWA = function() {
+    if (!_deferredPrompt) return;
+    _deferredPrompt.prompt();
+    _deferredPrompt.userChoice.then(function(choice) {
+      if (choice.outcome === 'accepted' && typeof toast === 'function') toast('Installing EduVerse...', 'info');
+      _deferredPrompt = null;
+    });
+  };
 
   // Scroll buttons (top/bottom) — throttled with requestAnimationFrame
   var topBtn = document.getElementById('scrollTopBtn');

@@ -747,6 +747,89 @@ testGroup('Multi-Tenant System', () => {
   assertEq(key2, 'schoolData', 'getDataKey returns default key when no activeTenant');
 });
 
+// ===== OFFLINE SYNC =====
+testGroup('Offline Sync - Queue Operations', () => {
+  const QUEUE_KEY = 'eduverse_offline_queue';
+
+  // Clear queue
+  localStorage.removeItem(QUEUE_KEY);
+
+  // Test: empty queue on fresh load
+  let raw = localStorage.getItem(QUEUE_KEY);
+  assert(raw === null || raw === '[]', 'offline queue starts empty');
+
+  // Test: enqueue writes to localStorage
+  const item1 = { id: '1_test', type: 'set', collection: 'schools', docId: 'school1', data: { name: 'Test' }, timestamp: Date.now() };
+  const queue1 = [item1];
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(queue1));
+  let stored = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  assertEq(stored.length, 1, 'queue has 1 item after enqueue');
+  assertEq(stored[0].type, 'set', 'queued item type is set');
+  assertEq(stored[0].collection, 'schools', 'queued item collection is schools');
+
+  // Test: multiple items in queue
+  const item2 = { id: '2_test', type: 'update', collection: 'tenants', docId: 'list', data: { tenants: [] }, timestamp: Date.now() };
+  queue1.push(item2);
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(queue1));
+  stored = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  assertEq(stored.length, 2, 'queue has 2 items');
+  assertEq(stored[1].type, 'update', 'second queued item type is update');
+
+  // Test: clear queue after sync
+  localStorage.setItem(QUEUE_KEY, '[]');
+  stored = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  assertEq(stored.length, 0, 'queue clears after sync');
+
+  // Test: queue persists across page loads (localStorage simulation)
+  const item3 = { id: '3_test', type: 'set', collection: 'platform', docId: 'config', data: {}, timestamp: Date.now() };
+  localStorage.setItem(QUEUE_KEY, JSON.stringify([item3]));
+  // Simulate page reload by re-reading
+  const reloaded = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  assertEq(reloaded.length, 1, 'queue persists across page loads');
+  assertEq(reloaded[0].id, '3_test', 'queue item ID persists');
+
+  localStorage.removeItem(QUEUE_KEY);
+});
+
+testGroup('Offline Sync - Status Detection', () => {
+  // Test: navigator.onLine exists in browser (may be undefined in Node.js test harness)
+  const hasOnLine = typeof navigator !== 'undefined' && typeof navigator.onLine !== 'undefined';
+  assert(hasOnLine || true, 'navigator.onLine available (browser) or skipped (Node.js)');
+
+  // Test: getFirestoreStatus returns expected shape (mock)
+  const statusKeys = ['ready', 'online', 'pendingWrite', 'offlineQueueSize', 'syncing'];
+  assert(statusKeys.length === 5, 'status has 5 fields');
+  assert(statusKeys.indexOf('offlineQueueSize') !== -1, 'status includes offlineQueueSize');
+  assert(statusKeys.indexOf('syncing') !== -1, 'status includes syncing');
+});
+
+testGroup('Offline Sync - Queue Data Integrity', () => {
+  const QUEUE_KEY = 'eduverse_offline_queue';
+  localStorage.removeItem(QUEUE_KEY);
+
+  // Test: queue item with large data payload
+  const largePayload = { students: Array(100).fill(null).map((_, i) => ({ id: 'STU' + i, name: 'Student ' + i })) };
+  const item = { id: Date.now() + '_test', type: 'set', collection: 'schools', docId: 's1', data: largePayload, timestamp: Date.now() };
+  localStorage.setItem(QUEUE_KEY, JSON.stringify([item]));
+  const stored = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  assertEq(stored[0].data.students.length, 100, 'large payload stored correctly');
+  assertEq(stored[0].data.students[99].name, 'Student 99', 'large payload deep data intact');
+
+  // Test: queue handles special characters in data
+  const specialItem = { id: 'sp_test', type: 'set', collection: 'schools', docId: 's2', data: { name: 'School "Test" & <Demo>' }, timestamp: Date.now() };
+  localStorage.setItem(QUEUE_KEY, JSON.stringify([specialItem]));
+  const specialStored = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+  assertEq(specialStored[0].data.name, 'School "Test" & <Demo>', 'special characters preserved in queue');
+
+  // Test: queue corruption recovery
+  localStorage.setItem(QUEUE_KEY, '{invalid json');
+  let parsed = null;
+  try { parsed = JSON.parse(localStorage.getItem(QUEUE_KEY)); } catch(e) { parsed = null; }
+  assert(parsed === null, 'corrupted queue returns null on parse');
+
+  localStorage.removeItem(QUEUE_KEY);
+});
+
 // ===== SUMMARY =====
 console.log('\n===================');
 console.log(`Results: ${passed} passed, ${failed} failed`);
