@@ -2039,6 +2039,15 @@ html { transition: background-color 0.3s ease, color 0.3s ease; }
 /* Footer accreditations */
 [data-theme="dark"] .footer-accreditations span { background: #4a5568; }
 
+/* Why EduVerse Table — dark mode */
+[data-theme="dark"] .why-eduverse { background: linear-gradient(135deg,#0f172a,#1e293b); }
+[data-theme="dark"] .why-table { background:#1e293b;box-shadow:0 4px 24px rgba(0,0,0,0.3); }
+[data-theme="dark"] .why-th-feature { background:#1a2332;color:#94a3b8; }
+[data-theme="dark"] .why-table tbody td { border-bottom-color:#334155;color:#cbd5e1; }
+[data-theme="dark"] .why-table tbody tr:hover { background:#334155; }
+[data-theme="dark"] .why-yes { color:#34d399; }
+[data-theme="dark"] .why-no { color:#f87171; }
+
 /* Super Admin */
 [data-theme="dark"] .sa-main-header { background: var(--card-bg); border-bottom-color: #4a5568; }
 [data-theme="dark"] .sa-section { background: var(--card-bg); }
@@ -3075,14 +3084,29 @@ button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c)
 
 /* ─── Why EduVerse section ─── */
 .why-eduverse { padding:60px 40px;background:linear-gradient(135deg,#f7fafc 0%,#edf2f7 100%); }
-.why-eduverse-grid { display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1000px;margin:0 auto; }
-.why-list { list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px; }
-.why-list li { display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text); }
-.why-list li i { margin-top:3px;flex-shrink:0; }
-.why-list li i.fa-check { color:#38a169; }
-.why-list li i.fa-times { color:#e53e3e; }
-.why-pros h3 { font-size:18px;margin-bottom:16px;color:#22543d; }
-.why-cons h3 { font-size:18px;margin-bottom:16px;color:#9b2c2c; }
+.why-table-wrap { max-width:900px;margin:0 auto;overflow-x:auto;-webkit-overflow-scrolling:touch; }
+.why-table { width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07); }
+.why-table thead th { padding:16px 20px;font-size:14px;font-weight:700;text-align:left;border-bottom:2px solid #e2e8f0; }
+.why-th-feature { background:#f8fafc;color:#475569;width:35%; }
+.why-th-eduverse { background:linear-gradient(135deg,#059669,#10b981);color:#fff;width:32.5%; }
+.why-th-eduverse i { margin-right:6px; }
+.why-th-others { background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;width:32.5%; }
+.why-th-others i { margin-right:6px; }
+.why-table tbody td { padding:14px 20px;font-size:13.5px;border-bottom:1px solid #f1f5f9;vertical-align:top; }
+.why-table tbody tr:last-child td { border-bottom:none; }
+.why-table tbody tr:hover { background:#f8fafc; }
+.why-table td:first-child { color:#1e293b; }
+.why-table td:first-child i { color:#2563eb;margin-right:8px;width:18px;text-align:center; }
+.why-yes { color:#065f46; }
+.why-yes::before { content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;margin-right:8px;color:#059669; }
+.why-no { color:#991b1b; }
+.why-no::before { content:'\f00d';font-family:'Font Awesome 6 Free';font-weight:900;margin-right:8px;color:#dc2626; }
+@media(max-width:768px){
+  .why-eduverse { padding:40px 16px; }
+  .why-table thead th,.why-table tbody td { padding:12px 14px;font-size:12.5px; }
+  .why-th-feature { width:auto; }
+  .why-th-eduverse,.why-th-others { width:auto; }
+}
 
 /* ─── "What Other Systems Lack" cards ─── */
 .gaps-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1100px;margin:0 auto; }
