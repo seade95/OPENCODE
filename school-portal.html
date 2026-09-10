@@ -371,6 +371,11 @@ function esc(s) {
 }
 
 function getSlug() {
+  // Query param: ?school=SLUG
+  var params = new URLSearchParams(window.location.search);
+  var qs = params.get('school');
+  if (qs) return qs;
+  // Path: /school/SLUG
   var path = window.location.pathname.replace(/\/+$/, '') || '';
   var parts = path.split('/');
   if (parts.length >= 3 && parts[1] === 'school') return parts[2];
@@ -378,6 +383,11 @@ function getSlug() {
 }
 
 function getPortalType() {
+  // Query param: ?portal=TYPE
+  var params = new URLSearchParams(window.location.search);
+  var qp = params.get('portal');
+  if (qp) return qp;
+  // Path: /school/SLUG/TYPE
   var path = window.location.pathname.replace(/\/+$/, '') || '';
   var parts = path.split('/');
   if (parts.length >= 4 && parts[1] === 'school') return parts[3];
