@@ -238,16 +238,26 @@ document.addEventListener('DOMContentLoaded', function() {
   // Restore session — auto-navigates to the correct portal if logged in
   if (typeof syncSession === 'function') { try { syncSession(); } catch(e) {} }
 
-  // Cross-tab session sync
+  // Cross-tab session sync — only reload if same school
   window.addEventListener('storage', function(e) {
     if (e.key === 'eduverse_session') {
       if (!e.newValue) {
-        // Session cleared in another tab
         clearSession();
         goHome();
       } else {
-        // Session set in another tab — reload to pick up fresh state
-        window.location.reload();
+        // Check if the new session is for the same school
+        try {
+          var newSession = JSON.parse(e.newValue);
+          var currentTenant = localStorage.getItem('activeTenant') || '';
+          var newSchoolId = newSession.schoolId || '';
+          if (newSchoolId && currentTenant && newSchoolId === currentTenant) {
+            window.location.reload();
+          }
+          // Different school or no schoolId — ignore
+        } catch(err) {
+          // Parse error — reload to be safe
+          window.location.reload();
+        }
       }
     }
   });

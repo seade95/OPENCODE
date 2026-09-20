@@ -190,6 +190,9 @@
     try {
       _fsUnsubscribe = db().collection('schools').doc(schoolId).onSnapshot(function(doc) {
         if (doc.exists) {
+          // Verify tenant hasn't changed since we subscribed
+          var currentTenant = getSchoolDocId();
+          if (currentTenant !== schoolId) return;
           var remote = doc.data();
           if (typeof window.data !== 'undefined' && window.data) {
             var localVer = 0;

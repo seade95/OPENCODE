@@ -4,9 +4,29 @@
 
   try { channel = new BroadcastChannel(CHANNEL); } catch(e) {}
 
+  function _getActiveTenant() {
+    try { return localStorage.getItem('activeTenant') || ''; } catch(e) { return ''; }
+  }
+
   function _broadcast(type, payload) {
     if (!channel) return;
-    try { channel.postMessage({ type: type, payload: payload, ts: Date.now() }); } catch(e) {}
+    try {
+      channel.postMessage({
+        type: type,
+        payload: payload,
+        tenant: _getActiveTenant(),
+        ts: Date.now()
+      });
+    } catch(e) {}
+  }
+
+  function _isTenantMatch(msgTenant) {
+    // Empty tenant means it's a global event (tenants list, platform config) — always process
+    if (!msgTenant) return true;
+    var current = _getActiveTenant();
+    // No active tenant on this tab — skip tenant-scoped messages
+    if (!current) return false;
+    return msgTenant === current;
   }
 
   function _reloadData() {
@@ -50,7 +70,7 @@
       if (!e.data) return;
       switch (e.data.type) {
         case 'data_changed':
-          _reloadData();
+          if (_isTenantMatch(e.data.tenant)) _reloadData();
           break;
         case 'tenants_changed':
           _reloadTenants();
@@ -72,7 +92,12 @@
   window.addEventListener('storage', function(e) {
     if (!e.key) return;
     if (e.key.startsWith('schoolData_') || e.key === 'schoolData') {
-      _reloadData();
+      // Only reload if the storage change matches our active tenant
+      var activeTenant = _getActiveTenant();
+      var expectedKey = activeTenant ? 'schoolData_' + activeTenant : 'schoolData';
+      if (e.key === expectedKey || e.key === 'schoolData') {
+        _reloadData();
+      }
     } else if (e.key === 'eduverse_tenants') {
       _reloadTenants();
       _reloadData();
@@ -81,17 +106,29 @@
     }
   });
 
-  // Refresh stale data when tab regains focus (user switches back)
+  // Refresh stale data when tab regains focus — only if same tenant
+  var _lastTenantOnFocus = '';
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden) {
-      _reloadData();
-      _reloadTenants();
+      var current = _getActiveTenant();
+      // Only reload if tenant hasn't changed (user is still on same school)
+      if (current === _lastTenantOnFocus) {
+        _reloadData();
+      }
+      _lastTenantOnFocus = current;
     }
   });
 
   window.addEventListener('focus', function() {
-    _reloadData();
+    var current = _getActiveTenant();
+    if (current === _lastTenantOnFocus) {
+      _reloadData();
+    }
+    _lastTenantOnFocus = current;
   });
+
+  // Track tenant on first load
+  _lastTenantOnFocus = _getActiveTenant();
 
   // ===== Hook into data-write functions via hook system =====
 
