@@ -144,9 +144,13 @@ function toggleNav() {
   const backdrop = document.getElementById('navBackdrop');
   const icon = document.getElementById('navToggleIcon');
   if (menu) {
-    menu.classList.toggle('open');
-    if (backdrop) backdrop.classList.toggle('active');
-    if (icon) icon.className = menu.classList.contains('open') ? 'fas fa-times' : 'fas fa-bars';
+    const isOpen = menu.classList.toggle('open');
+    if (backdrop) backdrop.classList.toggle('active', isOpen);
+    if (icon) icon.className = isOpen ? 'fas fa-times' : 'fas fa-bars';
+    // Lock body scroll when menu is open
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    document.body.style.position = isOpen ? 'fixed' : '';
+    document.body.style.width = isOpen ? '100%' : '';
   }
 }
 function toggleNavDropdown(el) {
@@ -156,6 +160,18 @@ function toggleUserDropdown() {
   var dd = document.getElementById('evUserDropdown');
   if (dd) dd.classList.toggle('show');
 }
+
+// Close mobile menu on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' || e.keyCode === 27) {
+    var menu = document.getElementById('navMenu');
+    if (menu && menu.classList.contains('open')) {
+      toggleNav();
+    }
+    // Also close modals
+    if (typeof closeModal === 'function') closeModal();
+  }
+});
 function triggerScoreGridFileInput() {
   var inp = document.getElementById('scoreGridFileInput');
   if (inp) inp.click();
