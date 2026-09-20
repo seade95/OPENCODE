@@ -1019,6 +1019,95 @@ firebase.auth().onAuthStateChanged(function(user) {
     showLogin();
   }
 });
+
+// ===== Firestore Real-Time Sync for Super Admin =====
+// Keeps localStorage in sync with Firestore across all devices
+(function() {
+  var _saUnsubs = [];
+
+  function startSuperAdminSync() {
+    // Platform config listener
+    _saUnsubs.push(
+      firebase.firestore().collection('platform').doc('config').onSnapshot(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          try {
+            localStorage.setItem('eduverse_platform_config', JSON.stringify(data));
+            _platformConfigCache = null; // invalidate cache
+            // Re-render active panel to reflect changes
+            if (typeof renderActivePanel === 'function') renderActivePanel();
+          } catch(e) {}
+        }
+      }, function(err) { console.warn('SA platform config sync error', err); })
+    );
+
+    // Tenants list listener
+    _saUnsubs.push(
+      firebase.firestore().collection('tenants').doc('list').onSnapshot(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          if (data && data.tenants) {
+            try {
+              localStorage.setItem('eduverse_tenants', JSON.stringify(data.tenants));
+              if (typeof invalidateTenantCache === 'function') invalidateTenantCache();
+              if (typeof renderActivePanel === 'function') renderActivePanel();
+            } catch(e) {}
+          }
+        }
+      }, function(err) { console.warn('SA tenants sync error', err); })
+    );
+
+    // Super admin config listener
+    _saUnsubs.push(
+      firebase.firestore().collection('superAdmin').doc('config').onSnapshot(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          try {
+            var SUPER_ADMIN_KEY = 'eduverse_super_admin';
+            var existing = localStorage.getItem(SUPER_ADMIN_KEY);
+            if (existing) {
+              var parsed = JSON.parse(existing);
+              Object.assign(parsed, data);
+              localStorage.setItem(SUPER_ADMIN_KEY, JSON.stringify(parsed));
+            }
+          } catch(e) {}
+        }
+      }, function(err) { console.warn('SA config sync error', err); })
+    );
+  }
+
+  // Start sync when Firebase is ready
+  if (firebase.auth().currentUser) {
+    startSuperAdminSync();
+  } else {
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) startSuperAdminSync();
+    });
+  }
+
+  // Push local changes to Firestore
+  window._saPushToFirestore = function(type, data) {
+    if (!firebase.auth().currentUser) return;
+    if (type === 'platform') {
+      firebase.firestore().collection('platform').doc('config').set(data, { merge: true }).catch(function(e) {
+        console.warn('SA platform push failed', e);
+      });
+    } else if (type === 'tenants') {
+      firebase.firestore().collection('tenants').doc('list').set(data, { merge: true }).catch(function(e) {
+        console.warn('SA tenants push failed', e);
+      });
+    }
+  };
+
+  // Patch saveTenants to push to Firestore on super admin page
+  var _origSaveTenantsSA = window.saveTenants;
+  if (typeof _origSaveTenantsSA === 'function') {
+    window.saveTenants = function(t) {
+      _origSaveTenantsSA(t);
+      window._saPushToFirestore('tenants', { tenants: t });
+    };
+  }
+})();
 </script>
 <script src="js/events.js"></script>
 </body>

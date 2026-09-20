@@ -17,6 +17,10 @@ function getPlatformConfig() {
 function savePlatformConfig(cfg) {
   _platformConfigCache = cfg;
   localStorage.setItem(PLATFORM_CONFIG_KEY, JSON.stringify(cfg));
+  // Push to Firestore for cross-device sync
+  if (typeof window._saPushToFirestore === 'function') {
+    window._saPushToFirestore('platform', cfg);
+  }
 }
 
 function getDefaultPlatformConfig() {
