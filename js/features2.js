@@ -2161,7 +2161,7 @@ function printIDCard(id) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
       body { display:flex;justify-content:center;align-items:center;min-height:100vh;background:#333;font-family:Arial,sans-serif; }
-      .id-card { width:340px;background:white;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3); }
+      .id-card { width:340px;max-width:100%;background:white;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3); }
       .id-card-header { background:linear-gradient(135deg,#1a3a5c,#2a5a8c);padding:24px;text-align:center;color:white; }
       .id-card-header .school-name { font-weight:700;font-size:16px; }
       .id-card-header .school-motto { font-size:11px;opacity:0.8; }

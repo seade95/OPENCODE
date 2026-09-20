@@ -3403,3 +3403,247 @@ button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c)
   .slide { min-height: 80vh; padding: 60px 20px; }
   .hero-slider { margin-top: 0; }
 }
+
+/* ═══════════════════════════════════════════════
+   FIX: ID Card overflow
+   ═══════════════════════════════════════════════ */
+.id-card {
+  width: 320px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Calendar week view overflow
+   ═══════════════════════════════════════════════ */
+.cal-week-view {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 768px) {
+  .cal-week-view .cal-week-header,
+  .cal-week-view .cal-week-period {
+    min-width: 480px;
+  }
+  .cal-week-view .cal-week-header div {
+    font-size: 10px;
+    padding: 6px 4px;
+  }
+  .cal-week-view .cal-week-period > div {
+    font-size: 9px;
+    padding: 4px 3px;
+    min-height: 30px;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Embedded admin mobile stacking
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .embedded-admin {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .embedded-admin-sidebar {
+    width: 100%;
+    flex-shrink: 1;
+    max-height: 200px;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Global image responsive
+   ═══════════════════════════════════════════════ */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Super admin hero sections responsive
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .sa-backup-hero, .sa-revenue-hero, .sa-broadcast-hero, .sa-sub-hero {
+    padding: 20px 16px !important;
+  }
+  .sa-backup-hero h3, .sa-revenue-hero h3, .sa-broadcast-hero h3, .sa-sub-hero h3 {
+    font-size: 18px !important;
+  }
+  .sa-revenue-form, .sa-danger-actions {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Super admin modal scrollbar overflow
+   ═══════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100dvh !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: offline.html and 404.html mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .card {
+    padding: 24px 16px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: School dashboard info grid responsive
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .info-grid, .sd-info-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: All hardcoded grids — force 1col on mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .features-grid { grid-template-columns: 1fr !important; }
+  .portal-grid { grid-template-columns: 1fr !important; }
+  .gaps-grid { grid-template-columns: 1fr !important; }
+  .services-grid { grid-template-columns: 1fr !important; }
+  .courses-grid { grid-template-columns: 1fr !important; }
+  .events-grid { grid-template-columns: 1fr !important; }
+  .news-grid { grid-template-columns: 1fr !important; }
+  .partners-grid { grid-template-columns: 1fr !important; }
+  .library-grid { grid-template-columns: 1fr !important; }
+  .health-grid { grid-template-columns: 1fr !important; }
+  .cbt-exam-grid-v2 { grid-template-columns: 1fr !important; }
+  .cbt-stat-grid { grid-template-columns: 1fr !important; }
+  .fee-config-grid { grid-template-columns: 1fr !important; }
+  .form-grid { grid-template-columns: 1fr !important; }
+  .report-config-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: All tables — horizontal scroll on mobile
+   ═══════════════════════════════════════════════ */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+@media (max-width: 768px) {
+  table { min-width: 600px; }
+  th, td { padding: 8px 10px !important; font-size: 12px !important; }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: All form elements — prevent mobile zoom
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: All modals — full screen on mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .modal-content, .modal-inner {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    min-height: 100dvh;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: All card headers — stack on mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .card-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px;
+  }
+  .card-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Search bars — stack on mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .search-bar {
+    flex-direction: column !important;
+    gap: 8px;
+  }
+  .search-bar input, .search-bar select {
+    width: 100% !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Filter rows — stack on mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .filter-row, .toolbar, .fee-controls, .hr-toolbar, .beh-filters, .ln-filters {
+    flex-direction: column !important;
+    gap: 8px;
+  }
+  .filter-row > *, .toolbar > *, .fee-controls > * {
+    width: 100% !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Admin sidebar — horizontal scroll on mobile
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 100% !important;
+    display: flex !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 12px !important;
+    gap: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-sidebar-item {
+    flex-shrink: 0;
+    border-left: none !important;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .admin-sidebar-item.active {
+    border-left-color: transparent !important;
+    border-bottom-color: var(--accent);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: Footer — responsive on all sizes
+   ═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .footer-main {
+    grid-template-columns: 1fr !important;
+    padding: 24px 16px !important;
+  }
+  .footer-top-bar {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 12px;
+  }
+  .footer-social {
+    justify-content: center;
+  }
+}

@@ -161,7 +161,7 @@ function doLogout() {
   document.getElementById('welcomeMsg').textContent = 'Welcome to ' + school.schoolName;
 
   var info = document.getElementById('schoolInfo');
-  info.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">'
+  info.innerHTML = '<div class="sd-info-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:14px">'
     + '<div><strong>School:</strong> ' + (school.schoolName || '-') + '</div>'
     + '<div><strong>Contact:</strong> ' + (school.contactName || '-') + '</div>'
     + '<div><strong>Email:</strong> ' + (school.adminEmail || school.email || '-') + '</div>'
