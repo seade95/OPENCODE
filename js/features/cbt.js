@@ -1,5 +1,5 @@
-// EduVerse - cbt module
-// Extracted from features.js
+// EduVerse - CBT Exam Module
+// Computer-Based Testing system with persistence, shuffling, and marks-weighted scoring
 
 // ===== CBT EXAM SYSTEM (Admin) =====
 function renderCBTAdmin() {
@@ -8,19 +8,16 @@ function renderCBTAdmin() {
   var exams = data.cbtExams || [];
   var results = data.cbtResults || [];
   var totalExams = exams.length;
-  var totalQuestions = exams.reduce(function(acc, e) { return acc + (e.questions || []).length; }, 0);
+  var totalQuestions = exams.reduce(function(acc, e) { return acc + (Array.isArray(e.questions) ? e.questions.length : 0); }, 0);
   var totalAttempts = results.length;
   var passRate = totalAttempts ? Math.round(results.filter(function(r) { return r.passed; }).length / totalAttempts * 100) : 0;
 
   var html = ''
-    // Hero banner
     + '<div class="cbt-hero">'
     + '<h2><i class="fas fa-laptop-code"></i> CBT Exam Manager</h2>'
     + '<p>Create, manage, and track computer-based tests. Add questions, set durations, and monitor student performance.</p>'
     + '<button class="btn btn-primary" onclick="showAddCBTExamModal()"><i class="fas fa-plus"></i> Create New Exam</button>'
     + '</div>'
-
-    // Stats grid
     + '<div class="cbt-stat-grid">'
     + '<div class="cbt-stat-item cbt-stat-item--exams"><div class="cbt-stat-value">' + totalExams + '</div><div class="cbt-stat-label">Total Exams</div></div>'
     + '<div class="cbt-stat-item cbt-stat-item--questions"><div class="cbt-stat-value">' + totalQuestions + '</div><div class="cbt-stat-label">Questions</div></div>'
@@ -34,34 +31,30 @@ function renderCBTAdmin() {
     return;
   }
 
-  // Exam cards
   html += '<div class="cbt-exam-grid-v2">';
   exams.forEach(function(exam) {
-    var qCount = (exam.questions || []).length;
+    var qCount = (Array.isArray(exam.questions) ? exam.questions.length : 0);
     var attCount = results.filter(function(r) { return r.examId === exam.id; }).length;
     var avgScore = attCount ? Math.round(results.filter(function(r) { return r.examId === exam.id; }).reduce(function(s, r) { return s + r.percentage; }, 0) / attCount) : 0;
+    var isActive = exam.status !== 'inactive';
 
     html += '<div class="cbt-exam-card-v2">'
-
-      // Card header
       + '<div class="cbt-exam-card-v2-header">'
       + '<div class="cbt-exam-card-v2-title">' + htmlEscape(exam.title) + '</div>'
       + '<div class="cbt-exam-card-v2-desc">' + htmlEscape(exam.description || 'No description') + '</div>'
       + '</div>'
-
-      // Card body
       + '<div class="cbt-exam-card-v2-body">'
       + '<div class="cbt-exam-meta">'
       + '<div class="cbt-exam-meta-item"><i class="fas fa-clock"></i> <strong>' + (exam.duration || 0) + ' min</strong></div>'
       + '<div class="cbt-exam-meta-item"><i class="fas fa-check-circle"></i> Pass: <strong>' + (exam.passScore || 50) + '%</strong></div>'
       + '<div class="cbt-exam-meta-item"><i class="fas fa-question-circle"></i> <strong>' + qCount + '</strong> Qs</div>'
+      + '<div class="cbt-exam-meta-item"><i class="fas fa-circle" style="color:' + (isActive ? 'var(--success)' : 'var(--text-light)') + '"></i> ' + (isActive ? 'Active' : 'Inactive') + '</div>'
       + '</div>'
       + '<div class="cbt-exam-stats-row">'
       + '<div class="cbt-exam-stat"><div class="cbt-exam-stat-value">' + attCount + '</div><div class="cbt-exam-stat-label">Attempts</div></div>'
       + '<div class="cbt-exam-stat"><div class="cbt-exam-stat-value">' + avgScore + '%</div><div class="cbt-exam-stat-label">Avg Score</div></div>'
       + '</div>';
 
-    // Question list
     if (qCount) {
       html += '<div class="cbt-questions-v2">';
       (exam.questions || []).forEach(function(q, qi) {
@@ -77,19 +70,16 @@ function renderCBTAdmin() {
       html += '</div>';
     }
 
-    html += '</div>' // end card body
-
-      // Card actions
+    html += '</div>'
       + '<div class="cbt-exam-card-v2-actions">'
       + '<button class="btn btn-sm btn-primary" onclick="showAddCBTQuestionModal(\'' + exam.id + '\')"><i class="fas fa-plus"></i> Add Question</button>'
       + '<button class="btn btn-sm btn-secondary" onclick="showEditCBTExamModal(\'' + exam.id + '\')"><i class="fas fa-edit"></i> Edit</button>'
+      + '<button class="btn btn-sm btn-secondary" onclick="toggleCBTExamStatus(\'' + exam.id + '\')"><i class="fas fa-' + (isActive ? 'pause' : 'play') + '"></i> ' + (isActive ? 'Deactivate' : 'Activate') + '</button>'
       + '<button class="btn btn-sm btn-danger" onclick="deleteCBTExam(\'' + exam.id + '\')"><i class="fas fa-trash"></i></button>'
       + '</div>'
-
-      + '</div>'; // end exam card
+      + '</div>';
   });
   html += '</div>';
-
   container.innerHTML = html;
 }
 
@@ -124,14 +114,16 @@ function saveCBTExam() {
   var instructions = document.getElementById('cbtExamInstructions');
   var editId = document.getElementById('cbtExamEditId');
   if (!title || !title.value.trim()) { alert('Please enter an exam title.'); return; }
+  var dur = Math.max(1, parseInt(duration.value) || 60);
+  var ps = Math.min(100, Math.max(0, parseInt(passScore.value) || 50));
   if (!data.cbtExams) data.cbtExams = [];
   if (editId && editId.value) {
     var exam = data.cbtExams.find(function(e) { return e.id === editId.value; });
     if (exam) {
       exam.title = title.value.trim();
       exam.description = desc ? desc.value.trim() : '';
-      exam.duration = parseInt(duration.value) || 60;
-      exam.passScore = parseInt(passScore.value) || 50;
+      exam.duration = dur;
+      exam.passScore = ps;
       exam.instructions = instructions ? instructions.value.trim() : '';
     }
   } else {
@@ -139,8 +131,8 @@ function saveCBTExam() {
       id: genId('CBT'),
       title: title.value.trim(),
       description: desc ? desc.value.trim() : '',
-      duration: parseInt(duration.value) || 60,
-      passScore: parseInt(passScore.value) || 50,
+      duration: dur,
+      passScore: ps,
       instructions: instructions ? instructions.value.trim() : '',
       questions: [],
       created: new Date().toISOString().split('T')[0],
@@ -156,6 +148,14 @@ function deleteCBTExam(id) {
   if (!confirm('Delete this exam and all its questions and results?')) return;
   data.cbtExams = (data.cbtExams || []).filter(function(e) { return e.id !== id; });
   data.cbtResults = (data.cbtResults || []).filter(function(r) { return r.examId !== id; });
+  saveData();
+  renderCBTAdmin();
+}
+
+function toggleCBTExamStatus(id) {
+  var exam = (data.cbtExams || []).find(function(e) { return e.id === id; });
+  if (!exam) return;
+  exam.status = exam.status === 'inactive' ? 'active' : 'inactive';
   saveData();
   renderCBTAdmin();
 }
@@ -208,25 +208,24 @@ function saveCBTQuestion() {
   var options = [];
   for (var i = 0; i < 4; i++) {
     var opt = document.getElementById('cbtQOpt' + i);
-    if (opt) options.push(opt.value.trim() || 'Option ' + (i + 1));
+    options.push(opt ? (opt.value.trim() || 'Option ' + (i + 1)) : 'Option ' + (i + 1));
   }
   if (!exam.questions) exam.questions = [];
+  var qData = {
+    id: genId('CBTQ'),
+    question: qText.value.trim(),
+    options: options,
+    answer: parseInt(qAnswer.value),
+    marks: Math.max(1, parseInt(qMarks.value) || 1)
+  };
   if (qIndex && qIndex.value !== '') {
     var idx = parseInt(qIndex.value);
     if (exam.questions[idx]) {
-      exam.questions[idx].question = qText.value.trim();
-      exam.questions[idx].options = options;
-      exam.questions[idx].answer = parseInt(qAnswer.value);
-      exam.questions[idx].marks = parseInt(qMarks.value) || 1;
+      qData.id = exam.questions[idx].id;
+      exam.questions[idx] = qData;
     }
   } else {
-    exam.questions.push({
-      id: genId('CBTQ'),
-      question: qText.value.trim(),
-      options: options,
-      answer: parseInt(qAnswer.value),
-      marks: parseInt(qMarks.value) || 1
-    });
+    exam.questions.push(qData);
   }
   closeModal();
   saveData();
@@ -245,12 +244,90 @@ function deleteCBTQuestion(examId, qIndex) {
 
 // ===== CBT EXAM SYSTEM (Student) =====
 var _cbtState = null;
+var _cbtSubmitting = false;
+var CBT_STATE_KEY = 'eduverse_cbt_active';
+
+// Shuffle array (Fisher-Yates)
+function _cbtShuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+// Persist exam state to sessionStorage
+function _cbtPersistState() {
+  if (!_cbtState) return;
+  try {
+    var toSave = {
+      examId: _cbtState.examId,
+      examTitle: _cbtState.examTitle,
+      answers: _cbtState.answers,
+      currentQ: _cbtState.currentQ,
+      duration: _cbtState.duration,
+      passScore: _cbtState.passScore,
+      tabSwitches: _cbtState.tabSwitches,
+      startedAt: _cbtState.startedAt,
+      questionOrder: _cbtState.questionOrder,
+      optionOrders: _cbtState.optionOrders
+    };
+    sessionStorage.setItem(CBT_STATE_KEY, JSON.stringify(toSave));
+  } catch(e) {}
+}
+
+// Restore exam state from sessionStorage
+function _cbtRestoreState() {
+  try {
+    var raw = sessionStorage.getItem(CBT_STATE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
 
 function renderCBTStudent() {
   var container = document.getElementById('studentCBTView');
   if (!container) return;
   if (!currentStudent) { container.innerHTML = '<div class="empty-state"><i class="fas fa-user-graduate"></i><p>Please log in to view CBT exams.</p></div>'; return; }
-  var exams = (data.cbtExams || []).filter(function(e) { return e.status === 'active' && (e.questions || []).length > 0; });
+
+  // Check for active exam in sessionStorage
+  var savedState = _cbtRestoreState();
+  if (savedState && savedState.examId) {
+    var activeExam = (data.cbtExams || []).find(function(e) { return e.id === savedState.examId; });
+    if (activeExam && confirm('You have an ongoing exam: "' + savedState.examTitle + '". Resume it?')) {
+      _cbtState = {
+        examId: savedState.examId,
+        examTitle: savedState.examTitle,
+        questions: activeExam.questions || [],
+        duration: savedState.duration,
+        passScore: savedState.passScore,
+        answers: savedState.answers,
+        currentQ: savedState.currentQ,
+        timer: null,
+        timeLeft: 0,
+        tabSwitches: savedState.tabSwitches || 0,
+        startedAt: savedState.startedAt,
+        questionOrder: savedState.questionOrder || null,
+        optionOrders: savedState.optionOrders || null
+      };
+      // Calculate remaining time from startedAt
+      var elapsed = Math.floor((Date.now() - new Date(savedState.startedAt).getTime()) / 1000);
+      _cbtState.timeLeft = Math.max(0, _cbtState.duration * 60 - elapsed);
+      if (_cbtState.timeLeft <= 0) {
+        _cbtState = null;
+        sessionStorage.removeItem(CBT_STATE_KEY);
+        alert('Time expired for the ongoing exam.');
+      } else {
+        _renderCBTTimerUI();
+        return;
+      }
+    } else {
+      sessionStorage.removeItem(CBT_STATE_KEY);
+    }
+  }
+
+  var exams = (data.cbtExams || []).filter(function(e) { return e.status === 'active' && (Array.isArray(e.questions) ? e.questions.length : 0) > 0; });
   var results = (data.cbtResults || []).filter(function(r) { return r.studentId === currentStudent.id; });
   var html = '<div class="card-header"><h2><i class="fas fa-laptop-code"></i> CBT Exams</h2></div>';
   if (results.length) {
@@ -261,7 +338,7 @@ function renderCBTStudent() {
       html += '<div class="cbt-result-summary ' + cls + '" style="padding:16px;text-align:center;">';
       html += '<div style="font-size:13px;font-weight:600;">' + htmlEscape(r.examTitle) + '</div>';
       html += '<div class="score" style="font-size:28px;font-weight:800;margin:4px 0;">' + r.percentage + '%</div>';
-      html += '<p style="font-size:12px;margin:0;">' + (r.passed ? '&#10003; Passed' : '&#10007; Failed') + ' &middot; ' + r.score + '/' + r.total + '</p>';
+      html += '<p style="font-size:12px;margin:0;">' + (r.passed ? '&#10003; Passed' : '&#10007; Failed') + ' &middot; ' + r.score + '/' + r.total + ' marks</p>';
       html += '<button class="btn btn-sm btn-secondary" style="margin-top:8px;" onclick="renderCBTResult(\'' + r.id + '\')"><i class="fas fa-eye"></i> Review</button>';
       html += '</div>';
     });
@@ -298,27 +375,40 @@ function launchCBTExam(examId) {
   var exam = (data.cbtExams || []).find(function(e) { return e.id === examId; });
   if (!exam || !currentStudent) return;
   if (!confirm('You are about to start "' + exam.title + '".\n\nDuration: ' + exam.duration + ' minutes\nQuestions: ' + (exam.questions || []).length + '\nPass Score: ' + (exam.passScore || 50) + '%\n\nThis exam will be in full-screen mode. Make sure you are ready!')) return;
+
+  var questions = exam.questions || [];
+  // Shuffle questions
+  var questionOrder = _cbtShuffle(Array.from({length: questions.length}, function(_, i) { return i; }));
+  // Shuffle options for each question
+  var optionOrders = questionOrder.map(function(qi) {
+    var q = questions[qi];
+    return _cbtShuffle(Array.from({length: q.options.length}, function(_, i) { return i; }));
+  });
+
   _cbtState = {
     examId: exam.id,
     examTitle: exam.title,
-    questions: exam.questions || [],
+    questions: questions,
     duration: exam.duration || 60,
     passScore: exam.passScore || 50,
-    answers: [],
+    answers: questions.map(function() { return null; }),
     currentQ: 0,
     timer: null,
     timeLeft: (exam.duration || 60) * 60,
     tabSwitches: 0,
-    startedAt: new Date().toISOString()
+    startedAt: new Date().toISOString(),
+    questionOrder: questionOrder,
+    optionOrders: optionOrders
   };
-  _cbtState.answers = _cbtState.questions.map(function() { return null; });
+  _cbtPersistState();
   _renderCBTTimerUI();
 }
 
 function _renderCBTTimerUI() {
   if (!_cbtState) return;
   var s = _cbtState;
-  var q = s.questions[s.currentQ];
+  var qIdx = s.questionOrder ? s.questionOrder[s.currentQ] : s.currentQ;
+  var q = s.questions[qIdx];
   if (!q) return;
   var total = s.questions.length;
   var answered = s.answers.filter(function(a) { return a !== null; }).length;
@@ -327,25 +417,31 @@ function _renderCBTTimerUI() {
   var pad = function(n) { return (n < 10 ? '0' : '') + n; };
   var timeStr = pad(mins) + ':' + pad(secs);
   var warningClass = s.timeLeft <= 300 ? ' warning' : '';
+
+  // Get shuffled options for this question
+  var optOrder = s.optionOrders ? s.optionOrders[s.currentQ] : null;
+
   var html = '<div class="cbt-timer-overlay" id="cbtTimerOverlay">';
   html += '<div class="cbt-timer-header">';
   html += '<h2><i class="fas fa-laptop-code"></i> ' + htmlEscape(s.examTitle) + '</h2>';
-  html += '<div style="display:flex;align-items:center;gap:16px;">';
+  html += '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">';
   if (s.tabSwitches > 0) html += '<span class="cbt-tab-switch"><i class="fas fa-exclamation-triangle"></i> Tab switches: ' + s.tabSwitches + '</span>';
-  html += '<div class="cbt-timer-display' + warningClass + '" id="cbtTimerDisplay">' + timeStr + '</div>';
-  html += '<button class="btn btn-sm" style="background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);" onclick="submitCBTExam()"><i class="fas fa-check"></i> Submit</button>';
-  html += '<button class="btn btn-sm" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);" onclick="if(confirm(\'Cancel this exam? All progress will be lost.\')){if(_cbtState){if(_cbtState.timer)clearInterval(_cbtState.timer);var e=document.getElementById(\'cbtTimerOverlay\');if(e)e.remove();_cbtState=null;}}"><i class="fas fa-times"></i></button>';
+  html += '<div class="cbt-timer-display' + warningClass + '" id="cbtTimerDisplay" role="timer" aria-live="polite">' + timeStr + '</div>';
+  html += '<button class="btn btn-sm cbt-submit-btn" onclick="submitCBTExam()"><i class="fas fa-check"></i> Submit</button>';
+  html += '<button class="btn btn-sm cbt-cancel-btn" onclick="cancelCBTExam()"><i class="fas fa-times"></i></button>';
   html += '</div></div>';
   html += '<div class="cbt-timer-body">';
   html += '<div class="cbt-timer-main">';
   html += '<div class="cbt-question-card">';
   html += '<h3>Question ' + (s.currentQ + 1) + ' of ' + total + '</h3>';
   html += '<p style="font-size:15px;line-height:1.6;margin-bottom:16px;">' + htmlEscape(q.question) + '</p>';
-  (q.options || []).forEach(function(opt, oi) {
-    var selected = s.answers[s.currentQ] === oi ? ' selected' : '';
-    html += '<div class="cbt-option' + selected + '" onclick="selectCBTAnswer(' + oi + ')">';
-    html += '<input type="radio" name="cbtOption" value="' + oi + '"' + (s.answers[s.currentQ] === oi ? ' checked' : '') + '>';
-    html += '<span>' + htmlEscape(opt) + '</span></div>';
+
+  var displayOptions = optOrder ? optOrder.map(function(oi) { return {text: q.options[oi], origIdx: oi}; }) : q.options.map(function(t, i) { return {text: t, origIdx: i}; });
+  displayOptions.forEach(function(opt) {
+    var selected = s.answers[s.currentQ] === opt.origIdx ? ' selected' : '';
+    html += '<div class="cbt-option' + selected + '" onclick="selectCBTAnswer(' + opt.origIdx + ')" tabindex="0" role="radio" aria-checked="' + (selected ? 'true' : 'false') + '">';
+    html += '<input type="radio" name="cbtOption" value="' + opt.origIdx + '"' + (selected ? ' checked' : '') + '>';
+    html += '<span>' + htmlEscape(opt.text) + '</span></div>';
   });
   html += '</div>';
   html += '<div class="cbt-nav-buttons">';
@@ -358,7 +454,7 @@ function _renderCBTTimerUI() {
   html += '<div class="cbt-timer-sidebar">';
   html += '<div style="font-size:13px;font-weight:600;margin-bottom:8px;">' + answered + '/' + total + ' answered</div>';
   html += '<div class="cbt-question-nav">';
-  s.questions.forEach(function(q2, qi) {
+  s.questions.forEach(function(_, qi) {
     var cls = 'cbt-nav-btn';
     if (s.answers[qi] !== null) cls += ' answered';
     if (s.currentQ === qi) cls += ' current';
@@ -371,15 +467,16 @@ function _renderCBTTimerUI() {
   el.innerHTML = html;
   document.body.appendChild(el);
   if (!s.timer) {
-    s.timer = setInterval(function() {
-      _cbtTick();
-    }, 1000);
+    s.timer = setInterval(function() { _cbtTick(); }, 1000);
   }
 }
 
 function _cbtTick() {
   if (!_cbtState) return;
-  _cbtState.timeLeft--;
+  // Calculate time from timestamps to avoid drift
+  var elapsed = Math.floor((Date.now() - new Date(_cbtState.startedAt).getTime()) / 1000);
+  _cbtState.timeLeft = Math.max(0, _cbtState.duration * 60 - elapsed);
+  _cbtPersistState();
   if (_cbtState.timeLeft <= 0) {
     clearInterval(_cbtState.timer);
     _cbtState.timer = null;
@@ -392,40 +489,71 @@ function _cbtTick() {
   var secs = _cbtState.timeLeft % 60;
   var pad = function(n) { return (n < 10 ? '0' : '') + n; };
   disp.textContent = pad(mins) + ':' + pad(secs);
-  if (_cbtState.timeLeft <= 300) disp.classList.add('warning');
+  disp.classList.toggle('warning', _cbtState.timeLeft <= 300);
 }
 
+// Anti-cheating: tab switch detection
 if (!window._cbtVisibilityListenerAdded) {
   document.addEventListener('visibilitychange', function() {
     if (_cbtState && document.hidden) {
       _cbtState.tabSwitches = (_cbtState.tabSwitches || 0) + 1;
+      _cbtPersistState();
     }
   });
   window._cbtVisibilityListenerAdded = true;
 }
 
+// Warn before leaving during exam
+if (!window._cbtBeforeunloadAdded) {
+  window.addEventListener('beforeunload', function(e) {
+    if (_cbtState && !_cbtSubmitting) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+  window._cbtBeforeunloadAdded = true;
+}
+
 function selectCBTAnswer(optIndex) {
-  if (!_cbtState) return;
+  if (!_cbtState || _cbtSubmitting) return;
   _cbtState.answers[_cbtState.currentQ] = optIndex;
+  _cbtPersistState();
   _renderCBTTimerUI();
 }
 
 function navigateCBTQuestion(index) {
-  if (!_cbtState) return;
+  if (!_cbtState || _cbtSubmitting) return;
   _cbtState.currentQ = index;
+  _cbtPersistState();
   _renderCBTTimerUI();
 }
 
+function cancelCBTExam() {
+  if (!confirm('Cancel this exam? All progress will be lost.')) return;
+  if (_cbtState && _cbtState.timer) clearInterval(_cbtState.timer);
+  var el = document.getElementById('cbtTimerOverlay');
+  if (el) el.remove();
+  _cbtState = null;
+  _cbtSubmitting = false;
+  sessionStorage.removeItem(CBT_STATE_KEY);
+  if (typeof renderCBTStudent === 'function') renderCBTStudent();
+}
+
 function submitCBTExam(force) {
-  if (!_cbtState) return;
+  if (!_cbtState || _cbtSubmitting) return;
   if (!force && !confirm('Are you sure you want to submit this exam? ' + _cbtState.answers.filter(function(a) { return a !== null; }).length + '/' + _cbtState.questions.length + ' answered.')) return;
+  _cbtSubmitting = true;
   if (_cbtState.timer) { clearInterval(_cbtState.timer); _cbtState.timer = null; }
-  var total = _cbtState.questions.length;
+
+  // Marks-weighted scoring
+  var totalMarks = 0;
   var score = 0;
   _cbtState.questions.forEach(function(q, i) {
-    if (_cbtState.answers[i] !== null && _cbtState.answers[i] === q.answer) score++;
+    var marks = q.marks || 1;
+    totalMarks += marks;
+    if (_cbtState.answers[i] !== null && _cbtState.answers[i] === q.answer) score += marks;
   });
-  var pct = total ? Math.round(score / total * 100) : 0;
+  var pct = totalMarks ? Math.round(score / totalMarks * 100) : 0;
   var passed = pct >= _cbtState.passScore;
   var result = {
     id: genId('CBTR'),
@@ -435,20 +563,25 @@ function submitCBTExam(force) {
     studentName: currentStudent.name,
     answers: _cbtState.answers.slice(),
     score: score,
-    total: total,
+    total: totalMarks,
     percentage: pct,
     passed: passed,
     passScore: _cbtState.passScore,
     startedAt: _cbtState.startedAt,
     submittedAt: new Date().toISOString(),
-    tabSwitches: _cbtState.tabSwitches
+    tabSwitches: _cbtState.tabSwitches,
+    questionOrder: _cbtState.questionOrder,
+    optionOrders: _cbtState.optionOrders
   };
   if (!data.cbtResults) data.cbtResults = [];
   data.cbtResults.push(result);
   saveData();
+  sessionStorage.removeItem(CBT_STATE_KEY);
   var overlay = document.getElementById('cbtTimerOverlay');
   if (overlay) overlay.remove();
   _cbtState = null;
+  _cbtSubmitting = false;
+  if (typeof toast === 'function') toast('Exam submitted successfully!', 'success');
   renderCBTResult(result.id);
 }
 
@@ -464,7 +597,7 @@ function renderCBTResult(resultId) {
   html += '<div class="cbt-result-summary ' + cls + '">';
   html += '<h2>' + htmlEscape(result.examTitle) + '</h2>';
   html += '<div class="score">' + result.percentage + '%</div>';
-  html += '<p>' + result.score + '/' + result.total + ' correct</p>';
+  html += '<p>' + result.score + '/' + result.total + ' marks</p>';
   html += '<p style="font-weight:600;font-size:16px;">' + (result.passed ? '&#10003; PASSED' : '&#10007; FAILED') + ' (Pass mark: ' + result.passScore + '%)</p>';
   if (result.tabSwitches > 0) html += '<p style="font-size:12px;opacity:0.7;">Tab switches detected: ' + result.tabSwitches + '</p>';
   html += '</div>';
@@ -475,7 +608,7 @@ function renderCBTResult(resultId) {
       var isCorrect = selected !== null && selected === q.answer;
       var cls2 = isCorrect ? 'correct' : 'incorrect';
       html += '<div class="cbt-review-item ' + cls2 + '">';
-      html += '<div class="cbt-review-question">Q' + (i + 1) + ': ' + htmlEscape(q.question) + '</div>';
+      html += '<div class="cbt-review-question">Q' + (i + 1) + ' (' + (q.marks || 1) + ' mark' + ((q.marks || 1) > 1 ? 's' : '') + '): ' + htmlEscape(q.question) + '</div>';
       html += '<div class="cbt-review-answer">Correct: <span class="correct-answer">' + htmlEscape(q.options[q.answer] || '') + '</span></div>';
       html += '<div class="cbt-review-answer ' + (isCorrect ? 'correct-answer' : 'wrong-answer') + '">Your answer: ' + (selected !== null ? htmlEscape(q.options[selected] || '') : 'Not answered') + '</div>';
       html += '</div>';
@@ -496,7 +629,9 @@ window.showAddCBTExamModal = showAddCBTExamModal;
 window.showEditCBTExamModal = showEditCBTExamModal;
 window.saveCBTExam = saveCBTExam;
 window.deleteCBTExam = deleteCBTExam;
+window.toggleCBTExamStatus = toggleCBTExamStatus;
 window.showAddCBTQuestionModal = showAddCBTQuestionModal;
 window.showEditCBTQuestionModal = showEditCBTQuestionModal;
 window.saveCBTQuestion = saveCBTQuestion;
 window.deleteCBTQuestion = deleteCBTQuestion;
+window.cancelCBTExam = cancelCBTExam;

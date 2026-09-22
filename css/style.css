@@ -2067,6 +2067,25 @@ html { transition: background-color 0.3s ease, color 0.3s ease; }
 [data-theme="dark"] .cbt-tab-switch { background: #4a3b0a; color: #fefcbf; }
 [data-theme="dark"] .cbt-result-summary.passed { background: linear-gradient(135deg,#1c4532,#276749); }
 [data-theme="dark"] .cbt-result-summary.failed { background: linear-gradient(135deg,#4a2020,#742a2a); }
+[data-theme="dark"] .cbt-question-card { background: var(--card-bg); border-color: #4a5568; color: var(--text); }
+[data-theme="dark"] .cbt-option { background: var(--card-bg); border-color: #4a5568; color: var(--text); }
+[data-theme="dark"] .cbt-option:hover { background: #334155; }
+[data-theme="dark"] .cbt-option.selected { background: #1e40af; border-color: #3b82f6; }
+[data-theme="dark"] .cbt-nav-btn { background: #334155; color: var(--text); }
+[data-theme="dark"] .cbt-nav-btn.answered { background: #166534; }
+[data-theme="dark"] .cbt-nav-btn.current { background: #1e40af; }
+[data-theme="dark"] .cbt-hero { background: linear-gradient(135deg,#1a2332,#0f172a); color: var(--text); }
+[data-theme="dark"] .cbt-hero h2 { color: var(--text); }
+[data-theme="dark"] .cbt-exam-card-v2 { background: var(--card-bg); border-color: #4a5568; }
+[data-theme="dark"] .cbt-exam-card-v2-header { background: #1a2332; color: var(--text); }
+[data-theme="dark"] .cbt-exam-card-v2-body { color: var(--text); }
+[data-theme="dark"] .cbt-questions-v2 { border-color: #4a5568; }
+[data-theme="dark"] .cbt-question-v2 { border-color: #4a5568; }
+[data-theme="dark"] .cbt-question-v2-text { color: var(--text); }
+[data-theme="dark"] .cbt-exam-card { background: var(--card-bg); border-color: #4a5568; color: var(--text); }
+[data-theme="dark"] .cbt-review-item { border-color: #4a5568; }
+[data-theme="dark"] .cbt-submit-btn { background: rgba(255,255,255,0.2); color: white; border-color: rgba(255,255,255,0.3); }
+[data-theme="dark"] .cbt-cancel-btn { background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2); }
 
 /* Gradebook */
 [data-theme="dark"] .gradebook-grid { background: #4a5568; }
@@ -3216,6 +3235,29 @@ button:focus-visible, a:focus-visible { outline:2px solid var(--primary,#1a3a5c)
   .cbt-stat-grid{grid-template-columns:1fr 1fr}
   .fee-controls{flex-direction:column}
   .fee-search-wrap{width:100%}
+}
+
+/* ═══════════════════════════════════════════════
+   FIX: CBT hero mobile responsive
+   ═══════════════════════════════════════════════ */
+@media(max-width:768px){
+  .cbt-hero{padding:24px 16px}
+  .cbt-hero h2{font-size:20px}
+  .cbt-hero p{font-size:13px}
+  .cbt-exam-card-v2-actions{flex-wrap:wrap}
+  .cbt-exam-card-v2-actions .btn{flex:1 1 45%;min-width:0}
+  .cbt-timer-header h2{font-size:16px}
+  .cbt-question-card h3{font-size:15px}
+  .cbt-option{padding:12px 14px}
+}
+@media(max-width:480px){
+  .cbt-hero{padding:20px 14px}
+  .cbt-hero h2{font-size:17px}
+  .cbt-stat-grid{grid-template-columns:1fr 1fr}
+  .cbt-exam-card-v2-actions .btn{flex:1 1 100%}
+  .cbt-timer-header{padding:10px 12px}
+  .cbt-timer-header h2{font-size:14px}
+  .cbt-question-nav{flex-wrap:wrap}
 }
 
 /* ═══════════════════════════════════════════════
