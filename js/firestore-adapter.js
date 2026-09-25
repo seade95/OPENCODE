@@ -31,6 +31,45 @@
     try { return localStorage.getItem('activeTenant') || 'default'; } catch (e) { return 'default'; }
   }
 
+  // ===== Cloud write gating =====
+  // Anonymous homepage visitors never push to Firestore: their data
+  // lives in localStorage only. Writes are attempted only when a
+  // user is signed in (staff/admin), queued only when a local
+  // session exists (so it can flush once auth restores), and
+  // NEVER queued on permission-denied (a 403 would poison the
+  // queue forever, retrying an illegal write on every sync).
+  function hasLocalSession() {
+    try { return !!localStorage.getItem('eduverse_session'); } catch (e) { return false; }
+  }
+
+  function canPushToCloud() {
+    if (!FB_READY || !navigator.onLine) return false;
+    try { return !!firebase.auth().currentUser; } catch (e) { return false; }
+  }
+
+  function isPermissionDenied(err) {
+    return !!err && (err.code === 'permission-denied' || err.code === 7);
+  }
+
+  function pushOrQueue(collection, docId, payload) {
+    if (canPushToCloud()) {
+      db().collection(collection).doc(docId).set(payload, { merge: true }).then(function() {
+        syncOfflineQueue();
+      }).catch(function(err) {
+        if (isPermissionDenied(err)) {
+          console.warn('Firestore write forbidden for ' + collection + '/' + docId + ' — dropped', err);
+          return;
+        }
+        console.warn('Firestore write failed, queuing for retry', err);
+        enqueueWrite('set', collection, docId, payload);
+      });
+      return;
+    }
+    // Not pushed: queue only if someone is logged in on this device
+    // (auth may still be restoring); pure anonymous saves stay local.
+    if (hasLocalSession()) enqueueWrite('set', collection, docId, payload);
+  }
+
   // ===== Offline Write Queue =====
   function getOfflineQueue() {
     try {
@@ -70,7 +109,7 @@
     _writeTimer = null;
     if (!_pendingWrite) return;
     _pendingWrite = false;
-    var schoolId = getSchoolDocId();
+    var schoolId = resolveDocId(getSchoolDocId());
     var payload = {};
     try {
       if (typeof window.data !== 'undefined' && window.data) {
@@ -87,16 +126,32 @@
     try { localStorage.setItem('_dataVersion_' + schoolId, String(_dataVersion)); } catch(e) {}
 
     if (!FB_READY || !navigator.onLine) {
-      enqueueWrite('set', 'schools', schoolId, payload);
+      if (hasLocalSession()) enqueueWrite('set', 'schools', schoolId, payload);
       return;
     }
 
-    db().collection('schools').doc(schoolId).set(payload, { merge: true }).then(function() {
-      syncOfflineQueue();
-    }).catch(function(err) {
-      console.warn('Firestore write failed, queuing for retry', err);
+    // Full staff document — only signed-in staff of this school may
+    // write it (rules enforce). Anonymous saves stay localStorage-only.
+    if (canPushToCloud()) {
+      db().collection('schools').doc(schoolId).set(payload, { merge: true }).then(function() {
+        syncOfflineQueue();
+      }).catch(function(err) {
+        if (isPermissionDenied(err)) {
+          console.warn('Firestore schools write forbidden — dropped', err);
+        } else {
+          console.warn('Firestore write failed, queuing for retry', err);
+          enqueueWrite('set', 'schools', schoolId, payload);
+        }
+      });
+      // Public projection for the anonymous landing page — same
+      // write gate: rules allow staff/super-admin only.
+      if (typeof buildPublicSchoolDoc === 'function') {
+        db().collection('schoolsPublic').doc(schoolId).set(buildPublicSchoolDoc(payload, _dataVersion), { merge: true })
+          .catch(function(err) { console.warn('schoolsPublic projection write failed', err.code || ''); });
+      }
+    } else if (hasLocalSession()) {
       enqueueWrite('set', 'schools', schoolId, payload);
-    });
+    }
   }
 
   // ===== Offline Queue Sync =====
@@ -125,6 +180,32 @@
         processed++;
         processNext();
       }).catch(function(err) {
+        if (isPermissionDenied(err)) {
+          var signedIn = false;
+          try { signedIn = !!firebase.auth().currentUser; } catch (e) {}
+          if (!signedIn && hasLocalSession()) {
+            // Auth may still be restoring on page load — hold the item
+            // and wait for the auth-change listener to resume the sync
+            // (dropping it here would lose a legitimate write).
+            console.warn('Offline queue paused — sign-in required to sync');
+            _syncing = false;
+            updateOfflineBadge();
+            return;
+          }
+          // Signed in and still forbidden (genuinely not allowed for
+          // this user), or no local session (legacy anonymous write
+          // that can never legally succeed): drop it and continue so
+          // one poisoned item doesn't block the whole queue.
+          console.warn('Dropping forbidden offline queue item', item.id, item.collection + '/' + item.docId);
+          queue.splice(processed, 1);
+          saveOfflineQueue(queue);
+          total = queue.length;
+          processNext();
+          return;
+        }
+        // Transient failure: stop this pass but keep the queue
+        // intact (processed < total so nothing is cleared); the
+        // remaining items retry on the next sync pass.
         console.warn('Offline queue sync failed for item', item.id, err);
         _syncing = false;
         updateOfflineBadge();
@@ -175,45 +256,143 @@
 
   // ===== Realtime Subscriptions =====
   var _subscribedSchool = null;
+  var _defaultSubRetries = 0;
+  var MAX_DEFAULT_SUB_RETRIES = 50; // 10s — then stop (no timer leak on plain homepage)
+  var _tenantSwitchAttempted = false;
+
+  function hasFirebaseUser() {
+    try { return !!(FB_READY && firebase.auth().currentUser); } catch (e) { return false; }
+  }
+
+  // If activeTenant holds a slug (unresolved ?school= on a fresh
+  // device), map it to the real tenant ID once tenants are known.
+  function resolveDocId(raw) {
+    if (!raw || raw === 'default') return raw;
+    try {
+      if (typeof getTenants === 'function') {
+        var tenants = getTenants();
+        for (var i = 0; i < tenants.length; i++) {
+          if (tenants[i].slug === raw) return tenants[i].id;
+        }
+      }
+    } catch (e) {}
+    return raw;
+  }
+
+  function rerenderAfterSync() {
+    try {
+      if (typeof renderLandingPageSections === 'function') renderLandingPageSections();
+    } catch (e) {}
+    try {
+      if (typeof renderActivePanel === 'function') renderActivePanel();
+    } catch (e) {}
+    try {
+      var gs = document.getElementById('gallerySection');
+      if (gs && window.data && window.data.gallery && window.data.gallery.length) gs.style.display = '';
+      if (typeof renderGalleryView === 'function') renderGalleryView('landingGalleryView');
+    } catch (e) {}
+  }
+
+  // Persist merged remote data directly (bypasses save hooks so a
+  // cloud snapshot never triggers a cloud write-back loop).
+  function persistMergedData() {
+    try {
+      var key = (typeof getDataKey === 'function') ? getDataKey() : 'schoolData';
+      var serialized = JSON.stringify(window.data);
+      localStorage.setItem(key, serialized);
+      if (localStorage.getItem('activeTenant')) localStorage.setItem('schoolData', serialized);
+    } catch (e) {}
+  }
+
+  function applyRemoteDoc(remote, schoolId, isPublic) {
+    var apply = function() {
+      if (typeof window.data === 'undefined' || !window.data) return false; // not loaded yet
+      if (resolveDocId(getSchoolDocId()) !== schoolId) return true; // stale — drop
+      var localVer = 0;
+      var remoteVer = remote._version || 0;
+      try { localVer = parseInt(localStorage.getItem('_dataVersion_' + schoolId) || '0', 10) || 0; } catch (e) {}
+      if (remoteVer <= localVer) return true;
+      var keys = Object.keys(remote);
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if (k === 'id' || k === '_version') continue;
+        // Public docs carry only landing-page fields — merge them all;
+        // full staff docs merge arrays only (existing behavior).
+        if (isPublic || Array.isArray(remote[k])) window.data[k] = remote[k];
+      }
+      try { localStorage.setItem('_dataVersion_' + schoolId, String(remoteVer)); } catch (e) {}
+      persistMergedData();
+      if (typeof toast === 'function') toast('Data synced from cloud', 'info');
+      rerenderAfterSync();
+      return true;
+    };
+    if (!apply()) {
+      // window.data is set by app.js on DOMContentLoaded — bounded wait
+      var tries = 0;
+      var timer = setInterval(function() {
+        tries++;
+        if (apply() || tries >= 50) clearInterval(timer);
+      }, 100);
+    }
+  }
+
+  function attachSchoolSnapshot(schoolId, usePublic) {
+    var collection = usePublic ? 'schoolsPublic' : 'schools';
+    _subscribedSchool = schoolId;
+    try {
+      _fsUnsubscribe = db().collection(collection).doc(schoolId).onSnapshot(function(doc) {
+        if (doc.exists) {
+          // Verify tenant hasn't changed since we subscribed
+          if (resolveDocId(getSchoolDocId()) !== schoolId) return;
+          applyRemoteDoc(doc.data(), schoolId, usePublic);
+        }
+      }, function(err) {
+        console.warn(collection + ' snapshot error', err);
+        if (!usePublic && isPermissionDenied(err)) {
+          // Anonymous or non-staff reader — fall back to the public
+          // landing-page projection instead of failing silently.
+          if (_fsUnsubscribe) { try { _fsUnsubscribe(); } catch (e) {} _fsUnsubscribe = null; }
+          attachSchoolSnapshot(schoolId, true);
+        }
+      });
+    } catch (e) {}
+  }
 
   function subscribeSchoolData() {
     if (IS_ADMIN_PAGE || IS_SUPERADMIN_PAGE) return;
     if (!FB_READY || !navigator.onLine) return;
-    var schoolId = getSchoolDocId();
-    if (!schoolId || schoolId === 'default') {
-      setTimeout(subscribeSchoolData, 200);
+    var rawId = getSchoolDocId();
+    if (!rawId || rawId === 'default') {
+      // No active tenant yet — wait briefly for tenant resolution,
+      // but stop after MAX retries so the plain homepage doesn't
+      // leak a timer forever.
+      if (_defaultSubRetries < MAX_DEFAULT_SUB_RETRIES) {
+        _defaultSubRetries++;
+        setTimeout(subscribeSchoolData, 200);
+      }
       return;
     }
+    _defaultSubRetries = 0;
+    var schoolId = resolveDocId(rawId);
     if (_subscribedSchool === schoolId) return;
     if (_fsUnsubscribe) { _fsUnsubscribe(); _fsUnsubscribe = null; }
-    _subscribedSchool = schoolId;
+    attachSchoolSnapshot(schoolId, !hasFirebaseUser());
+  }
+
+  // Once tenants arrive from the cloud, re-resolve ?school=/#/school/
+  // against the now-complete directory and switch if it maps to a
+  // different tenant (fresh device initially only knows the slug).
+  function reResolveTenantFromUrl() {
+    if (_tenantSwitchAttempted) return;
     try {
-      _fsUnsubscribe = db().collection('schools').doc(schoolId).onSnapshot(function(doc) {
-        if (doc.exists) {
-          // Verify tenant hasn't changed since we subscribed
-          var currentTenant = getSchoolDocId();
-          if (currentTenant !== schoolId) return;
-          var remote = doc.data();
-          if (typeof window.data !== 'undefined' && window.data) {
-            var localVer = 0;
-            var remoteVer = remote._version || 0;
-            try { localVer = parseInt(localStorage.getItem('_dataVersion_' + schoolId) || '0', 10); } catch(e) {}
-            if (remoteVer <= localVer) return;
-            var keys = Object.keys(remote);
-            for (var i = 0; i < keys.length; i++) {
-              if (keys[i] !== 'id' && keys[i] !== '_version' && Array.isArray(remote[keys[i]])) {
-                window.data[keys[i]] = remote[keys[i]];
-              }
-            }
-            localStorage.setItem('_dataVersion_' + schoolId, String(remoteVer));
-            if (typeof toast === 'function') toast('Data synced from cloud', 'info');
-            if (typeof renderActivePanel === 'function') renderActivePanel();
-          }
-        }
-      }, function(err) {
-        console.warn('Firestore snapshot error', err);
-      });
-    } catch(e) {}
+      if (localStorage.getItem('_eduverse_go_home') === '1') return;
+      if (typeof resolveSchoolFromUrl !== 'function' || typeof switchTenant !== 'function') return;
+      var resolved = resolveSchoolFromUrl();
+      if (resolved && resolved !== getSchoolDocId()) {
+        _tenantSwitchAttempted = true;
+        switchTenant(resolved); // reloads the page
+      }
+    } catch (e) {}
   }
 
   function subscribeTenants() {
@@ -222,9 +401,15 @@
     try {
       _tenantsUnsub = db().collection('tenants').doc('list').onSnapshot(function(doc) {
         if (doc.exists) {
-          var data = doc.data();
-          if (data && data.tenants) {
-            try { localStorage.setItem('eduverse_tenants', JSON.stringify(data.tenants)); } catch (e) {}
+          var payload = doc.data();
+          if (payload && Array.isArray(payload.tenants)) {
+            try { localStorage.setItem('eduverse_tenants', JSON.stringify(payload.tenants)); } catch (e) {}
+            if (typeof invalidateTenantCache === 'function') invalidateTenantCache();
+            reResolveTenantFromUrl();
+            // activeTenant may have been an unresolved slug — now that
+            // the directory is local, re-target the school subscription.
+            subscribeSchoolData();
+            if (!IS_ADMIN_PAGE && !IS_SUPERADMIN_PAGE) rerenderAfterSync();
           }
         }
       }, function(err) {
@@ -246,7 +431,13 @@
           }
         }
       }, function(err) {
-        console.warn('Platform config snapshot error', err);
+        // Auth-only doc: anonymous homepage falls back to defaults —
+        // expected, not an error worth spamming.
+        if (isPermissionDenied(err)) {
+          console.info('Platform config unavailable while signed out — using defaults');
+        } else {
+          console.warn('Platform config snapshot error', err);
+        }
       });
     } catch(e) {}
   }
@@ -338,14 +529,11 @@
   if (typeof _origSaveTenants === 'function') {
     window.saveTenants = function(t) {
       _origSaveTenants(t);
-      if (FB_READY && navigator.onLine) {
-        db().collection('tenants').doc('list').set({ tenants: t }, { merge: true }).catch(function(err) {
-          console.warn('Firestore tenants save failed', err);
-          enqueueWrite('set', 'tenants', 'list', { tenants: t });
-        });
-      } else {
-        enqueueWrite('set', 'tenants', 'list', { tenants: t });
-      }
+      // tenants/list is world-readable — never push credentials.
+      var safe = (typeof sanitizeTenantsForCloud === 'function')
+        ? sanitizeTenantsForCloud(t)
+        : t;
+      pushOrQueue('tenants', 'list', { tenants: safe });
     };
   }
 
@@ -360,14 +548,7 @@
   if (typeof _origSavePlatformConfig === 'function') {
     window.savePlatformConfig = function(cfg) {
       _origSavePlatformConfig(cfg);
-      if (FB_READY && navigator.onLine) {
-        db().collection('platform').doc('config').set(cfg, { merge: true }).catch(function(err) {
-          console.warn('Firestore config save failed', err);
-          enqueueWrite('set', 'platform', 'config', cfg);
-        });
-      } else {
-        enqueueWrite('set', 'platform', 'config', cfg);
-      }
+      pushOrQueue('platform', 'config', cfg);
     };
   }
 
@@ -382,14 +563,11 @@
   if (typeof _origSaveApplications === 'function') {
     window.saveApplications = function(apps) {
       _origSaveApplications(apps);
-      if (FB_READY && navigator.onLine) {
-        db().collection('tenants').doc('list').set({ applications: apps }, { merge: true }).catch(function(err) {
-          console.warn('Firestore applications save failed', err);
-          enqueueWrite('set', 'tenants', 'list', { applications: apps });
-        });
-      } else {
-        enqueueWrite('set', 'tenants', 'list', { applications: apps });
-      }
+      // Applications live in their own super-admin-only doc (they
+      // used to ride inside tenants/list, which is now public).
+      // Public/anonymous submissions stay device-local — pushOrQueue
+      // only queues when a signed-in session exists.
+      pushOrQueue('applications', 'list', { applications: apps });
     };
   }
 
@@ -404,17 +582,25 @@
   if (typeof _origSaveSuperAdmin === 'function') {
     window.saveSuperAdmin = function(admin) {
       _origSaveSuperAdmin(admin);
-      if (FB_READY && navigator.onLine) {
-        var safe = {};
-        for (var k in admin) { if (admin.hasOwnProperty(k) && k !== 'password') safe[k] = admin[k]; }
-        db().collection('superAdmin').doc('config').set(safe, { merge: true }).catch(function(err) {
-          console.warn('Firestore super admin save failed', err);
-          enqueueWrite('set', 'superAdmin', 'config', safe);
+      var safe = {};
+      for (var k in admin) { if (admin.hasOwnProperty(k) && k !== 'password') safe[k] = admin[k]; }
+      if (canPushToCloud()) {
+        // Explicitly delete any previously-leaked password field.
+        try { safe.password = firebase.firestore.FieldValue.delete(); } catch (e) {}
+        db().collection('superAdmin').doc('config').set(safe, { merge: true }).then(function() {
+          syncOfflineQueue();
+        }).catch(function(err) {
+          if (isPermissionDenied(err)) {
+            console.warn('superAdmin/config write forbidden — dropped', err);
+          } else {
+            console.warn('Firestore super admin save failed', err);
+            var queued = {};
+            for (var kq in safe) { if (kq !== 'password') queued[kq] = safe[kq]; }
+            enqueueWrite('set', 'superAdmin', 'config', queued);
+          }
         });
-      } else {
-        var safe2 = {};
-        for (var k2 in admin) { if (admin.hasOwnProperty(k2) && k2 !== 'password') safe2[k2] = admin[k2]; }
-        enqueueWrite('set', 'superAdmin', 'config', safe2);
+      } else if (hasLocalSession()) {
+        enqueueWrite('set', 'superAdmin', 'config', safe);
       }
     };
   }
@@ -508,6 +694,30 @@
     return firebase.auth().onAuthStateChanged(callback);
   };
 
+  // Registered AFTER firebaseOnAuthChange is assigned: sign-in can
+  // change Firestore visibility (anonymous → staff), so resubscribe
+  // and flush any queued writes on every auth state change.
+  if (FB_READY) {
+    var _lastAuthUid = null;
+    try {
+      firebase.auth().onAuthStateChanged(function(user) {
+        var uid = user ? user.uid : null;
+        if (uid === _lastAuthUid) return;
+        _lastAuthUid = uid;
+        if (!IS_ADMIN_PAGE && !IS_SUPERADMIN_PAGE) {
+          // Reset so the subscription re-picks public vs staff doc.
+          _subscribedSchool = null;
+          if (_fsUnsubscribe) { try { _fsUnsubscribe(); } catch (e) {} _fsUnsubscribe = null; }
+          subscribeSchoolData();
+        }
+        // platform/config is auth-only: anonymous sign-in changes its
+        // visibility, so re-attach (previous listener died on 403).
+        subscribePlatformConfig();
+        if (uid) syncOfflineQueue();
+      });
+    } catch (e) {}
+  }
+
   window.subscribeSchoolData = subscribeSchoolData;
   window.subscribeTenants = subscribeTenants;
   window.subscribePlatformConfig = subscribePlatformConfig;
@@ -534,14 +744,23 @@
       var tenantsRaw = localStorage.getItem('eduverse_tenants');
       if (tenantsRaw) {
         var tenantsList = JSON.parse(tenantsRaw);
-        batch['tenants/list'] = { tenants: tenantsList };
+        // tenants/list is world-readable — push the sanitized copy.
+        batch['tenants/list'] = {
+          tenants: (typeof sanitizeTenantsForCloud === 'function')
+            ? sanitizeTenantsForCloud(tenantsList)
+            : tenantsList
+        };
         count++;
         for (var i = 0; i < tenantsList.length; i++) {
           var t = tenantsList[i];
           try {
             var schoolRaw = localStorage.getItem('schoolData_' + t.id);
             if (schoolRaw) {
-              batch['schools/' + t.id] = JSON.parse(schoolRaw);
+              var schoolObj = JSON.parse(schoolRaw);
+              batch['schools/' + t.id] = schoolObj;
+              if (typeof buildPublicSchoolDoc === 'function') {
+                batch['schoolsPublic/' + t.id] = buildPublicSchoolDoc(schoolObj);
+              }
               count++;
             }
           } catch(e) {}
@@ -560,15 +779,16 @@
     try {
       var appsRaw = localStorage.getItem('eduverse_school_applications');
       if (appsRaw) {
-        if (!batch['tenants/list']) batch['tenants/list'] = {};
-        batch['tenants/list'].applications = JSON.parse(appsRaw);
+        batch['applications/list'] = { applications: JSON.parse(appsRaw) };
       }
     } catch(e) {}
 
     try {
       var saRaw = localStorage.getItem('eduverse_super_admin');
       if (saRaw) {
-        batch['superAdmin/config'] = JSON.parse(saRaw);
+        var saObj = JSON.parse(saRaw);
+        delete saObj.password;
+        batch['superAdmin/config'] = saObj;
         count++;
       }
     } catch(e) {}

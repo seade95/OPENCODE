@@ -34,6 +34,29 @@ service cloud.firestore {
       return isSignedIn() && userDoc().schoolId == schoolId;
     }
 
+    // Top-level fields that must NEVER be stored in the public
+    // tenants directory (it is readable by anyone, including
+    // anonymous homepage visitors). Nested sanitization (stripping
+    // adminPass/adminEmail from each tenant object) is done by the
+    // super-admin client in sanitizeTenantsForCloud() before write —
+    // rules cannot deep-scan arrays, and writes are super-admin
+    // only, so the client strip is the trusted path.
+    function tenantsAreSanitized(data) {
+      return !data.keys().hasAny(['adminPass', 'adminEmail', 'password', 'applications']);
+    }
+
+    // Fields that must NEVER be stored in schoolsPublic — the
+    // public landing-page projection of a school (students,
+    // staff records, credentials, payment settings…).
+    function publicSchoolIsSanitized(data) {
+      return !data.keys().hasAny([
+        'admins', 'adminPass', 'adminEmail', 'password',
+        'students', 'teachers', 'staff', 'staffRecords', 'salaryRecords',
+        'fees', 'paymentConfig', 'paymentSecrets', 'smtpConfig',
+        'bankAccounts', 'apiKeys', 'secrets'
+      ]);
+    }
+
     // ============================================================
     // superAdmin/config — platform owner only
     // ============================================================
@@ -42,8 +65,9 @@ service cloud.firestore {
     }
 
     // ============================================================
-    // platform/config — any signed-in user may read (e.g. feature
-    // flags, branding); only super admin may write
+    // platform/config — auth-only read (contains SMTP password and
+    // bank account details); only super admin may write. Anonymous
+    // homepage visitors fall back to getDefaultPlatformConfig().
     // ============================================================
     match /platform/{doc} {
       allow read: if isSignedIn();
@@ -51,14 +75,39 @@ service cloud.firestore {
     }
 
     // ============================================================
-    // tenants/list — directory of schools. Signed-in users can
-    // read; only super admin can write (school provisioning should
-    // go through a Cloud Function, not direct client writes, but
-    // this keeps current behavior working until that migration).
+    // tenants/list — public directory of schools. PUBLIC read so an
+    // anonymous visitor on the homepage can resolve ?school=slug.
+    // Writes are super-admin only AND must be sanitized (no
+    // adminPass/adminEmail/applications inside a world-readable doc).
     // ============================================================
     match /tenants/{doc} {
-      allow read: if isSignedIn();
-      allow write: if isSuperAdmin();
+      allow read: if true;
+      allow create, update: if isSuperAdmin() && tenantsAreSanitized(request.resource.data);
+      allow delete: if isSuperAdmin();
+    }
+
+    // ============================================================
+    // schoolsPublic/{schoolId} — sanitized projection of a school
+    // used by the public landing page (profile, gallery, branding,
+    // announcements…). PUBLIC read; only staff of that school (or
+    // super admin) may write, and only with sensitive fields absent.
+    // ============================================================
+    match /schoolsPublic/{schoolId} {
+      allow read: if true;
+      allow create, update: if
+        (isStaffOfSchool(schoolId) || isSuperAdmin()) &&
+        publicSchoolIsSanitized(request.resource.data);
+      allow delete: if isStaffOfSchool(schoolId) || isSuperAdmin();
+    }
+
+    // ============================================================
+    // applications/list — school applications submitted from the
+    // public "Apply for a School" flow. Super admin only (public
+    // submissions stay device-local in localStorage until an admin
+    // signs in, which avoids world-writable spam vectors).
+    // ============================================================
+    match /applications/{doc} {
+      allow read, write: if isSuperAdmin();
     }
 
     // ============================================================
@@ -92,7 +141,8 @@ service cloud.firestore {
     // ============================================================
     // schools/{schoolId} — the main per-school data document
     // (students, teachers, fees, results, etc. all live inside
-    // this one document today).
+    // this one document today). Staff-only read/write; the public
+    // landing page uses schoolsPublic/{schoolId} instead.
     //
     // NOTE: this is a whole-document model — any staff member of
     // the school gets read/write to the ENTIRE doc, including
@@ -138,4 +188,3 @@ service cloud.firestore {
     }
   }
 }
-

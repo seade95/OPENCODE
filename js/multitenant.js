@@ -110,6 +110,28 @@ function saveTenants(tenants) {
   localStorage.setItem(TENANT_KEY, JSON.stringify(tenants));
 }
 
+// Returns a copy of the tenants array safe to push to the
+// world-readable tenants/list document: strips each tenant's
+// admin credentials (adminPass/adminEmail/password) and any
+// nested applications payload. The full unsanitized tenants stay
+// in localStorage for local login flows.
+function sanitizeTenantsForCloud(tenants) {
+  if (!Array.isArray(tenants)) return [];
+  var out = [];
+  for (var i = 0; i < tenants.length; i++) {
+    var src = tenants[i];
+    if (!src || typeof src !== 'object') continue;
+    var t = {};
+    for (var k in src) {
+      if (!src.hasOwnProperty(k)) continue;
+      if (k === 'adminPass' || k === 'adminEmail' || k === 'password' || k === 'applications') continue;
+      t[k] = src[k];
+    }
+    out.push(t);
+  }
+  return out;
+}
+
 var _superAdminCache = null;
 
 function getSuperAdmin() {

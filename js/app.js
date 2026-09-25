@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (typeof currentTeacher !== 'undefined') currentTeacher = null;
       if (typeof currentParent !== 'undefined') currentParent = null;
       if (typeof window.eduverseUser !== 'undefined') window.eduverseUser = null;
+      // Load data before rendering — renderLandingPageSections reads
+      // data.schoolName directly (would throw on null data).
+      data = loadData();
       // Show landing page, skip everything else
       var lp = document.getElementById('landing-page');
       if (lp) { lp.classList.remove('hidden'); lp.style.display = 'block'; }

@@ -1024,8 +1024,81 @@ firebase.auth().onAuthStateChanged(function(user) {
 // Keeps localStorage in sync with Firestore across all devices
 (function() {
   var _saUnsubs = [];
+  var _seeded = false;
+
+  function readJson(key, fallback) {
+    try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch(e) { return fallback; }
+  }
+
+  // Seed any missing cloud docs from this device's localStorage.
+  // This is the ONLY path that creates tenants/list, platform/config,
+  // and schools/{id} documents (anonymous clients cannot write them),
+  // so the super admin must sign in once from the browser that holds
+  // the canonical data.
+  function seedCloudIfMissing() {
+    if (_seeded || !firebase.auth().currentUser) return;
+    _seeded = true;
+    var fs = firebase.firestore();
+    var seeded = [];
+
+    function ifMissing(path, data, label) {
+      return fs.doc(path).get().then(function(d) {
+        if (d.exists) return null;
+        return fs.doc(path).set(data).then(function() { seeded.push(label || path); });
+      }).catch(function(e) { console.warn('Seed failed for ' + path, e); });
+    }
+
+    // 1) Tenants directory (sanitized — world-readable)
+    var tenants = readJson('eduverse_tenants', []);
+    var pTenants = tenants.length
+      ? ifMissing('tenants/list', { tenants: sanitizeTenantsForCloud(tenants) }, 'tenants/list')
+      : Promise.resolve();
+
+    // 2) Platform config
+    var cfg = readJson('eduverse_platform_config', null);
+    var pCfg = cfg ? ifMissing('platform/config', cfg, 'platform/config') : Promise.resolve();
+
+    // 3) Applications
+    var apps = readJson('eduverse_school_applications', []);
+    var pApps = apps.length
+      ? ifMissing('applications/list', { applications: apps }, 'applications/list')
+      : Promise.resolve();
+
+    // 4) Per-school data + public projections (cap 50 tenants)
+    var pairs = [];
+    var defaultSchool = readJson('schoolData', null);
+    if (defaultSchool) pairs.push(['default', defaultSchool]);
+    tenants.slice(0, 50).forEach(function(t) {
+      if (!t || !t.id) return;
+      var school = readJson('schoolData_' + t.id, null);
+      if (school) pairs.push([t.id, school]);
+    });
+    var pSchools = Promise.all(pairs.map(function(pair) {
+      var id = pair[0], school = pair[1];
+      return ifMissing('schools/' + id, school, 'schools/' + id).then(function() {
+        if (typeof buildPublicSchoolDoc === 'function') {
+          return ifMissing('schoolsPublic/' + id, buildPublicSchoolDoc(school), 'schoolsPublic/' + id);
+        }
+      });
+    }));
+
+    // 5) Remove the password field leaked into superAdmin/config
+    var pPurge = fs.doc('superAdmin/config').get().then(function(d) {
+      if (!d.exists || typeof d.data().password === 'undefined') return;
+      var upd = {};
+      upd.password = firebase.firestore.FieldValue.delete();
+      return fs.doc('superAdmin/config').set(upd, { merge: true }).then(function() {
+        seeded.push('superAdmin/config (password removed)');
+      });
+    }).catch(function(e) { console.warn('Password purge failed', e); });
+
+    Promise.all([pTenants, pCfg, pApps, pSchools, pPurge]).then(function() {
+      if (seeded.length) console.info('[SA] Seeded cloud docs:', seeded.join(', '));
+    });
+  }
 
   function startSuperAdminSync() {
+    seedCloudIfMissing();
     // Platform config listener
     _saUnsubs.push(
       firebase.firestore().collection('platform').doc('config').onSnapshot(function(doc) {
@@ -1063,16 +1136,33 @@ firebase.auth().onAuthStateChanged(function(user) {
         if (doc.exists) {
           var data = doc.data();
           try {
+            delete data.password; // never mirror credentials back to localStorage
             var SUPER_ADMIN_KEY = 'eduverse_super_admin';
             var existing = localStorage.getItem(SUPER_ADMIN_KEY);
             if (existing) {
               var parsed = JSON.parse(existing);
+              delete parsed.password;
               Object.assign(parsed, data);
               localStorage.setItem(SUPER_ADMIN_KEY, JSON.stringify(parsed));
             }
           } catch(e) {}
         }
       }, function(err) { console.warn('SA config sync error', err); })
+    );
+
+    // Applications list listener (super-admin-only doc)
+    _saUnsubs.push(
+      firebase.firestore().collection('applications').doc('list').onSnapshot(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          if (data && Array.isArray(data.applications)) {
+            try {
+              localStorage.setItem('eduverse_school_applications', JSON.stringify(data.applications));
+              if (typeof renderActivePanel === 'function') renderActivePanel();
+            } catch(e) {}
+          }
+        }
+      }, function(err) { console.warn('SA applications sync error', err); })
     );
   }
 
@@ -1093,8 +1183,14 @@ firebase.auth().onAuthStateChanged(function(user) {
         console.warn('SA platform push failed', e);
       });
     } else if (type === 'tenants') {
-      firebase.firestore().collection('tenants').doc('list').set(data, { merge: true }).catch(function(e) {
+      // tenants/list is world-readable — strip credentials
+      var safe = { tenants: (typeof sanitizeTenantsForCloud === 'function') ? sanitizeTenantsForCloud(data.tenants || []) : (data.tenants || []) };
+      firebase.firestore().collection('tenants').doc('list').set(safe, { merge: true }).catch(function(e) {
         console.warn('SA tenants push failed', e);
+      });
+    } else if (type === 'applications') {
+      firebase.firestore().collection('applications').doc('list').set({ applications: data || [] }, { merge: true }).catch(function(e) {
+        console.warn('SA applications push failed', e);
       });
     }
   };
@@ -1105,6 +1201,15 @@ firebase.auth().onAuthStateChanged(function(user) {
     window.saveTenants = function(t) {
       _origSaveTenantsSA(t);
       window._saPushToFirestore('tenants', { tenants: t });
+    };
+  }
+
+  // Patch saveApplications to push to Firestore on super admin page
+  var _origSaveAppsSA = window.saveApplications;
+  if (typeof _origSaveAppsSA === 'function') {
+    window.saveApplications = function(apps) {
+      _origSaveAppsSA(apps);
+      window._saPushToFirestore('applications', apps);
     };
   }
 })();

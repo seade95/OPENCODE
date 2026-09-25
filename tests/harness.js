@@ -123,6 +123,7 @@ function loadProjectFiles() {
       K12_CONFIG,
       getTenants, saveTenants, createTenant, getSuperAdmin, saveSuperAdmin,
       createSuperAdmin, verifySuperAdmin, getTenantDataKey, genTenantId,
+      sanitizeTenantsForCloud, buildPublicSchoolDoc, PUBLIC_SCHOOL_KEYS,
       getDataKey, __saveCurrentData,
       eduverseUser, eduverseSignup, eduverseLogin, eduverseLogout,
       getMySchools, getMembershipForSchool, createSchoolPage,

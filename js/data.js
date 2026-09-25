@@ -13,7 +13,7 @@ var _dataHookAPI = {
 window.dataHooks = _dataHookAPI;
 
 // ===== APP VERSION (bump to force cache refresh) =====
-var APP_VERSION = '2026.06.19.1';
+var APP_VERSION = '2026.09.25.1';
 (function() {
   var key = 'app_cache_version';
   try {
@@ -33,6 +33,28 @@ function getDataKey() {
     if (activeTenant) return 'schoolData_' + activeTenant;
   } catch(e) {}
   return DATA_KEY;
+}
+
+// Keys of a school's data that are safe to publish to
+// schoolsPublic/{schoolId} — the world-readable projection the
+// anonymous landing page renders from. Everything else (students,
+// fees, staff records, credentials, payment settings…) stays in
+// the staff-only schools/{schoolId} document.
+var PUBLIC_SCHOOL_KEYS = [
+  'schoolProfile', 'schoolName', 'schoolMotto', 'schoolTier',
+  'gallery', 'websiteConfig', 'whatsappNumber', 'broadcasts',
+  'heroSlides', 'translations', 'currentLanguage', 'schoolLogo'
+];
+
+function buildPublicSchoolDoc(schoolData, version) {
+  var doc = {};
+  if (!schoolData || typeof schoolData !== 'object') schoolData = {};
+  for (var i = 0; i < PUBLIC_SCHOOL_KEYS.length; i++) {
+    var k = PUBLIC_SCHOOL_KEYS[i];
+    if (typeof schoolData[k] !== 'undefined') doc[k] = schoolData[k];
+  }
+  doc._version = typeof version === 'number' ? version : (schoolData._version || Date.now());
+  return doc;
 }
 
 function getDefaultData() {

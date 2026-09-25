@@ -830,6 +830,91 @@ testGroup('Offline Sync - Queue Data Integrity', () => {
   localStorage.removeItem(QUEUE_KEY);
 });
 
+// ===== PUBLIC SCHOOL PROJECTION =====
+testGroup('buildPublicSchoolDoc', () => {
+  const full = {
+    students: [{ id: 'STU001' }],
+    teachers: [{ id: 'TCH001' }],
+    fees: [{ id: 'FEE001' }],
+    admins: [{ id: 'ADM001', password: 'secret' }],
+    paymentGateway: { secret: 'sk_live' },
+    schoolName: 'Test School',
+    schoolMotto: 'Learn Always',
+    schoolTier: 'full_k12',
+    schoolProfile: { schoolName: 'Test School', logoUrl: 'logo.png' },
+    gallery: [{ id: 'G1', url: 'a.jpg' }],
+    websiteConfig: { heroTitle: 'Welcome' },
+    whatsappNumber: '123456',
+    broadcasts: [{ id: 'BC1', subject: 'Hi' }],
+    _version: 12345
+  };
+
+  const doc = EV.buildPublicSchoolDoc(full, 999);
+
+  assertEq(doc.schoolName, 'Test School', 'public doc includes schoolName');
+  assertEq(doc.schoolMotto, 'Learn Always', 'public doc includes schoolMotto');
+  assertEq(doc.schoolTier, 'full_k12', 'public doc includes schoolTier');
+  assertEq(doc.whatsappNumber, '123456', 'public doc includes whatsappNumber');
+  assertEq(doc._version, 999, 'explicit version wins');
+  assert(Array.isArray(doc.gallery) && doc.gallery.length === 1, 'public doc includes gallery');
+  assert(typeof doc.schoolProfile === 'object', 'public doc includes schoolProfile');
+  assert(typeof doc.websiteConfig === 'object', 'public doc includes websiteConfig');
+  assert(Array.isArray(doc.broadcasts), 'public doc includes broadcasts');
+
+  assert(typeof doc.students === 'undefined', 'public doc excludes students');
+  assert(typeof doc.teachers === 'undefined', 'public doc excludes teachers');
+  assert(typeof doc.fees === 'undefined', 'public doc excludes fees');
+  assert(typeof doc.admins === 'undefined', 'public doc excludes admins');
+  assert(typeof doc.paymentGateway === 'undefined', 'public doc excludes paymentGateway');
+
+  // Empty / invalid input
+  const empty = EV.buildPublicSchoolDoc(null);
+  assertEq(typeof empty._version, 'number', 'null input yields numeric _version');
+  assertEq(EV.buildPublicSchoolDoc({ schoolName: 'X' }).schoolName, 'X', 'minimal input works');
+
+  // Version falls back to source data version
+  assertEq(EV.buildPublicSchoolDoc(full)._version, 12345, 'falls back to data._version');
+  assertEq(EV.buildPublicSchoolDoc({})._version > 0, true, 'generates version when missing');
+
+  // No secret keys can ever appear
+  const keys = Object.keys(doc);
+  assert(keys.indexOf('admins') === -1 && keys.indexOf('paymentGateway') === -1, 'no secret top-level keys');
+});
+
+// ===== TENANT CLOUD SANITIZATION =====
+testGroup('sanitizeTenantsForCloud', () => {
+  const tenants = [
+    { id: 'TNT1', name: 'Alpha School', slug: 'alpha', adminPass: 'P@ss1', adminEmail: 'admin@alpha.com', email: 'info@alpha.com' },
+    { id: 'TNT2', name: 'Beta School', slug: 'beta', password: 'hunter2', applications: [{ id: 'APP1' }] },
+    { id: 'TNT3', name: 'Gamma' }
+  ];
+
+  const safe = EV.sanitizeTenantsForCloud(tenants);
+
+  assertEq(safe.length, 3, 'all tenants preserved');
+  assertEq(safe[0].id, 'TNT1', 'tenant id preserved');
+  assertEq(safe[0].name, 'Alpha School', 'tenant name preserved');
+  assertEq(safe[0].slug, 'alpha', 'tenant slug preserved');
+  assertEq(safe[0].email, 'info@alpha.com', 'public contact email preserved');
+  assert(typeof safe[0].adminPass === 'undefined', 'adminPass stripped');
+  assert(typeof safe[0].adminEmail === 'undefined', 'adminEmail stripped');
+  assert(typeof safe[1].password === 'undefined', 'password stripped');
+  assert(typeof safe[1].applications === 'undefined', 'applications payload stripped');
+  assertEq(safe[2].name, 'Gamma', 'tenant without secrets untouched');
+
+  // Original not mutated
+  assertEq(tenants[0].adminPass, 'P@ss1', 'input array not mutated');
+
+  // Invalid inputs
+  assertEq(EV.sanitizeTenantsForCloud(null).length, 0, 'null returns empty array');
+  assertEq(EV.sanitizeTenantsForCloud('nope').length, 0, 'string returns empty array');
+  assertEq(EV.sanitizeTenantsForCloud([null, 'x']).length, 0, 'junk entries filtered');
+
+  // Round-trips through JSON (as it would into Firestore)
+  const json = JSON.parse(JSON.stringify({ tenants: safe }));
+  assert(typeof json.tenants[0].adminPass === 'undefined', 'no credentials survive JSON round-trip');
+});
+
 // ===== SUMMARY =====
 console.log('\n===================');
 console.log(`Results: ${passed} passed, ${failed} failed`);
