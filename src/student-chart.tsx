@@ -586,27 +586,79 @@ export interface AttendanceTrendPoint {
 
 export const StudentAttendanceTrendChart: React.FC<{ studentId?: string }> = () => {
   const [selectedTerm, setSelectedTerm] = useState('Term 1 (2025-2026)');
+  const [updateNonce, setUpdateNonce] = useState(0);
 
-  const monthlyTrends: Record<string, AttendanceTrendPoint[]> = {
-    'Term 1 (2025-2026)': [
-      { month: 'Sep 2025', rate: 95, presentDays: 20, absentDays: 1, lateDays: 1 },
-      { month: 'Oct 2025', rate: 91, presentDays: 19, absentDays: 2, lateDays: 0 },
-      { month: 'Nov 2025', rate: 85, presentDays: 18, absentDays: 3, lateDays: 1 },
-      { month: 'Dec 2025', rate: 93, presentDays: 14, absentDays: 1, lateDays: 0 },
-      { month: 'Jan 2026', rate: 71, presentDays: 13, absentDays: 5, lateDays: 2 },
-      { month: 'Feb 2026', rate: 88, presentDays: 17, absentDays: 2, lateDays: 1 },
-      { month: 'Mar 2026', rate: 92, presentDays: 19, absentDays: 1, lateDays: 1 },
-    ],
-    'Term 2 (2025-2026)': [
-      { month: 'Apr 2026', rate: 96, presentDays: 21, absentDays: 1, lateDays: 0 },
-      { month: 'May 2026', rate: 90, presentDays: 18, absentDays: 2, lateDays: 0 },
-      { month: 'Jun 2026', rate: 94, presentDays: 16, absentDays: 1, lateDays: 0 },
-    ]
+  React.useEffect(() => {
+    const handleUpdate = () => {
+      setUpdateNonce((prev) => prev + 1);
+    };
+    window.addEventListener('attendanceDataUpdated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('attendanceDataUpdated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  // Compute live attendance trend points from (window as any).data.attendance
+  const computeLiveTrends = (): Record<string, AttendanceTrendPoint[]> => {
+    const windowObj = window as any;
+    const baseList: any[] = (windowObj.data && Array.isArray(windowObj.data.attendance)) ? windowObj.data.attendance : [];
+
+    // Grouping by Month Key (e.g., 'Oct 2026')
+    const monthStats: Record<string, { present: number; absent: number; late: number; total: number }> = {
+      'Sep 2025': { present: 20, absent: 1, late: 1, total: 22 },
+      'Oct 2025': { present: 19, absent: 2, late: 0, total: 21 },
+      'Nov 2025': { present: 18, absent: 3, late: 1, total: 22 },
+      'Dec 2025': { present: 14, absent: 1, late: 0, total: 15 },
+      'Jan 2026': { present: 13, absent: 5, late: 2, total: 20 },
+      'Feb 2026': { present: 17, absent: 2, late: 1, total: 20 },
+      'Mar 2026': { present: 19, absent: 1, late: 1, total: 21 },
+    };
+
+    baseList.forEach((item: any) => {
+      if (!item || !item.date) return;
+      const d = new Date(item.date);
+      if (isNaN(d.getTime())) return;
+      const monthKey = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      if (!monthStats[monthKey]) {
+        monthStats[monthKey] = { present: 0, absent: 0, late: 0, total: 0 };
+      }
+      monthStats[monthKey].total += 1;
+      const st = (item.status || '').toLowerCase();
+      if (st === 'present') monthStats[monthKey].present += 1;
+      else if (st === 'late') monthStats[monthKey].late += 1;
+      else if (st === 'absent') monthStats[monthKey].absent += 1;
+      else monthStats[monthKey].present += 1;
+    });
+
+    const term1Points: AttendanceTrendPoint[] = Object.keys(monthStats).map((mKey) => {
+      const stats = monthStats[mKey];
+      const tot = stats.total || 1;
+      const rate = Math.round(((stats.present + stats.late * 0.5) / tot) * 100);
+      return {
+        month: mKey,
+        rate: Math.min(100, Math.max(0, rate)),
+        presentDays: stats.present,
+        absentDays: stats.absent,
+        lateDays: stats.late
+      };
+    });
+
+    return {
+      'Term 1 (2025-2026)': term1Points,
+      'Term 2 (2025-2026)': [
+        { month: 'Apr 2026', rate: 96, presentDays: 21, absentDays: 1, lateDays: 0 },
+        { month: 'May 2026', rate: 90, presentDays: 18, absentDays: 2, lateDays: 0 },
+        { month: 'Jun 2026', rate: 94, presentDays: 16, absentDays: 1, lateDays: 0 },
+      ]
+    };
   };
 
+  const monthlyTrends = computeLiveTrends();
   const currentData = monthlyTrends[selectedTerm] || monthlyTrends['Term 1 (2025-2026)'];
-  const avgRate = Math.round(currentData.reduce((acc, curr) => acc + curr.rate, 0) / currentData.length);
-  const lowestMonth = [...currentData].sort((a, b) => a.rate - b.rate)[0];
+  const avgRate = currentData.length ? Math.round(currentData.reduce((acc, curr) => acc + curr.rate, 0) / currentData.length) : 100;
+  const lowestMonth = currentData.length ? [...currentData].sort((a, b) => a.rate - b.rate)[0] : { month: 'Current', rate: 100 };
 
   return (
     <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', marginBottom: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
