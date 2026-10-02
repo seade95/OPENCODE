@@ -137,6 +137,69 @@ app.post('/api/virtual-accounts/reconcile', (req, res) => {
   });
 });
 
+// ===== 4. Global Platform Cross-Device Activity Telemetry & Sync Stream =====
+interface GlobalActivityLog {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  user: string;
+  role: string;
+  tenantId: string;
+  schoolName: string;
+  timestamp: string;
+  ip?: string;
+  device?: string;
+}
+
+const globalActivityLogs: GlobalActivityLog[] = [
+  {
+    id: 'ACT_INIT_1',
+    type: 'system_startup',
+    title: 'Global Telemetry Service Active',
+    description: 'Cross-platform real-time synchronization node initialized across all global devices & tenant institutions.',
+    user: 'System Engine',
+    role: 'superadmin',
+    tenantId: 'main_tenant',
+    schoolName: 'EduVerse International Academy',
+    timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    device: 'Server Node'
+  }
+];
+
+app.get('/api/activity/global', (req, res) => {
+  const limit = parseInt(req.query.limit as string, 10) || 50;
+  res.json({
+    success: true,
+    count: globalActivityLogs.length,
+    activities: globalActivityLogs.slice(0, limit)
+  });
+});
+
+app.post('/api/activity/global', (req, res) => {
+  const { type, title, description, user, role, tenantId, schoolName, device } = req.body;
+  const newLog: GlobalActivityLog = {
+    id: 'ACT_' + Date.now() + '_' + Math.floor(Math.random() * 899 + 100),
+    type: type || 'user_action',
+    title: title || 'User Activity',
+    description: description || 'Platform interaction recorded',
+    user: user || 'Anonymous User',
+    role: role || 'user',
+    tenantId: tenantId || 'default',
+    schoolName: schoolName || 'EduVerse Academy',
+    timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    ip: (req.ip || '127.0.0.1').toString(),
+    device: device || (req.headers['user-agent']?.includes('Mobile') ? 'Mobile App' : 'Web Dashboard')
+  };
+
+  globalActivityLogs.unshift(newLog);
+  if (globalActivityLogs.length > 200) {
+    globalActivityLogs.pop();
+  }
+
+  res.json({ success: true, logged: newLog });
+});
+
 // Serve built static files with optimized HTTP Caching headers
 const staticOptions = {
   maxAge: '1y',

@@ -308,13 +308,20 @@ function renderSaOverview(container) {
   }
   html += '</div>';
 
-  // Recent activity log
-  var log = getActivityLog().slice(0, 10);
-  html += '<div class="sa-section"><h3><i class="fas fa-history"></i> Recent Activity</h3>'
-    + (log.length ? '<div class="sa-log">' + log.map(function(l) {
-      return '<div class="sa-log-item"><span class="sa-log-time">' + (l.time || '') + '</span><span class="sa-log-msg">' + esc(l.msg) + '</span></div>';
-    }).join('') + '</div>' : '<div class="sa-empty-state"><i class="fas fa-history"></i><p>No activity recorded yet.</p></div>')
+  // Global Real-Time Telemetry Stream & Recent activity log
+  html += '<div class="sa-section">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">'
+    + '  <h3 style="margin:0;"><i class="fas fa-satellite-dish" style="color:#2563eb;"></i> Live Global Activity Stream & Cross-Device Telemetry</h3>'
+    + '  <button class="btn btn-sm btn-outline" onclick="fetchLiveGlobalActivities()"><i class="fas fa-sync"></i> Refresh Telemetry</button>'
+    + '</div>'
+    + '<div id="saLiveGlobalActivityFeed" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;max-height:320px;overflow-y:auto;">'
+    + '  <div style="font-size:13px;color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Loading live global activities across all devices & tenant schools...</div>'
+    + '</div>'
     + '</div>';
+
+  setTimeout(function() {
+    fetchLiveGlobalActivities();
+  }, 100);
 
   // Quick actions
   html += '<div class="sa-section"><h3><i class="fas fa-bolt"></i> Quick Actions</h3>'
@@ -1212,7 +1219,7 @@ function saResetPlatform() {
   renderSaTab('platform');
 }
 
-// ===== Activity Log =====
+// ===== Activity Log & Global Telemetry Stream =====
 function getActivityLog() {
   try {
     var raw = localStorage.getItem('eduverse_activity_log');
@@ -1225,7 +1232,58 @@ function saLogActivity(msg) {
   log.unshift({ time: new Date().toLocaleString(), msg: msg });
   if (log.length > 100) log.length = 100;
   localStorage.setItem('eduverse_activity_log', JSON.stringify(log));
+
+  if (typeof window.logGlobalActivity === 'function') {
+    window.logGlobalActivity({
+      type: 'superadmin_action',
+      title: 'Super Admin Action',
+      description: msg,
+      user: 'Super Admin',
+      role: 'superadmin'
+    });
+  }
 }
+
+function fetchLiveGlobalActivities() {
+  var feed = document.getElementById('saLiveGlobalActivityFeed');
+  if (!feed) return;
+
+  fetch('/api/activity/global?limit=25')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data && data.success && Array.isArray(data.activities) && data.activities.length) {
+        var itemsHtml = data.activities.map(function(act) {
+          var roleColor = act.role === 'superadmin' ? '#ef4444' : (act.role === 'student' ? '#2563eb' : '#059669');
+          return '<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:12px;">'
+            + '  <div>'
+            + '    <div style="font-weight:700;color:#0f172a;display:flex;align-items:center;gap:8px;">'
+            + '      <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + roleColor + ';"></span>'
+            + '      ' + esc(act.title)
+            + '      <span style="font-size:11px;font-weight:600;color:#64748b;background:#eff6ff;padding:2px 8px;border-radius:12px;">' + esc(act.schoolName) + '</span>'
+            + '    </div>'
+            + '    <p style="margin:2px 0 0;color:#475569;">' + esc(act.description) + '</p>'
+            + '    <span style="font-size:11px;color:#94a3b8;">User: ' + esc(act.user) + ' (' + esc(act.role) + ') • Device: ' + esc(act.device || 'Web Browser') + '</span>'
+            + '  </div>'
+            + '  <span style="font-size:11px;color:#64748b;white-space:nowrap;margin-left:12px;">' + esc(act.timestamp) + '</span>'
+            + '</div>';
+        }).join('');
+        feed.innerHTML = itemsHtml;
+      } else {
+        feed.innerHTML = '<div style="font-size:13px;color:#64748b;">No global activity recorded yet. Telemetry node active.</div>';
+      }
+    })
+    .catch(function() {
+      var log = getActivityLog().slice(0, 10);
+      if (log.length) {
+        feed.innerHTML = log.map(function(l) {
+          return '<div style="padding:8px 0;border-bottom:1px solid #e2e8f0;font-size:12px;"><span style="font-weight:700;">' + esc(l.time) + ':</span> ' + esc(l.msg) + '</div>';
+        }).join('');
+      } else {
+        feed.innerHTML = '<div style="font-size:13px;color:#64748b;">Telemetry active. Activity log ready.</div>';
+      }
+    });
+}
+window.fetchLiveGlobalActivities = fetchLiveGlobalActivities;
 
 // ===== Init on load: propagate platform contact info to the landing page =====
 // This is called from renderLandingPageSections in schoolprofile.js

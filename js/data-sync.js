@@ -131,6 +131,42 @@
     };
   }
 
+  function logGlobalActivity(info) {
+    if (!info) return;
+    var user = info.user || (window.currentStudent ? window.currentStudent.name : null) || 'Platform User';
+    var role = info.role || (window.currentStudent ? 'student' : 'admin');
+    var tenantId = info.tenantId || localStorage.getItem('activeTenant') || 'default';
+    var schoolName = info.schoolName || (window.data && window.data.schoolProfile ? window.data.schoolProfile.name : 'EduVerse Academy');
+
+    var logItem = {
+      type: info.type || 'user_action',
+      title: info.title || 'Platform Interaction',
+      description: info.description || info.msg || 'User activity recorded across platform',
+      user: user,
+      role: role,
+      tenantId: tenantId,
+      schoolName: schoolName,
+      device: (navigator.userAgent && navigator.userAgent.indexOf('Mobile') !== -1) ? 'Mobile App / Tablet' : 'Web Dashboard'
+    };
+
+    // Save locally
+    try {
+      var logs = JSON.parse(localStorage.getItem('eduverse_activity_log') || '[]');
+      logs.unshift(logItem);
+      if (logs.length > 50) logs.pop();
+      localStorage.setItem('eduverse_activity_log', JSON.stringify(logs));
+    } catch(e) {}
+
+    // Dispatch real-time telemetry to global server API
+    if (navigator.onLine) {
+      fetch('/api/activity/global', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(logItem)
+      }).catch(function() {});
+    }
+  }
+
   // Initialize status on DOM ready
   document.addEventListener('DOMContentLoaded', function() {
     initSyncBanner();
@@ -141,4 +177,6 @@
 
   window.EduVerseDataSync.updateStatus = updateStatusIndicators;
   window.EduVerseDataSync.notifyChangeSaved = notifyChangeSaved;
+  window.EduVerseDataSync.logGlobalActivity = logGlobalActivity;
+  window.logGlobalActivity = logGlobalActivity;
 })();
