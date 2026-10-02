@@ -1,0 +1,6 @@
+{
+  "name": "EduVerse",
+  "description": "Institute of Technology & Management - Complete school management platform featuring student and teacher portals, admissions, CBT exams, grading, payments, and the WebDev Copilot Git integration workspace.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
