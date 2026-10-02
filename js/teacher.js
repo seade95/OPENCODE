@@ -126,9 +126,9 @@
     var filtered = fullRoster.filter(function(s) {
       // Search term matching
       if (searchQuery) {
-        var matchName = s.name.toLowerCase().indexOf(searchQuery) !== -1;
-        var matchId = s.id.toLowerCase().indexOf(searchQuery) !== -1;
-        var matchContact = s.contact.toLowerCase().indexOf(searchQuery) !== -1;
+        var matchName = s.name && typeof s.name === 'string' ? s.name.toLowerCase().indexOf(searchQuery) !== -1 : false;
+        var matchId = s.id && typeof s.id === 'string' ? s.id.toLowerCase().indexOf(searchQuery) !== -1 : false;
+        var matchContact = s.contact && typeof s.contact === 'string' ? s.contact.toLowerCase().indexOf(searchQuery) !== -1 : false;
         if (!matchName && !matchId && !matchContact) return false;
       }
 

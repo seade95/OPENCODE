@@ -191,7 +191,7 @@
 
     var facName = input.value.trim();
     var profile = getSchoolProfile();
-    if (!profile.facilities) profile.facilities = [];
+    if (!Array.isArray(profile.facilities)) profile.facilities = [];
 
     if (profile.facilities.indexOf(facName) === -1) {
       profile.facilities.push(facName);
