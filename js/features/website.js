@@ -18,14 +18,14 @@
    */
   var PRESET_TEMPLATES = {
     k12: {
-      name: 'EduVerse International Academy',
-      motto: 'Excellence in Knowledge, Character & Digital Innovation',
-      about: 'EduVerse Academy is a premier K-12 institution committed to nurturing academic leaders through modern digital curriculum, world-class science labs, and holistic character building.',
-      established: '2012',
-      tier: 'Gold Partner Accredited K-12',
-      address: '12 Innovation Boulevard, Victoria Island, Lagos',
-      phone: '+234 800 338 8377',
-      email: 'admissions@eduverse.academy',
+      name: 'Gracefield International School',
+      motto: 'Nurturing Global Leaders for Tomorrow',
+      about: 'Gracefield International School is a premier K-12 institution committed to nurturing academic leaders through modern digital curriculum, world-class science labs, and holistic character building.',
+      established: '2015',
+      tier: 'Full K-12 Partner Accredited',
+      address: '45 Gracefield Drive, Ikeja, Lagos',
+      phone: '+234 802 345 6789',
+      email: 'info@gracefield.edu.ng',
       logoUrl: 'icons/icon.svg',
       bannerUrl: 'images/services/library.jpg',
       themeColor: '#0f2440',
@@ -81,16 +81,16 @@
     if (!container) return;
 
     var currentProfile = typeof getSchoolProfile === 'function' ? getSchoolProfile() : {
-      name: 'EduVerse International Academy',
-      motto: 'Excellence in Knowledge & Character',
+      name: 'Gracefield International School',
+      motto: 'Nurturing Global Leaders for Tomorrow',
       about: 'Welcome to our official school portal.',
-      address: '123 Education Boulevard',
-      phone: '+234 800 000 0000',
-      email: 'admissions@school.edu',
-      slug: 'eduverse-international-academy'
+      address: '45 Gracefield Drive, Ikeja, Lagos',
+      phone: '+234 802 345 6789',
+      email: 'info@gracefield.edu.ng',
+      slug: 'gracefield-international'
     };
 
-    var slug = currentProfile.slug || 'eduverse-international-academy';
+    var slug = currentProfile.slug || 'gracefield-international';
 
     var html = ''
       + '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:14px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.03);margin-bottom:20px;">'

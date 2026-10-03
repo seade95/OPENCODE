@@ -95,14 +95,14 @@
     } catch (e) {}
 
     return {
-      name: 'EduVerse International Academy',
-      motto: 'Excellence in Knowledge, Character & Innovation',
-      about: 'EduVerse Academy is a premier K-12 institution committed to nurturing academic leaders through modern digital curriculum, world-class science labs, and holistic character building.',
-      established: '2012',
-      tier: 'Gold Partner Accredited',
-      address: '12 Innovation Boulevard, Victoria Island, Lagos',
-      phone: '+234 800 338 8377',
-      email: 'admissions@eduverse.academy',
+      name: 'Gracefield International School',
+      motto: 'Nurturing Global Leaders for Tomorrow',
+      about: 'Gracefield International School is a premier K-12 institution committed to nurturing academic leaders through modern digital curriculum, world-class science labs, and holistic character building.',
+      established: '2015',
+      tier: 'Full K-12 Partner Accredited',
+      address: '45 Gracefield Drive, Ikeja, Lagos',
+      phone: '+234 802 345 6789',
+      email: 'info@gracefield.edu.ng',
       logoUrl: 'icons/icon.svg',
       bannerUrl: 'images/services/library.jpg',
       themeColor: '#0f2440',
@@ -171,8 +171,8 @@
     if (!profile) profile = getSchoolProfile();
     if (!profile) return;
 
-    var schoolName = profile.name || 'EduVerse International Academy';
-    var schoolMotto = profile.motto || 'Excellence in Knowledge, Character & Innovation';
+    var schoolName = profile.name || 'Gracefield International School';
+    var schoolMotto = profile.motto || 'Nurturing Global Leaders for Tomorrow';
 
     // 1. Navigation & Brand Labels
     var nameEls = document.querySelectorAll('#navSchoolName, .school-name-display, #footerSchoolName');

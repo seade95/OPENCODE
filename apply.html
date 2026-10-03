@@ -203,7 +203,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#2563eb;box-sh
 
     var tenants = typeof getTenants === 'function' ? getTenants() : [];
     var params = new URLSearchParams(window.location.search);
-    var targetSlug = params.get('school') || params.get('s') || localStorage.getItem('activeTenant') || 'eduverse-international-academy';
+    var targetSlug = params.get('school') || params.get('s') || localStorage.getItem('activeTenant') || 'gracefield-international';
 
     select.innerHTML = tenants.map(function(t) {
       var slug = t.slug || t.id;

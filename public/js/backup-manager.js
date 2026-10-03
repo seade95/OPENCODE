@@ -73,7 +73,7 @@
     var attendanceData = dataObj.attendance || [];
     var gradesData = dataObj.results || [];
     var feesData = dataObj.payments || [];
-    var schoolName = (dataObj.schoolProfile ? dataObj.schoolProfile.name : null) || 'EduVerse International Academy';
+    var schoolName = (dataObj.schoolProfile ? dataObj.schoolProfile.name : null) || 'Gracefield International School';
 
     var payload = {
       attendanceData: attendanceData,

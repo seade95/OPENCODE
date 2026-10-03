@@ -219,7 +219,7 @@
   </div>
 
   <footer style="background:#0f2440;color:#94a3b8;padding:24px;text-align:center;font-size:13px;border-top:1px solid #1e293b;">
-    <p style="margin:0;">&copy; <span id="footerYear">2026</span> <span id="footerSchoolName">EduVerse International Academy</span>. Powered by EduVerse Multi-Tenant Platform.</p>
+    <p style="margin:0;">&copy; <span id="footerYear">2026</span> <span id="footerSchoolName">Gracefield International School</span>. Powered by EduVerse Multi-Tenant Platform.</p>
   </footer>
 
   <script src="js/namespace.js"></script>
@@ -228,7 +228,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var params = new URLSearchParams(window.location.search);
-      var schoolSlug = params.get('school') || params.get('s') || localStorage.getItem('activeTenant') || 'demo-school';
+      var schoolSlug = params.get('school') || params.get('s') || localStorage.getItem('activeTenant') || 'gracefield-international';
 
       var profile = null;
       var tenant = null;
@@ -248,11 +248,11 @@
 
       if (!profile) {
         profile = {
-          name: (tenant ? tenant.name : null) || 'EduVerse International Academy',
-          motto: 'Excellence in Knowledge, Character & Digital Innovation',
+          name: (tenant ? tenant.name : null) || 'Gracefield International School',
+          motto: 'Nurturing Global Leaders for Tomorrow',
           about: 'Premier K-12 institution committed to academic leadership, digital curriculum, and character building.',
-          address: '12 Innovation Boulevard, Lagos',
-          phone: '+234 800 338 8377',
+          address: '45 Gracefield Drive, Ikeja, Lagos',
+          phone: '+234 802 345 6789',
           email: 'admissions@eduverse.academy',
           slug: schoolSlug
         };

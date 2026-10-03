@@ -13,24 +13,12 @@ window.normalizeSlug = normalizeSlug;
 
 var DEFAULT_SYSTEM_TENANTS = [
   {
-    id: 'eduverse-international-academy',
-    name: 'EduVerse International Academy',
-    slug: 'eduverse-international-academy',
-    motto: 'Excellence in Knowledge, Character & Innovation',
-    status: 'active',
-    tier: 'Gold Partner Accredited',
-    address: '12 Innovation Boulevard, Victoria Island, Lagos',
-    phone: '+234 800 338 8377',
-    email: 'admissions@eduverse.academy',
-    logo: 'icons/icon.svg'
-  },
-  {
     id: 'gracefield-international',
     name: 'Gracefield International School',
     slug: 'gracefield-international',
     motto: 'Nurturing Global Leaders for Tomorrow',
     status: 'active',
-    tier: 'Full K-12 Partner',
+    tier: 'Full K-12 Partner Accredited',
     address: '45 Gracefield Drive, Ikeja, Lagos',
     phone: '+234 802 345 6789',
     email: 'info@gracefield.edu.ng',

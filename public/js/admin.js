@@ -468,7 +468,7 @@ function saveWebsiteConfig() {
 }
 
 function previewWebsite() {
-  var slug = localStorage.getItem('activeTenant') || 'eduverse-international-academy';
+  var slug = localStorage.getItem('activeTenant') || 'gracefield-international';
   try {
     var p = typeof getSchoolProfile === 'function' ? getSchoolProfile() : null;
     if (p && p.slug) slug = p.slug;
