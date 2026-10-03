@@ -86,19 +86,25 @@ function syncSession() {
   if (s.type === 'admin') {
     if (!currentAdmin && data && data.admins) currentAdmin = data.admins.find(function(a) { return a.id === s.user.id; }) || null;
     if (!currentAdmin && s.user) currentAdmin = s.user;
-    if (currentAdmin && typeof showAdminPortal === 'function') showAdminPortal();
   } else if (s.type === 'student') {
     if (!currentStudent && data && data.students) currentStudent = data.students.find(function(st) { return st.id === s.user.id; }) || null;
     if (!currentStudent && s.user) currentStudent = s.user;
-    if (currentStudent && typeof renderStudentPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var sp = document.getElementById('studentPage'); if (sp) sp.classList.add('active'); renderStudentPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
   } else if (s.type === 'teacher') {
     if (!currentTeacher && data && data.teachers) currentTeacher = data.teachers.find(function(t) { return t.id === s.user.id; }) || null;
     if (!currentTeacher && s.user) currentTeacher = s.user;
-    if (currentTeacher && typeof renderTeacherPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var tp = document.getElementById('teacherPage'); if (tp) tp.classList.add('active'); renderTeacherPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
   } else if (s.type === 'parent') {
     if (!currentParent && data && data.parents) currentParent = data.parents.find(function(p) { return p.id === s.user.id; }) || null;
     if (!currentParent && s.user) currentParent = s.user;
-    if (currentParent && typeof renderParentPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var pp = document.getElementById('parentPage'); if (pp) pp.classList.add('active'); renderParentPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
+  }
+
+  // Only open portal automatically if URL contains an explicit portal param
+  var params = new URLSearchParams(window.location.search);
+  var portalParam = params.get('portal');
+  if (portalParam) {
+    if (s.type === 'admin' && typeof showAdminPortal === 'function') showAdminPortal();
+    else if (s.type === 'student' && typeof renderStudentPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var sp = document.getElementById('studentPage'); if (sp) sp.classList.add('active'); renderStudentPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
+    else if (s.type === 'teacher' && typeof renderTeacherPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var tp = document.getElementById('teacherPage'); if (tp) tp.classList.add('active'); renderTeacherPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
+    else if (s.type === 'parent' && typeof renderParentPortal === 'function') { document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); }); var pp = document.getElementById('parentPage'); if (pp) pp.classList.add('active'); renderParentPortal(); if (typeof updateNotifBadge === 'function') updateNotifBadge(); }
   }
 }
 
@@ -420,6 +426,12 @@ function showLandingPage() {
     lp.style.display = 'block';
   }
   document.querySelectorAll('.portal-page').forEach(function(p) { p.classList.remove('active'); });
+  var topbar = document.getElementById('eduverse-topbar');
+  if (topbar) topbar.style.display = 'none';
+  var app = document.getElementById('eduverse-app');
+  if (app) app.style.display = 'none';
+  var navbar = document.getElementById('navbar');
+  if (navbar) navbar.style.display = 'flex';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 window.showLandingPage = showLandingPage;
