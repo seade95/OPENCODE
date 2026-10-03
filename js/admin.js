@@ -458,11 +458,22 @@ function printTranscript() {
 }
 
 function saveWebsiteConfig() {
-  if (typeof toast === 'function') toast('School website config saved!', 'success');
+  if (typeof window.EduVerseWebsite?.saveFromWebsiteBuilder === 'function') {
+    window.EduVerseWebsite.saveFromWebsiteBuilder();
+  } else if (typeof window.saveSchoolProfile === 'function') {
+    window.saveSchoolProfile();
+  } else if (typeof toast === 'function') {
+    toast('School website configuration saved!', 'success');
+  }
 }
 
 function previewWebsite() {
-  window.open('directory.html', '_blank');
+  var slug = localStorage.getItem('activeTenant') || 'eduverse-international-academy';
+  try {
+    var p = typeof getSchoolProfile === 'function' ? getSchoolProfile() : null;
+    if (p && p.slug) slug = p.slug;
+  } catch(e) {}
+  window.open('school-portal.html?school=' + encodeURIComponent(slug), '_blank');
 }
 
 // Export all handlers to global window scope
