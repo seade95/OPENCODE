@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduVerse — Dedicated School Website & Public Portal</title>
+  <meta name="description" content="EduVerse Dedicated School Public Portal & Website Showcase">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --primary: #0f2440;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --text: #0f172a;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+    .sp-header {
+      background: #0f2440;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .sp-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .sp-brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .sp-nav-btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .sp-hero {
+      position: relative;
+      background: linear-gradient(135deg, #0f2440 0%, #1e3a8a 100%);
+      color: #fff;
+      padding: 60px 24px;
+      text-align: center;
+    }
+    .sp-hero h1 {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+    .sp-hero p {
+      font-size: 16px;
+      opacity: 0.9;
+      max-width: 650px;
+      margin: 0 auto 24px;
+    }
+    .sp-container {
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .sp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .sp-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .sp-card h3 {
+      margin-top: 0;
+      font-size: 18px;
+      color: #0f2440;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sp-badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #fff; }
+    .btn-success { background: #059669; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- Set Tenant Context from URL -->
+  <script>
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var schoolParam = params.get('school') || params.get('s') || params.get('id');
+        if (schoolParam) {
+          var tenantsList = JSON.parse(localStorage.getItem('eduverse_tenants') || '[]');
+          var matched = tenantsList.find(function(t) {
+            return (t.slug && t.slug.toLowerCase() === schoolParam.toLowerCase()) || (t.id && t.id.toLowerCase() === schoolParam.toLowerCase());
+          });
+          if (matched) {
+            localStorage.setItem('activeTenant', matched.id);
+            localStorage.setItem('activeTenantKey', 'schoolData_' + matched.id);
+          } else {
+            localStorage.setItem('activeTenant', schoolParam);
+            localStorage.setItem('activeTenantKey', 'schoolData_' + schoolParam);
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
+
+  <header class="sp-header">
+    <div class="sp-brand">
+      <img id="schoolLogo" src="icons/icon.svg" alt="School Logo" onerror="this.src='icons/icon.svg'">
+      <span id="schoolTitleName">EduVerse Dedicated School Portal</span>
+    </div>
+    <div class="sp-nav-btns">
+      <a id="btnPortalLogin" href="index.html" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Portal Login</a>
+      <a id="btnAdmissions" href="apply.html" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Apply for Admission</a>
+    </div>
+  </header>
+
+  <div class="sp-hero">
+    <span class="sp-badge" style="background:rgba(255,255,255,0.2);color:#fff;margin-bottom:12px;" id="schoolCategoryBadge">K-12 Accredited School</span>
+    <h1 id="heroSchoolName">Loading School Portal...</h1>
+    <p id="heroSchoolMotto">Excellence in Knowledge, Character & Digital Innovation</p>
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px;">
+      <a id="heroApplyBtn" href="apply.html" class="btn btn-success"><i class="fas fa-file-signature"></i> Online Admission Application</a>
+      <a id="heroPortalBtn" href="index.html" class="btn btn-primary"><i class="fas fa-user-shield"></i> Access School Portal</a>
+    </div>
+  </div>
+
+  <div class="sp-container">
+    <div class="sp-grid">
+      <div class="sp-card">
+        <h3><i class="fas fa-info-circle" style="color:#2563eb;"></i> About Our School</h3>
+        <p id="spAboutText" style="font-size:14px;color:#475569;line-height:1.6;">
+          Welcome to our official school portal. We provide a world-class learning experience equipped with STEM labs, digital classrooms, and holistic student development.
+        </p>
+      </div>
+
+      <div class="sp-card">
+        <h3><i class="fas fa-map-marker-alt" style="color:#059669;"></i> Location & Contact</h3>
+        <p style="font-size:13px;color:#475569;line-height:1.6;">
+          <strong>Address:</strong> <span id="spAddress">123 Education Boulevard</span><br>
+          <strong>Phone:</strong> <span id="spPhone">+234 800 123 4567</span><br>
+          <strong>Email:</strong> <span id="spEmail">admissions@school.edu</span><br>
+          <strong>Dedicated URL Slug:</strong> <code id="spSlugCode" style="background:#f1f5f9;padding:2px 6px;border-radius:4px;color:#2563eb;">default-slug</code>
+        </p>
+      </div>
+
+      <div class="sp-card">
+        <h3><i class="fas fa-graduation-cap" style="color:#d97706;"></i> Portal Quick Access</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <a id="linkAdminPortal" href="admin.html" class="btn btn-primary" style="justify-content:center;"><i class="fas fa-user-shield"></i> School Admin Portal</a>
+          <a id="linkStudentPortal" href="index.html?portal=student" class="btn btn-outline" style="color:#0f172a;border-color:#cbd5e1;justify-content:center;"><i class="fas fa-user-graduate"></i> Student Portal</a>
+          <a id="linkTeacherPortal" href="index.html?portal=teacher" class="btn btn-outline" style="color:#0f172a;border-color:#cbd5e1;justify-content:center;"><i class="fas fa-chalkboard-teacher"></i> Teacher Portal</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Popular Programs / Subjects Showcase -->
+    <div class="sp-card" style="margin-bottom:30px;">
+      <h3><i class="fas fa-book-open" style="color:#2563eb;"></i> Academic Programs & Featured Subjects</h3>
+      <div id="spSubjectsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:16px;">
+        <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
+          <h4 style="margin:0 0 6px;font-size:14px;color:#0f2440;"><i class="fas fa-calculator" style="color:#2563eb;"></i> Mathematics & STEM</h4>
+          <p style="margin:0;font-size:12px;color:#64748b;">Comprehensive STEM curriculum and problem solving.</p>
+        </div>
+        <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
+          <h4 style="margin:0 0 6px;font-size:14px;color:#0f2440;"><i class="fas fa-laptop-code" style="color:#059669;"></i> Computer Studies & Coding</h4>
+          <p style="margin:0;font-size:12px;color:#64748b;">ICT labs, cloud coding, and web development.</p>
+        </div>
+        <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
+          <h4 style="margin:0 0 6px;font-size:14px;color:#0f2440;"><i class="fas fa-atom" style="color:#d97706;"></i> Pure & Applied Sciences</h4>
+          <p style="margin:0;font-size:12px;color:#64748b;">Physics, Chemistry, and Biological Science practicals.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="background:#0f2440;color:#94a3b8;padding:24px;text-align:center;font-size:13px;border-top:1px solid #1e293b;">
+    <p style="margin:0;">&copy; <span id="footerYear">2026</span> <span id="footerSchoolName">EduVerse International Academy</span>. Powered by EduVerse Multi-Tenant Platform.</p>
+  </footer>
+
+  <script src="js/namespace.js"></script>
+  <script src="js/multitenant.js"></script>
+  <script src="js/schoolprofile.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var params = new URLSearchParams(window.location.search);
+      var schoolSlug = params.get('school') || params.get('s') || localStorage.getItem('activeTenant') || 'demo-school';
+
+      var profile = null;
+      var tenant = null;
+
+      if (typeof getTenantBySlug === 'function') {
+        tenant = getTenantBySlug(schoolSlug);
+      }
+
+      var dataKey = 'schoolData_' + (tenant ? tenant.id : schoolSlug);
+      try {
+        var rawData = localStorage.getItem(dataKey) || localStorage.getItem('schoolData_' + schoolSlug) || localStorage.getItem('schoolProfile_' + schoolSlug);
+        if (rawData) {
+          var parsed = JSON.parse(rawData);
+          profile = parsed.schoolProfile || parsed;
+        }
+      } catch(e) {}
+
+      if (!profile) {
+        profile = {
+          name: (tenant ? tenant.name : null) || 'EduVerse International Academy',
+          motto: 'Excellence in Knowledge, Character & Digital Innovation',
+          about: 'Premier K-12 institution committed to academic leadership, digital curriculum, and character building.',
+          address: '12 Innovation Boulevard, Lagos',
+          phone: '+234 800 338 8377',
+          email: 'admissions@eduverse.academy',
+          slug: schoolSlug
+        };
+      }
+
+      var name = profile.name || (tenant ? tenant.name : 'School Portal');
+      var slug = profile.slug || (tenant ? tenant.slug : schoolSlug);
+
+      document.title = name + ' — Official Dedicated Public Portal';
+      document.getElementById('schoolTitleName').textContent = name;
+      document.getElementById('heroSchoolName').textContent = name;
+      document.getElementById('heroSchoolMotto').textContent = profile.motto || 'Excellence in Knowledge & Character';
+      document.getElementById('spAboutText').textContent = profile.about || 'Welcome to our official school portal.';
+      document.getElementById('spAddress').textContent = profile.address || '123 School Address';
+      document.getElementById('spPhone').textContent = profile.phone || '+234 800 000 0000';
+      document.getElementById('spEmail').textContent = profile.email || 'contact@school.edu';
+      document.getElementById('spSlugCode').textContent = slug;
+      document.getElementById('footerSchoolName').textContent = name;
+
+      if (profile.logoUrl) {
+        document.getElementById('schoolLogo').src = profile.logoUrl;
+      }
+
+      // Sync links with school slug
+      var encSlug = encodeURIComponent(slug);
+      document.getElementById('btnPortalLogin').href = 'index.html?school=' + encSlug;
+      document.getElementById('btnAdmissions').href = 'apply.html?school=' + encSlug;
+      document.getElementById('heroApplyBtn').href = 'apply.html?school=' + encSlug;
+      document.getElementById('heroPortalBtn').href = 'index.html?school=' + encSlug;
+      document.getElementById('linkAdminPortal').href = 'admin.html?school=' + encSlug;
+      document.getElementById('linkStudentPortal').href = 'index.html?school=' + encSlug + '&portal=student';
+      document.getElementById('linkTeacherPortal').href = 'index.html?school=' + encSlug + '&portal=teacher';
+    });
+  </script>
+
+</body>
+</html>
