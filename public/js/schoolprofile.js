@@ -165,15 +165,128 @@
   }
 
   /**
-   * Synchronize branding elements in UI
+   * Synchronize branding elements in UI across the main webpage
    */
   function syncGlobalBranding(profile) {
     if (!profile) profile = getSchoolProfile();
-    var nameEls = document.querySelectorAll('#navSchoolName, .school-name-display');
-    nameEls.forEach(function(el) { el.textContent = profile.name; });
+    if (!profile) return;
+
+    var schoolName = profile.name || 'EduVerse International Academy';
+    var schoolMotto = profile.motto || 'Excellence in Knowledge, Character & Innovation';
+
+    // 1. Navigation & Brand Labels
+    var nameEls = document.querySelectorAll('#navSchoolName, .school-name-display, #footerSchoolName');
+    nameEls.forEach(function(el) { el.textContent = schoolName; });
+
+    var indicatorEl = document.getElementById('navSchoolIndicator');
+    if (indicatorEl) indicatorEl.textContent = schoolName;
 
     var logoEls = document.querySelectorAll('.school-logo-img');
     logoEls.forEach(function(el) { if (profile.logoUrl) el.src = profile.logoUrl; });
+
+    // 2. Document Page Title & Meta
+    if (schoolName) {
+      document.title = schoolName + ' — ' + schoolMotto;
+    }
+
+    // 3. Hero Slide Updates
+    var heroTitle0 = document.getElementById('heroTitle0');
+    if (heroTitle0) {
+      heroTitle0.innerHTML = esc(schoolName) + ' — <span>' + esc(schoolMotto) + '</span>';
+    }
+    var heroSub0 = document.getElementById('heroSubtitle0');
+    if (heroSub0 && profile.about) {
+      heroSub0.textContent = profile.about;
+    }
+    var heroBadge0 = document.getElementById('heroBadge0');
+    if (heroBadge0) {
+      heroBadge0.innerHTML = '<i class="fas fa-certificate"></i> ' + esc(profile.tier || 'VERIFIED INSTITUTION') + ' · EST. ' + esc(profile.established || '2012');
+    }
+    var heroSlide0 = document.getElementById('heroSlide0');
+    if (heroSlide0 && profile.bannerUrl) {
+      heroSlide0.style.backgroundImage = "linear-gradient(135deg, rgba(15,36,64,0.65), rgba(26,58,92,0.55)), url('" + profile.bannerUrl + "')";
+    }
+
+    // 4. Dedicated About Our School Showcase Section
+    var aboutTitle = document.getElementById('aboutSchoolTitle');
+    var aboutMotto = document.getElementById('aboutSchoolMotto');
+    var aboutDesc = document.getElementById('aboutSchoolDesc');
+    var aboutLoc = document.getElementById('aboutSchoolLocation');
+    var aboutPhone = document.getElementById('aboutSchoolPhone');
+    var aboutEmail = document.getElementById('aboutSchoolEmail');
+    var aboutTier = document.getElementById('aboutSchoolTier');
+
+    if (aboutTitle) aboutTitle.textContent = schoolName;
+    if (aboutMotto) aboutMotto.textContent = '"' + schoolMotto + '"';
+    if (aboutDesc && profile.about) aboutDesc.textContent = profile.about;
+    if (aboutLoc && profile.address) aboutLoc.textContent = profile.address;
+    if (aboutPhone && profile.phone) aboutPhone.textContent = profile.phone;
+    if (aboutEmail && profile.email) aboutEmail.textContent = profile.email;
+    if (aboutTier) aboutTier.textContent = (profile.tier || 'Gold Partner Accredited') + ' (Est. ' + (profile.established || '2012') + ')';
+
+    // Facilities in About Section
+    var aboutFacList = document.getElementById('aboutFacilitiesList');
+    if (aboutFacList && Array.isArray(profile.facilities) && profile.facilities.length > 0) {
+      var facHtml = '';
+      profile.facilities.forEach(function(f) {
+        facHtml += '<span style="background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;"><i class="fas fa-check-circle" style="color:#0284c7;"></i> ' + esc(f) + '</span>';
+      });
+      aboutFacList.innerHTML = facHtml;
+    }
+
+    // 5. Featured Courses / Popular Subjects Grid on Main Webpage
+    var coursesGrid = document.getElementById('coursesGrid');
+    if (coursesGrid && Array.isArray(profile.popularSubjects) && profile.popularSubjects.length > 0) {
+      var coursesHtml = '';
+      profile.popularSubjects.forEach(function(s) {
+        var defaultImg = s.image || 'images/courses/mathematics.jpg';
+        coursesHtml += '<div class="course-card" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s, box-shadow 0.2s;">'
+          + '  <div>'
+          + '    <div style="position:relative;height:140px;overflow:hidden;background:#0f172a;">'
+          + '      <img src="' + esc(defaultImg) + '" alt="' + esc(s.name) + '" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=null;this.src=\'images/courses/science.jpg\';">'
+          + '      <span style="position:absolute;top:10px;left:10px;background:rgba(15,23,42,0.85);backdrop-filter:blur(4px);color:#38bdf8;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.5px;text-transform:uppercase;">' + esc(s.category || 'ACADEMIC PROGRAM') + '</span>'
+          + '    </div>'
+          + '    <div style="padding:16px;">'
+          + '      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
+          + '        <h4 style="margin:0;font-size:15px;font-weight:700;color:#0f172a;">' + esc(s.name) + '</h4>'
+          + '        <span style="font-size:12px;font-weight:700;color:#b45309;display:flex;align-items:center;gap:3px;"><i class="fas fa-star" style="color:#f59e0b;"></i> ' + (s.rating || '5.0') + '</span>'
+          + '      </div>'
+          + '      <p style="font-size:12px;color:#64748b;margin:0 0 10px;line-height:1.5;">' + esc(s.topics) + '</p>'
+          + '    </div>'
+          + '  </div>'
+          + '  <div style="padding:12px 16px;background:#f8fafc;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:8px;">'
+          + '    <span style="font-size:11px;color:#059669;font-weight:600;display:flex;align-items:center;gap:4px;"><i class="fas fa-certificate"></i> ' + esc(s.sellingPoints) + '</span>'
+          + '    <a href="apply.html" class="btn btn-sm btn-primary" style="font-size:11px;padding:4px 10px;text-decoration:none;"><i class="fas fa-pen"></i> Apply</a>'
+          + '  </div>'
+          + '</div>';
+      });
+      coursesGrid.innerHTML = coursesHtml;
+    }
+
+    // 6. Campus Facilities Section
+    var facilitiesSec = document.getElementById('facilitiesSection');
+    var facilitiesGrid = document.getElementById('facilitiesGrid');
+    if (facilitiesSec && facilitiesGrid && Array.isArray(profile.facilities) && profile.facilities.length > 0) {
+      facilitiesSec.style.display = 'block';
+      var mainFacHtml = '';
+      profile.facilities.forEach(function(f) {
+        mainFacHtml += '<div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,0.03);">'
+          + '  <div style="width:36px;height:36px;border-radius:8px;background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;font-size:16px;">'
+          + '    <i class="fas fa-building"></i>'
+          + '  </div>'
+          + '  <span style="font-size:13px;font-weight:600;color:#1e293b;">' + esc(f) + '</span>'
+          + '</div>';
+      });
+      facilitiesGrid.innerHTML = mainFacHtml;
+    }
+
+    // 7. Footer Info
+    var footerLoc = document.getElementById('footerSchoolAddress');
+    if (footerLoc && profile.address) footerLoc.textContent = profile.address;
+    var footerPhone = document.getElementById('footerSchoolPhone');
+    if (footerPhone && profile.phone) footerPhone.textContent = profile.phone;
+    var footerEmail = document.getElementById('footerSchoolEmail');
+    if (footerEmail && profile.email) footerEmail.textContent = profile.email;
   }
 
   /**
