@@ -1263,13 +1263,17 @@ function exportActivityGameCSV() {
   else toast('Activity game CSV report exported', 'success');
 }
 
-function openCalculator() {
-  var calcModal = document.getElementById('calcModal');
-  if (calcModal) {
-    calcModal.classList.add('active');
-    calcModal.style.display = 'flex';
+function openCalculator(tab) {
+  if (window.EduVerseCalculator && typeof window.EduVerseCalculator.openCalculator === 'function') {
+    window.EduVerseCalculator.openCalculator(tab);
   } else {
-    toast('Scientific calculator activated.', 'info');
+    var calcModal = document.getElementById('calcModal');
+    if (calcModal) {
+      calcModal.classList.add('active');
+      calcModal.style.display = 'flex';
+    } else {
+      toast('Scientific calculator activated.', 'info');
+    }
   }
 }
 
