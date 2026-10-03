@@ -837,10 +837,15 @@ export default function App() {
     if (authStatusEl) {
       if (state.user) {
         authStatusEl.innerHTML = `
-          <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-full">
-            <img src="${state.user.avatar_url || 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'}" class="w-5 h-5 rounded-full border border-slate-600" alt="Avatar">
-            <span class="text-xs font-medium text-slate-200">@${state.user.login}</span>
-            <button id="btnDisconnectGh" class="text-slate-400 hover:text-rose-400 ml-1 text-xs" title="Disconnect GitHub"><i class="fas fa-sign-out-alt"></i></button>
+          <div class="flex items-center gap-2">
+            <button onclick="window.openPushModal()" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full font-semibold transition shadow-sm">
+              <i class="fas fa-upload"></i> Push to GitHub
+            </button>
+            <div class="flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-full">
+              <img src="${state.user.avatar_url || 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'}" class="w-5 h-5 rounded-full border border-slate-600" alt="Avatar">
+              <span class="text-xs font-medium text-slate-200">@${state.user.login}</span>
+              <button id="btnDisconnectGh" class="text-slate-400 hover:text-rose-400 ml-1 text-xs" title="Disconnect GitHub"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
           </div>
         `;
         document.getElementById('btnDisconnectGh')?.addEventListener('click', () => {
@@ -850,10 +855,15 @@ export default function App() {
         });
       } else {
         authStatusEl.innerHTML = `
-          <button id="btnConnectGhHeader" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-xs px-3.5 py-1.5 rounded-lg border border-slate-700 transition">
-            <i class="fab fa-github text-sm"></i>
-            <span>Connect GitHub</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="window.openPushModal()" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-lg border border-blue-500 transition shadow-sm font-semibold">
+              <i class="fas fa-upload"></i> Push to GitHub
+            </button>
+            <button id="btnConnectGhHeader" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white text-xs px-3.5 py-1.5 rounded-lg border border-slate-700 transition">
+              <i class="fab fa-github text-sm"></i>
+              <span>Connect GitHub</span>
+            </button>
+          </div>
         `;
         document.getElementById('btnConnectGhHeader')?.addEventListener('click', connectGitHub);
       }
@@ -1226,7 +1236,7 @@ export default function App() {
   }
 
   // Expose public API
-  return {
+  const api = {
     state,
     init,
     connectGitHub,
@@ -1238,6 +1248,13 @@ export default function App() {
     closeFile,
     triggerCopilotAnalysis,
     openOAuthSetupModal,
+    openPushModal,
+    pushToGitHub,
     updateUI,
   };
+
+  window.openPushModal = openPushModal;
+  window.pushToGitHub = pushToGitHub;
+
+  return api;
 });

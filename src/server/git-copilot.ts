@@ -1,6 +1,10 @@
 import { GoogleGenAI } from '@google/genai';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { URL } from 'url';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 // Lazy initialize Gemini client
 let genAIClient: GoogleGenAI | null = null;
@@ -410,6 +414,93 @@ export async function handleGitCopilotApi(req: IncomingMessage, res: ServerRespo
     } catch (err: any) {
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message || 'Failed to read file' }));
+    }
+    return true;
+  }
+
+  // 5b. Push Local Git Repository to Remote: POST /api/github/push
+  if (pathname === '/api/github/push' && req.method === 'POST') {
+    try {
+      const body = await parseJsonBody(req);
+      const authHeader = req.headers.authorization;
+      const token = body.token || authHeader?.replace(/^Bearer\s+/i, '') || process.env.GITHUB_TOKEN || process.env.GITHUB_PAT || '';
+      const owner = body.owner || 'mczeniith3';
+      const repo = body.repo || 'EduVerse';
+      const branch = body.branch || 'main';
+      const createIfMissing = body.createIfMissing !== false;
+
+      if (!token) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'GitHub Personal Access Token (PAT) or OAuth token is required.' }));
+        return true;
+      }
+
+      // 1. Ensure remote repo exists if createIfMissing is true
+      if (createIfMissing) {
+        try {
+          const checkRepoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: 'application/vnd.github.v3+json',
+              'User-Agent': 'EduVerse-WebDev-Copilot',
+            },
+          });
+          if (checkRepoRes.status === 404) {
+            // Create repository on GitHub
+            await fetch('https://api.github.com/user/repos', {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/vnd.github.v3+json',
+                'User-Agent': 'EduVerse-WebDev-Copilot',
+              },
+              body: JSON.stringify({
+                name: repo,
+                description: 'EduVerse School Management Platform',
+                private: false,
+                auto_init: false,
+              }),
+            });
+          }
+        } catch (e) {
+          // ignore repo check error and proceed
+        }
+      }
+
+      // 2. Ensure git repo initialized and committed locally
+      await execAsync('git init').catch(() => null);
+      await execAsync('git config user.email "mczeniith3@gmail.com"').catch(() => null);
+      await execAsync('git config user.name "EduVerse Engineer"').catch(() => null);
+      await execAsync('git add -A').catch(() => null);
+      await execAsync('git commit -m "feat: complete school profile slug synchronization, hero slider timing, image asset restoration, and nutmeg menu restructuring"').catch(() => null);
+
+      // 3. Configure remote and push
+      const cleanToken = token.trim();
+      const cleanOwner = owner.trim();
+      const cleanRepo = repo.trim();
+      const cleanBranch = branch.trim();
+      const remoteUrl = `https://x-access-token:${encodeURIComponent(cleanToken)}@github.com/${cleanOwner}/${cleanRepo}.git`;
+
+      await execAsync('git remote remove origin').catch(() => null);
+      await execAsync(`git remote add origin "${remoteUrl}"`);
+      await execAsync(`git branch -M ${cleanBranch}`);
+      const { stdout, stderr } = await execAsync(`git push -u origin ${cleanBranch} --force`);
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        message: `Successfully pushed all local changes to https://github.com/${cleanOwner}/${cleanRepo} on branch '${cleanBranch}'`,
+        repoUrl: `https://github.com/${cleanOwner}/${cleanRepo}`,
+        branch: cleanBranch,
+        output: stdout || stderr,
+      }));
+    } catch (err: any) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        error: err.message || 'Failed to push changes to GitHub',
+        details: err.stderr || err.stdout || '',
+      }));
     }
     return true;
   }
