@@ -207,23 +207,64 @@ function showSchoolSelector() {
   const overlay = document.getElementById('modalOverlay');
   const body = document.getElementById('modalBody');
   if (!body) return;
+
   body.innerHTML = `
-    <h3><i class="fas fa-school"></i> Select School</h3>
-    <p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">Choose a school to access its portal.</p>
-    <div class="school-selector-grid">
-      ${tenants.map(t => `
-        <div class="school-card" onclick="window.location.href='school-portal.html?school=' + encodeURIComponent('${t.slug || t.id}')" style="${activeTenant === t.id ? 'border-color:var(--primary);background:#ebf8ff;' : ''}">
-          ${t.logo ? `<img src="${htmlEscape(t.logo)}" class="school-logo" onerror="this.style.display='none'">` : '<div style="width:64px;height:64px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px;">' + (t.name ? t.name.charAt(0) : 'S') + '</div>'}
-          <div class="school-name">${htmlEscape(t.name || 'Unknown School')}</div>
-          <div class="school-tier">${htmlEscape(t.tier || 'N/A')} &middot; ${htmlEscape(t.status || 'active')}</div>
-          ${activeTenant === t.id ? '<div style="margin-top:8px;"><span class="badge badge-paid">Active</span></div>' : ''}
+    <div style="padding:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-b:1px solid #e2e8f0;pb-3;">
+        <div>
+          <h3 style="font-size:18px;font-weight:800;color:#0f2440;margin:0;display:flex;align-items:center;gap:8px;">
+            <i class="fas fa-university" style="color:#2563eb;"></i> Access School Portal & Directory
+          </h3>
+          <p style="color:#64748b;font-size:13px;margin:4px 0 0;">Choose a partner institution to view its public portal, apply for admission, or sign in.</p>
         </div>
-      `).join('')}
-      ${tenants.length ? '' : '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-school"></i><p>No schools registered. Contact the Super Admin.</p></div>'}
-    </div>
-    <div class="modal-actions" style="margin-top:16px;">
-      <button class="btn btn-outline" onclick="closeModal()">Close</button>
-      ${activeTenant ? '<button class="btn btn-outline" onclick="if(confirm(\'Switch back to local mode?\')){if(window.__saveCurrentData)window.__saveCurrentData();localStorage.removeItem(\'activeTenant\');localStorage.removeItem(\'activeTenantKey\');window.location.reload();}" style="color:#e53e3e;"><i class="fas fa-times"></i> Leave School</button>' : ''}
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:14px;max-height:60vh;overflow-y:auto;padding:4px 2px;">
+        ${tenants.map(t => {
+          const isCurrent = activeTenant === t.id || activeTenant === t.slug;
+          const slug = t.slug || t.id;
+          return `
+            <div style="background:#ffffff;border:${isCurrent ? '2px solid #2563eb' : '1px solid #cbd5e1'};border-radius:12px;padding:16px;box-shadow:${isCurrent ? '0 4px 12px rgba(37,99,235,0.15)' : '0 2px 6px rgba(0,0,0,0.03)'};display:flex;flex-direction:column;justify-content:space-between;position:relative;">
+              <div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                  <div style="width:48px;height:48px;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0;padding:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    ${t.logo ? `<img src="${htmlEscape(t.logo)}" style="width:38px;height:38px;object-fit:contain;" onerror="this.onerror=null;this.src='icons/icon.svg';">` : `<div style="font-weight:700;color:#2563eb;font-size:20px;">${(t.name ? t.name.charAt(0) : 'S')}</div>`}
+                  </div>
+                  <div style="overflow:hidden;">
+                    <div style="font-size:11px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:0.5px;">${htmlEscape(t.tier || 'VERIFIED SCHOOL')}</div>
+                    <h4 style="margin:2px 0;font-size:15px;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${htmlEscape(t.name || 'School')}</h4>
+                    <div style="font-size:11px;color:#64748b;font-style:italic;" class="truncate">"${htmlEscape(t.motto || 'Excellence in Education')}"</div>
+                  </div>
+                </div>
+
+                ${isCurrent ? '<div style="background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:12px;display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-check-circle"></i> Active Selected Institution</div>' : ''}
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9;">
+                <a href="school-portal.html?school=${encodeURIComponent(slug)}" class="btn btn-sm btn-primary" style="justify-content:center;font-size:12px;text-decoration:none;">
+                  <i class="fas fa-globe"></i> Open Dedicated Public Portal
+                </a>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                  <a href="apply.html?school=${encodeURIComponent(slug)}" class="btn btn-sm" style="background:#f59e0b;color:#0f172a;font-weight:700;justify-content:center;font-size:11px;text-decoration:none;">
+                    <i class="fas fa-pen"></i> Apply
+                  </a>
+                  <a href="index.html?school=${encodeURIComponent(slug)}" class="btn btn-sm btn-outline" style="justify-content:center;font-size:11px;color:#0f172a;border-color:#cbd5e1;text-decoration:none;">
+                    <i class="fas fa-home"></i> Main Site
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span style="font-size:12px;color:#64748b;"><i class="fas fa-info-circle"></i> Looking for admin onboarding? <a href="apply.html?type=school" style="color:#2563eb;font-weight:600;text-decoration:none;">Register a New School &rarr;</a></span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="closeModal()">Close</button>
+          ${activeTenant ? '<button class="btn btn-sm" onclick="if(confirm(\'Reset active tenant focus?\')){localStorage.removeItem(\'activeTenant\');localStorage.removeItem(\'activeTenantKey\');window.location.href=\'index.html\';}" style="background:#fee2e2;color:#991b1b;border:none;"><i class="fas fa-undo"></i> Reset Default View</button>' : ''}
+        </div>
+      </div>
     </div>
   `;
   if (overlay) overlay.classList.add('active');

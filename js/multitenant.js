@@ -11,12 +11,84 @@ function normalizeSlug(str) {
 }
 window.normalizeSlug = normalizeSlug;
 
+var DEFAULT_SYSTEM_TENANTS = [
+  {
+    id: 'eduverse-international-academy',
+    name: 'EduVerse International Academy',
+    slug: 'eduverse-international-academy',
+    motto: 'Excellence in Knowledge, Character & Innovation',
+    status: 'active',
+    tier: 'Gold Partner Accredited',
+    address: '12 Innovation Boulevard, Victoria Island, Lagos',
+    phone: '+234 800 338 8377',
+    email: 'admissions@eduverse.academy',
+    logo: 'icons/icon.svg'
+  },
+  {
+    id: 'gracefield-international',
+    name: 'Gracefield International School',
+    slug: 'gracefield-international',
+    motto: 'Nurturing Global Leaders for Tomorrow',
+    status: 'active',
+    tier: 'Full K-12 Partner',
+    address: '45 Gracefield Drive, Ikeja, Lagos',
+    phone: '+234 802 345 6789',
+    email: 'info@gracefield.edu.ng',
+    logo: 'images/courses/science.jpg'
+  },
+  {
+    id: 'ames-premier-academy',
+    name: 'Ames Premier Academy',
+    slug: 'ames-premier-academy',
+    motto: 'Academic Mastery & STEM Excellence',
+    status: 'active',
+    tier: 'STEM Excellence Accredited',
+    address: '88 Tech Hub Avenue, Yaba, Lagos',
+    phone: '+234 803 456 7890',
+    email: 'admissions@amespremier.sch.ng',
+    logo: 'images/courses/technology.jpg'
+  }
+];
+
 function getTenants() {
+  var list = [];
   try {
     var raw = localStorage.getItem('eduverse_tenants');
-    if (raw) return JSON.parse(raw);
+    if (raw) list = JSON.parse(raw);
   } catch(e) {}
-  return [];
+
+  if (!list || !list.length) {
+    list = DEFAULT_SYSTEM_TENANTS.slice();
+    try { localStorage.setItem('eduverse_tenants', JSON.stringify(list)); } catch(e) {}
+  }
+
+  // Also include custom school profile if created in localStorage
+  try {
+    var customProfRaw = localStorage.getItem('eduverse_school_profile');
+    if (customProfRaw) {
+      var cp = JSON.parse(customProfRaw);
+      if (cp && cp.name) {
+        var cpSlug = cp.slug || normalizeSlug(cp.name);
+        var exists = list.some(function(t) { return t.slug === cpSlug || t.id === cpSlug; });
+        if (!exists) {
+          list.unshift({
+            id: cpSlug,
+            name: cp.name,
+            slug: cpSlug,
+            motto: cp.motto || 'Custom Institution',
+            status: 'active',
+            tier: cp.tier || 'Verified Custom Institution',
+            address: cp.address || 'Custom Campus',
+            phone: cp.phone || '+234 800 000 0000',
+            email: cp.email || 'admissions@school.edu',
+            logo: cp.logoUrl || 'icons/icon.svg'
+          });
+        }
+      }
+    }
+  } catch(e) {}
+
+  return list;
 }
 window.getTenants = getTenants;
 
