@@ -648,6 +648,44 @@ testGroup('Gateway Features', () => {
   assert((EV.data.virtualAccounts || []).every(a => a.balance === 0), 'new accounts start at zero balance');
 });
 
+// ===== TIMETABLE SYSTEM =====
+testGroup('Timetable System', () => {
+  assert(typeof EV.deleteTimetableRoom === 'function', 'deleteTimetableRoom loaded (not shadowed)');
+  assert(typeof EV.renderTimetableAdmin === 'function', 'renderTimetableAdmin loaded');
+  assert(typeof EV.detectTimetableConflicts === 'function', 'detectTimetableConflicts loaded');
+
+  // Static guards on the source (these were real shipped bugs)
+  const fs = require('fs');
+  const path = require('path');
+  const src = fs.readFileSync(path.join(__dirname, '..', 'js', 'features', 'timetable.js'), 'utf8');
+  assert(!/function\s+deleteRoom\s*\(/.test(src),
+    'timetable.js must not declare deleteRoom (collides with eduverse.js chat deleteRoom)');
+  assert(/onclick="deleteTimetableRoom\(/.test(src),
+    'room manager delete button calls deleteTimetableRoom');
+  assert(!/\be\.room\b/.test(src),
+    'printTimetable reads e.roomId (entries store roomId, not room)');
+  assert(!/nigeriaSchoolName/.test(src),
+    'PDF header uses the real data.schoolName field (nigeriaSchoolName never exists)');
+  assert(/var\s+_ttDragEntryClass\s*=/.test(src),
+    '_ttDragEntryClass is declared (was an implicit global)');
+
+  // Conflict detection behaviour
+  seedData({
+    students: [{ id: 'STU1', name: 'A', class: 'JSS1' }, { id: 'STU2', name: 'B', class: 'JSS2' }],
+    teachers: [],
+    timetables: [
+      { id: 'C1', class: 'JSS1', day: 'Monday', period: '08:00-09:00', subject: 'Math', teacher: 'Mr X' },
+      { id: 'C2', class: 'JSS2', day: 'Monday', period: '08:00-09:00', subject: 'Eng', teacher: 'Mr X' },
+      { id: 'C3', class: 'JSS1', day: 'Monday', period: '09:00-10:00', subject: 'Sci', teacher: 'Mrs Y' },
+    ],
+  });
+  EV = loadEduVerse();
+  const conflicts = EV.detectTimetableConflicts();
+  assert(conflicts.some((c) => c.type === 'teacher'), 'detects teacher double-booking');
+  assert(!conflicts.some((c) => c.type === 'class'), 'different classes same slot is not a class conflict');
+  assert(conflicts.length === 1, 'exactly one conflict in fixture', conflicts.length);
+});
+
 // ===== SUMMARY =====
 console.log('\n========================================');
 console.log(`  Feature Tests: ${passed} passed, ${failed} failed`);

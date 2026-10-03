@@ -104,7 +104,7 @@ function renderRoomManager() {
     rooms.forEach(function(r) {
       html += '<div style="padding:12px;background:#f7fafc;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">' +
         '<div><strong>' + htmlEscape(r.name) + '</strong><p style="font-size:12px;color:var(--text-light);">Capacity: ' + r.capacity + '</p></div>' +
-        '<button class="btn btn-sm btn-outline" style="padding:4px 8px;font-size:12px;color:#e53e3e;" onclick="deleteRoom(\'' + r.id + '\')"><i class="fas fa-times"></i></button></div>';
+        '<button class="btn btn-sm btn-outline" style="padding:4px 8px;font-size:12px;color:#e53e3e;" onclick="deleteTimetableRoom(\'' + r.id + '\')"><i class="fas fa-times"></i></button></div>';
     });
     html += '</div>';
   }
@@ -136,11 +136,15 @@ function saveRoom() {
   toast('Room added');
 }
 
-function deleteRoom(id) {
+// NOTE: named deleteTimetableRoom — NOT deleteRoom: js/eduverse.js also declares a
+// global deleteRoom(schoolId, roomId) for chat rooms and loads after this file,
+// which silently shadowed this function (timetable room delete was a no-op).
+function deleteTimetableRoom(id) {
   if (!confirm('Delete this room?')) return;
   data.rooms = (data.rooms || []).filter(function(r) { return r.id !== id; });
   saveData();
   renderRoomManager();
+  toast('Room deleted');
 }
 
 function renderTeacherSubjects() {
@@ -660,6 +664,7 @@ function deleteTimetableEntry(id) {
 
 // ===== TIMETABLE DRAG-AND-DROP =====
 var _ttDragEntryId = null;
+var _ttDragEntryClass = null;
 
 function ttDragStart(id, cls) {
   _ttDragEntryId = id;
@@ -794,7 +799,7 @@ function printTimetable() {
   var rooms = _ttRooms();
   var roomMap = {};
   rooms.forEach(function(r) { roomMap[r.id] = r.name; });
-  var schoolName = data.nigeriaSchoolName || 'School Name';
+  var schoolName = data.schoolName || 'School Name';
   var termInfo = (data.terms && data.terms.length) ? data.terms[data.terms.length - 1] : null;
   var dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -843,7 +848,7 @@ function printTimetable() {
             cellEntries.forEach(function(e) {
               cellHtml += '<div class="entry-subj">' + htmlEscape(e.subject || 'Subject') + '</div>' +
                 '<div class="entry-teacher">' + htmlEscape(e.teacher || '') + '</div>' +
-                (e.room ? '<div class="entry-room">' + htmlEscape(roomMap[e.room] || e.room) + '</div>' : '');
+                (e.roomId ? '<div class="entry-room">' + htmlEscape(roomMap[e.roomId] || e.roomId) + '</div>' : '');
             });
             win.document.write('<td>' + cellHtml + '</td>');
           } else {

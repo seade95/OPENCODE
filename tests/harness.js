@@ -137,6 +137,7 @@ function loadProjectFiles() {
       renderWhatsAppGateway, waNormalizePhone, waBuildLink, waGetPhoneFromContact,
       gateResolvePerson, vbAccountNumber, vbEnsureAccounts,
       renderGateScanner, renderVirtualBank,
+      deleteTimetableRoom, renderTimetableAdmin, detectTimetableConflicts,
       ACTIVITY_GAMES, GAME_CONTENT,
       _isPremium: window._isPremium, _isFree: window._isFree,
       EduVerse: window.EduVerse,
