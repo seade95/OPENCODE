@@ -48,7 +48,14 @@ function copySchoolLink() {
   input.select();
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(input.value).then(function() { showToast('School link copied!'); });
+      navigator.clipboard.writeText(input.value).then(function() {
+        showToast('School link copied!');
+      }).catch(function() {
+        try {
+          document.execCommand('copy');
+          showToast('School link copied!');
+        } catch (e) { showToast('Press Ctrl+C to copy'); }
+      });
     } else {
       document.execCommand('copy');
       showToast('School link copied!');

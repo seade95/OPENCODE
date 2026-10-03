@@ -206,6 +206,9 @@ if (navigator.serviceWorker) {
       <div class="admin-sidebar-item" data-panel="alumni"><i class="fas fa-user-graduate"></i><span data-i18n="alumni">Alumni</span></div>
       <div class="admin-sidebar-item" data-panel="predictive"><i class="fas fa-robot"></i><span data-i18n="predictiveai">Predictive AI</span></div>
       <div class="admin-sidebar-item" data-panel="aitools"><i class="fas fa-wand-magic"></i><span data-i18n="aitools">AI Tools</span></div>
+      <div class="admin-sidebar-item" data-panel="whatsappgateway"><i class="fab fa-whatsapp"></i><span data-i18n="whatsappgateway">WhatsApp Gateway</span></div>
+      <div class="admin-sidebar-item" data-panel="gatescanner"><i class="fas fa-shield-halved"></i><span data-i18n="gatescanner">Gate Access Scanner</span></div>
+      <div class="admin-sidebar-item" data-panel="virtualbank"><i class="fas fa-building-columns"></i><span data-i18n="virtualbank">Virtual Bank Accounts</span></div>
       <div class="admin-sidebar-item" data-panel="eschool"><i class="fas fa-video"></i><span data-i18n="eschool">E School</span></div>
       <div class="admin-sidebar-item" data-panel="academiccalendar"><i class="fas fa-calendar-alt"></i><span data-i18n="academiccalendar">Academic Calendar</span></div>
       <div class="admin-sidebar-item" data-panel="idcards"><i class="fas fa-id-card"></i><span data-i18n="idcards">ID Cards</span></div>
@@ -615,6 +618,12 @@ if (navigator.serviceWorker) {
         <p class="subtitle">Generate structured lesson plans with AI powered templates and create personalized student feedback</p>
         <div class="card"><div id="aiToolsView"></div></div>
       </div>
+      <!-- WhatsApp Gateway Panel -->
+      <div class="admin-panel" id="admin-whatsappgateway"></div>
+      <!-- Gate Access Scanner Panel -->
+      <div class="admin-panel" id="admin-gatescanner"></div>
+      <!-- Virtual Bank Accounts Panel -->
+      <div class="admin-panel" id="admin-virtualbank"></div>
       <!-- E School Panel -->
       <div class="admin-panel" id="admin-eschool">
         <div class="card-header">
@@ -889,6 +898,7 @@ if (navigator.serviceWorker) {
 <script src="js/features/scoregrid.js"></script>
 <script src="js/features/aitools.js"></script>
 <script src="js/features/misc-features.js"></script>
+<script src="js/features/gateway-features.js"></script>
 <script src="js/features2.js"></script>
 <script src="js/payment-gateway.js"></script>
 <script src="js/k12.js"></script>
@@ -1100,7 +1110,14 @@ document.addEventListener('DOMContentLoaded', function() {
   if (currentAdmin) {
     document.querySelectorAll('.admin-login-wrapper').forEach(el => el.style.display = 'none');
     document.getElementById('adminPage').classList.add('active');
-    switchAdminPanel('dashboard');
+    // Return to the panel that was open before any SW/version reload
+    var _lastPanel = null;
+    try { _lastPanel = sessionStorage.getItem('eduverse_last_admin_panel'); } catch(e) {}
+    if (_lastPanel && document.getElementById('admin-' + _lastPanel)) {
+      switchAdminPanel(_lastPanel);
+    } else {
+      switchAdminPanel('dashboard');
+    }
   }
 });
 </script>
@@ -1127,7 +1144,14 @@ window.addEventListener('load', function() {
         });
       });
     }).catch(function(){});
-    navigator.serviceWorker.addEventListener('controllerchange', function() { window.location.reload(); });
+    // First SW install also fires controllerchange (skipWaiting) — that must
+    // NOT reload the page (it interrupts the user mid-action). Only reload
+    // when an existing controller is replaced by an update.
+    var _hadSwController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (!_hadSwController) { _hadSwController = true; return; }
+      window.location.reload();
+    });
   }
 });
 </script>

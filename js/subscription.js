@@ -360,6 +360,10 @@ function subCheckExpiry() {
 
 // ===== PREMIUM FEATURE GATING =====
 
+// Master switch: all panels/features unlocked by default (2026.09).
+// Set to true to re-enable the paywall for the lists below.
+var _PANEL_GATING = false;
+
 // Admin panels that require premium
 var _PREMIUM_ADMIN = ['hostel','gradebook','promotion','library','hr','payments','analytics','reportbuilder','predictive','aitools','idcards','transcript','reportcards','paymentgateway','simquestions','simattempts','activitygames','alumni','handwritingocr','teacherexams'];
 // Teacher panels that require premium
@@ -409,7 +413,7 @@ function showUpgradeModal() {
 function _guardAdminSidebar() {
   document.querySelectorAll('.admin-sidebar-item[data-panel]').forEach(function(item) {
     var panel = item.dataset.panel;
-    if (_PREMIUM_ADMIN.indexOf(panel) >= 0 && !item.querySelector('.fa-lock')) {
+    if (_PANEL_GATING && _PREMIUM_ADMIN.indexOf(panel) >= 0 && !item.querySelector('.fa-lock')) {
       var lock = document.createElement('i');
       lock.className = 'fas fa-lock';
       lock.style.cssText = 'font-size:11px;color:#a0aec0;margin-left:auto;opacity:0.6;';
@@ -429,7 +433,7 @@ function _guardAdminSidebar() {
 function _guardTeacherSidebar() {
   document.querySelectorAll('.admin-sidebar-item[data-teacher-panel]').forEach(function(item) {
     var panel = item.dataset.teacherPanel;
-    if (_PREMIUM_TEACHER.indexOf(panel) >= 0 && !item.querySelector('.fa-lock')) {
+    if (_PANEL_GATING && _PREMIUM_TEACHER.indexOf(panel) >= 0 && !item.querySelector('.fa-lock')) {
       var lock = document.createElement('i');
       lock.className = 'fas fa-lock';
       lock.style.cssText = 'font-size:11px;color:#a0aec0;margin-left:auto;opacity:0.6;';
@@ -449,7 +453,7 @@ function _guardTeacherSidebar() {
 function _guardStudentTabs() {
   document.querySelectorAll('.student-tab').forEach(function(tab) {
     var tabName = tab.dataset.tab;
-    if (_PREMIUM_STUDENT.indexOf(tabName) >= 0 && !tab.dataset.spGuarded) {
+    if (_PANEL_GATING && _PREMIUM_STUDENT.indexOf(tabName) >= 0 && !tab.dataset.spGuarded) {
       tab.dataset.spGuarded = '1';
       tab.addEventListener('click', function(e) {
         if (_isFree()) {
@@ -467,7 +471,7 @@ function _guardStudentTabs() {
 var _origSwitchAdmin = window.switchAdminPanel;
 if (typeof _origSwitchAdmin === 'function') {
   window.switchAdminPanel = function(panel) {
-    if (_PREMIUM_ADMIN.indexOf(panel) >= 0 && _isFree()) {
+    if (_PANEL_GATING && _PREMIUM_ADMIN.indexOf(panel) >= 0 && _isFree()) {
       // Find and highlight the sidebar item
       var si = document.querySelector('.admin-sidebar-item[data-panel="' + panel + '"]');
       if (si) {
@@ -485,7 +489,7 @@ if (typeof _origSwitchAdmin === 'function') {
 var _origSwitchTeacher = window.switchTeacherPanel;
 if (typeof _origSwitchTeacher === 'function') {
   window.switchTeacherPanel = function(panel) {
-    if (_PREMIUM_TEACHER.indexOf(panel) >= 0 && _isFree()) {
+    if (_PANEL_GATING && _PREMIUM_TEACHER.indexOf(panel) >= 0 && _isFree()) {
       var si = document.querySelector('.admin-sidebar-item[data-teacher-panel="' + panel + '"]');
       if (si) {
         document.querySelectorAll('.admin-sidebar-item[data-teacher-panel]').forEach(function(i) { i.classList.remove('active'); });

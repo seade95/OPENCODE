@@ -535,6 +535,8 @@ function switchTeacherPanel(panel) {
 
 function switchAdminPanel(panel) {
   currentAdminPanel = panel;
+  // Remember the panel so SW/version reloads return to the same place
+  try { sessionStorage.setItem('eduverse_last_admin_panel', panel); } catch(e) {}
   document.querySelectorAll('.admin-panel').forEach(function(p) { p.classList.remove('active'); });
   var ap = document.getElementById('admin-' + panel);
   if (ap) ap.classList.add('active');
@@ -580,6 +582,9 @@ function switchAdminPanel(panel) {
     case 'reportbuilder': if (typeof renderReportBuilder === 'function') renderReportBuilder(); break;
     case 'predictive': if (typeof renderPredictiveAnalytics === 'function') renderPredictiveAnalytics(); break;
     case 'aitools': if (typeof renderAITools === 'function') renderAITools(); break;
+    case 'whatsappgateway': if (typeof renderWhatsAppGateway === 'function') renderWhatsAppGateway(); break;
+    case 'gatescanner': if (typeof renderGateScanner === 'function') renderGateScanner(); break;
+    case 'virtualbank': if (typeof renderVirtualBank === 'function') renderVirtualBank(); break;
     case 'eschool': if (typeof renderESchoolAdmin === 'function') renderESchoolAdmin(); break;
     case 'academiccalendar': if (typeof renderAcademicCalendar === 'function') renderAcademicCalendar(); break;
     case 'idcards': if (typeof renderIDCards === 'function') renderIDCards('adminIDCards'); break;
@@ -659,6 +664,9 @@ function renderActivePanel() {
       case 'reportbuilder': if (typeof renderReportBuilder === 'function') renderReportBuilder(); break;
       case 'predictive': if (typeof renderPredictiveAnalytics === 'function') renderPredictiveAnalytics(); break;
       case 'aitools': if (typeof renderAITools === 'function') renderAITools(); break;
+      case 'whatsappgateway': if (typeof renderWhatsAppGateway === 'function') renderWhatsAppGateway(); break;
+      case 'gatescanner': if (typeof renderGateScanner === 'function') renderGateScanner(); break;
+      case 'virtualbank': if (typeof renderVirtualBank === 'function') renderVirtualBank(); break;
       case 'eschool': if (typeof renderESchoolAdmin === 'function') renderESchoolAdmin(); break;
       case 'academiccalendar': if (typeof renderAcademicCalendar === 'function') renderAcademicCalendar(); break;
       case 'idcards': if (typeof renderIDCards === 'function') renderIDCards('adminIDCards'); break;

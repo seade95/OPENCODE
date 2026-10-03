@@ -1456,7 +1456,14 @@ window.addEventListener('load', function() {
         });
       });
     }).catch(function(){});
-    navigator.serviceWorker.addEventListener('controllerchange', function() { window.location.reload(); });
+    // First SW install also fires controllerchange (skipWaiting) — that must
+    // NOT reload the page (it interrupts the user mid-action). Only reload
+    // when an existing controller is replaced by an update.
+    var _hadSwController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      if (!_hadSwController) { _hadSwController = true; return; }
+      window.location.reload();
+    });
   }
 });
 </script>

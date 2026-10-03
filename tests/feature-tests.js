@@ -571,6 +571,83 @@ testGroup('Namespace Module', () => {
   assertEq(EV.EduVerse.utils.getGrade(45), 'F', 'grade 45 = F');
 });
 
+// ===== GATEWAY FEATURES =====
+testGroup('Gateway Features', () => {
+  seedData({
+    students: [
+      { id: 'STU1', name: 'Alice Active', class: 'JSS1', contact: '08031234567', status: 'active' },
+      { id: 'STU2', name: 'Bob Graduated', class: 'JSS2', contact: 'bob@mail.com', status: 'graduated' },
+      { id: 'STU3', name: 'Cara NoPhone', class: 'JSS3', contact: '' },
+    ],
+    teachers: [
+      { id: 'TCH1', name: 'Mr Teacher', contact: '+234 803 999 8877', status: 'active' },
+      { id: 'TCH2', name: 'Mrs Suspended', contact: '09091112222', status: 'suspended' },
+    ],
+  });
+  EV = loadEduVerse();
+
+  assert(typeof EV.renderWhatsAppGateway === 'function', 'renderWhatsAppGateway loaded');
+  assert(typeof EV.renderGateScanner === 'function', 'renderGateScanner loaded');
+  assert(typeof EV.renderVirtualBank === 'function', 'renderVirtualBank loaded');
+  assert(typeof EV.waNormalizePhone === 'function', 'waNormalizePhone loaded');
+  assert(typeof EV.gateResolvePerson === 'function', 'gateResolvePerson loaded');
+  assert(typeof EV.vbAccountNumber === 'function', 'vbAccountNumber loaded');
+
+  // Renderers must be null-safe (no panel element in test DOM)
+  let threw = false;
+  try { EV.renderWhatsAppGateway(); EV.renderGateScanner(); EV.renderVirtualBank(); } catch (e) { threw = true; }
+  assert(!threw, 'all gateway renderers are null-safe');
+
+  // Phone normalization
+  assertEq(EV.waNormalizePhone('08031234567'), '2348031234567', 'local 0-prefixed number');
+  assertEq(EV.waNormalizePhone('+234 803 123 4567'), '2348031234567', 'international +234 number');
+  assertEq(EV.waNormalizePhone('8031234567'), '2348031234567', 'bare 10-digit number');
+  assertEq(EV.waNormalizePhone(''), '', 'empty number');
+  assertEq(EV.waNormalizePhone(null), '', 'null number');
+
+  // wa.me link building
+  const link = EV.waBuildLink('08031234567', 'Hello world');
+  assert(link.indexOf('https://wa.me/2348031234567') === 0, 'wa.me link has normalized number');
+  assert(link.indexOf('text=Hello%20world') !== -1, 'wa.me link encodes message');
+  assertEq(EV.waBuildLink('', 'hi'), '', 'no phone → no link');
+  assertEq(EV.waBuildLink('08031234567'), 'https://wa.me/2348031234567', 'link without message');
+
+  // Contact extraction (email is not a phone)
+  assertEq(EV.waGetPhoneFromContact('bob@mail.com'), '', 'email contact rejected');
+  assertEq(EV.waGetPhoneFromContact('08031234567'), '08031234567', 'phone contact accepted');
+  assertEq(EV.waGetPhoneFromContact(''), '', 'empty contact rejected');
+
+  // Gate person resolution
+  const r1 = EV.gateResolvePerson('stu1');
+  assert(r1.found && r1.role === 'student' && r1.allowed, 'active student resolved case-insensitively');
+  const r2 = EV.gateResolvePerson('STU2');
+  assert(r2.found && !r2.allowed, 'graduated student denied');
+  const r3 = EV.gateResolvePerson('TCH1');
+  assert(r3.found && r3.role === 'teacher' && r3.allowed, 'active teacher allowed');
+  const r4 = EV.gateResolvePerson('TCH2');
+  assert(r4.found && !r4.allowed, 'suspended teacher denied');
+  const r5 = EV.gateResolvePerson('GHOST999');
+  assert(!r5.found, 'unknown code not found');
+  assertEq(EV.gateResolvePerson('').found, false, 'empty code not found');
+
+  // Virtual account numbers
+  assertEq(EV.vbAccountNumber(1), '3900000137', 'account number seq 1');
+  assertEq(EV.vbAccountNumber(2), '3900000274', 'account number seq 2');
+  const nums = new Set();
+  for (let i = 1; i <= 500; i++) nums.add(EV.vbAccountNumber(i));
+  assertEq(nums.size, 500, 'account numbers unique across 500 seqs');
+  assert([...nums].every(n => n.length === 10 && /^[0-9]+$/.test(n)), 'account numbers are 10-digit numeric');
+
+  // Account creation
+  const created = EV.vbEnsureAccounts(true);
+  assertEq(created, 3, 'creates one account per student');
+  const again = EV.vbEnsureAccounts(true);
+  assertEq(again, 0, 'second run creates nothing');
+  const acctNumbers = (EV.data.virtualAccounts || []).map(a => a.number);
+  assertEq(new Set(acctNumbers).size, acctNumbers.length, 'created account numbers are unique');
+  assert((EV.data.virtualAccounts || []).every(a => a.balance === 0), 'new accounts start at zero balance');
+});
+
 // ===== SUMMARY =====
 console.log('\n========================================');
 console.log(`  Feature Tests: ${passed} passed, ${failed} failed`);
