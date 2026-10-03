@@ -171,18 +171,47 @@ function toggleNav() {
 
 function toggleNavDropdown(el) {
   if (!el) return;
-  var target = el.closest ? el.closest('.nav-dropdown') : el;
-  if (target) target.classList.toggle('open');
+  var target = el.closest ? el.closest('.nav-dropdown, .nutmeg-dropdown-wrap') : el;
+  if (target) {
+    target.classList.toggle('open');
+    var menu = target.querySelector('.nav-dropdown-menu, .nutmeg-dropdown-menu');
+    if (menu) menu.classList.toggle('show');
+  }
 }
 
 window.openNav = openNav;
 window.closeNav = closeNav;
 window.toggleNav = toggleNav;
 window.toggleNavDropdown = toggleNavDropdown;
-function toggleUserDropdown() {
+
+function toggleUserDropdown(el) {
+  if (el) {
+    var target = el.closest ? el.closest('.nutmeg-dropdown-wrap, .ev-user-menu') : null;
+    if (target) {
+      target.classList.toggle('open');
+      var menu = target.querySelector('.nutmeg-dropdown-menu, .ev-dropdown');
+      if (menu) menu.classList.toggle('show');
+      return;
+    }
+  }
   var dd = document.getElementById('evUserDropdown');
   if (dd) dd.classList.toggle('show');
 }
+window.toggleUserDropdown = toggleUserDropdown;
+
+// Close dropdowns on outside click
+document.addEventListener('click', function(e) {
+  var target = e.target;
+  if (!target) return;
+  if (!target.closest('.nutmeg-dropdown-wrap') && !target.closest('.nav-dropdown') && !target.closest('.ev-user-menu')) {
+    document.querySelectorAll('.nutmeg-dropdown-wrap.open, .nav-dropdown.open').forEach(function(el) {
+      el.classList.remove('open');
+    });
+    document.querySelectorAll('.nutmeg-dropdown-menu.show, .nav-dropdown-menu.show, .ev-dropdown.show').forEach(function(el) {
+      el.classList.remove('show');
+    });
+  }
+});
 function triggerScoreGridFileInput() {
   var inp = document.getElementById('scoreGridFileInput');
   if (inp) inp.click();

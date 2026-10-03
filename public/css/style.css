@@ -244,8 +244,8 @@ body {
 [data-theme="dark"] .nav-dropdown-menu a:hover { background: #334155 !important; color: #60a5fa !important; }
 [data-theme="dark"] .nav-dropdown-menu a i { color: #60a5fa; }
 
-/* ---- Desktop view default (> 1024px) ---- */
-@media (min-width: 1025px) {
+/* ---- Desktop view default (> 868px) ---- */
+@media (min-width: 869px) {
   .nav-toggle,
   .nav-backdrop,
   .nav-close-btn {
@@ -332,8 +332,8 @@ body {
   }
 }
 
-/* ---- Mobile: <= 640px (mobile drawer) ---- */
-@media (max-width: 640px) {
+/* ---- Mobile: <= 868px (mobile drawer) ---- */
+@media (max-width: 868px) {
   .navbar { padding: 12px 18px !important; }
 
   .nav-toggle {
