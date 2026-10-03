@@ -424,8 +424,8 @@ export async function handleGitCopilotApi(req: IncomingMessage, res: ServerRespo
       const body = await parseJsonBody(req);
       const authHeader = req.headers.authorization;
       const token = body.token || authHeader?.replace(/^Bearer\s+/i, '') || process.env.GITHUB_TOKEN || process.env.GITHUB_PAT || '';
-      const owner = body.owner || 'mczeniith3';
-      const repo = body.repo || 'EduVerse';
+      const owner = body.owner || 'seade95';
+      const repo = body.repo || 'OPENCODE';
       const branch = body.branch || 'main';
       const createIfMissing = body.createIfMissing !== false;
 

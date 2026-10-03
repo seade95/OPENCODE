@@ -1235,6 +1235,105 @@ export default function App() {
     }
   }
 
+  async function pushToGitHub(token, owner, repo, branch) {
+    const activeToken = token || state.token || localStorage.getItem('eduverse_github_token') || '';
+    const activeOwner = owner || 'seade95';
+    const activeRepoName = repo || 'OPENCODE';
+    const activeBranch = branch || 'main';
+
+    if (!activeToken) {
+      openPushModal();
+      return false;
+    }
+
+    try {
+      showToast('Pushing local changes to GitHub repository...', 'info');
+      const res = await fetch('/api/github/push', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${activeToken}`,
+        },
+        body: JSON.stringify({
+          token: activeToken,
+          owner: activeOwner,
+          repo: activeRepoName,
+          branch: activeBranch,
+          createIfMissing: true,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showToast(`Successfully pushed to ${data.repoUrl}!`, 'success');
+        if (window.closeModal) window.closeModal();
+        return true;
+      } else {
+        showToast(data.error || 'Push failed', 'error');
+        return false;
+      }
+    } catch (err) {
+      showToast('Failed to push to GitHub: ' + err.message, 'error');
+      return false;
+    }
+  }
+
+  function openPushModal() {
+    const savedToken = state.token || localStorage.getItem('eduverse_github_token') || '';
+    const defaultOwner = 'seade95';
+    const defaultRepo = 'OPENCODE';
+
+    const modalHtml = `
+      <div style="padding:16px;max-width:500px;">
+        <h3 style="font-size:18px;font-weight:700;color:#3b82f6;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <i class="fab fa-github"></i> Push Local Codebase to GitHub
+        </h3>
+        <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">
+          Push all local files and commits directly to your GitHub repository: <strong>seade95/OPENCODE</strong>.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;color:#cbd5e1;">GitHub Personal Access Token (PAT)</label>
+            <input type="password" id="pushPatInput" value="${savedToken}" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:8px 12px;background:#0f172a;border:1px solid #334155;color:#fff;border-radius:6px;font-size:13px;">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;color:#cbd5e1;">Owner / Username</label>
+              <input type="text" id="pushOwnerInput" value="${defaultOwner}" placeholder="seade95" style="width:100%;padding:8px 12px;background:#0f172a;border:1px solid #334155;color:#fff;border-radius:6px;font-size:13px;">
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;color:#cbd5e1;">Repository Name</label>
+              <input type="text" id="pushRepoInput" value="${defaultRepo}" placeholder="OPENCODE" style="width:100%;padding:8px 12px;background:#0f172a;border:1px solid #334155;color:#fff;border-radius:6px;font-size:13px;">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px;color:#cbd5e1;">Target Branch</label>
+            <input type="text" id="pushBranchInput" value="main" placeholder="main" style="width:100%;padding:8px 12px;background:#0f172a;border:1px solid #334155;color:#fff;border-radius:6px;font-size:13px;">
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;justify-content:end;gap:10px;">
+          <button onclick="if(window.closeModal) window.closeModal()" style="padding:8px 16px;background:transparent;border:1px solid #475569;color:#cbd5e1;border-radius:6px;font-size:13px;cursor:pointer;">Cancel</button>
+          <button id="btnConfirmPush" style="padding:8px 20px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+            <i class="fas fa-upload"></i> Push Changes Now
+          </button>
+        </div>
+      </div>
+    `;
+
+    if (window.openModal) {
+      window.openModal(modalHtml);
+      setTimeout(() => {
+        document.getElementById('btnConfirmPush')?.addEventListener('click', () => {
+          const token = document.getElementById('pushPatInput')?.value;
+          const owner = document.getElementById('pushOwnerInput')?.value;
+          const repo = document.getElementById('pushRepoInput')?.value;
+          const branch = document.getElementById('pushBranchInput')?.value;
+          pushToGitHub(token, owner, repo, branch);
+        });
+      }, 50);
+    }
+  }
+
   // Expose public API
   const api = {
     state,
