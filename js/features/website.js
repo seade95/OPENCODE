@@ -26,6 +26,7 @@ function renderWebsiteBuilder() {
     + '<button class="btn btn-sm" onclick="showWebsiteTab(\'announce\')" id="wbTabAnnounce" style="flex:1;">Announcements</button>'
     + '<button class="btn btn-sm" onclick="showWebsiteTab(\'gallery\')" id="wbTabGallery" style="flex:1;">Gallery</button>'
     + '<button class="btn btn-sm" onclick="showWebsiteTab(\'contact\')" id="wbTabContact" style="flex:1;">Contact</button>'
+    + '<button class="btn btn-sm" onclick="showWebsiteTab(\'ai\')" id="wbTabAi" style="flex:1;">AI Generator</button>'
     + '</div>'
     + '<div id="websiteTabContent"></div>'
     + '</div>'
@@ -56,6 +57,7 @@ function showWebsiteTab(tab) {
   else if (tab === 'announce') renderWebsiteAnnouncements(content);
   else if (tab === 'gallery') renderWebsiteGallery(content);
   else if (tab === 'contact') renderWebsiteContact(content);
+  else if (tab === 'ai') renderWebsiteAI(content);
 }
 
 function renderWebsiteGeneral(container) {
@@ -538,3 +540,202 @@ function resendBroadcast(idx) {
   if (wh) window.open('https://wa.me/' + wh.replace(/[^0-9]/g, '') + '?text=' + waMsg, '_blank');
   toast('Re-sending broadcast...');
 }
+
+// ===== AI SCHOOL WEBSITE & PROFILE GENERATOR (ported from engineer lineage) =====
+var AI_PRESET_TEMPLATES = {
+  k12: {
+    name: 'EduVerse International Academy',
+    motto: 'Excellence in Knowledge, Character & Digital Innovation',
+    about: 'A premier K-12 institution committed to nurturing academic leaders through modern digital curriculum, world-class science labs, and holistic character building.',
+    tier: 'Gold Partner Accredited K-12',
+    address: '12 Innovation Boulevard, Victoria Island, Lagos',
+    phone: '+234 800 338 8377',
+    email: 'admissions@eduverse.academy',
+    logoUrl: 'icons/icon.svg'
+  },
+  stem: {
+    name: 'Ames Premier STEM Academy',
+    motto: 'Empowering Innovators, Engineers & Future Scientists',
+    about: 'A specialist science, technology, engineering and mathematics academy with state-of-the-art laboratories and an industry-certified curriculum.',
+    tier: 'STEM Excellence Accredited',
+    address: '88 Tech Hub Avenue, Yaba, Lagos',
+    phone: '+234 803 456 7890',
+    email: 'admissions@amespremier.sch.ng',
+    logoUrl: 'images/courses/technology.jpg'
+  }
+};
+
+function _aiActiveTenant(tenants) {
+  var activeId = null;
+  try { activeId = localStorage.getItem('activeTenant'); } catch(e) {}
+  if (activeId) {
+    for (var i = 0; i < tenants.length; i++) if (tenants[i].id === activeId) return tenants[i];
+  }
+  return tenants[0] || null;
+}
+
+function renderWebsiteAI() {
+  var container = document.getElementById('websiteTabContent');
+  if (!container) return;
+  var prof = typeof getSchoolProfile === 'function' ? getSchoolProfile() : {};
+  var tenants = typeof getTenants === 'function' ? getTenants() : [];
+  var cur = _aiActiveTenant(tenants);
+  var slug = (cur && (cur.slug || cur.id)) || prof.slug || '';
+
+  var html = ''
+    + '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:14px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.03);">'
+    + '  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">'
+    + '    <div>'
+    + '      <h3 style="margin:0;font-size:18px;font-weight:800;color:#0f2440;display:flex;align-items:center;gap:8px;">'
+    + '        <i class="fas fa-magic" style="color:#2563eb;"></i> AI School Website & Profile Generator'
+    + '      </h3>'
+    + '      <p style="margin:4px 0 0;font-size:13px;color:#64748b;">Generate a complete public website profile for your school in one click or customize elements manually.</p>'
+    + '    </div>'
+    + '    <div style="display:flex;gap:8px;flex-wrap:wrap;">'
+    + '      <button class="btn btn-sm btn-primary" onclick="window.EduVerseWebsite.generatePresetProfile(\'k12\')"><i class="fas fa-wand-magic-sparkles"></i> Generate K-12 Academy</button>'
+    + '      <button class="btn btn-sm" style="background:#f59e0b;color:#0f172a;" onclick="window.EduVerseWebsite.generatePresetProfile(\'stem\')"><i class="fas fa-atom"></i> Generate STEM School</button>'
+    + '      <a href="school-portal.html?school=' + encodeURIComponent(slug) + '" target="_blank" class="btn btn-sm btn-outline"><i class="fas fa-external-link-alt"></i> Launch Live Website</a>'
+    + '    </div>'
+    + '  </div>'
+
+    + '  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="ev-pros-cons-grid">'
+    + '    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;">'
+    + '      <h4 style="margin:0 0 12px;font-size:14px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:6px;">'
+    + '        <i class="fas fa-sliders-h" style="color:#2563eb;"></i> Website Content Controls'
+    + '      </h4>'
+    + '      <div style="display:flex;flex-direction:column;gap:10px;">'
+    + '        <div>'
+    + '          <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">School Institution Name</label>'
+    + '          <input type="text" id="wbName" value="' + esc(prof.schoolName || 'EduVerse') + '" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;">'
+    + '        </div>'
+    + '        <div>'
+    + '          <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Motto / Tagline</label>'
+    + '          <input type="text" id="wbMotto" value="' + esc(prof.schoolMotto || '') + '" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;">'
+    + '        </div>'
+    + '        <div>'
+    + '          <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Dedicated Website Slug URL</label>'
+    + '          <input type="text" id="wbSlug" value="' + esc(slug) + '" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;">'
+    + '        </div>'
+    + '        <div>'
+    + '          <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">About & Mission Overview</label>'
+    + '          <textarea id="wbAbout" rows="3" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;font-family:inherit;box-sizing:border-box;">' + esc(prof.aboutText || '') + '</textarea>'
+    + '        </div>'
+    + '        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
+    + '          <div>'
+    + '            <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Phone Line</label>'
+    + '            <input type="text" id="wbPhone" value="' + esc(prof.contactPhone || '') + '" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;">'
+    + '          </div>'
+    + '          <div>'
+    + '            <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Admissions Email</label>'
+    + '            <input type="email" id="wbEmail" value="' + esc(prof.contactEmail || '') + '" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;">'
+    + '          </div>'
+    + '        </div>'
+    + '        <div>'
+    + '          <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:2px;">Campus Physical Address</label>'
+    + '          <input type="text" id="wbAddress" value="' + esc(prof.contactAddress || '') + '" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;box-sizing:border-box;">'
+    + '        </div>'
+    + '        <div style="margin-top:8px;display:flex;gap:8px;">'
+    + '          <button class="btn btn-primary btn-sm" onclick="window.EduVerseWebsite.saveFromWebsiteBuilder()" style="flex:1;"><i class="fas fa-save"></i> Save Website Profile</button>'
+    + '          <button class="btn btn-outline btn-sm" onclick="window.EduVerseWebsite.refreshWebsitePreview()"><i class="fas fa-sync"></i> Refresh Preview</button>'
+    + '        </div>'
+    + '      </div>'
+    + '    </div>'
+
+    + '    <div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;">'
+    + '      <div style="background:#0f2440;color:#ffffff;padding:10px 14px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between;">'
+    + '        <span><i class="fas fa-desktop"></i> Live Website Preview Frame</span>'
+    + '        <span style="font-size:10px;background:rgba(255,255,255,0.2);padding:2px 8px;border-radius:12px;">ACTIVE TENANT PORTAL</span>'
+    + '      </div>'
+    + '      <iframe id="wbIframePreview" src="school-portal.html?school=' + encodeURIComponent(slug) + '" style="width:100%;height:450px;border:none;background:#f8fafc;" title="Live School Website Preview"></iframe>'
+    + '    </div>'
+    + '  </div>'
+    + '</div>';
+
+  container.innerHTML = html;
+}
+
+function saveFromWebsiteBuilder() {
+  var prof = typeof getSchoolProfile === 'function' ? getSchoolProfile() : null;
+  if (!prof) { if (typeof toast === 'function') toast('School profile is not available.', 'error'); return; }
+
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+  var name = val('wbName');
+  var motto = val('wbMotto');
+  var slugVal = val('wbSlug');
+  if (slugVal && typeof normalizeSlug === 'function') slugVal = normalizeSlug(slugVal);
+
+  var tenants = typeof getTenants === 'function' ? getTenants() : [];
+  var cur = _aiActiveTenant(tenants);
+
+  // Validate slug before mutating anything
+  if (slugVal && cur && slugVal !== (cur.slug || cur.id)) {
+    if (typeof isSlugTaken === 'function' && isSlugTaken(slugVal, cur.id)) {
+      if (typeof toast === 'function') toast('That website slug is already in use by another school.', 'error');
+      return;
+    }
+  }
+
+  if (name) prof.schoolName = name;
+  prof.schoolMotto = motto;
+  prof.aboutText = val('wbAbout');
+  prof.contactPhone = val('wbPhone');
+  prof.contactEmail = val('wbEmail');
+  prof.contactAddress = val('wbAddress');
+  if (slugVal) prof.slug = slugVal;
+
+  if (slugVal && cur && slugVal !== (cur.slug || cur.id) && typeof saveTenants === 'function') {
+    cur.slug = slugVal;
+    saveTenants(tenants);
+  }
+
+  if (typeof saveSchoolProfile === 'function') saveSchoolProfile();
+  else if (typeof saveData === 'function') saveData();
+
+  refreshWebsitePreview();
+}
+
+function generatePresetProfile(presetKey) {
+  var template = AI_PRESET_TEMPLATES[presetKey] || AI_PRESET_TEMPLATES.k12;
+  var cleanSlug = typeof normalizeSlug === 'function' ? normalizeSlug(template.name) : String(template.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+  var tenants = typeof getTenants === 'function' ? getTenants() : [];
+  var exists = tenants.some(function(t) { return (t.slug || t.id) === cleanSlug; });
+  if (!exists && typeof createTenant === 'function') {
+    createTenant({
+      name: template.name,
+      slug: cleanSlug,
+      motto: template.motto,
+      tier: template.tier,
+      address: template.address,
+      phone: template.phone,
+      email: template.email,
+      adminName: template.name + ' Admin',
+      adminEmail: template.email,
+      logo: template.logoUrl || ''
+    });
+  }
+
+  var iframe = document.getElementById('wbIframePreview');
+  if (iframe) iframe.src = 'school-portal.html?school=' + encodeURIComponent(cleanSlug) + '&t=' + Date.now();
+
+  if (typeof toast === 'function') {
+    toast('Generated school website profile: ' + template.name + ' (previewing live portal).', 'success');
+  }
+}
+
+function refreshWebsitePreview() {
+  var iframe = document.getElementById('wbIframePreview');
+  if (!iframe) return;
+  var slugEl = document.getElementById('wbSlug');
+  var slug = slugEl ? slugEl.value.trim() : '';
+  if (!slug) return;
+  iframe.src = 'school-portal.html?school=' + encodeURIComponent(slug) + '&t=' + Date.now();
+}
+
+window.EduVerseWebsite = window.EduVerseWebsite || {};
+window.EduVerseWebsite.renderWebsiteAI = renderWebsiteAI;
+window.EduVerseWebsite.saveFromWebsiteBuilder = saveFromWebsiteBuilder;
+window.EduVerseWebsite.generatePresetProfile = generatePresetProfile;
+window.EduVerseWebsite.refreshWebsitePreview = refreshWebsitePreview;
+window.renderWebsiteAI = renderWebsiteAI;
