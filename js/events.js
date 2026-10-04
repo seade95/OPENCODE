@@ -7,6 +7,15 @@
   // Actions that take no args just call the function directly
   // Actions with args use data-args="arg1,arg2"
 
+  // Close dropdowns when clicking outside them
+  document.addEventListener('click', function(e) {
+    var t = e.target;
+    if (t && t.closest && !t.closest('.nav-dropdown') && !t.closest('.ev-user-menu')) {
+      document.querySelectorAll('.nav-dropdown.open').forEach(function(el) { el.classList.remove('open'); });
+      document.querySelectorAll('.ev-dropdown.show').forEach(function(el) { el.classList.remove('show'); });
+    }
+  });
+
   document.addEventListener('click', function(e) {
     var el = e.target.closest('[data-action]');
     if (!el) return;
@@ -27,8 +36,11 @@
       args = argsStr.split(',').map(function(a) { return a.trim(); });
     }
 
-    e.preventDefault();
+    if (el.tagName === 'A') {
+      var href = (el.getAttribute('href') || '').trim();
+      if (href.indexOf('javascript:') === 0 || href.charAt(0) === '#') e.preventDefault();
+    }
     e.stopPropagation();
-    window[action].apply(el, args);
+    window[action].apply(el, args.length ? args : [el]);
   });
 })();
