@@ -154,7 +154,10 @@ function toggleNav() {
   }
 }
 function toggleNavDropdown(el) {
-  el.classList.toggle('open');
+  var ctx = el || this;
+  if (!ctx || !ctx.closest) return;
+  var target = ctx.closest('.nav-dropdown');
+  if (target) target.classList.toggle('open');
 }
 function toggleUserDropdown() {
   var dd = document.getElementById('evUserDropdown');
