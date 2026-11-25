@@ -58,7 +58,7 @@
   .card p{font-size:13.5px;color:var(--demo-muted);margin:0;line-height:1.55;}
   .icon-box{width:44px;height:44px;border-radius:10px;background:#f1f5f9;color:var(--demo-primary);display:inline-flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
   /* Stats */
-  .stats-wrap{background:linear-gradient(135deg,var(--demo-dark),#154a8b);color:#fff;padding:50px 20px;text-align:center;}
+  .stats-wrap{background:linear-gradient(135deg,var(--demo-dark),var(--demo-primary));color:#fff;padding:50px 20px;text-align:center;}
   .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:20px;max-width:900px;margin:0 auto;}
   .stat{padding:0 10px;}
   .stat .num{font-size:34px;font-weight:800;line-height:1;display:block;}
@@ -70,7 +70,7 @@
   /* Team */
   .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px;}
   .team-card{text-align:center;}
-  .team-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--demo-primary),#154a8b);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:700;box-shadow:0 6px 16px rgba(37,99,235,0.25);}
+  .team-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--demo-primary),var(--demo-dark));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:700;box-shadow:0 6px 16px rgba(26,58,92,0.35);}
   .team-card h4{font-size:15px;margin:0 0 3px;}
   .team-card .role{font-size:12.5px;color:var(--demo-primary);font-weight:700;margin-bottom:6px;display:block;}
   .team-card p{font-size:12.5px;color:var(--demo-muted);margin:0;line-height:1.5;}
@@ -133,7 +133,7 @@
   .chk input{margin-top:3px;width:auto;flex-shrink:0;}
   .chk a{color:var(--demo-primary);text-decoration:underline;font-weight:600;font-size:12.5px;}
   .btn-submit{width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:15px;background:var(--demo-dark);color:#fff;cursor:pointer;font-family:inherit;transition:background .15s;}
-  .btn-submit:hover{background:#154a8b;}
+  .btn-submit:hover{background:var(--demo-dark);}
   .btn-submit:disabled{opacity:.65;cursor:not-allowed;}
   .note{text-align:center;font-size:12.5px;color:var(--demo-muted);margin-top:14px;}
   /* Dark mode */
@@ -150,7 +150,27 @@
   @media(max-width:640px){.demo-hero h1{font-size:30px;}.sec-head h2{font-size:24px;}.fg-row{grid-template-columns:1fr;}}
 </style>
 </head>
-<body>
+<body class="page-shell page-offset">
+
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
+</nav>
 
 <!-- Toast Container -->
 <div class="toast-container" id="toastContainer"></div>
@@ -415,7 +435,7 @@
 </div>
 
 <!-- Online Learning Portal -->
-<section class="sec-head dark" style="background:linear-gradient(135deg,var(--demo-dark),#154a8b);color:#fff;padding:44px 20px;border-radius:var(--radius);margin:60px 0 24px;text-align:left;">
+<section class="sec-head dark" style="background:linear-gradient(135deg,var(--demo-dark),var(--demo-primary));color:#fff;padding:44px 20px;border-radius:var(--radius);margin:60px 0 24px;text-align:left;">
   <span class="eyebrow">Digital Learning</span>
   <h2 style="color:#fff;">Online <span>Learning Portal</span></h2>
   <p style="color:#cbd5e1;margin:0 0 18px;">Access assignments, results, and learning resources anytime, anywhere</p>
@@ -511,7 +531,7 @@
     </div>
   </div>
   <div class="card news-card">
-    <div class="news-img"><i class="fas fa-laptop-code" style="color:#2563eb;"></i></div>
+    <div class="news-img"><i class="fas fa-laptop-code" style="color:var(--demo-primary);"></i></div>
     <div class="news-body">
       <div class="news-meta"><i class="fas fa-calendar-alt"></i> <span>May 25, 2026</span><i class="fas fa-user"></i> <span>Admin</span></div>
       <h5>New Digital Learning Platform Launched for Students</h5>
@@ -685,6 +705,7 @@
   </div>
 </footer>
 
+<script src="js/site-chrome.js"></script>
 <script>
 // Gallery filter
 (function(){
