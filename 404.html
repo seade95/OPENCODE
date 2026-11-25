@@ -6,36 +6,117 @@
 <title>Page Not Found — EduVerse</title>
 <meta name="description" content="The page you're looking for doesn't exist. Return to EduVerse.">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#f0f4ff 0%,#e0e7ff 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
-.card{background:#fff;border-radius:16px;padding:48px 40px;width:100%;max-width:480px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1)}
-.code{font-size:96px;font-weight:800;color:#2563eb;line-height:1;margin-bottom:4px}
-h1{font-size:1.5rem;color:#1e293b;margin-bottom:8px}
-p{color:#64748b;font-size:0.9375rem;margin-bottom:24px;line-height:1.5}
-.links{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;font-size:0.9375rem;font-weight:600;text-decoration:none;transition:background .2s}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-primary:hover{background:#1d4ed8}
-.btn-outline{background:transparent;border:2px solid #e2e8f0;color:#475569}
-.btn-outline:hover{border-color:#2563eb;color:#2563eb}
-</style>
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 </head>
-<body>
-<div class="card">
-  <div class="code">404</div>
-  <h1>Page Not Found</h1>
-  <p>The page you are looking for doesn't exist or has been moved. Check the URL or head back to familiar ground.</p>
-  <div class="links">
-    <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> Go Home</a>
-    <a href="directory.html" class="btn btn-outline"><i class="fas fa-school"></i> Browse Schools</a>
-    <a href="login/student.html" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+<body class="page-shell">
+
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
   </div>
-</div>
+</nav>
+
+<main class="status-page">
+  <div class="status-card">
+    <div class="status-code">404</div>
+    <h1>Page Not Found</h1>
+    <p>The page you are looking for doesn't exist or has been moved. Check the URL or head back to familiar ground.</p>
+    <div class="status-actions">
+      <a href="index.html" class="btn btn-primary"><i class="fas fa-home"></i> Go Home</a>
+      <a href="directory.html" class="btn btn-ghost"><i class="fas fa-school"></i> Browse Schools</a>
+      <a href="login.html" class="btn btn-ghost"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+    </div>
+    <p class="status-note">Looking for your school? Open its portal from the school directory.</p>
+  </div>
+</main>
+
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/site-chrome.js"></script>
 </body>
 </html>

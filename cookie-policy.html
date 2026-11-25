@@ -1,56 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cookie Policy — EduVerse</title>
-<link rel="stylesheet" href="css/style.css">
-<style>body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:40px 20px;line-height:1.7}.legal-wrap{max-width:800px;margin:0 auto;background:#fff;border-radius:12px;padding:40px;box-shadow:0 1px 3px rgba(0,0,0,.1)}h1{font-size:28px;margin-bottom:4px}h2{font-size:20px;margin-top:28px;margin-bottom:8px;color:#2563eb}p{font-size:14px;color:#475569;margin-bottom:12px}.back{display:inline-block;margin-bottom:24px;color:#2563eb;text-decoration:none;font-size:14px}.back:hover{text-decoration:underline}ul{font-size:14px;color:#475569;padding-left:20px}li{margin-bottom:6px}hr{border:none;border-top:1px solid #e2e8f0;margin:32px 0}</style>
+<meta name="description" content="Which cookies EduVerse uses and how you can control them.">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 </head>
-<body>
-<div class="legal-wrap">
-<a href="index.html" class="back">&larr; Back to EduVerse</a>
-<h1>Cookie Policy</h1>
-<p><em>Last updated: July 10, 2026</em></p>
-<hr>
+<body class="page-shell">
 
-<h2>1. What Are Cookies</h2>
-<p>Cookies are small text files stored on your device by your web browser. They help websites remember your preferences, authenticate your session, and understand how you use the site.</p>
-
-<h2>2. Cookies We Use</h2>
-<p><strong>Essential Cookies:</strong> Required for the Platform to function. They enable user authentication, session management, and security features. No consent required.</p>
-<ul>
-  <li><code>eduverse_session</code> — maintains your login session</li>
-  <li><code>XSRF-TOKEN</code> — prevents cross-site request forgery</li>
-</ul>
-<p><strong>Functional Cookies:</strong> Remember your preferences (theme, language).</p>
-<ul>
-  <li><code>eduverse_theme</code> — stores dark/light mode preference</li>
-  <li><code>cookie_consent</code> — records your cookie preference</li>
-</ul>
-<p><strong>Analytics Cookies:</strong> Help us understand how the Platform is used. Only placed with your consent.</p>
-<ul>
-  <li>We use privacy respecting, anonymized analytics that do not track individuals across sites</li>
-</ul>
-
-<h2>3. Third-Party Cookies</h2>
-<p>We may use payment processors (e.g., Paystack) that set their own cookies. We do not control third-party cookies. Please review their respective policies.</p>
-
-<h2>4. Managing Cookies</h2>
-<p>You can control cookies through your browser settings. You may block all cookies, but essential cookies are required for the Platform to function. To withdraw consent, clear your cookies and reload the site to see the consent banner again.</p>
-
-<h2>5. Changes</h2>
-<p>We may update this policy. Changes will be posted here with an updated date.</p>
-
-<h2>6. Contact</h2>
-<p><a href="mailto:privacy@eduverse.app">privacy@eduverse.app</a></p>
-
-</div>
-<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
-  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
-    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy Policy</a>
-    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms of Service</a>
-    <a href="gdpr-compliance.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR Compliance</a>
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
   </div>
-  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
+</nav>
+
+<header class="page-head">
+  <h1>Cookie <span>Policy</span></h1>
+  <p>Last updated: July 10, 2026</p>
+</header>
+
+<main class="legal-page">
+  <article class="legal-card">
+    <a href="index.html" class="legal-back"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+
+    <h2>1. What Are Cookies</h2>
+    <p>Cookies are small text files stored on your device by your web browser. They help websites remember your preferences, authenticate your session, and understand how you use the site.</p>
+
+    <h2>2. Cookies We Use</h2>
+    <p><strong>Essential Cookies:</strong> Required for the Platform to function. They enable user authentication, session management, and security features. No consent required.</p>
+    <ul>
+      <li><code>eduverse_session</code> — maintains your login session</li>
+      <li><code>XSRF-TOKEN</code> — prevents cross-site request forgery</li>
+    </ul>
+    <p><strong>Functional Cookies:</strong> Remember your preferences (theme, language).</p>
+    <ul>
+      <li><code>eduverse_theme</code> — stores dark/light mode preference</li>
+      <li><code>cookie_consent</code> — records your cookie preference</li>
+    </ul>
+    <p><strong>Analytics Cookies:</strong> Help us understand how the Platform is used. Only placed with your consent.</p>
+    <ul>
+      <li>We use privacy respecting, anonymized analytics that do not track individuals across sites</li>
+    </ul>
+
+    <h2>3. Third-Party Cookies</h2>
+    <p>We may use payment processors (e.g., Paystack) that set their own cookies. We do not control third-party cookies. Please review their respective policies.</p>
+
+    <h2>4. Managing Cookies</h2>
+    <p>You can control cookies through your browser settings. You may block all cookies, but essential cookies are required for the Platform to function. To withdraw consent, clear your cookies and reload the site to see the consent banner again.</p>
+
+    <h2>5. Changes</h2>
+    <p>We may update this policy. Changes will be posted here with an updated date.</p>
+
+    <h2>6. Contact</h2>
+    <p><a href="mailto:privacy@eduverse.app">privacy@eduverse.app</a></p>
+  </article>
+</main>
+
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
 </footer>
+
+<script src="js/site-chrome.js"></script>
 </body>
 </html>

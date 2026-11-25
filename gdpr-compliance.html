@@ -1,70 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>GDPR Compliance — EduVerse</title>
-<link rel="stylesheet" href="css/style.css">
-<style>body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:40px 20px;line-height:1.7}.legal-wrap{max-width:800px;margin:0 auto;background:#fff;border-radius:12px;padding:40px;box-shadow:0 1px 3px rgba(0,0,0,.1)}h1{font-size:28px;margin-bottom:4px}h2{font-size:20px;margin-top:28px;margin-bottom:8px;color:#2563eb}p{font-size:14px;color:#475569;margin-bottom:12px}.back{display:inline-block;margin-bottom:24px;color:#2563eb;text-decoration:none;font-size:14px}.back:hover{text-decoration:underline}ul{font-size:14px;color:#475569;padding-left:20px}li{margin-bottom:6px}hr{border:none;border-top:1px solid #e2e8f0;margin:32px 0}code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:13px}</style>
+<meta name="description" content="EduVerse GDPR commitments, data subject rights and processing details.">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 </head>
-<body>
-<div class="legal-wrap">
-<a href="index.html" class="back">&larr; Back to EduVerse</a>
-<h1>GDPR Compliance</h1>
-<p><em>Last updated: July 10, 2026</em></p>
-<hr>
+<body class="page-shell">
 
-<h2>Data Processing Agreement</h2>
-<p>EduVerse acts as a data processor for school data and a data controller for user account data. We process personal data in accordance with the General Data Protection Regulation (GDPR) (EU) 2016/679.</p>
-
-<h2>Your Rights</h2>
-<ul>
-  <li><strong>Right to Access</strong> — Request a copy of all personal data we hold about you. Email <a href="mailto:privacy@eduverse.app">privacy@eduverse.app</a> with subject "Data Access Request". We will respond within 30 days.</li>
-  <li><strong>Right to Rectification</strong> — Correct inaccurate or incomplete data via your account settings or by contacting us.</li>
-  <li><strong>Right to Erasure</strong> — Request deletion of your account and associated data. We will delete within 30 days unless retention is required by law.</li>
-  <li><strong>Right to Restrict Processing</strong> — Limit how we use your data while a dispute is being resolved.</li>
-  <li><strong>Right to Data Portability</strong> — Export your data in JSON format. Use the export feature in your account dashboard or contact us.</li>
-  <li><strong>Right to Object</strong> — Object to processing for direct marketing or legitimate interests.</li>
-</ul>
-
-<h2>Data We Collect</h2>
-<ul>
-  <li><strong>Account data:</strong> name, email, phone, school affiliation</li>
-  <li><strong>Student data:</strong> name, class, academic records, attendance (uploaded by schools)</li>
-  <li><strong>Usage data:</strong> page views, feature usage, session duration (anonymized where possible)</li>
-  <li><strong>Cookies:</strong> essential session cookies, optional analytics cookies with consent</li>
-</ul>
-
-<h2>Data Retention</h2>
-<p>Account data is retained until account deletion. School-provided data is retained for the duration of the service agreement plus 90 days. Anonymized analytics data may be retained indefinitely.</p>
-
-<h2>Data Transfers</h2>
-<p>Data may be stored on servers in the EU, US, or Africa depending on your region. We ensure adequate safeguards via Standard Contractual Clauses where required.</p>
-
-<h2>Third-Party Processors</h2>
-<ul>
-  <li><strong>Netlify</strong> — hosting and CDN (US/EU servers)</li>
-  <li><strong>Paystack</strong> — payment processing (Nigeria)</li>
-  <li><strong>Stripe</strong> — payment processing (US)</li>
-</ul>
-
-<h2>Breach Notification</h2>
-<p>In the event of a data breach affecting your personal data, we will notify affected users within 72 hours via email and publish a notice on our website.</p>
-
-<h2>Data Protection Officer</h2>
-<p>Contact our DPO for all GDPR-related inquiries:<br>
-Email: <a href="mailto:dpo@eduverse.app">dpo@eduverse.app</a><br>
-Response time: within 48 hours</p>
-
-<h2>Supervisory Authority</h2>
-<p>You have the right to lodge a complaint with your local data protection authority if you believe we have not processed your data in compliance with GDPR.</p>
-
-</div>
-<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
-  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
-    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy Policy</a>
-    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms of Service</a>
-    <a href="cookie-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookie Policy</a>
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
   </div>
-  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
+</nav>
+
+<header class="page-head">
+  <h1>GDPR <span>Compliance</span></h1>
+  <p>Last updated: July 10, 2026</p>
+</header>
+
+<main class="legal-page">
+  <article class="legal-card">
+    <a href="index.html" class="legal-back"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
+
+    <h2>Data Processing Agreement</h2>
+    <p>EduVerse acts as a data processor for school data and a data controller for user account data. We process personal data in accordance with the General Data Protection Regulation (GDPR) (EU) 2016/679.</p>
+
+    <h2>Your Rights</h2>
+    <ul>
+      <li><strong>Right to Access</strong> — Request a copy of all personal data we hold about you. Email <a href="mailto:privacy@eduverse.app">privacy@eduverse.app</a> with subject "Data Access Request". We will respond within 30 days.</li>
+      <li><strong>Right to Rectification</strong> — Correct inaccurate or incomplete data via your account settings or by contacting us.</li>
+      <li><strong>Right to Erasure</strong> — Request deletion of your account and associated data. We will delete within 30 days unless retention is required by law.</li>
+      <li><strong>Right to Restrict Processing</strong> — Limit how we use your data while a dispute is being resolved.</li>
+      <li><strong>Right to Data Portability</strong> — Export your data in JSON format. Use the export feature in your account dashboard or contact us.</li>
+      <li><strong>Right to Object</strong> — Object to processing for direct marketing or legitimate interests.</li>
+    </ul>
+
+    <h2>Data We Collect</h2>
+    <ul>
+      <li><strong>Account data:</strong> name, email, phone, school affiliation</li>
+      <li><strong>Student data:</strong> name, class, academic records, attendance (uploaded by schools)</li>
+      <li><strong>Usage data:</strong> page views, feature usage, session duration (anonymized where possible)</li>
+      <li><strong>Cookies:</strong> essential session cookies, optional analytics cookies with consent</li>
+    </ul>
+
+    <h2>Data Retention</h2>
+    <p>Account data is retained until account deletion. School-provided data is retained for the duration of the service agreement plus 90 days. Anonymized analytics data may be retained indefinitely.</p>
+
+    <h2>Data Transfers</h2>
+    <p>Data may be stored on servers in the EU, US, or Africa depending on your region. We ensure adequate safeguards via Standard Contractual Clauses where required.</p>
+
+    <h2>Third-Party Processors</h2>
+    <ul>
+      <li><strong>Netlify</strong> — hosting and CDN (US/EU servers)</li>
+      <li><strong>Paystack</strong> — payment processing (Nigeria)</li>
+      <li><strong>Stripe</strong> — payment processing (US)</li>
+    </ul>
+
+    <h2>Breach Notification</h2>
+    <p>In the event of a data breach affecting your personal data, we will notify affected users within 72 hours via email and publish a notice on our website.</p>
+
+    <h2>Data Protection Officer</h2>
+    <p>Contact our DPO for all GDPR-related inquiries:<br>
+    Email: <a href="mailto:dpo@eduverse.app">dpo@eduverse.app</a><br>
+    Response time: within 48 hours</p>
+
+    <h2>Supervisory Authority</h2>
+    <p>You have the right to lodge a complaint with your local data protection authority if you believe we have not processed your data in compliance with GDPR.</p>
+  </article>
+</main>
+
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
 </footer>
+
+<script src="js/site-chrome.js"></script>
 </body>
 </html>

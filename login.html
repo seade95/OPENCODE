@@ -6,35 +6,45 @@
 <title>Sign In — EduVerse</title>
 <meta name="description" content="Sign in to your EduVerse school admin portal.">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#f0f4ff,#e0e7ff);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.login-card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,0.08);width:100%;max-width:440px;padding:40px 32px;}
-.login-card .logo{text-align:center;margin-bottom:24px;}
-.login-card .logo img{height:40px;width:auto;}
-.login-card .logo span{font-size:22px;font-weight:800;color:#1e293b;margin-left:8px;vertical-align:middle;}
-.login-card h1{font-size:22px;text-align:center;color:#1e293b;margin-bottom:4px;}
-.login-card .subtitle{text-align:center;color:#64748b;font-size:14px;margin-bottom:24px;}
-.admin-badge{display:flex;align-items:center;justify-content:center;gap:8px;background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe;border-radius:10px;padding:10px;font-size:14px;font-weight:600;margin-bottom:20px;}
-.admin-badge i{font-size:16px;}
+/* Sign-in card — mapped onto the EduVerse design tokens */
+.login-card{width:100%;max-width:452px;padding:40px 36px 32px;background:var(--card-bg);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:var(--radius);box-shadow:var(--shadow-hover);}
+.login-card .logo{text-align:center;margin-bottom:20px;}
+.login-card .logo a{display:inline-flex;align-items:center;gap:10px;text-decoration:none;}
+.login-card .logo img{height:42px;width:auto;border-radius:6px;}
+.login-card .logo span{font-size:22px;font-weight:800;color:var(--primary);}
+.login-card h1{font-size:23px;text-align:center;color:var(--primary);margin:0 0 6px;font-weight:800;}
+.login-card .subtitle{text-align:center;color:var(--text-light);font-size:14px;margin:0 0 22px;}
+.admin-badge{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(245,166,35,0.12);color:var(--accent-dark);border:1px solid rgba(245,166,35,0.45);border-radius:var(--radius-sm);padding:10px;font-size:13.5px;font-weight:700;margin-bottom:20px;}
+.admin-badge i{font-size:15px;}
 .form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:4px;}
-.form-group input{width:100%;padding:11px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .15s;}
-.form-group input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
-.form-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:13px;}
-.form-row label{display:flex;align-items:center;gap:6px;color:#475569;cursor:pointer;}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.form-group input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;background:#f8fafc;transition:var(--transition);}
+.form-group input:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(245,166,35,0.18);}
+.form-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;font-size:13px;color:var(--text-light);}
+.form-row label{display:flex;align-items:center;gap:6px;cursor:pointer;}
 .form-row input[type=checkbox]{width:auto;}
-.form-row a{color:#2563eb;text-decoration:none;}
-.form-row a:hover{text-decoration:underline;}
-.login-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;background:#2563eb;color:#fff;transition:background .15s;}
-.login-btn:hover{background:#1d4ed8;}
-.login-btn:disabled{opacity:0.6;cursor:not-allowed;}
-.error{background:#fef2f2;color:#dc2626;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:16px;display:none;}
+.form-row a{color:var(--primary);text-decoration:none;font-weight:600;}
+.form-row a:hover{color:var(--accent-dark);}
+.login-btn{width:100%;padding:13px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--accent);color:var(--primary-dark);transition:var(--transition);}
+.login-btn:hover{background:var(--accent-light);transform:translateY(-1px);box-shadow:0 10px 24px rgba(245,166,35,0.3);}
+.login-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none;box-shadow:none;}
+.error{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;font-size:13px;padding:11px 14px;border-radius:var(--radius-sm);margin-bottom:16px;display:none;}
 .back-link{text-align:center;margin-top:20px;font-size:13px;}
-.back-link a{color:#64748b;text-decoration:none;}
-.back-link a:hover{color:#2563eb;}
+.back-link a{color:var(--text-light);text-decoration:none;}
+.back-link a:hover{color:var(--primary);}
+[data-theme="dark"] .login-card{background:#1e293b;border-color:#334155;color:#e2e8f0;}
+[data-theme="dark"] .login-card h1,[data-theme="dark"] .login-card .logo span{color:#f1f5f9;}
+[data-theme="dark"] .form-group input{background:#0f172a;border-color:#334155;color:#e2e8f0;}
+[data-theme="dark"] .form-group input:focus{background:#0f172a;}
 @media(max-width:400px){.login-card{padding:28px 20px;}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -301,17 +311,38 @@ function showError(msg) {
 })();
 </script>
 </head>
-<body>
+<body class="page-shell">
 
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="auth-page">
 <div class="login-card">
   <div class="logo">
-    <a href="index.html" style="text-decoration:none;color:inherit;">
+    <a href="index.html">
     <img src="icons/icon.svg" alt="EduVerse" onerror="this.style.display='none'">
     <span>EduVerse</span>
     </a>
   </div>
   <h1>Welcome Back</h1>
-  <p class="subtitle">Sign in to your account</p>
+  <p class="subtitle">Sign in to your school admin account</p>
 
   <div class="admin-badge"><i class="fas fa-user-shield"></i> Admin Portal</div>
 
@@ -319,11 +350,11 @@ function showError(msg) {
 
   <form id="loginForm">
     <div class="form-group">
-      <label>Admin Email</label>
+      <label for="email">Admin Email</label>
       <input type="email" id="email" placeholder="admin@school.edu" required autocomplete="email">
     </div>
     <div class="form-group">
-      <label>Password</label>
+      <label for="password">Password</label>
       <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password">
     </div>
     <div class="form-row">
@@ -336,7 +367,21 @@ function showError(msg) {
   <div class="back-link">
     <a id="loginBackLink" href="index.html"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
   </div>
+  <p class="auth-fineprint">School admin? <a href="apply.html" style="color:var(--primary);font-weight:600;text-decoration:none;">Apply for an account</a> &middot; Other portals: <a href="login/teacher.html" style="color:var(--primary);font-weight:600;text-decoration:none;">Teacher</a>, <a href="login/student.html" style="color:var(--primary);font-weight:600;text-decoration:none;">Student</a>, <a href="login/parent.html" style="color:var(--primary);font-weight:600;text-decoration:none;">Parent</a></p>
 </div>
+</main>
+
+<footer class="slim-footer">
+  <div class="slim-footer-links">
+    <a href="index.html">Home</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="directory.html">Schools</a>
+    <a href="demo.html">Demo</a>
+    <a href="privacy-policy.html">Privacy</a>
+    <a href="terms-of-service.html">Terms</a>
+  </div>
+  <p style="margin:0;">&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management</p>
+</footer>
 
 <script>
 document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -377,6 +422,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
 });
 </script>
 <script src="js/events.js"></script>
+<script src="js/site-chrome.js"></script>
 
 </body>
 </html>

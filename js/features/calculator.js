@@ -1,6 +1,6 @@
 /**
- * EduVerse - Reconstructed Interactive Scientific & Academic Calculator Engine
- * Handles scientific calculations, grade/GPA calculations, and fee discount computations.
+ * EduVerse - Interactive Scientific Calculator Engine
+ * Handles scientific calculations for the floating calculator.
  */
 
 (function () {
@@ -10,32 +10,12 @@
 
   var calcExpression = '';
   var calcHistory = '';
-  var activeTab = 'scientific'; // 'scientific' | 'gpa' | 'fees'
   var lastAns = '0';
 
-  // GPA Subjects Array
-  var gpaSubjects = [
-    { name: 'Mathematics', ca: 28, exam: 58, unit: 3 },
-    { name: 'English Language', ca: 25, exam: 55, unit: 3 },
-    { name: 'Integrated Sciences', ca: 27, exam: 60, unit: 3 },
-    { name: 'Computer Studies & AI', ca: 29, exam: 62, unit: 3 }
-  ];
-
-  // Fee Calculator Fields
-  var feeInputs = {
-    tuition: 150000,
-    ict: 15000,
-    lab: 10000,
-    boarding: 45000,
-    discountPct: 10
-  };
-
   /**
-   * Open Scientific & Academic Calculator Modal
+   * Open Scientific Calculator Modal
    */
-  function openCalculator(tab) {
-    if (tab) activeTab = tab;
-
+  function openCalculator() {
     var modal = document.getElementById('calcModal');
     if (!modal) {
       modal = document.createElement('div');
@@ -64,15 +44,7 @@
   }
 
   /**
-   * Switch Active Mode Tab
-   */
-  function setTab(tab) {
-    activeTab = tab;
-    renderCalculatorUI();
-  }
-
-  /**
-   * Render Reconstructed Calculator UI
+   * Render Calculator UI
    */
   function renderCalculatorUI() {
     var modal = document.getElementById('calcModal');
@@ -88,36 +60,17 @@
       + '        <i class="fas fa-calculator"></i>'
       + '      </div>'
       + '      <div>'
-      + '        <h3 style="margin:0;font-size:15px;font-weight:700;color:#ffffff;">EduVerse Academic Calculator</h3>'
-      + '        <span style="font-size:11px;color:#94a3b8;">Scientific · GPA Grade Point · Fee Discount</span>'
+      + '        <h3 style="margin:0;font-size:15px;font-weight:700;color:#ffffff;">EduVerse Scientific Calculator</h3>'
+      + '        <span style="font-size:11px;color:#94a3b8;">Scientific functions · Instant results</span>'
       + '      </div>'
       + '    </div>'
       + '    <button onclick="window.EduVerseCalculator.closeCalculator()" style="background:transparent;border:none;color:#94a3b8;font-size:20px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color 0.2s;" hover="color:#ffffff;">&times;</button>'
       + '  </div>'
 
-      // Mode Navigation Tabs
-      + '  <div style="display:flex;background:#0f172a;padding:8px 16px;border-bottom:1px solid #1e293b;gap:6px;">'
-      + '    <button onclick="window.EduVerseCalculator.setTab(\'scientific\')" style="flex:1;padding:8px 12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;' + (activeTab === 'scientific' ? 'background:#2563eb;color:#ffffff;box-shadow:0 2px 6px rgba(37,99,235,0.4);' : 'background:#1e293b;color:#94a3b8;') + '">'
-      + '      <i class="fas fa-microchip"></i> Scientific'
-      + '    </button>'
-      + '    <button onclick="window.EduVerseCalculator.setTab(\'gpa\')" style="flex:1;padding:8px 12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;' + (activeTab === 'gpa' ? 'background:#2563eb;color:#ffffff;box-shadow:0 2px 6px rgba(37,99,235,0.4);' : 'background:#1e293b;color:#94a3b8;') + '">'
-      + '      <i class="fas fa-graduation-cap"></i> GPA & Grades'
-      + '    </button>'
-      + '    <button onclick="window.EduVerseCalculator.setTab(\'fees\')" style="flex:1;padding:8px 12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;' + (activeTab === 'fees' ? 'background:#2563eb;color:#ffffff;box-shadow:0 2px 6px rgba(37,99,235,0.4);' : 'background:#1e293b;color:#94a3b8;') + '">'
-      + '      <i class="fas fa-file-invoice-dollar"></i> Fee Discount'
-      + '    </button>'
-      + '  </div>'
-
-      // Body Section based on active tab
+      // Body
       + '  <div style="padding:16px;">';
 
-    if (activeTab === 'scientific') {
-      html += renderScientificTab();
-    } else if (activeTab === 'gpa') {
-      html += renderGpaTab();
-    } else {
-      html += renderFeesTab();
-    }
+    html += renderScientificTab();
 
     html += '  </div>'
       + '</div>';
@@ -250,159 +203,6 @@
   }
 
   /**
-   * Render Tab 2: GPA / Grade Point Calculator
-   */
-  function renderGpaTab() {
-    var totalWeightedPoints = 0;
-    var totalUnits = 0;
-
-    var rowsHtml = '';
-    gpaSubjects.forEach(function(s, idx) {
-      var ca = parseFloat(s.ca) || 0;
-      var exam = parseFloat(s.exam) || 0;
-      var total = ca + exam;
-      var unit = parseFloat(s.unit) || 1;
-
-      var gradeInfo = calculateGradeLetter(total);
-      var points = gradeInfo.point * unit;
-
-      totalWeightedPoints += points;
-      totalUnits += unit;
-
-      rowsHtml += '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 30px;gap:8px;align-items:center;background:#1e293b;padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:12px;">'
-        + '  <input type="text" value="' + esc(s.name) + '" onchange="window.EduVerseCalculator.updateGpaSubj(' + idx + ',\'name\',this.value)" style="background:#0f172a;border:1px solid #334155;color:#fff;padding:4px 8px;border-radius:6px;width:100%;font-size:12px;">'
-        + '  <input type="number" value="' + ca + '" max="40" onchange="window.EduVerseCalculator.updateGpaSubj(' + idx + ',\'ca\',this.value)" style="background:#0f172a;border:1px solid #334155;color:#fff;padding:4px 6px;border-radius:6px;width:100%;font-size:12px;text-align:center;">'
-        + '  <input type="number" value="' + exam + '" max="60" onchange="window.EduVerseCalculator.updateGpaSubj(' + idx + ',\'exam\',this.value)" style="background:#0f172a;border:1px solid #334155;color:#fff;padding:4px 6px;border-radius:6px;width:100%;font-size:12px;text-align:center;">'
-        + '  <div style="font-weight:700;color:#38bdf8;text-align:center;">' + total + ' (' + gradeInfo.letter + ')</div>'
-        + '  <input type="number" value="' + unit + '" min="1" max="6" onchange="window.EduVerseCalculator.updateGpaSubj(' + idx + ',\'unit\',this.value)" style="background:#0f172a;border:1px solid #334155;color:#fff;padding:4px 6px;border-radius:6px;width:100%;font-size:12px;text-align:center;">'
-        + '  <button onclick="window.EduVerseCalculator.removeGpaSubj(' + idx + ')" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;"><i class="fas fa-trash-alt"></i></button>'
-        + '</div>';
-    });
-
-    var gpa = totalUnits > 0 ? (totalWeightedPoints / totalUnits).toFixed(2) : '0.00';
-    var classStanding = getAcademicClass(parseFloat(gpa));
-
-    return ''
-      + '<div style="background:#020617;border:1px solid #1e293b;border-radius:12px;padding:14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">'
-      + '  <div>'
-      + '    <div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;">Calculated Termly GPA / CGPA</div>'
-      + '    <div style="font-size:32px;font-weight:800;color:#10b981;font-family:monospace;">' + gpa + ' <span style="font-size:14px;color:#64748b;">/ 5.00</span></div>'
-      + '  </div>'
-      + '  <div style="text-align:right;">'
-      + '    <span style="background:#1e3a8a;color:#93c5fd;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;">' + classStanding + '</span>'
-      + '    <div style="font-size:11px;color:#64748b;margin-top:4px;">Total Credits: ' + totalUnits + ' Units</div>'
-      + '  </div>'
-      + '</div>'
-
-      // Column Headers
-      + '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 30px;gap:8px;padding:0 12px 6px;font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;">'
-      + '  <div>Subject Name</div>'
-      + '  <div style="text-align:center;">CA (40)</div>'
-      + '  <div style="text-align:center;">Exam (60)</div>'
-      + '  <div style="text-align:center;">Score</div>'
-      + '  <div style="text-align:center;">Unit</div>'
-      + '  <div></div>'
-      + '</div>'
-
-      + '<div style="max-height:200px;overflow-y:auto;margin-bottom:12px;">' + rowsHtml + '</div>'
-
-      + '<button onclick="window.EduVerseCalculator.addGpaSubj()" class="btn btn-sm btn-outline" style="width:100%;border-color:#334155;color:#38bdf8;padding:8px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;"><i class="fas fa-plus-circle"></i> Add Subject</button>';
-  }
-
-  function calculateGradeLetter(total) {
-    if (total >= 70) return { letter: 'A', point: 5.0 };
-    if (total >= 60) return { letter: 'B', point: 4.0 };
-    if (total >= 50) return { letter: 'C', point: 3.0 };
-    if (total >= 45) return { letter: 'D', point: 2.0 };
-    if (total >= 40) return { letter: 'E', point: 1.0 };
-    return { letter: 'F', point: 0.0 };
-  }
-
-  function getAcademicClass(gpa) {
-    if (gpa >= 4.50) return 'First Class / Distinction';
-    if (gpa >= 3.50) return 'Second Class Upper / Merit';
-    if (gpa >= 2.40) return 'Second Class Lower';
-    if (gpa >= 1.50) return 'Third Class Pass';
-    return 'Probation / Unsatisfactory';
-  }
-
-  function updateGpaSubj(idx, field, val) {
-    if (gpaSubjects[idx]) {
-      gpaSubjects[idx][field] = field === 'name' ? val : (parseFloat(val) || 0);
-      renderCalculatorUI();
-    }
-  }
-
-  function addGpaSubj() {
-    gpaSubjects.push({ name: 'Subject ' + (gpaSubjects.length + 1), ca: 25, exam: 50, unit: 3 });
-    renderCalculatorUI();
-  }
-
-  function removeGpaSubj(idx) {
-    gpaSubjects.splice(idx, 1);
-    renderCalculatorUI();
-  }
-
-  /**
-   * Render Tab 3: Fee Discount Calculator
-   */
-  function renderFeesTab() {
-    var gross = (feeInputs.tuition || 0) + (feeInputs.ict || 0) + (feeInputs.lab || 0) + (feeInputs.boarding || 0);
-    var discPct = parseFloat(feeInputs.discountPct) || 0;
-    var discAmt = (gross * discPct) / 100;
-    var netPayable = gross - discAmt;
-
-    return ''
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">'
-      + '  <div style="background:#020617;border:1px solid #1e293b;border-radius:12px;padding:12px;">'
-      + '    <div style="font-size:11px;color:#94a3b8;font-weight:700;text-transform:uppercase;">Gross Fee Total</div>'
-      + '    <div style="font-size:20px;font-weight:700;color:#f8fafc;font-family:monospace;margin-top:2px;">₦' + gross.toLocaleString() + '</div>'
-      + '  </div>'
-      + '  <div style="background:#020617;border:1px solid #10b981;border-radius:12px;padding:12px;">'
-      + '    <div style="font-size:11px;color:#10b981;font-weight:700;text-transform:uppercase;">Net Payable Fee</div>'
-      + '    <div style="font-size:20px;font-weight:800;color:#10b981;font-family:monospace;margin-top:2px;">₦' + netPayable.toLocaleString() + '</div>'
-      + '  </div>'
-      + '</div>'
-
-      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;font-size:12px;">'
-      + '  <div>'
-      + '    <label style="color:#94a3b8;font-weight:600;display:block;margin-bottom:4px;">Tuition Fee (₦)</label>'
-      + '    <input type="number" value="' + feeInputs.tuition + '" onchange="window.EduVerseCalculator.updateFee(\'tuition\',this.value)" style="width:100%;background:#1e293b;border:1px solid #334155;color:#fff;padding:8px;border-radius:6px;">'
-      + '  </div>'
-      + '  <div>'
-      + '    <label style="color:#94a3b8;font-weight:600;display:block;margin-bottom:4px;">ICT & E-Learning (₦)</label>'
-      + '    <input type="number" value="' + feeInputs.ict + '" onchange="window.EduVerseCalculator.updateFee(\'ict\',this.value)" style="width:100%;background:#1e293b;border:1px solid #334155;color:#fff;padding:8px;border-radius:6px;">'
-      + '  </div>'
-      + '  <div>'
-      + '    <label style="color:#94a3b8;font-weight:600;display:block;margin-bottom:4px;">Lab & STEM Suite (₦)</label>'
-      + '    <input type="number" value="' + feeInputs.lab + '" onchange="window.EduVerseCalculator.updateFee(\'lab\',this.value)" style="width:100%;background:#1e293b;border:1px solid #334155;color:#fff;padding:8px;border-radius:6px;">'
-      + '  </div>'
-      + '  <div>'
-      + '    <label style="color:#94a3b8;font-weight:600;display:block;margin-bottom:4px;">Boarding / Transport (₦)</label>'
-      + '    <input type="number" value="' + feeInputs.boarding + '" onchange="window.EduVerseCalculator.updateFee(\'boarding\',this.value)" style="width:100%;background:#1e293b;border:1px solid #334155;color:#fff;padding:8px;border-radius:6px;">'
-      + '  </div>'
-      + '</div>'
-
-      + '<div style="background:#1e293b;border-radius:10px;padding:12px;margin-bottom:14px;">'
-      + '  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
-      + '    <label style="color:#f59e0b;font-weight:700;font-size:12px;"><i class="fas fa-tag"></i> Scholarship / Early Bird Discount (%)</label>'
-      + '    <span style="font-weight:700;color:#f59e0b;font-size:13px;">' + discPct + '% (-₦' + discAmt.toLocaleString() + ')</span>'
-      + '  </div>'
-      + '  <input type="range" min="0" max="50" step="5" value="' + discPct + '" oninput="window.EduVerseCalculator.updateFee(\'discountPct\',this.value)" style="width:100%;accent-color:#f59e0b;cursor:pointer;">'
-      + '</div>'
-
-      + '<div style="background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px;font-size:12px;color:#94a3b8;display:flex;justify-content:space-between;">'
-      + '  <span><strong>60% 1st Term Deposit:</strong> ₦' + (netPayable * 0.6).toLocaleString() + '</span>'
-      + '  <span><strong>40% Balance:</strong> ₦' + (netPayable * 0.4).toLocaleString() + '</span>'
-      + '</div>';
-  }
-
-  function updateFee(field, val) {
-    feeInputs[field] = parseFloat(val) || 0;
-    renderCalculatorUI();
-  }
-
-  /**
    * Keyboard Listener for Scientific Calculator
    */
   function attachKeyListeners() {
@@ -411,7 +211,7 @@
 
     document.addEventListener('keydown', function(e) {
       var modal = document.getElementById('calcModal');
-      if (!modal || !modal.classList.contains('active') || activeTab !== 'scientific') return;
+      if (!modal || !modal.classList.contains('active')) return;
 
       var key = e.key;
       if (key >= '0' && key <= '9') calcInput(key);
@@ -434,13 +234,8 @@
   window.EduVerseCalculator = {
     openCalculator: openCalculator,
     closeCalculator: closeCalculator,
-    setTab: setTab,
     calcInput: calcInput,
-    calcEvaluate: calcEvaluate,
-    updateGpaSubj: updateGpaSubj,
-    addGpaSubj: addGpaSubj,
-    removeGpaSubj: removeGpaSubj,
-    updateFee: updateFee
+    calcEvaluate: calcEvaluate
   };
 
   window.openCalculator = openCalculator;

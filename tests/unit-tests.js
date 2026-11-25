@@ -921,5 +921,6 @@ console.log(`Results: ${passed} passed, ${failed} failed`);
 if (failed > 0) {
   console.log(`\n${failed} failure(s):`);
   failures.forEach(f => console.log(`  - ${f}`));
-  process.exit(1);
 }
+// Loaded modules register timers/listeners; exit explicitly so the runner terminates.
+process.exit(failed > 0 ? 1 : 0);
