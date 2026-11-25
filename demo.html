@@ -3,118 +3,711 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Book a Demo — EduVerse</title>
+<title>Demo School — EduVerse</title>
+<meta name="description" content="Preview of a school created on EduVerse. Explore services, facilities, subjects, team, events, news, and gallery — everything a school gets on the platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<meta name="theme-color" content="#1a3a5c">
 <style>
-body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
-.demo-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
-.demo-hero h1{font-size:36px;margin:0 0 8px;}
-.demo-hero p{font-size:16px;opacity:0.85;max-width:550px;margin:0 auto;}
-.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
-.back-link:hover{color:#fff;}
-.demo-wrap{max-width:560px;margin:-32px auto 60px;padding:0 20px;}
-.demo-card{background:#fff;border-radius:16px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,0.06);}
-.form-group{margin-bottom:18px;}
-.form-group label{display:block;font-size:13px;font-weight:600;color:#475569;margin-bottom:4px;}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;font-family:inherit;transition:border-color .15s;box-sizing:border-box;}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
-.form-group textarea{resize:vertical;min-height:80px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.demo-btn{width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;background:#2563eb;color:#fff;transition:background .15s;}
-.demo-btn:hover{background:#1d4ed8;}
-.demo-btn:disabled{opacity:0.6;cursor:not-allowed;}
-.demo-note{text-align:center;font-size:13px;color:#94a3b8;margin-top:12px;}
-.success-msg{display:none;text-align:center;padding:40px 20px;}
-.success-msg i{font-size:56px;color:#22c55e;margin-bottom:12px;}
-.success-msg h2{font-size:24px;margin:0 0 8px;}
-.success-msg p{color:#64748b;font-size:15px;}
-[data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
-[data-theme="dark"] .demo-card{background:#1e293b;}
-[data-theme="dark"] .form-group label{color:#94a3b8;}
-[data-theme="dark"] .form-group input,.form-group select,.form-group textarea{background:#334155;border-color:#475569;color:#e2e8f0;}
-[data-theme="dark"] .form-group input:focus,.form-group select:focus{box-shadow:0 0 0 3px rgba(37,99,235,0.2);}
-[data-theme="dark"] .success-msg p{color:#94a3b8;}
-@media(max-width:500px){.form-row{grid-template-columns:1fr;}.demo-card{padding:24px 16px;}.demo-hero h1{font-size:26px;}}
+  :root{--demo-primary:#1a3a5c;--demo-dark:#0f2440;--demo-accent:#f5a623;--demo-bg:#f0f4f8;--demo-text:#1e293b;--demo-muted:#64748b;--radius:16px;}
+  *{box-sizing:border-box;}
+  body{font-family:Inter,system-ui,sans-serif;background:var(--demo-bg);color:var(--demo-text);margin:0;padding:0;}
+  .container{max-width:1200px;margin:0 auto;padding:0 20px;}
+  /* Demo hero */
+  .demo-hero{background:linear-gradient(135deg,var(--demo-dark),var(--demo-primary));color:#fff;padding:70px 20px 50px;text-align:center;position:relative;overflow:hidden;}
+  .demo-hero::after{content:"";position:absolute;inset:0;background:url('images/hero/slide1.jpg') center/cover no-repeat;opacity:0.25;pointer-events:none;}
+  .demo-hero > *{position:relative;z-index:1;}
+  .demo-hero .eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.3);display:inline-block;}
+  .demo-hero h1{font-size:40px;margin:0 0 14px;font-weight:800;line-height:1.2;}
+  .demo-hero p{font-size:17px;opacity:.9;max-width:640px;margin:0 auto 26px;line-height:1.6;}
+  .demo-hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn-demo{padding:12px 26px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;display:inline-block;transition:transform .15s,box-shadow .15s;border:none;cursor:pointer;font-family:inherit;}
+  .btn-demo-primary{background:#fff;color:var(--demo-dark);}
+  .btn-demo-primary:hover{background:#f1f5f9;transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,0.12);}
+  .btn-demo-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);}
+  .btn-demo-ghost:hover{background:rgba(255,255,255,0.12);border-color:#fff;}
+  .back-to-platform{display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:24px;}
+  .back-to-platform:hover{color:#fff;}
+  /* Section headers */
+  .sec-head{margin:60px 0 24px;text-align:center;}
+  .sec-head .eyebrow{color:var(--demo-primary);font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:8px;}
+  .sec-head h2{font-size:30px;margin:0 0 8px;font-weight:800;letter-spacing:-0.02em;}
+  .sec-head h2 span{color:var(--demo-primary);}
+  .sec-head p{color:var(--demo-muted);font-size:15.5px;margin:0;}
+  .sec-head.dark{color:#fff;}
+  .sec-head.dark .eyebrow{color:#bfdbfe;}
+  .sec-head.dark p{color:#cbd5e1;}
+  /* Grid helpers */
+  .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
+  .grid-4{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+  .card{background:#fff;border-radius:var(--radius);box-shadow:0 4px 14px rgba(0,0,0,0.05);border:1px solid #eef2f7;overflow:hidden;transition:transform .15s,box-shadow .15s;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,0.08);}
+  .card-img{height:170px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:var(--demo-muted);font-size:13px;font-weight:600;overflow:hidden;}
+  .card-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .card-body{padding:18px 20px;}
+  .card-tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:#eff6ff;color:var(--demo-primary);margin-bottom:10px;}
+  .card h4{font-size:16px;margin:0 0 6px;font-weight:700;}
+  .card p{font-size:13.5px;color:var(--demo-muted);margin:0;line-height:1.55;}
+  .icon-box{width:44px;height:44px;border-radius:10px;background:#f1f5f9;color:var(--demo-primary);display:inline-flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px;}
+  /* Stats */
+  .stats-wrap{background:linear-gradient(135deg,var(--demo-dark),#154a8b);color:#fff;padding:50px 20px;text-align:center;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:20px;max-width:900px;margin:0 auto;}
+  .stat{padding:0 10px;}
+  .stat .num{font-size:34px;font-weight:800;line-height:1;display:block;}
+  .stat .lab{font-size:13px;opacity:.85;margin-top:6px;display:block;}
+  /* Facilities tags */
+  .fac-wrap{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;}
+  .fac-tag{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:30px;background:#f1f5f9;color:var(--demo-muted);font-size:13px;font-weight:600;border:1px solid #eef2f7;}
+  .fac-tag i{color:var(--demo-primary);font-size:12px;}
+  /* Team */
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px;}
+  .team-card{text-align:center;}
+  .team-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--demo-primary),#154a8b);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:700;box-shadow:0 6px 16px rgba(37,99,235,0.25);}
+  .team-card h4{font-size:15px;margin:0 0 3px;}
+  .team-card .role{font-size:12.5px;color:var(--demo-primary);font-weight:700;margin-bottom:6px;display:block;}
+  .team-card p{font-size:12.5px;color:var(--demo-muted);margin:0;line-height:1.5;}
+  /* Subjects */
+  .subject-card{border-left:4px solid var(--demo-accent);}
+  .subject-card .sub-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fef3c7;cursor:pointer;}
+  .subject-card .sub-head h5{margin:0;font-size:15px;font-weight:700;}
+  .subject-card .term{font-size:12px;background:#f59e0b;color:#fff;padding:2px 10px;border-radius:12px;font-weight:700;}
+  .subject-card .sub-body{padding:0 20px 18px;font-size:13.5px;color:var(--demo-muted);line-height:1.6;}
+  .subject-card .sub-body{display:none;}
+  .subject-card.open .sub-body{display:block;}
+  /* Events */
+  .event{display:flex;gap:16px;align-items:flex-start;padding:20px;border-bottom:1px solid #f1f5f9;}
+  .event:last-child{border-bottom:none;}
+  .ev-date{min-width:64px;text-align:center;}
+  .ev-day{display:block;font-size:26px;font-weight:800;color:var(--demo-primary);line-height:1;}
+  .ev-month{display:block;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--demo-muted);margin-top:2px;}
+  .ev-info h4{font-size:15px;margin:0 0 4px;font-weight:700;}
+  .ev-meta{font-size:12px;color:var(--demo-muted);margin:0 0 6px;display:flex;gap:14px;align-items:center;}
+  .ev-meta i{color:var(--demo-primary);width:14px;}
+  .ev-desc{font-size:13.5px;color:var(--demo-muted);margin:0;line-height:1.5;}
+  /* News */
+  .news-card{display:flex;gap:16px;align-items:flex-start;}
+  .news-img{width:92px;height:68px;border-radius:8px;background:#f1f5f9;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--demo-muted);font-weight:700;overflow:hidden;}
+  .news-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .news-body{flex:1;}
+  .news-meta{display:flex;gap:12px;font-size:11.5px;color:var(--demo-muted);margin-bottom:6px;}
+  .news-meta i{color:var(--demo-primary);}
+  .news-body h5{font-size:14px;margin:0 0 5px;font-weight:700;}
+  .news-body p{font-size:13px;color:var(--demo-muted);margin:0;line-height:1.5;}
+  /* Gallery filters */
+  .gallery-filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:26px;}
+  .gallery-filters button{padding:8px 16px;border-radius:22px;border:1px solid #e2e8f0;background:#fff;color:var(--demo-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+  .gallery-filters button.active{background:var(--demo-primary);color:#fff;border-color:var(--demo-primary);}
+  .gallery-filters button:hover{border-color:var(--demo-primary);color:var(--demo-primary);}
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+  .gallery-item{height:150px;border-radius:10px;background:#e2e8f0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;font-weight:700;}
+  .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;}
+  .gallery-item.loaded img{opacity:1;transition:opacity .4s;}
+  /* CTA */
+  .demo-cta{background:linear-gradient(135deg,var(--demo-dark),var(--demo-primary));color:#fff;padding:56px 20px;border-radius:var(--radius);margin:44px 0;text-align:center;position:relative;overflow:hidden;}
+  .demo-cta::after{content:"";position:absolute;inset:0;background:url('images/hero/slide2.jpg') center/cover no-repeat;opacity:0.15;pointer-events:none;}
+  .demo-cta > *{position:relative;z-index:1;}
+  .demo-cta h2{font-size:30px;margin:0 0 10px;font-weight:800;}
+  .demo-cta p{font-size:16px;opacity:.9;margin:0 0 22px;max-width:600px;margin-left:auto;margin-right:auto;}
+  .demo-cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  /* Form card */
+  .demo-form-wrap{max-width:520px;margin:0 auto;}
+  .form-card{background:#fff;border-radius:var(--radius);box-shadow:0 10px 32px rgba(0,0,0,0.07);padding:34px;border:1px solid #eef2f7;}
+  .form-head{text-align:center;margin-bottom:26px;}
+  .form-head h3{font-size:22px;margin:0 0 6px;font-weight:800;}
+  .form-head p{color:var(--demo-muted);font-size:14px;margin:0;}
+  .fg{margin-bottom:18px;}
+  .fg label{display:block;font-size:12.5px;font-weight:700;color:var(--demo-text);margin-bottom:6px;}
+  .fg input,.fg select,.fg textarea{width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;background:#f8fafc;transition:border-color .15s;}
+  .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--demo-primary);background:#fff;}
+  .fg textarea{resize:vertical;min-height:90px;}
+  .fg-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .chk{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--demo-muted);margin-bottom:4px;}
+  .chk input{margin-top:3px;width:auto;flex-shrink:0;}
+  .chk a{color:var(--demo-primary);text-decoration:underline;font-weight:600;font-size:12.5px;}
+  .btn-submit{width:100%;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:15px;background:var(--demo-dark);color:#fff;cursor:pointer;font-family:inherit;transition:background .15s;}
+  .btn-submit:hover{background:#154a8b;}
+  .btn-submit:disabled{opacity:.65;cursor:not-allowed;}
+  .note{text-align:center;font-size:12.5px;color:var(--demo-muted);margin-top:14px;}
+  /* Dark mode */
+  [data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
+  [data-theme="dark"] .card{background:#1e293b;border-color:#334155;}
+  [data-theme="dark"] .card-body p,[data-theme="dark"] .card p,[data-theme="dark"] .ev-desc,[data-theme="dark"] .news-body p,[data-theme="dark"] .team-card p{color:#94a3b8;}
+  [data-theme="dark"] .stat .lab{color:#94a3b8;}
+  [data-theme="dark"] .fac-tag{background:#334155;border-color:#475569;color:#cbd5e1;}
+  [data-theme="dark"] .subject-card .sub-head{background:#334155;color:#e2e8f0;}
+  [data-theme="dark"] .event{border-color:#334155;}
+  [data-theme="dark"] .gallery-item{background:#334155;color:#64748b;}
+  [data-theme="dark"] .form-card{background:#1e293b;border-color:#334155;color:#e2e8f0;}
+  [data-theme="dark"] .fg input,[data-theme="dark"] .fg select,[data-theme="dark"] .fg textarea{background:#334155;border-color:#475569;color:#e2e8f0;}
+  @media(max-width:640px){.demo-hero h1{font-size:30px;}.sec-head h2{font-size:24px;}.fg-row{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<section class="demo-hero">
-  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
-  <h1>Book a Demo</h1>
-  <p>See EduVerse in action. Our team will walk you through everything in a personalized demo.</p>
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Back to platform -->
+<a href="index.html" class="back-to-platform"><i class="fas fa-arrow-left"></i> Back to EduVerse Platform</a>
+
+<!-- Demo School Hero -->
+<section class="demo-hero" id="demoHero">
+  <div class="eyebrow"><i class="fas fa-school"></i> Demo School</div>
+  <h1>Sunrise International Academy</h1>
+  <p>A full preview of what your school gets on EduVerse — services, facilities, subjects, team, events, news, and gallery — all in one unified online platform.</p>
+  <div class="demo-hero-actions">
+    <a href="#book" class="btn-demo btn-demo-primary"><i class="fas fa-calendar-check"></i> Book a Demo</a>
+    <a href="index.html" class="btn-demo btn-demo-ghost"><i class="fas fa-home"></i> Platform Home</a>
+  </div>
 </section>
 
-<div class="demo-wrap">
-  <div class="demo-card" id="demoFormCard">
-    <div id="demoSuccess" class="success-msg">
-      <i class="fas fa-check-circle"></i>
-      <h2>Demo Request Sent!</h2>
-      <p>Thank you! Our team will reach out within 24 hours to schedule your personalized demo of EduVerse.</p>
-      <br><a href="index.html" class="btn btn-outline" style="display:inline-block;padding:10px 24px;border:2px solid #2563eb;color:#2563eb;border-radius:8px;text-decoration:none;font-weight:600;">Back to Home</a>
+<!-- Stats -->
+<section class="stats-wrap">
+  <div class="stats-grid">
+    <div class="stat"><span class="num">12+</span><span class="lab">Subjects Offered</span></div>
+    <div class="stat"><span class="num">50+</span><span class="lab">Extracurricular Activities</span></div>
+    <div class="stat"><span class="num">95%</span><span class="lab">Student Satisfaction</span></div>
+    <div class="stat"><span class="num">24/7</span><span class="lab">Online Learning Portal</span></div>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- Services -->
+<section class="sec-head">
+  <span class="eyebrow">Services</span>
+  <h2>Our <span>Services</span></h2>
+  <p>Comprehensive educational services designed to nurture academic excellence and personal growth</p>
+</section>
+<div class="grid-3">
+  <div class="card">
+    <div class="card-img"><i class="fas fa-chalkboard-teacher" style="font-size:40px;"></i></div>
+    <div class="card-body">
+      <div class="card-tag">Academic Excellence</div>
+      <h4>Rigorous Curriculum</h4>
+      <p>Rigorous curriculum aligned with national standards, delivered by qualified educators.</p>
     </div>
-    <form id="demoForm" onsubmit="submitDemo(event)">
-      <div class="form-row">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="demoName" required placeholder="John Doe">
-        </div>
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="demoEmail" required placeholder="john@school.edu">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="tel" id="demoPhone" required placeholder="+2347069332955">
-        </div>
-        <div class="form-group">
-          <label>School Name</label>
-          <input type="text" id="demoSchool" required placeholder="Sunrise International Academy">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>School Type</label>
-          <select id="demoType">
-            <option value="primary">Primary School</option>
-            <option value="secondary">Secondary School</option>
-            <option value="both">Primary &amp; Secondary</option>
-            <option value="district">School District / Group</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Approx. Student Count</label>
-          <select id="demoSize">
-            <option value="1-50">1–50 students</option>
-            <option value="51-200">51–200 students</option>
-            <option value="201-500">201–500 students</option>
-            <option value="501-1000">501–1,000 students</option>
-            <option value="1000+">1,000+ students</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Message (optional)</label>
-        <textarea id="demoMessage" placeholder="Tell us about your school's needs or any specific features you'd like to see..."></textarea>
-      </div>
-      <div class="form-group" style="display:flex;align-items:flex-start;gap:8px;">
-        <input type="checkbox" id="demoAgree" required style="margin-top:3px;width:auto;">
-        <label for="demoAgree" style="font-size:13px;margin:0;color:#64748b;">I agree to the <a href="privacy-policy.html" target="_blank" style="color:#2563eb;text-decoration:underline;">Privacy Policy</a> and <a href="terms-of-service.html" target="_blank" style="color:#2563eb;text-decoration:underline;">Terms of Service</a></label>
-      </div>
-      <button type="submit" class="demo-btn" id="demoSubmitBtn">Send Demo Request</button>
-      <p class="demo-note"><i class="fas fa-lock" style="margin-right:4px;"></i> Your information is stored securely and never shared.</p>
-    </form>
+  </div>
+  <div class="card">
+    <div class="card-img"><i class="fas fa-user-tie" style="font-size:40px;"></i></div>
+    <div class="card-body">
+      <div class="card-tag">Expert Teachers</div>
+      <h4>Qualified Faculty</h4>
+      <p>Highly qualified and experienced teaching staff committed to student success.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-img"><i class="fas fa-microscope" style="font-size:40px;"></i></div>
+    <div class="card-body">
+      <div class="card-tag">Science &amp; Technology</div>
+      <h4>Modern Labs</h4>
+      <p>Modern laboratories and technology integration across all subjects.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-img"><i class="fas fa-palette" style="font-size:40px;"></i></div>
+    <div class="card-body">
+      <div class="card-tag">Creative Arts</div>
+      <h4>Arts Programs</h4>
+      <p>Music, drama, visual arts, and creative expression programs.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-img"><i class="fas fa-futbol" style="font-size:40px;"></i></div>
+    <div class="card-body">
+      <div class="card-tag">Sports &amp; Athletics</div>
+      <h4>PE &amp; Sports</h4>
+      <p>Comprehensive physical education and competitive sports programs.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-img"><i class="fas fa-heart" style="font-size:40px;"></i></div>
+    <div class="card-body">
+      <div class="card-tag">Character Development</div>
+      <h4>Moral Education</h4>
+      <p>Moral education, leadership training, and community service initiatives.</p>
+    </div>
   </div>
 </div>
 
+<!-- Facilities -->
+<section class="sec-head">
+  <span class="eyebrow">Facilities</span>
+  <h2>Our <span>Facilities</span></h2>
+  <p>State of the art facilities designed to provide an enriching learning environment</p>
+</section>
+<div class="fac-wrap">
+  <span class="fac-tag"><i class="fas fa-flask"></i> Science Laboratory</span>
+  <span class="fac-tag"><i class="fas fa-laptop-code"></i> Computer Lab</span>
+  <span class="fac-tag"><i class="fas fa-book"></i> Library</span>
+  <span class="fac-tag"><i class="fas fa-futbol"></i> Sports Field</span>
+  <span class="fac-tag"><i class="fas fa-basketball-ball"></i> Basketball Court</span>
+  <span class="fac-tag"><i class="fas fa-music"></i> Music Room</span>
+  <span class="fac-tag"><i class="fas fa-paint-brush"></i> Art Studio</span>
+  <span class="fac-tag"><i class="fas fa-clinic-medical"></i> School Clinic</span>
+  <span class="fac-tag"><i class="fas fa-utensils"></i> Cafeteria</span>
+  <span class="fac-tag"><i class="fas fa-door-open"></i> Multipurpose Hall</span>
+</div>
+
+<!-- Integrated School Management -->
+<section class="sec-head" style="background:linear-gradient(135deg,#f1f5f9,#fff);border-radius:var(--radius);padding:34px 20px;margin:60px 0 24px;">
+  <span class="eyebrow" style="color:#1e40af;">Platform</span>
+  <h2>Integrated <span>School Management</span></h2>
+  <p style="color:#475569;">Everything you need to manage school operations in one unified online platform</p>
+</section>
+<div class="grid-4">
+  <div class="card">
+    <div class="icon-box"><i class="fas fa-user-graduate"></i></div>
+    <div class="card-body">
+      <h4>Student Portal</h4>
+      <p>Access grades, assignments, timetable, and communicate with teachers.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="icon-box"><i class="fas fa-chalkboard-teacher"></i></div>
+    <div class="card-body">
+      <h4>Teacher Portal</h4>
+      <p>Manage classes, assignments, attendance, and grade submissions.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="icon-box"><i class="fas fa-users"></i></div>
+    <div class="card-body">
+      <h4>Parent Portal</h4>
+      <p>Monitor your child's progress, fees, and school communication.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="icon-box"><i class="fas fa-chart-line"></i></div>
+    <div class="card-body">
+      <h4>Analytics</h4>
+      <p>Detailed academic analytics and performance tracking across terms.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Subjects -->
+<section class="sec-head">
+  <span class="eyebrow">Academics</span>
+  <h2>Popular <span>Subjects</span></h2>
+  <p>Explore our comprehensive range of academic subjects offered across all grade levels</p>
+</section>
+<div class="grid-3">
+  <div class="card subject-card">
+    <div class="sub-head" onclick="this.parentElement.classList.toggle('open')">
+      <h5>Mathematics</h5>
+      <span class="term">Full Term</span>
+    </div>
+    <div class="sub-body">Comprehensive mathematics from basic arithmetic to advanced calculus.</div>
+  </div>
+  <div class="card subject-card">
+    <div class="sub-head" onclick="this.parentElement.classList.toggle('open')">
+      <h5>English Language</h5>
+      <span class="term">Full Term</span>
+    </div>
+    <div class="sub-body">English language arts, literature, and communication skills.</div>
+  </div>
+  <div class="card subject-card">
+    <div class="sub-head" onclick="this.parentElement.classList.toggle('open')">
+      <h5>Sciences</h5>
+      <span class="term">Full Term</span>
+    </div>
+    <div class="sub-body">Physics, chemistry, biology with practical laboratory sessions.</div>
+  </div>
+  <div class="card subject-card">
+    <div class="sub-head" onclick="this.parentElement.classList.toggle('open')">
+      <h5>Social Studies</h5>
+      <span class="term">Full Term</span>
+    </div>
+    <div class="sub-body">History, geography, government, and cultural studies.</div>
+  </div>
+  <div class="card subject-card">
+    <div class="sub-head" onclick="this.parentElement.classList.toggle('open')">
+      <h5>Computer Studies</h5>
+      <span class="term">Full Term</span>
+    </div>
+    <div class="sub-body">Digital literacy, programming, and information technology.</div>
+  </div>
+  <div class="card subject-card">
+    <div class="sub-head" onclick="this.parentElement.classList.toggle('open')">
+      <h5>Languages</h5>
+      <span class="term">Full Term</span>
+    </div>
+    <div class="sub-body">French, Yoruba, Hausa, Igbo and other Nigerian languages.</div>
+  </div>
+</div>
+
+<!-- Team -->
+<section class="sec-head">
+  <span class="eyebrow">Faculty</span>
+  <h2>Meet Our <span>Team</span></h2>
+  <p>Dedicated educators and staff committed to your child's success</p>
+</section>
+<div class="team-grid">
+  <div class="team-card">
+    <div class="team-avatar">AO</div>
+    <h4>Dr. Amina Okonkwo</h4>
+    <span class="role">Principal</span>
+    <p>PhD in Educational Leadership with 20 years of experience.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">CO</div>
+    <h4>Mr. Chidi Okafor</h4>
+    <span class="role">Vice Principal (Academics)</span>
+    <p>M.Ed in Curriculum Development, 15 years in education.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">FA</div>
+    <h4>Mrs. Funke Adeleke</h4>
+    <span class="role">Head Teacher (Primary)</span>
+    <p>B.Ed in Primary Education, specialist in early childhood development.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">EN</div>
+    <h4>Mr. Emeka Nwachukwu</h4>
+    <span class="role">Mathematics Teacher</span>
+    <p>B.Sc Mathematics, 8 years teaching experience.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">SB</div>
+    <h4>Ms. Sarah Bello</h4>
+    <span class="role">English Teacher</span>
+    <p>BA English Literature, passionate about developing literacy skills.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">JA</div>
+    <h4>Mr. James Adeyemi</h4>
+    <span class="role">Science Teacher</span>
+    <p>B.Sc Biology/Chemistry, 10 years teaching experience.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">NE</div>
+    <h4>Mrs. Ngozi Eze</h4>
+    <span class="role">ICT / Computer Teacher</span>
+    <p>B.Sc Computer Science, certified in educational technology.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">ID</div>
+    <h4>Mr. Ibrahim Danjuma</h4>
+    <span class="role">Social Studies Teacher</span>
+    <p>B.Sc Social Studies, 7 years teaching experience.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">PO</div>
+    <h4>Coach Peter Obi</h4>
+    <span class="role">Physical Education Teacher</span>
+    <p>NIS-certified coach, former state-level athlete.</p>
+  </div>
+  <div class="team-card">
+    <div class="team-avatar">CU</div>
+    <h4>Ms. Chioma Uche</h4>
+    <span class="role">School Nurse</span>
+    <p>RN with 12 years experience in school health services.</p>
+  </div>
+</div>
+
+<!-- Online Learning Portal -->
+<section class="sec-head dark" style="background:linear-gradient(135deg,var(--demo-dark),#154a8b);color:#fff;padding:44px 20px;border-radius:var(--radius);margin:60px 0 24px;text-align:left;">
+  <span class="eyebrow">Digital Learning</span>
+  <h2 style="color:#fff;">Online <span>Learning Portal</span></h2>
+  <p style="color:#cbd5e1;margin:0 0 18px;">Access assignments, results, and learning resources anytime, anywhere</p>
+  <form class="search-form" onsubmit="event.preventDefault();window.location.href='directory.html';" style="display:flex;gap:10px;max-width:560px;">
+    <input type="text" placeholder="Search for schools, subjects, or programs..." aria-label="Search schools, subjects, or programs" style="flex:1;padding:12px 16px;border-radius:10px;border:none;font-size:14px;">
+    <button type="submit" class="btn-demo btn-demo-primary" style="padding:12px 24px;"><i class="fas fa-search"></i> Search</button>
+  </form>
+  <div class="stats-grid" style="margin-top:26px;max-width:560px;">
+    <div class="stat"><span class="num">12+</span><span class="lab">Subjects Offered</span></div>
+    <div class="stat"><span class="num">50+</span><span class="lab">Extracurricular Activities</span></div>
+    <div class="stat"><span class="num">95%</span><span class="lab">Student Satisfaction</span></div>
+  </div>
+</section>
+
+<!-- Events -->
+<section class="sec-head">
+  <span class="eyebrow">Calendar</span>
+  <h2>Upcoming <span>Events</span></h2>
+  <p>Stay connected with school activities, sports events, and academic programs</p>
+</section>
+<div class="grid-2">
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">15</span><span class="ev-month">Sep</span></div>
+    <div class="ev-info">
+      <h4>Academic Year Opening</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2026-09-15</span></div>
+      <p class="ev-desc">Opening ceremony for the 2026/2027 academic year.</p>
+    </div>
+  </div>
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">20</span><span class="ev-month">Oct</span></div>
+    <div class="ev-info">
+      <h4>Inter-House Sports</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2026-10-20</span></div>
+      <p class="ev-desc">Annual sports competition between the four school houses.</p>
+    </div>
+  </div>
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">12</span><span class="ev-month">Nov</span></div>
+    <div class="ev-info">
+      <h4>Science &amp; Technology Fair</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2026-11-12</span></div>
+      <p class="ev-desc">Students showcase their science and innovation projects.</p>
+    </div>
+  </div>
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">28</span><span class="ev-month">Jan</span></div>
+    <div class="ev-info">
+      <h4>Cultural Day</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2027-01-28</span></div>
+      <p class="ev-desc">Celebration of cultural diversity with traditional displays.</p>
+    </div>
+  </div>
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">5</span><span class="ev-month">Mar</span></div>
+    <div class="ev-info">
+      <h4>Career Day</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2027-03-05</span></div>
+      <p class="ev-desc">Career guidance with guest speakers from various professions.</p>
+    </div>
+  </div>
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">10</span><span class="ev-month">Jun</span></div>
+    <div class="ev-info">
+      <h4>Arts &amp; Drama Festival</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2027-06-10</span></div>
+      <p class="ev-desc">Annual festival featuring drama, music, dance, and visual arts.</p>
+    </div>
+  </div>
+  <div class="event">
+    <div class="ev-date"><span class="ev-day">15</span><span class="ev-month">Jul</span></div>
+    <div class="ev-info">
+      <h4>Prize Giving Day</h4>
+      <div class="ev-meta"><i class="far fa-calendar-alt"></i> <span>2027-07-15</span></div>
+      <p class="ev-desc">Award ceremony recognizing outstanding student achievements.</p>
+    </div>
+  </div>
+</div>
+
+<!-- News -->
+<section class="sec-head">
+  <span class="eyebrow">Newsroom</span>
+  <h2>Latest <span>News</span></h2>
+  <p>Stay updated with the latest happenings and announcements from EduVerse</p>
+</section>
+<div class="grid-3">
+  <div class="card news-card">
+    <div class="news-img"><i class="fas fa-trophy" style="color:#f59e0b;"></i></div>
+    <div class="news-body">
+      <div class="news-meta"><i class="fas fa-calendar-alt"></i> <span>June 1, 2026</span><i class="fas fa-user"></i> <span>Admin</span></div>
+      <h5>EduVerse Wins Best School Award at National Education Conference</h5>
+      <p>Our institution has been recognized for excellence in academic innovation and student development programs.</p>
+    </div>
+  </div>
+  <div class="card news-card">
+    <div class="news-img"><i class="fas fa-laptop-code" style="color:#2563eb;"></i></div>
+    <div class="news-body">
+      <div class="news-meta"><i class="fas fa-calendar-alt"></i> <span>May 25, 2026</span><i class="fas fa-user"></i> <span>Admin</span></div>
+      <h5>New Digital Learning Platform Launched for Students</h5>
+      <p>Introducing our enhanced online portal with assignment submissions, result tracking, and real time feedback.</p>
+    </div>
+  </div>
+  <div class="card news-card">
+    <div class="news-img"><i class="fas fa-palette" style="color:#7c3aed;"></i></div>
+    <div class="news-body">
+      <div class="news-meta"><i class="fas fa-calendar-alt"></i> <span>May 18, 2026</span><i class="fas fa-user"></i> <span>Admin</span></div>
+      <h5>Inter House Art Competition: Celebrating Student Creativity</h5>
+      <p>Students showcased amazing artistic talents across painting, sculpture, and digital art categories.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery -->
+<section class="sec-head">
+  <span class="eyebrow">Gallery</span>
+  <h2>School <span>Gallery</span></h2>
+  <p>Events, Sports, Exhibitions &amp; Key Moments</p>
+</section>
+<div class="gallery-filters">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="sports">Sports</button>
+  <button data-filter="games">Games</button>
+  <button data-filter="exhibition">Exhibition</button>
+  <button data-filter="extra">Extra-Curricular</button>
+  <button data-filter="other">Other</button>
+</div>
+<div class="gallery-grid" id="demoGallery">
+  <div class="gallery-item loaded" data-cat="extra"><img src="images/hero/slide1.jpg" alt="Cultural Day"><span>Cultural Day</span></div>
+  <div class="gallery-item loaded" data-cat="sports"><img src="images/hero/slide2.jpg" alt="Annual Sports Day"><span>Annual Sports Day</span></div>
+  <div class="gallery-item loaded" data-cat="exhibition"><img src="images/hero/slide3.jpg" alt="Science Exhibition"><span>Science Exhibition</span></div>
+  <div class="gallery-item loaded" data-cat="sports"><img src="images/hero/slide1.jpg" alt="Inter-House Football"><span>Inter-House Football</span></div>
+  <div class="gallery-item loaded" data-cat="games"><img src="images/hero/slide2.jpg" alt="Chess Tournament"><span>Chess Tournament</span></div>
+</div>
+
+<!-- Book a Demo CTA -->
+<section class="demo-cta" id="book">
+  <div class="container">
+    <h2>Ready to Get Your School on EduVerse?</h2>
+    <p>Book a personalized demo and see the platform in action for your institution.</p>
+    <div class="demo-cta-actions">
+      <a href="#demoForm" class="btn-demo btn-demo-primary"><i class="fas fa-calendar-check"></i> Book a Demo</a>
+      <a href="index.html" class="btn-demo btn-demo-ghost"><i class="fas fa-home"></i> Platform Home</a>
+    </div>
+  </div>
+</section>
+
+<!-- Demo Request Form -->
+<section class="sec-head" style="text-align:left;">
+  <span class="eyebrow">Request</span>
+  <h2 id="demoForm">Book Your <span>Demo</span></h2>
+  <p>See EduVerse in action. Our team will walk you through everything in a personalized demo.</p>
+</section>
+<div class="container">
+  <div class="demo-form-wrap">
+    <div class="form-card">
+      <div class="form-head">
+        <h3>Demo Request</h3>
+        <p>Request a personalized walkthrough for your school</p>
+      </div>
+      <form id="demoFormEl" onsubmit="submitDemo(event)">
+        <div class="fg-row">
+          <div class="fg">
+            <label>Full Name</label>
+            <input type="text" id="demoName" required placeholder="John Doe">
+          </div>
+          <div class="fg">
+            <label>Email Address</label>
+            <input type="email" id="demoEmail" required placeholder="john@school.edu">
+          </div>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Phone Number</label>
+            <input type="tel" id="demoPhone" required placeholder="+2347069332955">
+          </div>
+          <div class="fg">
+            <label>School Name</label>
+            <input type="text" id="demoSchool" required placeholder="Sunrise International Academy">
+          </div>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>School Type</label>
+            <select id="demoType">
+              <option value="primary">Primary School</option>
+              <option value="secondary">Secondary School</option>
+              <option value="both">Primary &amp; Secondary</option>
+              <option value="district">School District / Group</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Approx. Student Count</label>
+            <select id="demoSize">
+              <option value="1-50">1–50 students</option>
+              <option value="51-200">51–200 students</option>
+              <option value="201-500">201–500 students</option>
+              <option value="501-1000">501–1,000 students</option>
+              <option value="1000+">1,000+ students</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Message (optional)</label>
+          <textarea id="demoMessage" placeholder="Tell us about your school's needs or any specific features you'd like to see..."></textarea>
+        </div>
+        <div class="chk">
+          <input type="checkbox" id="demoAgree" required style="margin-top:3px;width:auto;">
+          <label for="demoAgree" style="font-size:13px;margin:0;color:var(--demo-muted);">I agree to the <a href="privacy-policy.html" target="_blank" style="color:var(--demo-primary);text-decoration:underline;">Privacy Policy</a> and <a href="terms-of-service.html" target="_blank" style="color:var(--demo-primary);text-decoration:underline;">Terms of Service</a></label>
+        </div>
+        <button type="submit" class="btn-submit" id="demoSubmitBtn">Send Demo Request</button>
+        <p class="note"><i class="fas fa-lock" style="margin-right:4px;"></i> Your information is stored securely and never shared.</p>
+      </form>
+      <div id="demoSuccess" style="display:none;text-align:center;padding:34px 20px;">
+        <i class="fas fa-check-circle" style="font-size:48px;color:#22c55e;margin-bottom:12px;display:block;"></i>
+        <h3 style="margin:0 0 8px;">Demo Request Sent!</h3>
+        <p style="color:var(--demo-muted);margin:0;">Thank you! Our team will reach out within 24 hours to schedule your personalized demo of EduVerse.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer class="footer-enhanced" style="margin-top:60px;">
+  <div class="footer-top-bar">
+    <div class="logo"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget">
+      <h5>About Sunrise International Academy</h5>
+      <p style="font-size:13px;color:var(--demo-muted);line-height:1.6;margin-bottom:10px;">A full preview of what your school gets on EduVerse — services, facilities, subjects, team, events, news, and gallery — all in one unified online platform.</p>
+    </div>
+    <div class="footer-widget">
+      <h5>Quick Links</h5>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="margin-bottom:6px;"><a href="#services" style="color:var(--demo-muted);text-decoration:none;">Our Services</a></li>
+        <li style="margin-bottom:6px;"><a href="#courses" style="color:var(--demo-muted);text-decoration:none;">Popular Subjects</a></li>
+        <li style="margin-bottom:6px;"><a href="#team" style="color:var(--demo-muted);text-decoration:none;">Meet Our Team</a></li>
+        <li style="margin-bottom:6px;"><a href="#events" style="color:var(--demo-muted);text-decoration:none;">Upcoming Events</a></li>
+        <li style="margin-bottom:6px;"><a href="#news" style="color:var(--demo-muted);text-decoration:none;">Latest News</a></li>
+        <li style="margin-bottom:6px;"><a href="index.html" style="color:var(--demo-muted);text-decoration:none;">EduVerse Platform</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="margin-bottom:6px;"><a href="#" style="color:var(--demo-muted);text-decoration:none;"><i class="fas fa-user-shield"></i> Admin Portal</a></li>
+        <li style="margin-bottom:6px;"><a href="#" style="color:var(--demo-muted);text-decoration:none;"><i class="fas fa-chalkboard-teacher"></i> Teacher Portal</a></li>
+        <li style="margin-bottom:6px;"><a href="#" style="color:var(--demo-muted);text-decoration:none;"><i class="fas fa-user-graduate"></i> Student Portal</a></li>
+        <li style="margin-bottom:6px;"><a href="#" style="color:var(--demo-muted);text-decoration:none;"><i class="fas fa-users"></i> Parent Portal</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 EduVerse. Demo School Preview. All rights reserved.</p>
+    <div style="display:flex;gap:16px;justify-content:center;font-size:12px;">
+      <a href="privacy-policy.html" style="color:var(--demo-muted);text-decoration:none;">Privacy</a>
+      <a href="terms-of-service.html" style="color:var(--demo-muted);text-decoration:none;">Terms</a>
+    </div>
+  </div>
+</footer>
+
 <script>
-function submitDemo(e) {
+// Gallery filter
+(function(){
+  var btns = document.querySelectorAll('.gallery-filters button');
+  var items = document.querySelectorAll('#demoGallery .gallery-item');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      btns.forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      var f = b.getAttribute('data-filter');
+      items.forEach(function(it){
+        it.style.display = (f==='all' || it.getAttribute('data-cat')===f) ? '' : 'none';
+      });
+    });
+  });
+})();
+
+// Demo form submission
+function submitDemo(e){
   e.preventDefault();
   var btn = document.getElementById('demoSubmitBtn');
+  var form = document.getElementById('demoFormEl');
+  var success = document.getElementById('demoSuccess');
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
   var data = {
@@ -132,22 +725,12 @@ function submitDemo(e) {
     existing.push(data);
     localStorage.setItem('eduverse_demo_requests', JSON.stringify(existing));
   } catch(e) {}
-  setTimeout(function() {
-    document.getElementById('demoForm').style.display = 'none';
-    document.getElementById('demoSuccess').style.display = 'block';
+  setTimeout(function(){
+    form.style.display = 'none';
+    success.style.display = 'block';
     if (typeof toast === 'function') toast('Demo request submitted!', 'success');
   }, 800);
 }
 </script>
-<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
-  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
-    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>
-    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms</a>
-    <a href="cookie-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookies</a>
-    <a href="gdpr-compliance.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR</a>
-    <a href="pricing.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Pricing</a>
-  </div>
-  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
-</footer>
 </body>
 </html>

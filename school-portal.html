@@ -103,6 +103,40 @@
 .sp-loading-state p{color:var(--text-light)}
 @media(max-width:768px){.sp-about-grid{grid-template-columns:1fr}.sp-hero-logo{width:60px;height:60px}.sp-cta h2{font-size:22px}.sp-cta{padding:32px 16px}.sp-card-icon-wrap i{font-size:40px}.sp-cbt-reg{padding:24px 16px}.sp-ft-legal{flex-direction:column;align-items:center;gap:8px}}
 @media(max-width:480px){.sp-hero-logo{width:48px;height:48px;border-width:3px}.sp-hero-city{font-size:12px}.sp-cta h2{font-size:18px}.sp-cta{padding:24px 12px}.sp-cta-actions{flex-direction:column;align-items:center}.sp-cta-actions .btn{width:100%;justify-content:center}}
+/* ===== School landing page sections (Team, Events, Gallery) ===== */
+.sl-grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;}
+.sl-card{background:#fff;border-radius:var(--radius);box-shadow:0 4px 14px rgba(0,0,0,0.05);border:1px solid #eef2f7;overflow:hidden;}
+.sl-card-img{height:150px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:var(--text-light);font-size:13px;font-weight:600;}
+.sl-card-body{padding:16px 20px;}
+.sl-card h4{font-size:15px;margin:0 0 5px;font-weight:700;}
+.sl-card p{font-size:13px;color:var(--text-light);margin:0;line-height:1.5;}
+.sl-team{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;text-align:center;}
+.sl-team-card{background:#fff;border-radius:var(--radius);box-shadow:0 4px 14px rgba(0,0,0,0.05);border:1px solid #eef2f7;padding:18px 14px;overflow:hidden;}
+.sl-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;}
+.sl-team-card h4{font-size:14.5px;margin:0 0 3px;}
+.sl-role{display:block;font-size:12px;color:var(--primary);font-weight:700;margin-bottom:5px;}
+.sl-event{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-bottom:1px solid #f1f5f9;}
+.sl-event:last-child{border-bottom:none;}
+.sl-ev-date{min-width:56px;text-align:center;}
+.sl-ev-day{display:block;font-size:22px;font-weight:800;color:var(--primary);line-height:1;}
+.sl-ev-month{display:block;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text-light);margin-top:2px;}
+.sl-ev-info h4{font-size:14.5px;margin:0 0 3px;font-weight:700;}
+.sl-ev-meta{font-size:11.5px;color:var(--text-light);margin:0 0 5px;display:flex;gap:12px;align-items:center;}
+.sl-ev-meta i{color:var(--primary);width:14px;}
+.sl-ev-desc{font-size:13px;color:var(--text-light);margin:0;line-height:1.5;}
+.sl-gallery-filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:22px;}
+.sl-gallery-filters button{padding:8px 16px;border-radius:22px;border:1px solid #e2e8f0;background:#fff;color:var(--text-light);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sl-gallery-filters button.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.sl-gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+.sl-gallery-item{height:140px;border-radius:10px;background:#e2e8f0;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px;font-weight:700;}
+.sl-gallery-item img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;}
+.sl-gallery-item.loaded img{opacity:1;transition:opacity .4s;}
+[data-theme="dark"] .sl-card,[data-theme="dark"] .sl-team-card{background:#1e293b;border-color:#334155;}
+[data-theme="dark"] .sl-card p,[data-theme="dark"] .sl-team-card p,[data-theme="dark"] .sl-ev-desc{color:#94a3b8;}
+[data-theme="dark"] .sl-event{border-color:#334155;}
+[data-theme="dark"] .sl-gallery-item{background:#334155;color:#64748b;}
+[data-theme="dark"] .sl-gallery-filters button{background:#1e293b;border-color:#334155;color:#cbd5e1;}
+[data-theme="dark"] .sl-gallery-filters button.active{background:var(--primary);color:#fff;}
 </style>
 </head>
 <body>
@@ -528,6 +562,88 @@ function renderPortal(slug, tenant, data) {
   }
   html += '</div></section>';
 
+  // Team
+  html += '<section class="section-area gray-bg" id="team">'
+    + '<div class="section-title"><h2>Meet Our <span>Team</span></h2><p>Dedicated educators and staff committed to your child\'s success</p></div>'
+    + '<div class="sl-team">';
+  var staff = prof.staff || [
+    {name:'Dr. Amina Okonkwo',role:'Principal',bio:'PhD in Educational Leadership with 20 years of experience.'},
+    {name:'Mr. Chidi Okafor',role:'Vice Principal (Academics)',bio:'M.Ed in Curriculum Development, 15 years in education.'},
+    {name:'Mrs. Funke Adeleke',role:'Head Teacher (Primary)',bio:'B.Ed in Primary Education, specialist in early childhood development.'},
+    {name:'Mr. Emeka Nwachukwu',role:'Mathematics Teacher',bio:'B.Sc Mathematics, 8 years teaching experience.'},
+    {name:'Ms. Sarah Bello',role:'English Teacher',bio:'BA English Literature, passionate about developing literacy skills.'},
+    {name:'Mr. James Adeyemi',role:'Science Teacher',bio:'B.Sc Biology/Chemistry, 10 years teaching experience.'},
+    {name:'Mrs. Ngozi Eze',role:'ICT / Computer Teacher',bio:'B.Sc Computer Science, certified in educational technology.'},
+    {name:'Mr. Ibrahim Danjuma',role:'Social Studies Teacher',bio:'B.Sc Social Studies, 7 years teaching experience.'},
+    {name:'Coach Peter Obi',role:'Physical Education Teacher',bio:'NIS-certified coach, former state-level athlete.'},
+    {name:'Ms. Chioma Uche',role:'School Nurse',bio:'RN with 12 years experience in school health services.'}
+  ];
+  var tcolors=['#2563eb','#7c3aed','#059669','#d97706','#dc2626','#0891b2','#f59e0b','#0ea5e9','#be185d','#6366f1'];
+  for(var si=0;si<staff.length;si++){
+    var s=staff[si];
+    var initial=(s.name||'?')[0].toUpperCase();
+    var c=tcolors[si%tcolors.length];
+    html+='<div class="sl-team-card">'
+      +'<div class="sl-avatar" style="background:linear-gradient(135deg,'+c+','+c+'cc);">'+esc(initial)+'</div>'
+      +'<h4>'+esc(s.name)+'</h4>'
+      +'<span class="sl-role">'+esc(s.role)+'</span>'
+      +'<p>'+esc(s.bio||'')+'</p>'
+      +'</div>';
+  }
+  html+='</div></section>';
+
+  // Events
+  var evts = prof.events || [
+    {day:'15',month:'Sep',title:'Academic Year Opening',date:'2026-09-15',desc:'Opening ceremony for the 2026/2027 academic year.'},
+    {day:'20',month:'Oct',title:'Inter-House Sports',date:'2026-10-20',desc:'Annual sports competition between the four school houses.'},
+    {day:'12',month:'Nov',title:'Science & Technology Fair',date:'2026-11-12',desc:'Students showcase their science and innovation projects.'},
+    {day:'28',month:'Jan',title:'Cultural Day',date:'2027-01-28',desc:'Celebration of cultural diversity with traditional displays.'},
+    {day:'5',month:'Mar',title:'Career Day',date:'2027-03-05',desc:'Career guidance with guest speakers from various professions.'},
+    {day:'10',month:'Jun',title:'Arts & Drama Festival',date:'2027-06-10',desc:'Annual festival featuring drama, music, dance, and visual arts.'},
+    {day:'15',month:'Jul',title:'Prize Giving Day',date:'2027-07-15',desc:'Award ceremony recognizing outstanding student achievements.'}
+  ];
+  html += '<section class="section-area" id="events">'
+    + '<div class="section-title"><h2>Upcoming <span>Events</span></h2><p>Stay connected with school activities, sports events, and academic programs</p></div>'
+    + '<div class="sl-events">';
+  for(var ei=0;ei<evts.length;ei++){
+    var e=evts[ei];
+    var dparts=(e.date||'').split('-');
+    var dy=(e.day||dparts[2]||''), mo=(e.month||(dparts[1]?new Date(dparts[1]+'-01').toLocaleString(undefined,{month:'short'}).slice(0,3):''));
+    html+='<div class="sl-event">'
+      +'<div class="sl-ev-date"><span class="sl-ev-day">'+esc(dy)+'</span><span class="sl-ev-month">'+esc(mo)+'</span></div>'
+      +'<div class="sl-ev-info">'
+      +'<h4>'+esc(e.title||'')+'</h4>'
+      +'<div class="sl-ev-meta"><i class="far fa-calendar-alt"></i> <span>'+esc(e.date||'')+'</span></div>'
+      +'<p class="sl-ev-desc">'+esc(e.desc||'')+'</p>'
+      +'</div></div>';
+  }
+  html+='</div></section>';
+
+  // Gallery
+  var gall = prof.gallery || [
+    {cat:'extra',label:'Cultural Day'},
+    {cat:'sports',label:'Annual Sports Day'},
+    {cat:'exhibition',label:'Science Exhibition'},
+    {cat:'sports',label:'Inter-House Football'},
+    {cat:'games',label:'Chess Tournament'}
+  ];
+  html += '<section class="section-area" id="gallery">'
+    + '<div class="section-title"><h2>School <span>Gallery</span></h2><p>Events, Sports, Exhibitions &amp; Key Moments</p></div>'
+    + '<div class="sl-gallery-filters">'
+    + '<button class="active" data-filter="all">All</button>'
+    + '<button data-filter="sports">Sports</button>'
+    + '<button data-filter="games">Games</button>'
+    + '<button data-filter="exhibition">Exhibition</button>'
+    + '<button data-filter="extra">Extra-Curricular</button>'
+    + '<button data-filter="other">Other</button>'
+    + '</div>'
+    + '<div class="sl-gallery-grid" id="portalGalleryView">';
+  for(var gi=0;gi<gall.length;gi++){
+    var g=gall[gi];
+    html+='<div class="sl-gallery-item loaded" data-cat="'+esc(g.cat||'')+'"><img src="images/hero/slide'+((gi%3)+1)+'.jpg" alt="'+esc(g.label||'')+'"><span>'+esc(g.label||'')+'</span></div>';
+  }
+  html+='</div></section>';
+
   // Announcements
   html += '<section class="section-area gray-bg" id="news">'
     + '<div class="section-title"><h2>Latest <span>Announcements</span></h2><p>Stay updated with school news and announcements</p></div>'
@@ -613,6 +729,18 @@ function renderPortal(slug, tenant, data) {
     + '</div></div></section>';
 
   document.getElementById('app').innerHTML = html;
+
+  // Gallery filter
+  (function(){
+    var btns=document.querySelectorAll('.sl-gallery-filters button');
+    var items=document.querySelectorAll('#portalGalleryView .sl-gallery-item');
+    btns.forEach(function(b){b.addEventListener('click',function(){
+      btns.forEach(function(x){x.classList.remove('active');});
+      b.classList.add('active');
+      var f=b.getAttribute('data-filter');
+      items.forEach(function(it){it.style.display=(f==='all'||it.getAttribute('data-cat')===f)?'':'none';});
+    });});
+  })();
 }
 
 function init() {

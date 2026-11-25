@@ -2,40 +2,126 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Offline — EduVerse</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1a202c; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-  .card { background: white; border-radius: 16px; padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
-  .icon { width: 80px; height: 80px; border-radius: 50%; background: #ebf8ff; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 36px; color: #2563eb; }
-  h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-  p { font-size: 15px; color: #718096; line-height: 1.6; margin-bottom: 24px; }
-  .features { text-align: left; background: #f7fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-  .features li { list-style: none; padding: 6px 0; font-size: 14px; color: #2d3748; display: flex; align-items: center; gap: 10px; }
-  .features li i { color: #48bb78; font-style: normal; }
-  .btn { display: inline-block; padding: 12px 28px; background: #2563eb; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background .2s; }
-  .btn:hover { background: #1d4ed8; }
-  .btn-secondary { background: #e2e8f0; color: #4a5568; margin-left: 8px; }
-  .btn-secondary:hover { background: #cbd5e0; }
-  .note { margin-top: 24px; font-size: 13px; color: #a0aec0; }
-</style>
+<meta name="description" content="You are offline. EduVerse keeps working with locally stored school data.">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 </head>
-<body>
-<div class="card">
-  <div class="icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></div>
-  <h1>You're Offline</h1>
-  <p>EduVerse is still fully functional. All your school data is available locally — nothing is lost.</p>
-  <div class="features">
-    <li><i>&#10003;</i> View students, teachers, results, and all school data</li>
-    <li><i>&#10003;</i> Add and edit records — everything is saved locally</li>
-    <li><i>&#10003;</i> Data will sync automatically when connection is restored</li>
+<body class="page-shell">
+
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
   </div>
-  <button class="btn" data-action="reloadPage">Try Again</button>
-  <a class="btn btn-secondary" href="index.html">Go to Home</a>
-  <p class="note">You can continue working offline — data is stored in your browser</p>
-</div>
-<script>window.addEventListener('online', function(){ location.reload(); });</script>
-<script src="js/events.js"></script>
+</nav>
+
+<main class="status-page">
+  <div class="status-card">
+    <div class="status-icon"><i class="fas fa-wifi"></i></div>
+    <h1>You're Offline</h1>
+    <p>EduVerse is still fully functional. All your school data is available locally — nothing is lost.</p>
+    <ul class="status-list">
+      <li><i class="fas fa-check"></i> View students, teachers, results, and all school data</li>
+      <li><i class="fas fa-check"></i> Add and edit records — everything is saved locally</li>
+      <li><i class="fas fa-check"></i> Data will sync automatically when connection is restored</li>
+    </ul>
+    <div class="status-actions">
+      <button type="button" class="btn btn-primary" onclick="location.reload()"><i class="fas fa-rotate-right"></i> Try Again</button>
+      <a class="btn btn-ghost" href="index.html"><i class="fas fa-home"></i> Go to Home</a>
+    </div>
+    <p class="status-note">You can continue working offline — data is stored in your browser.</p>
+  </div>
+</main>
+
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
+</footer>
+
+<script>window.addEventListener('online', function () { location.reload(); });</script>
+<script src="js/site-chrome.js"></script>
 </body>
 </html>

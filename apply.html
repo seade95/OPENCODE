@@ -11,39 +11,70 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;color:#0f172a}
-.card{background:#ffffff;border-radius:18px;padding:36px;width:100%;max-width:720px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.35);text-align:center}
-.logo{width:56px;height:56px;margin:0 auto 12px;background:#f8fafc;border-radius:12px;padding:6px;border:1px solid #e2e8f0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text)}
+.card{background:var(--card-bg);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:var(--radius);padding:36px;width:100%;max-width:720px;box-shadow:var(--shadow-hover);text-align:center}
+.logo{width:56px;height:56px;margin:0 auto 12px;background:#f8fafc;border-radius:12px;padding:6px;border:1px solid var(--border)}
 .logo img{width:100%;height:100%;object-fit:contain}
-h1{font-size:1.6rem;color:#0f172a;margin-bottom:4px;font-weight:800}
-.subtitle{color:#64748b;font-size:0.875rem;margin-bottom:20px}
+h1{font-size:1.6rem;color:var(--primary);margin-bottom:4px;font-weight:800}
+.subtitle{color:var(--text-light);font-size:0.875rem;margin-bottom:20px}
 .tab-group{display:flex;background:#f1f5f9;padding:4px;border-radius:12px;margin-bottom:24px;gap:4px}
-.tab-btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:0.875rem;font-weight:700;cursor:pointer;background:transparent;color:#64748b;transition:all 0.2s}
-.tab-btn.active{background:#ffffff;color:#2563eb;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+.tab-btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:0.875rem;font-weight:700;cursor:pointer;background:transparent;color:var(--text-light);transition:all 0.2s;font-family:inherit}
+.tab-btn.active{background:#ffffff;color:var(--primary);box-shadow:0 2px 6px rgba(0,0,0,0.06)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left}
 .form-group{display:flex;flex-direction:column;gap:4px}
 .form-group.full{grid-column:1/-1}
-label{font-size:0.8125rem;font-weight:700;color:#334155}
-input,select,textarea{padding:10px 14px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.9375rem;font-family:inherit;transition:border-color .2s;background:#fff;color:#0f172a}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.12)}
+label{font-size:0.8125rem;font-weight:700;color:var(--text)}
+input,select,textarea{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:0.9375rem;font-family:inherit;transition:border-color .2s;background:#fff;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,166,35,0.16)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 28px;border:none;border-radius:8px;font-size:0.9375rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;text-decoration:none}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-primary:hover{background:#1d4ed8}
-.btn-accent{background:#f59e0b;color:#0f172a}
-.btn-accent:hover{background:#d97706}
-.btn-outline{background:transparent;border:1.5px solid #cbd5e1;color:#475569}
-.btn-outline:hover{border-color:#2563eb;color:#2563eb}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-light)}
+.btn-accent{background:var(--accent);color:var(--primary-dark)}
+.btn-accent:hover{background:var(--accent-light)}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--primary)}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
 .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}
 .error-box{display:none;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;text-align:left}
 .success-box{display:none;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:24px;border-radius:12px;margin-bottom:16px;text-align:left}
-.back-link{display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:#64748b;text-decoration:none;font-size:0.875rem;font-weight:600}
-.back-link:hover{color:#2563eb}
+.back-link{display:inline-flex;align-items:center;gap:6px;margin-top:20px;color:var(--text-light);text-decoration:none;font-size:0.875rem;font-weight:600}
+.back-link:hover{color:var(--primary)}
+[data-theme="dark"] .card{background:#1e293b;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] h1,[data-theme="dark"] label{color:#f1f5f9}
+[data-theme="dark"] .tab-group{background:#0f172a}
+[data-theme="dark"] .tab-btn.active{background:#334155;color:#f1f5f9}
+[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea{background:#0f172a;border-color:#334155;color:#e2e8f0}
+[data-theme="dark"] .logo{background:#0f172a;border-color:#334155}
 @media(max-width:560px){.card{padding:24px}.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
-<body>
+<body class="page-shell">
+
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="auth-page">
 <div class="card" id="formCard">
   <div class="logo"><img src="icons/icon.svg" alt="EduVerse"></div>
   <h1 id="pageHeading">Online Admission Application</h1>
@@ -196,6 +227,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#2563eb;box-sh
 
   <a class="back-link" href="index.html"><i class="fas fa-arrow-left"></i> Back to School Webpage</a>
 </div>
+</main>
 
 <script src="js/namespace.js"></script>
 <script src="js/multitenant.js"></script>
@@ -441,5 +473,70 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#2563eb;box-sh
     }
   });
 </script>
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
+</footer>
+<script src="js/site-chrome.js"></script>
 </body>
 </html>

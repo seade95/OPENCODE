@@ -9,9 +9,15 @@
 <meta property="og:description" content="Start free, upgrade when you need more. Professional plan starts at $49/month.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -29,67 +35,69 @@
 }
 </script>
 <style>
-body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;margin:0;padding:0;min-height:100vh;}
-.pricing-hero{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:white;padding:80px 20px 60px;text-align:center;}
-.pricing-hero h1{font-size:36px;margin:0 0 8px;}
-.pricing-hero p{font-size:16px;opacity:0.85;margin:0 auto;max-width:600px;}
-.back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;position:absolute;top:20px;left:20px;}
-.back-link:hover{color:#fff;}
-.pricing-wrap{max-width:1100px;margin:-40px auto 60px;padding:0 20px;}
-.billing-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;font-size:14px;color:#64748b;}
-.billing-toggle .toggle-track{width:48px;height:26px;background:#cbd5e1;border-radius:13px;cursor:pointer;position:relative;transition:background .2s;}
-.billing-toggle .toggle-track.active{background:#2563eb;}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:0;min-height:100vh;}
+.pricing-hero{background:radial-gradient(circle at 15% 20%,rgba(245,166,35,0.18) 0%,transparent 45%),linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 58%,var(--primary-light) 100%);color:white;padding:150px 20px 104px;text-align:center;position:relative;overflow:hidden;}
+.pricing-hero::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.055) 1px,transparent 1px);background-size:26px 26px;pointer-events:none;}
+.pricing-hero > *{position:relative;z-index:1;}
+.pricing-hero h1{font-size:clamp(28px,4vw,42px);margin:0 0 12px;font-weight:800;letter-spacing:-0.02em;}
+.pricing-hero h1 span{color:var(--accent);}
+.pricing-hero p{font-size:16px;opacity:.85;margin:0 auto;max-width:620px;line-height:1.6;}
+.pricing-wrap{max-width:1100px;margin:-56px auto 60px;padding:0 20px;position:relative;z-index:2;}
+.billing-toggle{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px;font-size:14px;color:var(--text-light);}
+.billing-toggle .toggle-track{width:48px;height:26px;background:var(--border);border-radius:13px;cursor:pointer;position:relative;transition:background .2s;}
+.billing-toggle .toggle-track.active{background:var(--primary);}
 .billing-toggle .toggle-knob{width:22px;height:22px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
 .billing-toggle .toggle-track.active .toggle-knob{transform:translateX(22px);}
-.billing-toggle .badge{background:#dcfce7;color:#16a34a;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.billing-toggle .badge{background:rgba(72,187,120,0.18);color:#276749;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-.pricing-card{background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.06);text-align:center;position:relative;transition:transform .2s,box-shadow .2s;}
+.pricing-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,0.06);text-align:center;position:relative;transition:transform .2s,box-shadow .2s;}
 .pricing-card:hover{transform:translateY(-4px);box-shadow:0 8px 40px rgba(0,0,0,0.1);}
-.pricing-card.featured{border:2px solid #2563eb;transform:scale(1.03);}
+.pricing-card.featured{border:2px solid var(--accent);transform:scale(1.03);box-shadow:0 16px 44px rgba(245,166,35,0.22);}
 .pricing-card.featured:hover{transform:scale(1.03) translateY(-4px);}
-.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#2563eb;color:#fff;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:600;}
-.pricing-card h3{font-size:20px;margin:0 0 4px;}
-.pricing-card .sub{font-size:14px;color:#64748b;margin-bottom:20px;}
-.pricing-card .price{font-size:42px;font-weight:800;color:#1e293b;}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--primary-dark);padding:5px 18px;border-radius:20px;font-size:12px;font-weight:800;letter-spacing:.03em;box-shadow:0 6px 16px rgba(245,166,35,0.3);}
+.pricing-card h3{font-size:20px;margin:0 0 4px;color:var(--primary);}
+.pricing-card .sub{font-size:14px;color:var(--text-light);margin-bottom:20px;}
+.pricing-card .price{font-size:42px;font-weight:800;color:var(--primary);}
 .pricing-card .price span{font-size:16px;font-weight:400;color:#94a3b8;}
 .pricing-card .price .annual-only{display:none;font-size:14px;color:#16a34a;font-weight:600;}
-.pricing-card .desc{font-size:14px;color:#64748b;margin:8px 0 20px;line-height:1.6;}
+.pricing-card .desc{font-size:14px;color:var(--text-light);margin:8px 0 20px;line-height:1.6;}
 .pricing-features{list-style:none;padding:0;margin:0 0 24px;text-align:left;}
 .pricing-features li{padding:8px 0;font-size:14px;color:#475569;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f1f5f9;}
 .pricing-features li:last-child{border-bottom:none;}
-.pricing-features li i.fa-check{color:#22c55e;font-size:14px;width:18px;}
+.pricing-features li i.fa-check{color:var(--success);font-size:14px;width:18px;}
 .pricing-features li i.fa-times{color:#cbd5e1;font-size:14px;width:18px;}
 .pricing-features li.na{color:#94a3b8;}
-.pricing-card .btn{display:inline-block;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:all .15s;}
-.pricing-card .btn-primary{background:#2563eb;color:#fff;}
-.pricing-card .btn-primary:hover{background:#1d4ed8;}
-.pricing-card .btn-outline{border:2px solid #2563eb;color:#2563eb;}
-.pricing-card .btn-outline:hover{background:#2563eb;color:#fff;}
+.pricing-card .btn{display:inline-block;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all .15s;}
+.pricing-card .btn-primary{background:var(--accent);color:var(--primary-dark);}
+.pricing-card .btn-primary:hover{background:var(--accent-light);transform:translateY(-2px);box-shadow:0 10px 24px rgba(245,166,35,0.32);}
+.pricing-card .btn-outline{border:2px solid var(--primary);color:var(--primary);background:transparent;}
+.pricing-card .btn-outline:hover{background:var(--primary);color:#fff;}
 .trust-bar{display:flex;justify-content:center;gap:32px;margin:32px 0 0;flex-wrap:wrap;}
 .trust-bar span{font-size:13px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:6px;}
-.trust-bar span i{color:#fbbf24;}
+.trust-bar span i{color:var(--accent);}
 .compare-section{max-width:1000px;margin:0 auto 60px;padding:0 20px;}
-.compare-section h2{text-align:center;font-size:28px;margin-bottom:32px;}
+.compare-section h2{text-align:center;font-size:28px;margin-bottom:32px;color:var(--primary);}
 .compare-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.05);font-size:14px;}
 .compare-table th,.compare-table td{padding:14px 16px;text-align:center;border-bottom:1px solid #f1f5f9;}
-.compare-table th{background:#f8fafc;font-weight:600;color:#1e293b;}
+.compare-table th{background:#f8fafc;font-weight:600;color:var(--primary);}
 .compare-table th:first-child,.compare-table td:first-child{text-align:left;font-weight:500;}
-.compare-table td i.fa-check{color:#22c55e;}
+.compare-table td i.fa-check{color:var(--success);}
 .compare-table td i.fa-times{color:#cbd5e1;}
 .compare-table tr:hover td{background:#f8fafc;}
-.compare-table .popular-col{background:#eff6ff;}
+.compare-table .popular-col{background:rgba(245,166,35,0.1);}
 .faq-section{max-width:700px;margin:0 auto 60px;padding:0 20px;}
-.faq-section h2{text-align:center;font-size:28px;margin-bottom:32px;}
-.faq-item{margin-bottom:12px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;}
-.faq-q{padding:14px 20px;background:#fff;font-weight:600;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
-.faq-q i{transition:transform .2s;color:#2563eb;font-size:12px;}
+.faq-section h2{text-align:center;font-size:28px;margin-bottom:32px;color:var(--primary);}
+.faq-item{margin-bottom:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--card-bg);}
+.faq-q{padding:14px 20px;background:var(--card-bg);font-weight:600;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--primary);}
+.faq-q i{transition:transform .2s;color:var(--accent-dark);font-size:12px;}
 .faq-q.open i{transform:rotate(180deg);}
 .faq-a{padding:0 20px 14px;font-size:14px;color:#475569;line-height:1.7;display:none;}
 .faq-a.open{display:block;}
-.contact-cta{text-align:center;padding:40px 20px;background:#f8fafc;border-radius:12px;max-width:600px;margin:0 auto 40px;}
-.contact-cta h3{font-size:20px;margin:0 0 8px;}
-.contact-cta p{font-size:14px;color:#64748b;margin:0 0 16px;}
-.contact-cta .btn{display:inline-block;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:600;background:#2563eb;color:#fff;font-size:14px;}
+.contact-cta{text-align:center;padding:40px 20px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;max-width:600px;margin:0 auto 40px;}
+.contact-cta h3{font-size:20px;margin:0 0 8px;color:var(--primary);}
+.contact-cta p{font-size:14px;color:var(--text-light);margin:0 0 16px;}
+.contact-cta .btn{display:inline-block;padding:12px 32px;border-radius:8px;text-decoration:none;font-weight:700;background:var(--primary);color:#fff;font-size:14px;}
+.contact-cta .btn:hover{background:var(--primary-light);transform:translateY(-2px);}
 [data-theme="dark"] body{background:#0f172a;color:#e2e8f0;}
 [data-theme="dark"] .pricing-card{background:#1e293b;}
 [data-theme="dark"] .pricing-card h3{color:#e2e8f0;}
@@ -109,10 +117,29 @@ body{font-family:Inter,system-ui,sans-serif;background:#f8fafc;color:#1e293b;mar
 @media(max-width:400px){.pricing-hero h1{font-size:26px;}.pricing-card{padding:24px 16px;}}
 </style>
 </head>
-<body>
+<body class="page-shell">
+
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
+</nav>
 
 <section class="pricing-hero">
-  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
   <h1>Simple, Transparent Pricing</h1>
   <p>Start free, upgrade when you need more. No hidden fees. No credit card required for the Free plan.</p>
   <div class="trust-bar">
@@ -271,15 +298,70 @@ function toggleFaq(el) {
 }
 </script>
 <script src="js/events.js"></script>
-<footer style="background:#1e293b;color:rgba(255,255,255,0.5);padding:24px 20px;text-align:center;font-size:13px;">
-  <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
-    <a href="privacy-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Privacy</a>
-    <a href="terms-of-service.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Terms</a>
-    <a href="cookie-policy.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Cookies</a>
-    <a href="gdpr-compliance.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">GDPR</a>
-    <a href="demo.html" style="color:rgba(255,255,255,0.5);text-decoration:none;">Book a Demo</a>
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
   </div>
-  <p style="margin:0;">&copy; 2026 EduVerse. All rights reserved.</p>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
 </footer>
+<script src="js/site-chrome.js"></script>
 </body>
 </html>

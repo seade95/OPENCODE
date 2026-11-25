@@ -5,74 +5,76 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>School Directory — EduVerse</title>
 <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20260730">
+<link rel="stylesheet" href="css/pages.css?v=20261109">
+<meta name="theme-color" content="#1a3a5c">
 <style>
-body{font-family:Inter,system-ui,sans-serif;background:#f0f4f8;color:#1e293b;margin:0;padding:0;min-height:100vh}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);margin:0;padding:0;min-height:100vh}
 
-.dir-hero{background:linear-gradient(135deg,#0f2440 0%,#1e3a5f 40%,#2563eb 100%);color:#fff;padding:80px 20px 70px;text-align:center;position:relative;overflow:hidden}
+.dir-hero{background:linear-gradient(135deg,var(--primary-dark) 0%,#1e3a5f 42%,var(--primary-light) 100%);color:#fff;padding:150px 20px 74px;text-align:center;position:relative;overflow:hidden}
 .dir-hero::before{content:'';position:absolute;top:-50%;right:-15%;width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.1) 0%,transparent 70%);border-radius:50%}
 .dir-hero::after{content:'';position:absolute;bottom:-40%;left:10%;width:400px;height:400px;background:radial-gradient(circle,rgba(255,255,255,0.06) 0%,transparent 70%);border-radius:50%}
 .dir-hero h1{font-size:40px;font-weight:800;margin:0 0 12px;position:relative;z-index:1}
 .dir-hero p{font-size:16px;opacity:.85;max-width:550px;margin:0 auto;position:relative;z-index:1;line-height:1.6}
-.back-link{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,0.75);text-decoration:none;font-size:14px;font-weight:500;position:absolute;top:24px;left:24px;z-index:2;transition:color .2s}
+.back-link{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,0.75);text-decoration:none;font-size:14px;font-weight:500;position:absolute;top:96px;left:24px;z-index:2;transition:color .2s}
 .back-link:hover{color:#fff}
 .dir-hero-logo{width:64px;height:64px;margin:0 auto 16px;background:rgba(255,255,255,0.12);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;z-index:1;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.15)}
 
 .dir-stats-bar{max-width:1100px;margin:-30px auto 24px;padding:0 20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:2}
 .dir-stat-pill{background:#fff;border-radius:24px;padding:10px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.1);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#1e293b}
 .dir-stat-pill i{font-size:14px}
-.dir-stat-pill--total{border-left:3px solid #2563eb}
-.dir-stat-pill--total i{color:#2563eb}
-.dir-stat-pill--result{border-left:3px solid #059669}
-.dir-stat-pill--result i{color:#059669}
+.dir-stat-pill--total{border-left:3px solid var(--primary)}
+.dir-stat-pill--total i{color:var(--primary)}
+.dir-stat-pill--result{border-left:3px solid var(--success)}
+.dir-stat-pill--result i{color:var(--success)}
 
 .dir-controls{max-width:1100px;margin:0 auto 28px;padding:0 20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 .dir-search-wrap{position:relative;flex:1;min-width:240px;max-width:400px}
-.dir-search-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:15px}
-.dir-search-wrap input{width:100%;padding:12px 16px 12px 44px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:inherit;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all .2s;box-sizing:border-box}
-.dir-search-wrap input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 4px rgba(37,99,235,0.1)}
+.dir-search-wrap i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:15px}
+.dir-search-wrap input{width:100%;padding:12px 16px 12px 44px;border:2px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all .2s;box-sizing:border-box;color:var(--text)}
+.dir-search-wrap input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(245,166,35,0.16)}
 .dir-filter-wrap{position:relative}
-.dir-filter-wrap select{padding:12px 40px 12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:inherit;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);cursor:pointer;appearance:none;-webkit-appearance:none;transition:all .2s}
-.dir-filter-wrap select:focus{outline:none;border-color:#2563eb}
+.dir-filter-wrap select{padding:12px 40px 12px 16px;border:2px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);cursor:pointer;appearance:none;-webkit-appearance:none;transition:all .2s;color:var(--text)}
+.dir-filter-wrap select:focus{outline:none;border-color:var(--accent)}
 .dir-filter-wrap::after{content:'\f107';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none;font-size:13px}
 
 .dir-grid{max-width:1100px;margin:0 auto 60px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
 .dir-card{background:#fff;border-radius:16px;padding:0;box-shadow:0 2px 12px rgba(0,0,0,0.05);transition:all .3s;cursor:pointer;border:1px solid #e2e8f0;overflow:hidden}
-.dir-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.1);border-color:#bfdbfe}
+.dir-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.1);border-color:rgba(245,166,35,0.55)}
 .dir-card-top{padding:24px 24px 16px;display:flex;gap:14px;align-items:flex-start}
 .dir-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;color:#fff}
-.dir-card-icon--blue{background:linear-gradient(135deg,#2563eb,#3b82f6)}
+.dir-card-icon--blue{background:linear-gradient(135deg,var(--primary),var(--primary-light))}
 .dir-card-icon--purple{background:linear-gradient(135deg,#7c3aed,#8b5cf6)}
 .dir-card-icon--green{background:linear-gradient(135deg,#059669,#10b981)}
-.dir-card-icon--amber{background:linear-gradient(135deg,#d97706,#f59e0b)}
+.dir-card-icon--amber{background:linear-gradient(135deg,var(--accent-dark),var(--accent))}
 .dir-card-icon--rose{background:linear-gradient(135deg,#e11d48,#f43f5e)}
 .dir-card-icon--cyan{background:linear-gradient(135deg,#0891b2,#06b6d4)}
 .dir-card-info{flex:1;min-width:0}
-.dir-card-name{font-size:17px;font-weight:700;color:#1e293b;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dir-card-location{font-size:13px;color:#64748b;display:flex;align-items:center;gap:6px;margin:0}
-.dir-card-location i{color:#2563eb;font-size:12px}
+.dir-card-name{font-size:17px;font-weight:700;color:var(--text);margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dir-card-location{font-size:13px;color:var(--text-light);display:flex;align-items:center;gap:6px;margin:0}
+.dir-card-location i{color:var(--accent-dark);font-size:12px}
 .dir-card-body{padding:0 24px 16px}
 .dir-card-tags{display:flex;gap:6px;flex-wrap:wrap}
 .dir-tag{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
-.dir-tag--type{background:#dbeafe;color:#2563eb}
-.dir-tag--type.primary{background:#dcfce7;color:#16a34a}
-.dir-tag--type.secondary{background:#fef9c3;color:#ca8a04}
-.dir-tag--portal{background:#ede9fe;color:#7c3aed}
-.dir-card-footer{padding:14px 24px;background:#f8fafc;border-top:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.dir-tag--type{background:rgba(26,58,92,0.08);color:var(--primary)}
+.dir-tag--type.primary{background:rgba(72,187,120,0.16);color:#276749}
+.dir-tag--type.secondary{background:rgba(245,166,35,0.18);color:#9c650a}
+.dir-tag--portal{background:rgba(124,58,237,0.1);color:#6d28d9}
+.dir-card-footer{padding:14px 24px;background:var(--bg-subtle);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .dir-card-footer-label{font-size:12px;color:#94a3b8}
-.dir-card-footer-btn{font-size:12px;font-weight:600;color:#2563eb;display:flex;align-items:center;gap:4px;text-decoration:none;transition:color .2s}
-.dir-card-footer-btn:hover{color:#1d4ed8}
+.dir-card-footer-btn{font-size:12px;font-weight:600;color:var(--primary);display:flex;align-items:center;gap:4px;text-decoration:none;transition:color .2s}
+.dir-card-footer-btn:hover{color:var(--accent-dark)}
 
 .dir-empty{text-align:center;padding:64px 20px;color:#94a3b8;grid-column:1/-1}
 .dir-empty i{font-size:52px;margin-bottom:16px;display:block;opacity:.4}
-.dir-empty p{font-size:16px;margin:0 0 8px;color:#64748b}
+.dir-empty p{font-size:16px;margin:0 0 8px;color:var(--text-light)}
 .dir-empty span{font-size:13px}
-
-footer{background:#0f2440;color:rgba(255,255,255,0.5);padding:28px 20px;text-align:center;font-size:13px}
-footer a{color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s}
-footer a:hover{color:rgba(255,255,255,0.8)}
 
 @media(max-width:768px){
   .dir-hero h1{font-size:28px}
@@ -93,8 +95,27 @@ footer a:hover{color:rgba(255,255,255,0.8)}
 </head>
 <body>
 
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="index.html"><img class="school-logo-img" src="icons/icon.svg" alt="EduVerse"> <span>EduVerse</span></a>
+  <button class="nav-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
+  <div class="nav-backdrop"></div>
+  <div class="nav-menu" id="navMenu">
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="index.html#features" class="nav-link">Features</a></li>
+      <li><a href="pricing.html" class="nav-link">Pricing</a></li>
+      <li><a href="directory.html" class="nav-link">Schools</a></li>
+      <li><a href="demo.html" class="nav-link">Demo</a></li>
+      <li class="nav-divider" role="separator"></li>
+      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="apply.html" class="nav-link nav-link-accent"><i class="fas fa-pen"></i> Apply as School</a></li>
+      <li><a href="login.html" class="nav-btn nav-btn-primary"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+      <li><a href="javascript:;" class="nav-link nav-link-icon" data-chrome="theme" title="Toggle Dark Mode" aria-label="Toggle dark mode"><i class="fas fa-moon" id="darkModeIcon"></i></a></li>
+    </ul>
+  </div>
+</nav>
+
 <section class="dir-hero">
-  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to EduVerse</a>
   <div class="dir-hero-logo"><i class="fas fa-school"></i></div>
   <h1>School Directory</h1>
   <p>Discover schools using EduVerse to manage their academic operations. Browse, search, and connect with institutions near you.</p>
@@ -208,16 +229,70 @@ function htmlEscape(str) {
 renderDirectory();
 </script>
 <script src="js/events.js"></script>
-<footer>
-  <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px">
-    <a href="privacy-policy.html">Privacy</a>
-    <a href="terms-of-service.html">Terms</a>
-    <a href="cookie-policy.html">Cookies</a>
-    <a href="gdpr-compliance.html">GDPR</a>
-    <a href="pricing.html">Pricing</a>
-    <a href="directory.html">Directory</a>
+<footer class="footer-enhanced">
+  <div class="footer-top-bar">
+    <div class="logo"><img src="icons/icon.svg" alt="EduVerse" style="height:36px;border-radius:4px;"> EduVerse</div>
+    <div class="footer-social">
+      <a href="https://facebook.com/eduverse" aria-label="Facebook" target="_blank" rel="noopener"><i class="fab fa-facebook"></i></a>
+      <a href="https://twitter.com/eduverse" aria-label="Twitter" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+      <a href="https://linkedin.com/company/eduverse" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+      <a href="https://instagram.com/eduverse" aria-label="Instagram" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com/@eduverse" aria-label="YouTube" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+    </div>
   </div>
-  <p style="margin:0">&copy; 2026 EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+  <div class="footer-main">
+    <div class="footer-widget footer-about">
+      <h5>About EduVerse</h5>
+      <p>EduVerse is a unified school management platform for admissions, fees, results, attendance, portals and analytics — built for schools, by educators.</p>
+      <p class="footer-contact">
+        <i class="fas fa-map-marker-alt"></i> 123 Education Avenue, Lagos, Nigeria<br>
+        <i class="fas fa-phone"></i> <a href="tel:+2347069332955">+2347069332955</a><br>
+        <i class="fas fa-envelope"></i> <a href="mailto:eduversemgt@gmail.com">eduversemgt@gmail.com</a>
+      </p>
+    </div>
+    <div class="footer-widget">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="pricing.html">Pricing &amp; Plans</a></li>
+        <li><a href="directory.html">School Directory</a></li>
+        <li><a href="demo.html">Demo School</a></li>
+        <li><a href="apply.html">Apply as School</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Portals</h5>
+      <ul>
+        <li><a href="admin.html"><i class="fas fa-angle-right"></i> Administration</a></li>
+        <li><a href="login/teacher.html"><i class="fas fa-angle-right"></i> Teachers</a></li>
+        <li><a href="login/student.html"><i class="fas fa-angle-right"></i> Students</a></li>
+        <li><a href="login/parent.html"><i class="fas fa-angle-right"></i> Parents</a></li>
+        <li><a href="login/admission.html"><i class="fas fa-angle-right"></i> Admissions</a></li>
+      </ul>
+    </div>
+    <div class="footer-widget">
+      <h5>Stay Updated</h5>
+      <p>Subscribe for product updates, school stories and academic news.</p>
+      <div class="newsletter-form">
+        <form onsubmit="return subscribeNewsletter(this.querySelector('input'))">
+          <div class="input-group">
+            <input type="email" placeholder="Your email address" aria-label="Email address" required>
+            <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; <span data-year>2026</span> EduVerse Institute of Technology &amp; Management. All rights reserved.</p>
+    <div class="footer-legal-links">
+      <a href="privacy-policy.html">Privacy Policy</a>
+      <a href="terms-of-service.html">Terms of Service</a>
+      <a href="cookie-policy.html">Cookie Policy</a>
+      <a href="gdpr-compliance.html">GDPR Compliance</a>
+    </div>
+  </div>
 </footer>
+<script src="js/site-chrome.js"></script>
 </body>
 </html>
